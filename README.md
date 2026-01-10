@@ -1,2 +1,2 @@
-# 2026-Rebuilt
-Software and robot configuration for the FRC 2026 AGE season
+# 2025-BunnyBots
+Robot code for the 2025 Bunny Bots season
