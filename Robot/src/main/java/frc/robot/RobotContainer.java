@@ -43,28 +43,28 @@ public class RobotContainer {
         CONTROLLERS.DRIVER_PORT
     );
     
-    private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
+    // private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // The robot's subsystems
     private final Swerve swerve;
-    private final OdometryUpdates odometryUpdates;
-    private final Vision vision;
-    private final Indexer indexer;
+    // private final OdometryUpdates odometryUpdates;
+    // private final Vision vision;
+    // private final Indexer indexer;
 
-    private final Launcher testingLauncher;
+    // private final Launcher testingLauncher;
     private double percentDashboard1;
     private double percentDashboard2;
     
     private final Trigger RESET_HEADING = driverController.back();
     // private final Trigger SLOW_MODE = driverController.rightBumper();
-    private final Trigger LAUNCH = driverController.rightTrigger();
-    private Trigger RUN = driverController.rightBumper();
-    private final Trigger TESTINGINTAKEBOTTOMBUTTON = driverController.leftBumper();
+    // private final Trigger LAUNCH = driverController.rightTrigger();
+    // private Trigger RUN = driverController.rightBumper();
+    // private final Trigger TESTINGINTAKEBOTTOMBUTTON = driverController.leftBumper();
 
     //private final Trigger TESTINGINTAKEBUTTON = driverController.rightTrigger();
-    private final Trigger TESTINGINTAKESIDEBUTTON = driverController.leftTrigger();
-    private Intake testingIntake;
+    // private final Trigger TESTINGINTAKESIDEBUTTON = driverController.leftTrigger();
+    // private Intake testingIntake;
     
 
     /**
@@ -73,11 +73,11 @@ public class RobotContainer {
      */
     public RobotContainer() {
         swerve = new Swerve(drivetrain);
-        vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
-        odometryUpdates = new OdometryUpdates(vision, swerve);
-        testingLauncher = new Launcher();
-        indexer = new Indexer();
-        testingIntake = new Intake();
+        // vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+        // odometryUpdates = new OdometryUpdates(vision, swerve);
+        // testingLauncher = new Launcher();
+        // indexer = new Indexer();
+        // testingIntake = new Intake();
 
         configureBindings();
         configureDefaults();
@@ -109,30 +109,30 @@ public class RobotContainer {
 
         RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
-        double percentDerived1 = SmartDashboard.getNumber("bottom_launcher_motor",percentDashboard1);
-        double percentDerived2 = SmartDashboard.getNumber("top_launcher_motor",percentDashboard2);
+        // double percentDerived1 = SmartDashboard.getNumber("bottom_launcher_motor",percentDashboard1);
+        // double percentDerived2 = SmartDashboard.getNumber("top_launcher_motor",percentDashboard2);
         //Try and print the values
         System.out.println("PercentDashboard1 " + percentDashboard1);
         System.out.println("PercentDashboard2 " + percentDashboard2);
-        LAUNCH.whileTrue(new DeferredCommand(() -> testingLauncher.setLauncherCommand(SmartDashboard.getNumber("bottom_launcher_motor", 0.4), SmartDashboard.getNumber("top_launcher_motor", 0.4)), Set.of(testingLauncher))).onFalse(testingLauncher.stopLauncherCommand());
+        // LAUNCH.whileTrue(new DeferredCommand(() -> testingLauncher.setLauncherCommand(SmartDashboard.getNumber("bottom_launcher_motor", 0.4), SmartDashboard.getNumber("top_launcher_motor", 0.4)), Set.of(testingLauncher))).onFalse(testingLauncher.stopLauncherCommand());
 
-        RUN.onTrue(
-          new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(.5), Set.of(indexer))
-        ).onFalse(indexer.stopMotorCommand());
+        // RUN.onTrue(
+        //   new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(.5), Set.of(indexer))
+        // ).onFalse(indexer.stopMotorCommand());
 
-        driverController.a().onTrue(
-            new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(0, .5), Set.of(indexer))
-        ).onFalse(indexer.stopMotorCommand(0));
+        // driverController.a().onTrue(
+        //     new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(0, .5), Set.of(indexer))
+        // ).onFalse(indexer.stopMotorCommand(0));
 
-        driverController.b().onTrue(
-            new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(2, .5), Set.of(indexer))
-        ).onFalse(indexer.stopMotorCommand(2));
+        // driverController.b().onTrue(
+        //     new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(2, .5), Set.of(indexer))
+        // ).onFalse(indexer.stopMotorCommand(2));
 
-        driverController.y().onTrue(
-            new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(3, .5), Set.of(indexer))
-        ).onFalse(indexer.stopMotorCommand(3));
+        // driverController.y().onTrue(
+        //     new DeferredCommand(() -> indexer.setMotorPercentOutputCommand(3, .5), Set.of(indexer))
+        // ).onFalse(indexer.stopMotorCommand(3));
 
-        TESTINGINTAKESIDEBUTTON.onTrue(new DeferredCommand(() -> testingIntake.setIntakeSideCommand(0.75), Set.of(testingIntake))).onFalse(testingIntake.stopIntakeSideCommand());
+        // TESTINGINTAKESIDEBUTTON.onTrue(new DeferredCommand(() -> testingIntake.setIntakeSideCommand(0.75), Set.of(testingIntake))).onFalse(testingIntake.stopIntakeSideCommand());
         //TESTINGINTAKEBOTTOMBUTTON.onTrue(new DeferredCommand(() -> testingIntake.setIntakeBottomCommand(0.5), Set.of(testingIntake))).onFalse(testingIntake.stopIntakeBottomCommand());
         //TESTINGPIVOTINTAKEBUTTON.onTrue(new DeferredCommand(() ->testingIntake.setIntakeCommand(testingIntake.accessPivotIntakeMotor(),0.5), Set.of(testingIntake))).onFalse(testingIntake.stopIntakeCommand(testingIntake.accessPivotIntakeMotor()));
   
