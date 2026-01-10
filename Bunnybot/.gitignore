@@ -185,3 +185,8 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
+
+# Added by JGT
+*.bin
+*.properties
+*.lock
