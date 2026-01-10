@@ -14,6 +14,7 @@ public class PIDProfile implements Sendable {
     public double kS = 0;
     public double kA = 0;
     public double kV = 0;
+    public double kG = 0;
 
     public double maxAcceleration = Double.POSITIVE_INFINITY;
     public double maxVelocity = Double.POSITIVE_INFINITY;
@@ -100,6 +101,14 @@ public class PIDProfile implements Sendable {
 
     public double getS() {
         return this.kS;
+    }
+
+    public PIDProfile setG(double gain){
+        this.kG = gain;
+        return this;
+    }
+    public double getG(){
+        return this.kG;    
     }
 
     public PIDProfile setMaxAcceleration(double gain) {

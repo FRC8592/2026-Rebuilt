@@ -1,12 +1,15 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.swerve.TunerConstants;
-import static edu.wpi.first.units.Units.*;
 
 
 public final class Constants {
@@ -69,7 +72,7 @@ public final class VISION {
     );
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
-    public static final int POSE_AVERAGER_VALUE = 10;
+    public static final int POSE_AVERAGER_VALUE = 50;
 }
     
 public final class SWERVE {
@@ -95,14 +98,14 @@ public final class SWERVE {
 
     //TODO: Tone these down appropriately as per BB rules
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 0.75; 
+    public static final double ROTATE_POWER_FAST = 0.25; 
     public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.3;
 
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
 
-    public static final double JOYSTICK_EXPONENT = 1.2;
+    public static final double JOYSTICK_EXPONENT = 1.75;
 
     public static final Rotation2d BLUE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(0);
     public static final Rotation2d RED_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180);
@@ -143,15 +146,19 @@ public final class INDEXER {
 
     public static final int INDEXER_BEAM_BREAK_1_PORT = 0;
     public static final int INDEXER_BEAM_BREAK_2_PORT = 1;
-    public static final int INDEXER_BEAM_BREAK_3_PORT = 2;
+    public static final int INDEXER_BEAM_BREAK_3_PORT = 3;
+}
+
+public final class LAUNCHER {
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Launcher/";
 }
 
 public static class INTAKE{
     //DEFAULT VALUES, NEED TO CHANGE THESE LATER
     //these are for the PID of the Pivot Intake Motor
-    public static final int INTAKE_POSITION_P = 0;
-    public static final int INTAKE_POSITION_I = 0;
-    public static final int INTAKE_POSITION_D = 0;
+    public static final double INTAKE_POSITION_P = 5;
+    public static final double INTAKE_POSITION_I = 0;
+    public static final double INTAKE_POSITION_D = 0.1;
     //This is the gearbox that the motor will be plugged into
     public static final int GEARBOX_PIVOT_RATIO = 16;
     //this is to convert motor rotations to intake degrees
@@ -162,8 +169,9 @@ public static class INTAKE{
     public static final int INTAKE_CURRENT_LIMIT = 80;
     public static final int PIVOT_INTAKE_CURRENT_LIMIT = 40;
     //Set max velocity and max acceleration of Intake motor of Intake for motion magic set up
-    public static final int PIVOT_INTAKE_MAX_VELOCITY = 0;
-    public static final int PIVOT_INTAKE_MAX_ACCELERATION = 0;
+    public static final double PIVOT_INTAKE_MAX_VELOCITY = 2;
+    public static final double PIVOT_INTAKE_MAX_ACCELERATION = 4;
+    public static final double PIVOT_INTAKE_TOLERANCE = 0;
     //This is the position of the intake when we want to eject additional lunites
     public static final double EJECT_LUNITE_POSITION = 0;
     //This is the position of the intake when it is touching the ground
@@ -172,6 +180,11 @@ public static class INTAKE{
     public static final double STOW_PIVOT_INTAKE = 0;
     //Amount of motor rotations to eject
     public static final int EJECT_MOTOR_ROTATIONS = 1000;
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
 
+  }
+
+  public static final class SCORING{
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
   }
 }

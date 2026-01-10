@@ -1,11 +1,16 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 //import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
+import frc.robot.Constants.INTAKE;
+import frc.robot.Constants.LAUNCHER;
+import frc.robot.Constants.SCORING;
 import frc.robot.helpers.motor.NewtonMotor;
 import frc.robot.helpers.motor.NewtonMotor.IdleMode;
 // import frc.robot.helpers.motor.spark.*;
@@ -22,6 +27,7 @@ public class Launcher extends SubsystemBase {
         //Bottom is Motor1
         bottomLauncherMotor = new Falcon500Motor(CAN.BOTTOM_LAUNCHER_MOTOR, true);
         topLauncherMotor = new Falcon500Motor(CAN.TOP_LAUNCHER_MOTOR, true);
+
         SmartDashboard.putNumber("bottom_launcher_motor", 0.44); // High: 0.4 Low: 0.23  Close shot: 0.44
         SmartDashboard.putNumber("top_launcher_motor", 0.3); // High: 0.4 Low: 0.23   Close shot: 0.3
 
@@ -38,7 +44,7 @@ public class Launcher extends SubsystemBase {
     */
     public void setLauncherPercentOutput(double percent1, double percent2){
         //Debugging to try and see whether the method is running, which it does
-        System.out.println("Set Launch % Output called: " + percent1 + " " + percent2);
+        //System.out.println("Set Launch % Output called: " + percent1 + " " + percent2);
         bottomLauncherMotor.setPercentOutput(percent1);
         topLauncherMotor.setPercentOutput(percent2);
 
@@ -56,7 +62,7 @@ public class Launcher extends SubsystemBase {
      * @return Returns a command to set motor power to given percentage.
      */
     public Command setLauncherCommand(double percent1, double percent2){
-        return this.run(()->{setLauncherPercentOutput(percent1, percent2);
+        return this.runOnce(()->{setLauncherPercentOutput(percent1, percent2);
         });
     }
 
@@ -68,6 +74,11 @@ public class Launcher extends SubsystemBase {
         return this.runOnce(()->{
             setLauncherPercentOutput(0,0);
         });
+    }
+
+    public void Periodic() {
+         Logger.recordOutput(LAUNCHER.LOG_PATH+"Launcher|TopMotorSpeed",topLauncherMotor.getVelocityRPM());
+         Logger.recordOutput(LAUNCHER.LOG_PATH+"Launcher|BottomMotorSpeed",bottomLauncherMotor.getVelocityRPM());
     }
 
 }

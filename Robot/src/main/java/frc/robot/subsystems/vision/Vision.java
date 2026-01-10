@@ -80,7 +80,6 @@ public class Vision extends SubsystemBase{
 
     @Override
     public void periodic(){
- 
          // Read in relevant data from the Camera
          results = camera.getAllUnreadResults();
          if (!results.isEmpty()) {
@@ -99,8 +98,6 @@ public class Vision extends SubsystemBase{
         SmartDashboard.putBoolean("Has one tag", getTargets().size() > 0);
         SmartDashboard.putBoolean("Has two tags", getTargets().size() > 1);
     }
-
-
 
     /**
      * Gets the pose ambiguity ratio.

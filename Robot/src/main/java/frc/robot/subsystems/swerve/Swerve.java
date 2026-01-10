@@ -76,8 +76,8 @@ public class Swerve extends SubsystemBase {
         Logger.recordOutput(SWERVE.LOG_PATH+"TargetSpeeds", speeds); 
 
         swerve.setControl(
-            fieldCentric.withVelocityX(speeds.vxMetersPerSecond) // Drive forward with negative Y (forward)
-            .withVelocityY(speeds.vyMetersPerSecond) // Drive left with negative X (left)
+            fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
@@ -99,14 +99,14 @@ public class Swerve extends SubsystemBase {
         return swerve.getState().Pose;
     }
 
-    public void setKnownOdometryPose(Pose2d currentPose) {        
+    public void setKnownOdometryPose(Pose2d currentPose) {      //????   
         swerve.resetPose(currentPose);
         Logger.recordOutput(
             SWERVE.LOG_PATH+"Console", (
                 "Current pose reset to X: "+
-                currentPose.getX()+
+                -currentPose.getX()+
                 "; Y: "+
-                currentPose.getY()+
+                -currentPose.getY()+
                 "; Rotation: "+
                 -currentPose.getRotation().getDegrees()+
                 "°."
@@ -114,21 +114,23 @@ public class Swerve extends SubsystemBase {
         );
     }
     
-    public void resetPose(Pose2d pose, boolean flip) {
-        // TODO: implement something that allows the commented code to work
-        if(flip){
-            Pose2d flipped = new Pose2d(
-                new Translation2d(
-                    MEASUREMENTS.FIELD_LENGTH_METERS-pose.getX(),
-                    pose.getY()
-                ),
-                Rotation2d.fromDegrees(180).minus(pose.getRotation())
-            );
-            setKnownOdometryPose(flipped);
-            return;
-        }
-        setKnownOdometryPose(pose);
-    }
+    //never used in the code
+    // public void resetPose(Pose2d pose, boolean flip) {
+    //     // // TODO: implement something that allows the commented code to work
+    //     if(flip){
+    //         Pose2d flipped = new Pose2d(
+    //             new Translation2d(
+    //                 MEASUREMENTS.FIELD_LENGTH_METERS-pose.getX(),
+    //                 pose.getY()
+    //             ),
+    //             Rotation2d.fromDegrees(180).minus(pose.getRotation())
+    //         );
+    //         setKnownOdometryPose(flipped);
+    //         return;
+    //     }
+    //     setKnownOdometryPose(pose);
+
+    // }
 
     /**
      * Sets whether or not the input joystick is slowed
@@ -138,6 +140,7 @@ public class Swerve extends SubsystemBase {
     public void setSlowMode(boolean slowMode) {
         this.isSlowMode = slowMode;
     }
+    
     /**
      * Use PID to snap the robot to a rotational setpoint
      *
