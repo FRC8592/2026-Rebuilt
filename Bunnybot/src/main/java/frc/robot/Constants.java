@@ -153,6 +153,16 @@ public final class LAUNCHER {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Launcher/";
 }
 
+public final class SHOOTER {
+    public static final int LEFT_SHOOTER_MOTOR = -1;
+    public static final int RIGHT_SHOOTER_MOTOR = -1;
+    public static final double MOTOR_P = 0;
+    public static final double MOTOR_I = 0;
+    public static final double MOTOR_D = 0;
+    public static final double MAX_ACCELERATION = 0;
+    public static final double CRUISE_VELOCITY = 0;
+}
+
 public static class INTAKE{
     //DEFAULT VALUES, NEED TO CHANGE THESE LATER
     //these are for the PID of the Pivot Intake Motor
