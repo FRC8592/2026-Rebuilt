@@ -43,87 +43,19 @@ public class RobotContainer {
     private static final CommandXboxController operatorController = new CommandXboxController(
             CONTROLLERS.OPERATOR_PORT);
 
-    // TODO: implement the operator controller
-    // private static final CommandGenericHID operatorController = new
-    // CommandXboxController(
-    // CONTROLLERS.OPERATOR_PORT
-    // );
-
-    private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
     // robot subsystems
-    private final Swerve swerve;
-    private final OdometryUpdates odometryUpdates;
-    private final Vision vision;
-    private final Indexer indexer;
-    private final Intake intake;
-    private final Launcher launcher;
-    private final Scoring scoring;
-
+    private final Indexer_1 indexer;
     // robot button triggers
-    private final Trigger RESET_HEADING = driverController.back();
-    // private final Trigger SLOW_MODE = driverController.leftBumper();
-    // TODO: map these to the operator controller
-    private final Trigger LAUNCH_NORMAL = operatorController.b();
-    private final Trigger LAUNCH_CLOSE = operatorController.x();
-    private final Trigger LAUNCH_HIGH = operatorController.y();
-    private final Trigger LAUNCH_LOW = operatorController.a();
-
-    private final Trigger RUN_INDEXER = driverController.rightTrigger();
-    // private final Trigger INTAKE_TO_INDEXER = driverController.leftBumper();
-
-    private final Trigger INTAKE_DEPLOY = driverController.leftBumper();
-    private final Trigger INTAKE_STOW = driverController.rightBumper();
-
-    private final Trigger INTAKE = driverController.leftTrigger();
-    private final Trigger OUTTAKE = driverController.povUp();
-    private final Trigger REVERSE_INTAKE = driverController.povLeft();
-    // private final
+    private final Trigger RUN_INDEXER = driverController.a();
 
     /**
      * Create the robot container. This creates and configures subsystems, sets
      * up button bindings, and prepares for autonomous.
      */
     public RobotContainer() {
-        swerve = new Swerve(drivetrain);
-        vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
-        odometryUpdates = new OdometryUpdates(vision, swerve);
-        launcher = new Launcher();
-        indexer = new Indexer();
-        intake = new Intake();
-        scoring = new Scoring(intake, indexer, launcher);
+        indexer = new Indexer_1();
 
         configureBindings();
-        configureDefaults();
-        passSubsystems();
-
-        AutoManager.prepare();
-    }
-
-    private void passSubsystems(){
-        LargeCommand.addSubsystems(swerve);
-        AutoCommand.addSubsystems(swerve, launcher, indexer, intake);
-    }
-
-    /**
-     * Configure default commands for the subsystems
-     */
-    private void configureDefaults() {
-        // Set the swerve's default command to drive with joysticks
-
-        setDefaultCommand(swerve, swerve.run(() -> {
-            swerve.drive(swerve.processJoystickInputs(
-                    -driverController.getLeftX(),
-                    -driverController.getLeftY(),
-                    -driverController.getRightX()));
-        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-
-        indexer.setDefaultCommand(
-                new RunCommand(() -> indexer.autoIndex(), indexer));
-
-        launcher.setDefaultCommand(
-                new RunCommand(() -> launcher.setLauncherPercentOutput(0.4, 0.4), launcher));
 
     }
 
@@ -131,47 +63,9 @@ public class RobotContainer {
      * Configure all button bindings
      */
     private void configureBindings() {
-        // SLOW_MODE.onTrue(Commands.runOnce(() ->
-        // swerve.setSlowMode(true)).ignoringDisable(true))
-        // .onFalse(Commands.runOnce(() ->
-        // swerve.setSlowMode(false)).ignoringDisable(true));
 
-        RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-
-        LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
-                .onFalse(launcher.stopLauncherCommand());
-
-        LAUNCH_CLOSE.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.44, 0.3), Set.of(launcher)))
-                .onFalse(launcher.stopLauncherCommand());
-
-        LAUNCH_LOW.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.23, 0.23), Set.of(launcher)))
-                .onFalse(launcher.stopLauncherCommand());
-
-        LAUNCH_HIGH.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
-                .onFalse(launcher.stopLauncherCommand());
-
-        RUN_INDEXER
-                .whileTrue(new RunCommand(() -> indexer.run(3, 1)).alongWith(new RunCommand(() -> indexer.run(2, 1))))
-                .onFalse(indexer.stopMotorCommand(3));
-
-        // RUN_INDEXER
-        //         .whileTrue(new RunCommand(() -> indexer.shoot(1)))
-        //         .onFalse(new RunCommand(() -> indexer.stopShoot()));
-
-        INTAKE_DEPLOY.whileTrue(intake.deployIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
-
-        INTAKE_STOW.whileTrue(intake.stowIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
-
-        INTAKE.whileTrue(intake.runIntakeCommand()).onFalse(intake.stopIntakeCommand());
-
-        OUTTAKE.whileTrue(intake.reverseIntakeCommand().alongWith(indexer.setIndexerReverseCommand()))
-                .onFalse(intake.stopIntakeCommand().alongWith(indexer.setIndexerNormalCommand()));
-
-        REVERSE_INTAKE.whileTrue(indexer.setIndexerReverseCommand()).onFalse(indexer.setIndexerNormalCommand());
-
-        // INTAKE_TO_INDEXER.whileTrue(new DeferredCommand(() -> scoring.intakeLunite(),
-        // Set.of(scoring))
-        // ).onFalse(scoring.stowIntake());
+        RUN_INDEXER.whileTrue(new DeferredCommand(() -> indexer.setIndexerCommand(SmartDashboard.getNumber("spinnerMotor", 0.2), SmartDashboard.getNumber("pusherMotor", 0.2)), 
+                Set.of(indexer))).onFalse(indexer.stopCommand());
     }
 
     /**
@@ -180,7 +74,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return AutoManager.getAutonomousCommand();
+        return new InstantCommand();
     }
 
     /**
