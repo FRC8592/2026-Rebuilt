@@ -16,31 +16,29 @@ import frc.robot.Constants.LAUNCHER;
 
 
 // Two Motors - 1 constantly running - 1 running at different speeds - Krakens
-public class Indexer_1 extends SubsystemBase{
-    KrakenX60Motor spinner, pusher;
+public class Indexer_2 extends SubsystemBase{
+    KrakenX60Motor spinner;
 
-    public Indexer_1() {
+    public Indexer_2() {
         spinner = new KrakenX60Motor(CAN.INDEXER_1_MOTOR_1);
-        pusher = new KrakenX60Motor(CAN.INDEXER_1_MOTOR_2);
 
         SmartDashboard.putNumber("indexer_spinner_motor", 0.2); 
-        SmartDashboard.putNumber("indexer_pusher_motor", 0.2); 
+ 
     }
 
     /** 
      * Accepts the desired speed as a percentage and sets the motors to the given speed. 
      * @param percent Desired speed as a percentage.
     */
-    public void setIndexerPercentOutput (double percent1, double percent2) {
+    public void setIndexerPercentOutput (double percent1) {
         spinner.setPercentOutput(percent1);
-        spinner.setPercentOutput(percent2);
     }
 
     /**
      * Stops the indexer motors by setting by setting the percent output to 0
      */
     public void stop() {
-        setIndexerPercentOutput(0, 0);
+        setIndexerPercentOutput(0);
     }
 
     /**
@@ -48,9 +46,9 @@ public class Indexer_1 extends SubsystemBase{
      * @param percent Desired percentage of the motors.
      * @return Returns a command to set motor power to given percentage.
      */
-    public Command setIndexerCommand(double percent1, double percent2) {
+    public Command setIndexerCommand(double percent1) {
         return this.runOnce(() -> 
-            {setIndexerPercentOutput(percent1, percent2);});
+            {setIndexerPercentOutput(percent1);});
     }
 
     /**
@@ -59,7 +57,7 @@ public class Indexer_1 extends SubsystemBase{
      */
     public Command stopCommand() {
         return this.runOnce(() -> 
-            {setIndexerPercentOutput(0, 0);});
+            {setIndexerPercentOutput(0);});
     }
 
 

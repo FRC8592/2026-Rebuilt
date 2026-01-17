@@ -44,7 +44,7 @@ public class RobotContainer {
             CONTROLLERS.OPERATOR_PORT);
 
     // robot subsystems
-    private final Indexer_1 indexer;
+    private final Indexer_2 indexer;
     // robot button triggers
     private final Trigger RUN_INDEXER = driverController.a();
 
@@ -53,10 +53,9 @@ public class RobotContainer {
      * up button bindings, and prepares for autonomous.
      */
     public RobotContainer() {
-        indexer = new Indexer_1();
+        indexer = new Indexer_2();
 
         configureBindings();
-
     }
 
     /**
@@ -64,7 +63,8 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
-        RUN_INDEXER.whileTrue(new DeferredCommand(() -> indexer.setIndexerCommand(SmartDashboard.getNumber("spinnerMotor", 0.2), SmartDashboard.getNumber("pusherMotor", 0.2)), 
+        RUN_INDEXER.whileTrue(new DeferredCommand(() ->
+                indexer.setIndexerCommand(SmartDashboard.getNumber("spinnerMotor", 0.2)), 
                 Set.of(indexer))).onFalse(indexer.stopCommand());
     }
 
