@@ -156,9 +156,9 @@ public final class LAUNCHER {
 public static class INTAKE{
     //DEFAULT VALUES, NEED TO CHANGE THESE LATER
     //these are for the PID of the Pivot Intake Motor
-    public static final double INTAKE_POSITION_P = 5;
-    public static final double INTAKE_POSITION_I = 0;
-    public static final double INTAKE_POSITION_D = 0.1;
+    public static final double INTAKE_P = 1/2900;
+    public static final double INTAKE_I = 0;
+    public static final double INTAKE_D = 0;
     //This is the gearbox that the motor will be plugged into
     public static final int GEARBOX_PIVOT_RATIO = 16;
     //this is to convert motor rotations to intake degrees

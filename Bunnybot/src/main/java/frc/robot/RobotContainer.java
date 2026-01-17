@@ -158,16 +158,16 @@ public class RobotContainer {
         //         .whileTrue(new RunCommand(() -> indexer.shoot(1)))
         //         .onFalse(new RunCommand(() -> indexer.stopShoot()));
 
-        INTAKE_DEPLOY.whileTrue(intake.deployIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
+        // INTAKE_DEPLOY.whileTrue(intake.deployIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
 
-        INTAKE_STOW.whileTrue(intake.stowIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
+        // INTAKE_STOW.whileTrue(intake.stowIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
 
-        INTAKE.whileTrue(intake.runIntakeCommand()).onFalse(intake.stopIntakeCommand());
+        INTAKE.whileTrue(intake.runIntakeCommand(1000)).onFalse(intake.stopIntakeCommand());
 
-        OUTTAKE.whileTrue(intake.reverseIntakeCommand().alongWith(indexer.setIndexerReverseCommand()))
-                .onFalse(intake.stopIntakeCommand().alongWith(indexer.setIndexerNormalCommand()));
+        // OUTTAKE.whileTrue(intake.reverseIntakeCommand().alongWith(indexer.setIndexerReverseCommand()))
+        //         .onFalse(intake.stopIntakeCommand().alongWith(indexer.setIndexerNormalCommand()));
 
-        REVERSE_INTAKE.whileTrue(indexer.setIndexerReverseCommand()).onFalse(indexer.setIndexerNormalCommand());
+        // REVERSE_INTAKE.whileTrue(indexer.setIndexerReverseCommand()).onFalse(indexer.setIndexerNormalCommand());
 
         // INTAKE_TO_INDEXER.whileTrue(new DeferredCommand(() -> scoring.intakeLunite(),
         // Set.of(scoring))

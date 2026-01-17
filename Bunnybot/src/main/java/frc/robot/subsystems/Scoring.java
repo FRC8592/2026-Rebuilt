@@ -24,25 +24,25 @@ public class Scoring extends SubsystemBase{
         this.launcher = launcher;
     }
 
-    public Command deployIntake() {
-        return this.runOnce(() -> intake.deployIntakeCommand());
-    }
+    // public Command deployIntake() {
+    //     return this.runOnce(() -> intake.deployIntakeCommand());
+    // }
 
-    public Command stowIntake(){
-        return this.runOnce(() -> intake.stowIntakeCommand());
-    }
+    // public Command stowIntake(){
+    //     return this.runOnce(() -> intake.stowIntakeCommand());
+    // }
 
-    public Command stopIntakePivot() {
-        return this.runOnce(() -> intake.stopIntakePivotCommand());
-    }
+    // public Command stopIntakePivot() {
+    //     return this.runOnce(() -> intake.stopIntakePivotCommand());
+    // }
 
-    public Command runIntake() {
-        return this.runOnce(() -> intake.runIntakeCommand());
+    public Command runIntake(double desiredRPM) {
+        return this.runOnce(() -> intake.runIntakeCommand(desiredRPM));
     }
     
-    public Command stopIntake() {
-        return this.runOnce(() -> intake.stopIntakeCommand());
-    }
+    // public Command stopIntake() {
+    //     return this.runOnce(() -> intake.stopIntakeCommand());
+    // }
  
     public void periodic(){
         Logger.recordOutput(SCORING.LOG_PATH+ "Intake Position", intakePos);

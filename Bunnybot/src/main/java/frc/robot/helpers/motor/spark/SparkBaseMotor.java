@@ -102,7 +102,7 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
 
         this.motorCtrl.setReference(
             desiredVelocityRPM, 
-            ControlType.kMAXMotionVelocityControl, 
+            ControlType.kVelocity, 
             slot
         );
     }
