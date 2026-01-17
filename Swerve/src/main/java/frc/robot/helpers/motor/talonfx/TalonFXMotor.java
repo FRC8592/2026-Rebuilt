@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.helpers.PIDProfile;
@@ -166,7 +167,7 @@ public abstract class TalonFXMotor extends NewtonMotor {
 
     @Override
     public void setFollowerTo(NewtonMotor master, boolean reversed) {
-        this.motor.setControl(new Follower(master.getAsTalonFX().motor.getDeviceID(), reversed));
+        this.motor.setControl(new Follower(master.getAsTalonFX().motor.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
     @Override
