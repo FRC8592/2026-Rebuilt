@@ -4,14 +4,27 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.littletonrobotics.junction.LoggedRobot;
+
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
+    public static Field2d FIELD = new Field2d();
 
     private final RobotContainer m_robotContainer;
 
@@ -22,6 +35,40 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+    }
+
+    @Override
+    public void robotInit() {
+        Logger.recordMetadata("Game", "BunnyBots");
+        Logger.recordMetadata("Year", "2026");
+        Logger.recordMetadata("Team", "8592");
+
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        if (isReal()) { // If running on a real robot
+            String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
+
+            File sda1 = new File("/media/sda1/logs");
+            if(sda1.exists()){
+                String path = "/media/sda1/"+time+".wpilog";
+                Logger.addDataReceiver(new WPILOGWriter(path));
+            }
+            else{
+                File sdb1 = new File("/media/sdb1/logs");
+                if(sdb1.exists()){
+                    String path = "/media/sdb2/"+time+".wpilog";
+                    Logger.addDataReceiver(new WPILOGWriter(path));
+                }
+                else{
+                    System.err.println("UNABLE TO LOG TO A USB STICK!");
+                }
+            }
+        }
+        else { // If simulated
+            SmartDashboard.putData(FIELD);
+        }
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        Logger.start();
+        
     }
 
     @Override
