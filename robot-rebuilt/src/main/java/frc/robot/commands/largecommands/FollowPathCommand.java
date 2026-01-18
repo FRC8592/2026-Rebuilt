@@ -1,4 +1,5 @@
 package frc.robot.commands.largecommands;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -21,7 +22,7 @@ import frc.robot.subsystems.swerve.Swerve;
 
 public class FollowPathCommand extends LargeCommand{
     // Pathing variables
-    private Trajectory trajectory;
+    private Optional<Trajectory> trajectory;
     private Timer timer = new Timer();
 
     // Alternate movement variables
@@ -51,7 +52,7 @@ public class FollowPathCommand extends LargeCommand{
      * @param flip lambda that returns whether to mirror the path to the
      * red side of the field.
      */
-    public FollowPathCommand(Trajectory trajectory, BooleanSupplier flip, String commandName){
+    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName){
         super(swerve);
 
         this.trajectory = trajectory;
@@ -128,7 +129,7 @@ public class FollowPathCommand extends LargeCommand{
      * {@code ChassisSpeeds} is ignored.
      */
     public FollowPathCommand(
-        Trajectory trajectory, BooleanSupplier flip, String commandName,
+        Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName,
         BooleanSupplier useAlternateRotation, Supplier<Rotation2d> rotationSupplier,
         BooleanSupplier useAlternateTranslation, Supplier<ChassisSpeeds> translationSupplier
     ){
@@ -139,7 +140,7 @@ public class FollowPathCommand extends LargeCommand{
         this.alternateTranslation = translationSupplier;
     }
 
-    public FollowPathCommand(Trajectory trajectory, BooleanSupplier flip, String commandName, double secondsPastPathEndTolerated, boolean rollAtPathEnd, boolean useVision){
+    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double secondsPastPathEndTolerated, boolean rollAtPathEnd, boolean useVision){
         this(trajectory, flip, commandName);
         this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
         this.rollAtPathEnd = rollAtPathEnd;
@@ -147,21 +148,32 @@ public class FollowPathCommand extends LargeCommand{
 
     public void initialize(){
         Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", this.getName());
-        Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", this.trajectory);
+        if(this.trajectory.isPresent()) {
+            Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", this.trajectory.get());
+        } else {
+            Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", "Error: Is null");
+        }
+        
         timer.reset();
         timer.start();
         if(!Robot.isReal()){
+            if(this.trajectory.isPresent()) {
             if(flip.getAsBoolean()){
-                swerve.setKnownOdometryPose(flip(trajectory.sample(0)).poseMeters);
+                swerve.setKnownOdometryPose(flip(trajectory.get().sample(0)).poseMeters);
             }
             else{
-                swerve.setKnownOdometryPose(trajectory.sample(0).poseMeters);
+                swerve.setKnownOdometryPose(trajectory.get().sample(0).poseMeters);
             }
+        }
         }
     }
     public void execute(){
+
+        if(trajectory.isEmpty()) {
+            return;
+        }
         // Instances of State contain information about pose, velocity, accelleration, curvature, etc.
-        State desiredState = trajectory.sample(timer.get());
+        State desiredState = trajectory.get().sample(timer.get());
         //LEDs.setProgressBar(timer.get()/trajectory.getTotalTimeSeconds());
 
 
@@ -211,7 +223,8 @@ public class FollowPathCommand extends LargeCommand{
     public boolean isFinished(){
         return ( // Only return true if enough time has elapsed, we're at the target location, and we're not using alternate movement.
             (
-                timer.hasElapsed(trajectory.getTotalTimeSeconds())
+                trajectory.isEmpty() || (
+                timer.hasElapsed(trajectory.get().getTotalTimeSeconds())
                 && (
                     (drivePID.atReference() || !Robot.isReal())
                     // secondsPastPathEndTolerated != -1 || (
@@ -220,7 +233,7 @@ public class FollowPathCommand extends LargeCommand{
                     //     && !useAlternateTranslation.getAsBoolean()
                   // )
                 )
-            )
+            ))
         );
     }
 
