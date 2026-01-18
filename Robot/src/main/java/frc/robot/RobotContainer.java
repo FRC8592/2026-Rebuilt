@@ -73,9 +73,6 @@ public class RobotContainer {
     private final Trigger RUN_INDEXER = driverController.rightTrigger();
     // private final Trigger INTAKE_TO_INDEXER = driverController.leftBumper();
 
-    private final Trigger INTAKE_DEPLOY = driverController.leftBumper();
-    private final Trigger INTAKE_STOW = driverController.rightBumper();
-
     private final Trigger INTAKE = driverController.leftTrigger();
     private final Trigger OUTTAKE = driverController.povUp();
     private final Trigger REVERSE_INTAKE = driverController.povLeft();
@@ -157,10 +154,6 @@ public class RobotContainer {
         // RUN_INDEXER
         //         .whileTrue(new RunCommand(() -> indexer.shoot(1)))
         //         .onFalse(new RunCommand(() -> indexer.stopShoot()));
-
-        INTAKE_DEPLOY.whileTrue(intake.deployIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
-
-        INTAKE_STOW.whileTrue(intake.stowIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
 
         INTAKE.whileTrue(intake.runIntakeCommand()).onFalse(intake.stopIntakeCommand());
 

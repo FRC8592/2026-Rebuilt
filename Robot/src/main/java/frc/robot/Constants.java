@@ -46,9 +46,8 @@ public final class CAN {
     public static final int INDEXER_MOTOR3_CAN_ID = 42;
     public static final int INDEXER_MOTOR4_CAN_ID = 43;
     
-    public static final int INTAKE_MOTOR_SIDE_CAN_ID = 36;
-    public static final int INTAKE_MOTOR_BOTTOM_CAN_ID = 38;
-    public static final int PIVOT_INTAKE_MOTOR_CAN_ID = 44;
+    //NEED TO CHANGE
+    public static final int INTAKE_MOTOR_CAN_ID = 0;
 }
 
 public final class VISION {

@@ -24,17 +24,17 @@ public class Scoring extends SubsystemBase{
         this.launcher = launcher;
     }
 
-    public Command deployIntake() {
-        return this.runOnce(() -> intake.deployIntakeCommand());
-    }
+    // public Command deployIntake() {
+    //     return this.runOnce(() -> intake.deployIntakeCommand());
+    // }
 
-    public Command stowIntake(){
-        return this.runOnce(() -> intake.stowIntakeCommand());
-    }
+    // public Command stowIntake(){
+    //     return this.runOnce(() -> intake.stowIntakeCommand());
+    // }
 
-    public Command stopIntakePivot() {
-        return this.runOnce(() -> intake.stopIntakePivotCommand());
-    }
+    // public Command stopIntakePivot() {
+    //     return this.runOnce(() -> intake.stopIntakePivotCommand());
+    // }
 
     public Command runIntake() {
         return this.runOnce(() -> intake.runIntakeCommand());
