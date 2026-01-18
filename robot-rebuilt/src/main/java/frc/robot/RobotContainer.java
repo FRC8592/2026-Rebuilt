@@ -25,9 +25,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Swerve swerve;
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -44,8 +44,7 @@ public class RobotContainer {
     swerve = new Swerve(drivetrain);
     // Configure the trigger bindings
     configureBindings();
-    swerve = new Swerve(drivetrain);
-
+    
     LargeCommand.addSubsystems(swerve);
     AutoCommand.addSubsystems(swerve);
 
