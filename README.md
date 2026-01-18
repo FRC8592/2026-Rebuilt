@@ -1,2 +1,2 @@
-# 2025-BunnyBots
-Robot code for the 2025 Bunny Bots season
+# 2026 FRC Rebuilt
+Robot code for the 2026 Robot season.
