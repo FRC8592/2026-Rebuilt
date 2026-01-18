@@ -10,6 +10,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.swerve.TunerConstants;
 
@@ -27,10 +30,27 @@ public final class Constants {
     public static final String LOG_FOLDER = "CustomLogs";
   }
 
+  public final class MEASUREMENTS {
+    public static final double FIELD_LENGTH_METERS = 27 * CONVERSIONS.FEET_TO_METERS;
+    public static final double FIELD_WIDTH_METERS = 54 * CONVERSIONS.FEET_TO_METERS;
+    
+  }
+
+  public final class CONVERSIONS {
+    public static final double METERS_TO_FEET = 3.28084;
+    public static final double FEET_TO_METERS = 0.3048;
+    public static final double INCHES_TO_METERS = 0.0254;
+}
+
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public class SUPPLIERS{
+    public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
+}
+
 
   public final class SWERVE {
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Swerve/";
