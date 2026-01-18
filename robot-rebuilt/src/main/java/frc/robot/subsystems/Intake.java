@@ -47,6 +47,10 @@ public class Intake extends SubsystemBase{
     return this.run(() -> setPercentOut(intakeMotor, percent));
     }
 
+    public Command setOuttakeCommand (double percent){
+    return this.run (() -> setPercentOut(intakeMotor, percent));
+    }
+
    public Command stopIntakeCommand(){
     return this.runOnce(() -> stop(intakeMotor));
    }

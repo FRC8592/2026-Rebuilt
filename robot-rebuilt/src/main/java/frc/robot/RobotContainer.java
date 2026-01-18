@@ -38,6 +38,7 @@ public class RobotContainer {
 
   
   private  final Trigger intakeTrigger = driverController.leftBumper();
+  private final Trigger outtakeTrigger = driverController.rightBumper();
 
   private final Intake intake;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -65,6 +66,7 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     intakeTrigger.whileTrue(intake.setIntakeCommand(0.8)).onFalse (intake.stopIntakeCommand());
+    outtakeTrigger.whileTrue(intake.setOuttakeCommand(-0.8)).onFalse(intake.stopIntakeCommand());
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
