@@ -1,16 +1,10 @@
 package frc.robot.commands.autonomous;
 
-<<<<<<< Updated upstream
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-=======
 import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
->>>>>>> Stashed changes
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
