@@ -1,6 +1,6 @@
 {
  "name":"BlueMoveOut",
- "version":1,
+ "version":3,
  "snapshot":{
   "waypoints":[
     {"x":1.4205126762390137, "y":0.5259648561477661, "heading":-3.105001590946764, "intervals":21, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
