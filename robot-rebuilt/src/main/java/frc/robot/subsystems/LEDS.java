@@ -1,9 +1,15 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANdleConfiguration;
+import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
+import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.hardware.CANdle.*;
+import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
+import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
+import com.ctre.phoenix6.signals.StripTypeValue;
+import com.ctre.phoenix6.signals.VBatOutputModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.ctre.phoenix6.hardware.*;
 
@@ -16,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
 
 public class LEDS {
-     private CANdle candle;
+    private static CANdle candle;
     private static boolean hasCoral; 
     private static boolean coralMode;
     private static double progressBar = -1;
@@ -25,140 +31,67 @@ public class LEDS {
     private static boolean useRainbow;
     private static Timer timer = new Timer(); 
     private static Timer ledTimer=new Timer();
-    private static RainbowAnimation rainbow = new RainbowAnimation(1,3,LEDS.FULL_LED_COUNT);
+    //private static RainbowAnimation rainbow = new RainbowAnimation(1,3,LEDS.FULL_LED_COUNT);
     // private static Trigger coralScore = new Trigger(() -> hasCoral);
 
     // COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
 
     public static void init(){
         CANdleConfiguration configAll = new CANdleConfiguration();
-        configAll.statusLedOffWhenActive = true;
-        configAll.disableWhenLOS = false;
-        configAll.stripType = LEDStripType.GRB;
-        configAll.brightnessScalar = 1;
-        configAll.vBatOutputMode = VBatOutputMode.Modulated;
+        configAll.LED = new LEDConfigs()
+            .withBrightnessScalar(1)
+            .withStripType(StripTypeValue.GRB)
+            .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning);
+        configAll.CANdleFeatures = new CANdleFeaturesConfigs()
+            .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
+            .withVBatOutputMode(VBatOutputModeValue.Modulated);
         candle = new CANdle(46);
-        candle.configAllSettings(configAll, 100);
+        candle.getConfigurator().apply(configAll);
         timer.start();
 
     }
 
     public static void writeLEDs(){
-        if(DriverStation.isDisabled()){
-            if(!useRainbow){
-                candle.clearAnimation(0);
-                displayHasTagsLEDs();
-            }
-            else {
-                displayRaindow();
-            }
-        }
-        else{
-            if (useRainbow){
-                displayRaindow();
-            }
-            else if(deepclimb){
-                displayDeepClimb();
-            }
-            else if(progressBar != -1){
-                displayProgressBarLEDs();
-            }
-            else if(hasCoral){
-                displayHasCoralLEDs();
-            }
-            else{
-                displayModeLEDs();
-            }
-
-            if(!useRainbow){
-                candle.clearAnimation(0);
-            }
-        }
+       
     }
 
     public static void displayModeLEDs(){
-        if(coralMode){
-            candle.setLEDs((int)(LEDS.WHITE.red*255),(int)(LEDS.WHITE.green*255),(int)(LEDS.WHITE.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);
-        }
-        else{
-            candle.setLEDs((int)(LEDS.TEAL.red*255),(int)(LEDS.TEAL.green*255),(int)(LEDS.TEAL.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-        }
 
     }
 
     public static void displayHasCoralLEDs(){
-        if(!ledTimer.hasElapsed(1) && ledTimer.get()!=0){
-            if((int)(timer.get()*10) % 2 == 0){
-                candle.setLEDs((int)(LEDS.WHITE.red*255),(int)(LEDS.WHITE.green*255),(int)(LEDS.WHITE.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-            }
-            else{
-                candle.setLEDs((int)(LEDS.OFF.red*255),(int)(LEDS.OFF.green*255),(int)(LEDS.OFF.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-            }
-        }
-        else{
-            candle.setLEDs((int)(LEDS.WHITE.red*255),(int)(LEDS.WHITE.green*255),(int)(LEDS.WHITE.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-        }
     }
 
     public static void displayHasTagsLEDs(){
-        if(tagCount>=2){
-            candle.setLEDs((int)(LEDS.GREEN.red*255),(int)(LEDS.GREEN.green*255),(int)(LEDS.GREEN.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-        }
-        else if(tagCount==1){
-            candle.setLEDs((int)(LEDS.YELLOW.red*255),(int)(LEDS.YELLOW.green*255),(int)(LEDS.YELLOW.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-        }
-        else if(tagCount==0){
-            candle.setLEDs((int)(LEDS.RED.red*255),(int)(LEDS.RED.green*255),(int)(LEDS.RED.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-        }
-
-        else if(tagCount ==-1){
-            if((int)(timer.get()*3) % 2 == 0){
-                candle.setLEDs((int)(LEDS.RED.red*255),(int)(LEDS.RED.green*255),(int)(LEDS.RED.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-            }
-
-            else{
-                candle.setLEDs((int)(LEDS.OFF.red*255),(int)(LEDS.OFF.green*255),(int)(LEDS.OFF.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
-            }
-        }
 
     
     }
     public static void displayDeepClimb(){
-        candle.setLEDs((int)(LEDS.PURPLE.red*255),(int)(LEDS.PURPLE.green*255),(int)(LEDS.PURPLE.blue*255),0,LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);  
     }
 
     public static void displayProgressBarLEDs(){
         
-        candle.setLEDs((int)(LEDS.GREEN.red*255),(int)(LEDS.GREEN.green*255),(int)(LEDS.GREEN.blue*255),0,0,(int)(LEDS.FULL_LED_COUNT * progressBar));  
-        candle.setLEDs((int)(LEDS.RED.red*255),(int)(LEDS.RED.green*255),(int)(LEDS.RED.blue*255),0,(int)(LEDS.FULL_LED_COUNT * progressBar),LEDS.FULL_LED_COUNT);  
     }
 
     public static void displayRaindow(){
-        candle.animate(rainbow);
     }
 
     public static void setHasCoral(boolean robotHasCoral){
-        hasCoral = robotHasCoral;
     }
 
     public static void setCoralMode(boolean isCoralMode){
-        coralMode = isCoralMode;
     }
 
     public static void setProgressBar(double progress){
-        progressBar = progress;
     }
 
     public static void setHasTags(int cameraTagCount){
-        tagCount = cameraTagCount;
     }
 
     public static void setDeepClimb(boolean isDeepClimb){
-        deepclimb = isDeepClimb;
     }
 
     public static void setRainbow(boolean isRainbowAnimation){
-        useRainbow = isRainbowAnimation; // set equal to isRainbowAnimation when ready to test
     }
     
     
