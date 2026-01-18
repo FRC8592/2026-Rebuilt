@@ -1,6 +1,6 @@
 {
  "name":"RedMoveOut",
- "version":1,
+ "version":3,
  "snapshot":{
   "waypoints":[
     {"x":14.68950366973877, "y":0.6229601502418518, "heading":0.0, "intervals":18, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
