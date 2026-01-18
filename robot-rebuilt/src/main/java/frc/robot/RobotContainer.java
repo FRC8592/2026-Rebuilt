@@ -35,11 +35,19 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  // robot subsystems
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final Swerve swerve;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve = new Swerve(drivetrain);
     // Configure the trigger bindings
     configureBindings();
+    swerve = new Swerve(drivetrain);
+
+    LargeCommand.addSubsystems(swerve);
+    AutoCommand.addSubsystems(swerve);
 
     passSubsystems();
     AutoManager.prepare();
