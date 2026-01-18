@@ -7,9 +7,9 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
 import frc.robot.helpers.motor.NewtonMotor;
 import frc.robot.helpers.motor.NewtonMotor.IdleMode;
+import frc.robot.helpers.motor.spark.SparkFlexMotor;
 // import frc.robot.helpers.motor.spark.*;
 import frc.robot.helpers.motor.talonfx.Falcon500Motor;
 
@@ -29,21 +29,35 @@ public class Intake extends SubsystemBase{
    public Intake() {
    
     // Create the intake wheel and lift motors
-    intakeMotor = new Falcon500Motor(CAN.INTAKE_MOTOR_CAN_ID, true);
+    intakeMotor = new SparkFlexMotor(CAN.INTAKE_MOTOR_CAN_ID, false);
+
 
    }
 
-   public void runIntake() {
-    intakeMotor.setVoltage(4);
-   }
-
-   public void reverseIntake(){
-    intakeMotor.setVoltage(-3.5);
+   public void setPercentOut(NewtonMotor intakeMotor, double percent){
+        intakeMotor.setPercentOutput(percent);
 
    }
-   
-   public void stopIntake() {
-    intakeMotor.setVoltage(0);
+
+   public void stop(NewtonMotor intakeMotor){
+        intakeMotor.setPercentOutput(0);
    }
+
+    public Command setIntakeCommand (double percent){
+    return this.run(() -> setPercentOut(intakeMotor, percent));
+    }
+
+   public Command stopIntakeCommand(){
+    return this.runOnce(() -> stop(intakeMotor));
+   }
+
+   public double rotationstoDegrees(double motorRotations){
+    return motorRotations * 1/(INTAKE.INTAKE_DEGREES_TO_MOTOR_ROTATIONS);
+   }
+
+   public double degreestoRotations(double degrees){
+    return degrees * INTAKE.INTAKE_DEGREES_TO_MOTOR_ROTATIONS;
+   }
+ 
 
 }

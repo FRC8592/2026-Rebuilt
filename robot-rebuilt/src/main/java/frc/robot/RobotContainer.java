@@ -1,17 +1,28 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.nio.file.OpenOption;
+import java.util.Set;
+
+import javax.sound.sampled.SourceDataLine;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+// import frc.robot.subsystems.swerve.Swerve;
+// import frc.robot.subsystems.swerve.Telemetry;
+// import frc.robot.subsystems.swerve.TunerConstants;
+import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+// import frc.robot.subsystems.vision.Vision;
+import frc.robot.Constants.*;
+// import frc.robot.commands.autonomous.AutoManager;
+import frc.robot.subsystems.*;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -19,36 +30,44 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // The robot's subsystems and commands are defined here... 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
+  private static final CommandXboxController operatorController = new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
+  
+  private  final Trigger intakeTrigger = driverController.leftBumper();
+
+  private final Intake intake;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    intake = new Intake (); 
+
     // Configure the trigger bindings
     configureBindings();
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
+//  private void configureDefaults() {
+//         // Set the swerve's default command to drive with joysticks
+
+//         setDefaultCommand(swerve, swerve.run(() -> {
+//             swerve.drive(swerve.processJoystickInputs(
+//                     -driverController.getLeftX(),
+//                     -driverController.getLeftY(),
+//                     -driverController.getRightX()));
+//         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+
+//         indexer.setDefaultCommand(
+//                 new RunCommand(() -> indexer.autoIndex(), indexer));
+
+//     }
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
+    intakeTrigger.whileTrue(intake.setIntakeCommand(0.8)).onFalse (intake.stopIntakeCommand());
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
   /**
@@ -56,8 +75,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+//   public Command getAutonomousCommand() {
+//     //An example command will be run in autonomous
+//     //return Autos.exampleAuto(m_exampleSubsystem);
+//   }
+// }
+
 }
