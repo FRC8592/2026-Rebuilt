@@ -123,7 +123,7 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
 
     @Override
     public void setFollowerTo(NewtonMotor master, boolean reversed) {
-        this.config.follow(master.getAsSparkFlex().motor);
+        this.config.follow(master.getAsSparkFlex().motor, reversed);
         this.motor.configure(config, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
     }
     

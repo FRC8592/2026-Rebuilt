@@ -61,10 +61,10 @@ public class RobotContainer {
 //     private final Intake intake;
 //     private final Launcher launcher;
 //     private final Scoring scoring;
-        private final Shooter shooter;
+        public final Shooter shooter;
 
 //     // robot button triggers
-        private final Trigger TESTING_SHOOTER = driverController.a();
+        private final Trigger TESTING_SHOOTER = driverController.rightBumper();
 //     private final Trigger RESET_HEADING = driverController.back();
 //     // private final Trigger SLOW_MODE = driverController.leftBumper();
 //     // TODO: map these to the operator controller
@@ -143,7 +143,7 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_SHOOTER.whileTrue(shooter.runAtSpeedCommand(3000)).onFalse(shooter.stopShooterCommand());
+        TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
 
         // LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
         //         .onFalse(launcher.stopLauncherCommand());
