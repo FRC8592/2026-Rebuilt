@@ -43,12 +43,6 @@ public class RobotContainer {
     private static final CommandXboxController operatorController = new CommandXboxController(
             CONTROLLERS.OPERATOR_PORT);
 
-    // TODO: implement the operator controller
-    // private static final CommandGenericHID operatorController = new
-    // CommandXboxController(
-    // CONTROLLERS.OPERATOR_PORT
-    // );
-
     private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -103,7 +97,7 @@ public class RobotContainer {
 
     private void passSubsystems(){
         LargeCommand.addSubsystems(swerve);
-        AutoCommand.addSubsystems(swerve, launcher, indexer, intake);
+        AutoCommand.addSubsystems(swerve);
     }
 
     /**
@@ -114,9 +108,9 @@ public class RobotContainer {
 
         setDefaultCommand(swerve, swerve.run(() -> {
             swerve.drive(swerve.processJoystickInputs(
-                    -driverController.getLeftX(),
-                    -driverController.getLeftY(),
-                    -driverController.getRightX()));
+                -driverController.getLeftX(),
+                -driverController.getLeftY(),
+                -driverController.getRightX()));
         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
         indexer.setDefaultCommand(
