@@ -7,6 +7,8 @@ package frc.robot.commands.autonomous;
 import java.util.ArrayList;
 import java.util.Set;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +19,7 @@ import frc.robot.Robot;
 import frc.robot.commands.autonomous.autos.RedMoveOut;
 import frc.robot.commands.autonomous.autos.BlueMoveOut;
 import frc.robot.commands.proxies.*;
+import frc.robot.subsystems.swerve.*;
 
 /**
  * General class for autonomous management (loading autos, sending the chooser, getting the
