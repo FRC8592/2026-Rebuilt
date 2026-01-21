@@ -131,4 +131,20 @@ public final class VISION {
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
+
+public final class SHOOTER {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int RIGHT_SHOOTER_MOTOR = 38;
+    public static final int LEFT_SHOOTER_MOTOR = 36;
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double MOTOR_P = 0.01;
+    public static final double MOTOR_I = 0;
+    public static final double MOTOR_D = 0;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
+    public static final double CRUISE_VELOCITY = 0;
+    public static final double SHOOTER_HEIGHT = 0;
+    public static final double HUB_HEIGHT = 0;
+}
+
 }
