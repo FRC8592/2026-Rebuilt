@@ -136,7 +136,7 @@ public class FollowPathCommand extends LargeCommand{
         this(trajectory, flip, commandName);
         this.useAlternateRotation = useAlternateRotation;
         this.alternateRotation = rotationSupplier;
-        this.useAlternateRotation = useAlternateTranslation;
+        this.useAlternateTranslation = useAlternateTranslation;
         this.alternateTranslation = translationSupplier;
     }
 
