@@ -16,30 +16,9 @@ import frc.robot.commands.largecommands.*;
 public class RedMoveOut extends AutoCommand {
    
    public RedMoveOut(){
-     
-                  Rotation2d rotation=new Rotation2d(0);
-
-      Pose2d intialPose= new Pose2d(0,0,rotation);
-
-
-         swerve.setKnownOdometryPose(intialPose);
-         callme();
-
-
-   
-
-         
-
-         
-
-   }
-public static void driveCommand  (){
-
- super(
+      super(
             
-            new FollowPathCommand(getChoreoTrajectory("RedMoveOut"), Suppliers.isRedAlliance, "")
-         );
-
+      new FollowPathCommand(getChoreoTrajectory("RedMoveOut"), Suppliers.isRedAlliance, ""));
    }
 
 }
