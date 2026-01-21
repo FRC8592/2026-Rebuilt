@@ -21,7 +21,6 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-
 public class Swerve extends SubsystemBase {
 
     private PIDController snapToController;
@@ -93,9 +92,9 @@ public class Swerve extends SubsystemBase {
     /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    //TODO: does the robot have trouble turning back to its regular rotation after the request runs?
+    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
     // public void brake(){
-    //     return swerve.applyRequest(SwerveRequest.SwerveDriveBrake);
+    //     return swerve.applyRequest(() -> SwerveRequest.SwerveDriveBrake);
     // }
 
     /**

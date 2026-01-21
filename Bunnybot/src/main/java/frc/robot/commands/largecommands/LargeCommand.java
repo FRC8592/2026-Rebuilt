@@ -13,7 +13,7 @@ public abstract class LargeCommand extends Command {
     
     public LargeCommand(Subsystem requirement1, Subsystem... moreRequirements){
         addRequirements(requirement1);
-        // addRequirements(moreRequirements);
+        addRequirements(moreRequirements);
 
         
     }
