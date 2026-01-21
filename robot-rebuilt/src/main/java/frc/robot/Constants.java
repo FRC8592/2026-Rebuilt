@@ -10,6 +10,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.swerve.TunerConstants;
 
@@ -27,10 +30,50 @@ public final class Constants {
     public static final String LOG_FOLDER = "CustomLogs";
   }
 
+  public final class MEASUREMENTS {
+    public static final double FIELD_LENGTH_METERS = 27 * CONVERSIONS.FEET_TO_METERS;
+    public static final double FIELD_WIDTH_METERS = 54 * CONVERSIONS.FEET_TO_METERS;
+    
+  }
+
+  public final class CONVERSIONS {
+    public static final double METERS_TO_FEET = 3.28084;
+    public static final double FEET_TO_METERS = 0.3048;
+    public static final double INCHES_TO_METERS = 0.0254;
+}
+
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public class SUPPLIERS{
+    public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
+}
+
+public final class VISION {
+  public static final String LOG_PATH = SHARED.LOG_FOLDER+"ScoreCoral";
+  public static final double OFFSET_DEPTH = 0.40; // Drivers requested for the robot to be as close to the april tag as possible
+  public static final double OFFSET_LEFT_METERS = -0.137;
+  public static final double OFFSET_RIGHT_METERS = 0.213; 
+  public static final double ROT_OFFSET = 0d;
+  public static final double SPEED_SCALE = 1.0;
+  public static final double SPEED_MAX = 0.2; // originally 0.65
+
+  public static final int MAX_LOCK_LOSS_TICKS = 20;
+
+  public static final Transform3d CAMERA_OFFSETS = (
+      new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
+  );
+
+      public static final String CAMERA_NAME = (
+        "Arducam_OV9782_B" 
+    );
+    public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
+    public static final int POSE_AVERAGER_VALUE = 50;
+}
+
 
   public final class SWERVE {
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Swerve/";
