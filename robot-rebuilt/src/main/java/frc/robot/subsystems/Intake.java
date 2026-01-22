@@ -30,34 +30,34 @@ public class Intake extends SubsystemBase{
         MotorPID.setSlot(0);
         MotorPID.setPID(INTAKE.INTAKE_P, INTAKE.INTAKE_I, INTAKE.INTAKE_D);
         IntakeMotor.withGains(MotorPID);
+        //TODO: Set the current limit to a constant in intake
         IntakeMotor.setCurrentLimit(80);
-        //RightShooterMotor.setFollowerTo(LeftShooterMotor, true);
-        SmartDashboard.putNumber("P", 0.01);
-        SmartDashboard.putNumber("I", 0.0);
-        SmartDashboard.putNumber("D", 0.0);
-        SmartDashboard.putNumber("Vi", 3000);
-        //LeftShooterMotor.configureMotionMagic(SHOOTER.MAX_ACCELERATION, SHOOTER.CRUISE_VELOCITY);
+        //RightIntakeMotor.setFollowerTo(LeftIntakeMotor, true);
+        SmartDashboard.putNumber("P_INTAKE", 0.01);
+        SmartDashboard.putNumber("I_INTAKE", 0.0);
+        SmartDashboard.putNumber("D_INTAKE", 0.0);
+        SmartDashboard.putNumber("Vi_INTAKE", 3000);
+        //LeftIntakeMotor.configureMotionMagic(Intake.MAX_ACCELERATION, Intake.CRUISE_VELOCITY);
     }
 
-    public void runAtSpeed(double desiredRPM){
-        double RPM = SmartDashboard.getNumber("Vi", 0);
-        System.out.println("Shooter method is running");
+    public void runAtSpeed(){
+        double RPM = SmartDashboard.getNumber("Vi_INTAKE", 0);
+        System.out.println("Intake method is running");
         System.out.println("RPM Set " + RPM);
         IntakeMotor.setVelocity(RPM);
     }
 
     public Command runAtSpeedCommand(){
-        double RPM = SmartDashboard.getNumber("Vi", 0);
-        return this.runOnce(() -> runAtSpeed(RPM));
+        return this.runOnce(() -> runAtSpeed());
     }
     public void updatePID(){
         //System.out.println("Going into updatePID Method");
-        double P = SmartDashboard.getNumber("P", 0.001);
-        double I = SmartDashboard.getNumber("I", 0.0);
-        double D = SmartDashboard.getNumber("D", 0.0);
+        double P = SmartDashboard.getNumber("P_INTAKE", 0.001);
+        double I = SmartDashboard.getNumber("I_INTAKE", 0.0);
+        double D = SmartDashboard.getNumber("D_INTAKE", 0.0);
         //System.out.println("P Value from SmartDashboard "+ P + " P Old Value " + POld);
         if((P != POld) || (I!= IOld) || (D!= DOld)){
-            System.out.println("Going into if statement in updatePID method");
+            //System.out.println("Going into if statement in updatePID method");
             MotorPID.setPID(P, I, D);
             IntakeMotor.withGains(MotorPID);
             POld = P;
@@ -65,12 +65,12 @@ public class Intake extends SubsystemBase{
             DOld = D;
         }
     }
-    public void stopShooter(){
+    public void stop(){
         IntakeMotor.setPercentOutput(0);
     }
 
-    public Command stopShooterCommand(){
-        return this.runOnce(() -> stopShooter());
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
     }
 
     public double getVelocity(){
@@ -79,13 +79,13 @@ public class Intake extends SubsystemBase{
     //This is simply for calculation to get the ball landing in the center of the goal, based on the distance to the hub
     //This is very much a theoretical implementation, simply putting in just the math
     // public double DistanceToRPM(double theta, double dis){
-    //     return (1/Math.cos(theta))* (Math.sqrt((0.5 * 9.81 * Math.pow(dis,2))/(SHOOTER.SHOOTER_HEIGHT + Math.tan(theta) - SHOOTER.HUB_HEIGHT)));
+    //     return (1/Math.cos(theta))* (Math.sqrt((0.5 * 9.81 * Math.pow(dis,2))/(Intake.Intake_HEIGHT + Math.tan(theta) - Intake.HUB_HEIGHT)));
     // }
 
     @Override
     public void periodic(){
         // updatePID();
-        Logger.recordOutput("Motor Velocity RPM", getVelocity());
+        Logger.recordOutput("Intake Motor Velocity RPM", getVelocity());
     }
         
 }
