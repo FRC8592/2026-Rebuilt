@@ -54,7 +54,12 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.shooter.updatePID();
+    m_robotContainer.indexer.updatePID();
+    m_robotContainer.intake.updatePID();
+
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
