@@ -147,4 +147,31 @@ public final class SHOOTER {
     public static final double HUB_HEIGHT = 0;
 }
 
+public final class INTAKE {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int INTAKE_MOTOR_CAN_ID = 44;
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double INTAKE_P = 0.01;
+    public static final double INTAKE_I = 0;
+    public static final double INTAKE_D = 0;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
+}
+
+public final class INDEXER {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int INDEXER1_CAN_ID = 0;
+    public static final int INDEXER2_CAN_ID = 0; 
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double INDEXER1_P = 0.01;
+    public static final double INDEXER1_I = 0;
+    public static final double INDEXER1_D = 0;
+
+    public static final double INDEXER2_P = 0.01;
+    public static final double INDEXER2_I = 0;
+    public static final double INDEXER2_D = 0;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
+}
+
 }
