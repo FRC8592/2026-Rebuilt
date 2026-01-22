@@ -17,6 +17,9 @@ import frc.robot.subsystems.swerve.TunerConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Shooter;
+// import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Indexer; 
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,10 +41,17 @@ public class RobotContainer {
   // robot subsystems
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
+  public final Shooter shooter;
+  public final Intake intake;
+  public final Indexer indexer;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve = new Swerve(drivetrain);
+    shooter = new Shooter();
+    intake = new Intake();
+    indexer = new Indexer();
+    
     // Configure the trigger bindings
     configureBindings();
     
