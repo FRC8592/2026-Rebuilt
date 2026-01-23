@@ -54,6 +54,7 @@ public class RobotContainer {
 
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
+  private final Trigger RESET_HEADING = driverController.back();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -91,6 +92,7 @@ public class RobotContainer {
     // cancelling on release.
     runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
     runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
+    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     
 
   }
