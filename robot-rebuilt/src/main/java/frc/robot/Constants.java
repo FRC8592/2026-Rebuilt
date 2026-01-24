@@ -57,6 +57,12 @@ public final class SWERVE {
     public static final double PATH_FOLLOW_ROTATE_kD = 0;
     public static final double MAX_SPEED_METERS_PER_SECOND = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE_RADIANS_PER_SECOND = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
+    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
+    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
+    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
+    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
 }
     
 public class SUPPLIERS{
