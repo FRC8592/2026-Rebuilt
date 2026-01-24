@@ -131,4 +131,47 @@ public final class VISION {
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
+
+public final class SHOOTER {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int RIGHT_SHOOTER_MOTOR = 38;
+    public static final int LEFT_SHOOTER_MOTOR = 36;
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double MOTOR_P = 0.01;
+    public static final double MOTOR_I = 0;
+    public static final double MOTOR_D = 0;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
+    public static final double CRUISE_VELOCITY = 0;
+    public static final double SHOOTER_HEIGHT = 0;
+    public static final double HUB_HEIGHT = 0;
+}
+
+public final class INTAKE {
+    public static final int INTAKE_MOTOR_CAN_ID = 44;
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double INTAKE_P = 0.01;
+    public static final double INTAKE_I = 0;
+    public static final double INTAKE_D = 0;
+    public static final double INTAKE_VI = 3000;
+}
+
+public final class INDEXER {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int INDEXER_SPINNER_CAN_ID = 31;
+    public static final int INDEXER_OUTPUT_CAN_ID = 35; 
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double INDEXER_SPINNER_P = 0.01;
+    public static final double INDEXER_SPINNER_I = 0;
+    public static final double INDEXER_SPINNER_D = 0;
+     public static final double INDEXER_SPINNER_VELOCITY = 4000;
+
+    public static final double INDEXER_OUTPUT_P = 0.0001;
+    public static final double INDEXER_OUTPUT_I = 0;
+    public static final double INDEXER_OUTPUT_D = 0;
+    public static final double INDEXER_OUTPUT_VELOCITY = 5000;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
+}
+
 }
