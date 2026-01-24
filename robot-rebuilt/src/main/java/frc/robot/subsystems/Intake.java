@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase{
         //IntakeMotor.setIdleMode(IdleMode.kCoast);
   
         // TODO: Determine an appropriate current limit for the intake motor
-        IntakeMotor.setCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT);
+        // IntakeMotor.setCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT);
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
         SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_P);

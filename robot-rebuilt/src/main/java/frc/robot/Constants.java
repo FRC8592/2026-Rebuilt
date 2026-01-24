@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.Shooter;
 
 
 public final class Constants {
@@ -119,6 +120,10 @@ public final class SWERVE {
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
 
+public final class ROBOT {
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Robot/";
+}
+
 public class SUPPLIERS{
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
 }
@@ -133,19 +138,27 @@ public final class SHOOTER {
     public static final double MOTOR_D = 0;
     //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
     public static final double MAX_ACCELERATION = 0;
-    //For velocity control, cruise velocity is not needed, but it might throw errors if not included so this is here as a placeholder
     public static final double CRUISE_VELOCITY = 0;
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
 }
 
-public static class INTAKE{
-    // CAN ID for the Intake motor
+public final class TURRET{
+    public static final int TURRET_MOTOR = 18;
+    public static final double TURRET_P = 2;
+    public static final double TURRET_I = 0;
+    public static final double TURRET_D = 0;
+}
+
+
+  public static final class SCORING{
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+  }
+
+
+
+public final class INTAKE{
     public static final int INTAKE_MOTOR_CAN_ID = 44;
-
-    // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
-
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
     public static final double INTAKE_I = 0;
@@ -156,29 +169,21 @@ public static class INTAKE{
   }
 
   public final class INDEXER {
-    // CAN IDs for the Indexer motors
-    public static final int SPINNER_CAN_ID = 31;
-    public static final int OUTPUT_CAN_ID = 35;
-
-    // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
-
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int INDEXER_SPINNER_CAN_ID = 31;
+    public static final int INDEXER_OUTPUT_CAN_ID = 35; 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.01;
-    public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0;
-    public static final double SPINNER_VI = 2000;
+    public static final double INDEXER_SPINNER_P = 0.01;
+    public static final double INDEXER_SPINNER_I = 0;
+    public static final double INDEXER_SPINNER_D = 0;
+     public static final double INDEXER_SPINNER_VELOCITY = 4000;
 
-    public static final double OUTPUT_P = 0.01;
-    public static final double OUTPUT_I = 0;
-    public static final double OUTPUT_D = 0;
-    public static final double OUTPUT_VI = 5000;
-    
-  public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
+    public static final double INDEXER_OUTPUT_P = 0.0001;
+    public static final double INDEXER_OUTPUT_I = 0;
+    public static final double INDEXER_OUTPUT_D = 0;
+    public static final double INDEXER_OUTPUT_VELOCITY = 5000;
+    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+    public static final double MAX_ACCELERATION = 0;
 }
 
-  public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
-  }
 }
