@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems.vision;    
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CONVERSIONS;
 import frc.robot.Constants.MEASUREMENTS;
 
 public class Vision extends SubsystemBase{
@@ -41,16 +41,22 @@ public class Vision extends SubsystemBase{
 
     List<AprilTag> al = new ArrayList<>();
 
+    static Pose3d getAprilTagPos(double xInches,double yInches,double zInches,Rotation3d rot3d) {
+
+        return new Pose3d(Inches.of(xInches).in(Meters),Inches.of(yInches).in(Meters),Inches.of(zInches).in(Meters),rot3d);
+
+    }
+
     public Vision(String camName, Transform3d camOffsets){
         //creating new april tags for the bunny bots vision system
-        al.add(new AprilTag(1, new Pose3d(72 * CONVERSIONS.INCHES_TO_METERS, 320 * CONVERSIONS.INCHES_TO_METERS, 14 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(270)))));
-        al.add(new AprilTag(2, new Pose3d(576 * CONVERSIONS.INCHES_TO_METERS, 320 * CONVERSIONS.INCHES_TO_METERS, 14 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(270)))));
-        al.add(new AprilTag(3, new Pose3d(4 * CONVERSIONS.INCHES_TO_METERS, 270 * CONVERSIONS.INCHES_TO_METERS, 14 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, 0))));
-        al.add(new AprilTag(4, new Pose3d(644 * CONVERSIONS.INCHES_TO_METERS, 270 * CONVERSIONS.INCHES_TO_METERS, 14 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(180)))));
-        al.add(new AprilTag(5, new Pose3d(4 * CONVERSIONS.INCHES_TO_METERS, 196.125 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, 0))));
-        al.add(new AprilTag(6, new Pose3d(644 * CONVERSIONS.INCHES_TO_METERS, 196.125 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(180)))));
-        al.add(new AprilTag(7, new Pose3d(4 * CONVERSIONS.INCHES_TO_METERS, 20.5 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, 0))));
-        al.add(new AprilTag(8, new Pose3d(644 * CONVERSIONS.INCHES_TO_METERS, 20.5 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(180)))));
+        al.add(new AprilTag(1, getAprilTagPos(72, 320, 14, new Rotation3d(0, 0, Math.toRadians(270)))));
+        al.add(new AprilTag(2, getAprilTagPos(576, 320, 14, new Rotation3d(0, 0, Math.toRadians(270)))));
+        al.add(new AprilTag(3, getAprilTagPos(4, 270, 14, new Rotation3d(0, 0, 0))));
+        al.add(new AprilTag(4, getAprilTagPos(644, 270, 14, new Rotation3d(0, 0, Math.toRadians(180)))));
+        al.add(new AprilTag(5, getAprilTagPos(4, 196.125, 46, new Rotation3d(0, 0, 0))));
+        al.add(new AprilTag(6, getAprilTagPos(644, 196.125, 46, new Rotation3d(0, 0, Math.toRadians(180)))));
+        al.add(new AprilTag(7, getAprilTagPos(4, 20.5, 46, new Rotation3d(0, 0, 0))));
+        al.add(new AprilTag(8, getAprilTagPos(644, 20.5, 46, new Rotation3d(0, 0, Math.toRadians(180)))));
 
         aprilTagFieldLayout = new AprilTagFieldLayout(al, MEASUREMENTS.FIELD_LENGTH.in(Meters), MEASUREMENTS.FIELD_WIDTH.in(Meters));
 

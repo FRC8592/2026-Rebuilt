@@ -33,12 +33,6 @@ public final class MEASUREMENTS {
     
 }
 
-public final class CONVERSIONS {
-    public static final double METERS_TO_FEET = 3.28084;
-    public static final double FEET_TO_METERS = 0.3048;
-    public static final double INCHES_TO_METERS = 0.0254;
-}
-
 public final class CONTROLLERS {
     public static final int DRIVER_PORT = 0;
     public static final int OPERATOR_PORT = 1;
