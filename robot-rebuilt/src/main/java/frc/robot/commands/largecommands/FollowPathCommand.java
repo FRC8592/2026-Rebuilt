@@ -1,4 +1,6 @@
 package frc.robot.commands.largecommands;
+import static edu.wpi.first.units.Units.Meters;
+
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -249,7 +251,7 @@ public class FollowPathCommand extends LargeCommand{
             state.velocityMetersPerSecond,
             state.accelerationMetersPerSecondSq,
             new Pose2d(
-                MEASUREMENTS.FIELD_LENGTH_METERS - state.poseMeters.getX(),
+                MEASUREMENTS.FIELD_LENGTH.in(Meters) - state.poseMeters.getX(),
                 state.poseMeters.getY(),
                 Rotation2d.fromRadians(Math.PI).minus(state.poseMeters.getRotation())
             ),

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -9,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.units.measure.Distance;
 import frc.robot.subsystems.swerve.TunerConstants;
 
 
@@ -20,9 +23,13 @@ public final class Constants {
     public static final String LOG_FOLDER = "CustomLogs";
 }
 
+static {
+  
+}
+
 public final class MEASUREMENTS {
-    public static final double FIELD_LENGTH_METERS = 27 * CONVERSIONS.FEET_TO_METERS;
-    public static final double FIELD_WIDTH_METERS = 54 * CONVERSIONS.FEET_TO_METERS;
+    public static final Distance FIELD_LENGTH = Feet.of(27);
+    public static final Distance FIELD_WIDTH = Feet.of(54);
     
 }
 
