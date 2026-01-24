@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer; 
+import frc.robot.subsystems.Climb;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -51,8 +52,11 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
+  public final Climb climb; 
 
   private final Trigger runIntake = driverController.rightBumper();
+  private final Trigger runClimber = driverController. rightTrigger();
+  private final Trigger reverseClimber = driverController.leftTrigger();
   private final Trigger runIndexer = driverController.leftBumper();
   private final Trigger RESET_HEADING = driverController.back();
 
@@ -62,6 +66,7 @@ public class RobotContainer {
     shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
+    climb = new Climb();
     
     // Configure the trigger bindings
     configureBindings();
@@ -90,6 +95,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+    runClimber.whileTrue(climb.setClimbCommand(0)).onFalse(climb.stopCommand());
+    reverseClimber.whileTrue(climb.setReverseCommand(0)).onFalse(climb.stopCommand());
     runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
     runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));

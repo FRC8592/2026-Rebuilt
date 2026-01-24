@@ -174,4 +174,9 @@ public final class INDEXER {
     public static final double MAX_ACCELERATION = 0;
 }
 
+public final class CLIMB {
+public static final int CLIMB_CAN_ID = 3;  
+
+}
+
 }
