@@ -40,8 +40,8 @@ public class Intake extends SubsystemBase{
    }
 
    public void runIntake() {
-    intakeMotorSide.setVoltage(4);
-    intakeMotorBottom.setVoltage(4);
+    intakeMotorSide.setVoltage(12);
+    intakeMotorBottom.setVoltage(12);
    }
 
    public void reverseIntake(){

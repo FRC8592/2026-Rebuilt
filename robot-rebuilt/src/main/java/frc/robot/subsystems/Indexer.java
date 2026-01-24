@@ -3,26 +3,24 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import org.littletonrobotics.junction.Logger;
-
-import java.lang.Math;
-
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import frc.robot.Constants.*;
 import frc.robot.helpers.PIDProfile;
 import frc.robot.helpers.motor.NewtonMotor;
-import frc.robot.helpers.motor.talonfx.KrakenX60Motor;
 import frc.robot.helpers.motor.spark.SparkFlexMotor;
 
 
 public class Indexer extends SubsystemBase{
     private SparkFlexMotor spinnerMotor;
     private SparkFlexMotor outputMotor;
-
     private PIDProfile MotorPID;
 
+    /**
+     * Constructor for the Indexer subsystem
+     * 
+     * Instatiate the motors with initial PID values from the CONSTANTS class
+     */
     public Indexer(){
         spinnerMotor = new SparkFlexMotor(INDEXER.INDEXER_SPINNER_CAN_ID, false);
         outputMotor = new SparkFlexMotor(INDEXER.INDEXER_OUTPUT_CAN_ID, false);
@@ -30,20 +28,28 @@ public class Indexer extends SubsystemBase{
         MotorPID = new PIDProfile();
         MotorPID.setSlot(0);
         MotorPID.setPID(INDEXER.INDEXER_SPINNER_P, INDEXER.INDEXER_SPINNER_I,INDEXER.INDEXER_SPINNER_D);
-        MotorPID.setPID(INDEXER.INDEXER_OUTPUT_P, INDEXER.INDEXER_OUTPUT_I,INDEXER.INDEXER_OUTPUT_D);
         spinnerMotor.withGains(MotorPID);
-        spinnerMotor.setCurrentLimit(80);
+        
+        MotorPID.setPID(INDEXER.INDEXER_OUTPUT_P, INDEXER.INDEXER_OUTPUT_I,INDEXER.INDEXER_OUTPUT_D);
         outputMotor.withGains(MotorPID);
+  
+        // set idle modes
+        spinnerMotor.setIdleMode(IdleMode.kCoast);
+        outputMotor.setIdleMode(IdleMode.kCoast);
+
+        // TODO: Determine an appropriate current limit for the indexer motors
+        spinnerMotor.setCurrentLimit(80);
         outputMotor.setCurrentLimit(80);
-        //RightIndexerMotor.setFollowerTo(LeftIndexerMotor, true);
-        SmartDashboard.putNumber("P_SPINNER", 0.0001);
-        SmartDashboard.putNumber("I_SPINNER", 0.0);
-        SmartDashboard.putNumber("D_SPINNER", 0.0);
+
+        // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
+        SmartDashboard.putNumber("P_SPINNER", INDEXER.INDEXER_SPINNER_P);
+        SmartDashboard.putNumber("I_SPINNER", INDEXER.INDEXER_SPINNER_I);
+        SmartDashboard.putNumber("D_SPINNER", INDEXER.INDEXER_SPINNER_D);
         SmartDashboard.putNumber("Vi_SPINNER", INDEXER.INDEXER_SPINNER_VELOCITY);
 
-        SmartDashboard.putNumber("P_OUTPUT", 0.0001);
-        SmartDashboard.putNumber("I_OUTPUT", 0.0);
-        SmartDashboard.putNumber("D_OUTPUT", 0.0);
+        SmartDashboard.putNumber("P_OUTPUT", INDEXER.INDEXER_OUTPUT_P);
+        SmartDashboard.putNumber("I_OUTPUT", INDEXER.INDEXER_OUTPUT_I);
+        SmartDashboard.putNumber("D_OUTPUT", INDEXER);
         SmartDashboard.putNumber("Vi_OUTPUT", INDEXER.INDEXER_OUTPUT_VELOCITY);
         //LeftIndexerMotor.configureMotionMagic(Indexer.MAX_ACCELERATION, Indexer.CRUISE_VELOCITY);
     }
