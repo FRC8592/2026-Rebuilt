@@ -18,7 +18,7 @@ public class RedMoveOut extends AutoCommand {
    public RedMoveOut(){
       super(
             
-      new FollowPathCommand(getChoreoTrajectory("RedMoveOut"), Suppliers.isRedAlliance, ""));
+      new FollowPathCommand(getChoreoTrajectory("RedMoveOut")));
    }
 
 }

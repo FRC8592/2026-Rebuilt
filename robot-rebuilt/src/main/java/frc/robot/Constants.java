@@ -21,8 +21,8 @@ public final class Constants {
 }
 
 public final class MEASUREMENTS {
-    public static final double FIELD_LENGTH_METERS = 27 * CONVERSIONS.FEET_TO_METERS;
-    public static final double FIELD_WIDTH_METERS = 54 * CONVERSIONS.FEET_TO_METERS;
+    public static final double FIELD_Y_METERS = 26.475 * CONVERSIONS.FEET_TO_METERS; 
+    public static final double FIELD_X_METERS = 54.2666667 * CONVERSIONS.FEET_TO_METERS;
     
 }
 
@@ -85,7 +85,7 @@ public final class SWERVE {
 
     //TODO: Tone these down appropriately as per BB rules
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 0.25; 
+    public static final double ROTATE_POWER_FAST = 0.5; 
     public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.3;
 

@@ -8,7 +8,7 @@ import frc.robot.commands.largecommands.FollowPathCommand;
 public class BlueMoveOut extends AutoCommand {
     public BlueMoveOut(){
         super(
-            new FollowPathCommand(getChoreoTrajectory("BlueMoveOut"), Suppliers.isRedAlliance, "")
+            new FollowPathCommand(getChoreoTrajectory("BlueMoveOut"))
          );
     }
 }
