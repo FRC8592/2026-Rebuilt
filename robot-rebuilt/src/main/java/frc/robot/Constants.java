@@ -1,15 +1,11 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.subsystems.swerve.TunerConstants;
@@ -54,19 +50,10 @@ public final class SWERVE {
     public static final double SNAP_TO_kI = 0.0;
     public static final double SNAP_TO_kD = 0.1;
 
-    public static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND = 4.73;
+    public static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND =MetersPerSecond.of(4.73).baseUnitMagnitude();
     public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
-    public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = Math.toRadians(720);
-
-    public static final boolean INVERT_LEFT_SIDE = false;
-    public static final boolean INVERT_RIGHT_SIDE = true;
-
-    public static final double SIMULATED_STEER_INERTIA = 0.00001;
-    public static final double SIMULATED_DRIVE_INERTIA = 0.06;
-    public static final double SIMULATION_LOOP_PERIOD = 0.005;
-    public static final double STEER_FRICTION_VOLTAGE = 0.25;
-    public static final double DRIVE_FRICTION_VOLTAGE = 0.25;
-
+    public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = RadiansPerSecond.of(720).baseUnitMagnitude();
+    
     //TODO: Tone these down appropriately as per BB rules
     public static final double TRANSLATE_POWER_FAST = 1.0; 
     public static final double ROTATE_POWER_FAST = 0.25; 
@@ -90,14 +77,14 @@ public final class SWERVE {
     public static final double PATH_FOLLOW_ROTATE_kI = 0d;
     public static final double PATH_FOLLOW_ROTATE_kD = 0;
 
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
+    // public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
+    // public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
 
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
+    // public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
+    // public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
 
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
+    // public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
+    // public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
 
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
