@@ -27,6 +27,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.Climb;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -95,8 +96,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    runClimber.whileTrue(climb.setClimbCommand(0)).onFalse(climb.stopCommand());
-    reverseClimber.whileTrue(climb.setReverseCommand(0)).onFalse(climb.stopCommand());
+    runClimber.whileTrue(climb.setClimbCommand(0.8)).onFalse(climb.stopCommand());
+    reverseClimber.whileTrue(climb.setReverseCommand(0.8)).onFalse(climb.stopCommand());
     runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
     runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
