@@ -12,21 +12,13 @@ import frc.robot.subsystems.swerve.TunerConstants;
 
 
 public final class Constants {
-
-  
-
   public final class SHARED {
     public static final String LOG_FOLDER = "CustomLogs";
-}
-
-static {
-  
 }
 
 public final class MEASUREMENTS {
     public static final Distance FIELD_LENGTH = Feet.of(27);
     public static final Distance FIELD_WIDTH = Feet.of(54);
-    
 }
 
 public final class CONTROLLERS {
@@ -34,62 +26,39 @@ public final class CONTROLLERS {
     public static final int OPERATOR_PORT = 1;
 }
 
-
 public final class VISION {
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"ScoreCoral";
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
     public static final int POSE_AVERAGER_VALUE = 50;
 }
-    
 public final class SWERVE {
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Swerve/";
-
-    //TODO: Double check that these PID constants still work
     public static final double SNAP_TO_kP = 3.7;
     public static final double SNAP_TO_kI = 0.0;
     public static final double SNAP_TO_kD = 0.1;
-
     public static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND =MetersPerSecond.of(4.73).baseUnitMagnitude();
     public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
     public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = RadiansPerSecond.of(720).baseUnitMagnitude();
-    
-    //TODO: Tone these down appropriately as per BB rules
     public static final double TRANSLATE_POWER_FAST = 1.0; 
     public static final double ROTATE_POWER_FAST = 0.25; 
     public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.3;
-
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
-
     public static final double JOYSTICK_EXPONENT = 1.75;
-
     public static final Rotation2d BLUE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(0);
     public static final Rotation2d RED_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180);
-
     public static final double PATH_FOLLOW_TRANSLATE_kP = 8d; // Was 8 in the last test
     public static final double PATH_FOLLOW_TRANSLATE_kI = 0d;
     public static final double PATH_FOLLOW_TRANSLATE_kD = 0d;
-
-    //TODO: Double check that these still work
     public static final double PATH_FOLLOW_ROTATE_kP = 12;
     public static final double PATH_FOLLOW_ROTATE_kI = 0d;
     public static final double PATH_FOLLOW_ROTATE_kD = 0;
-
-    // public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
-    // public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
-
-    // public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
-    // public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
-
-    // public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
-    // public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
-
-    public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    public static final double MAX_SPEED_METERS_PER_SECOND = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    public static final double MAX_ANGULAR_RATE_RADIANS_PER_SECOND = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
-
+    
 public class SUPPLIERS{
     public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
 }
@@ -121,22 +90,22 @@ public static class INTAKE{
 
   }
 
-  public final class INDEXER {
-  //Left and right classifications are for looking from the robots viewpoint
-    public static final int INDEXER_SPINNER_CAN_ID = 31;
-    public static final int INDEXER_OUTPUT_CAN_ID = 35; 
-    //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double INDEXER_SPINNER_P = 0.01;
-    public static final double INDEXER_SPINNER_I = 0;
-    public static final double INDEXER_SPINNER_D = 0;
-     public static final double INDEXER_SPINNER_VELOCITY = 4000;
+public final class INDEXER {
+//Left and right classifications are for looking from the robots viewpoint
+  public static final int INDEXER_SPINNER_CAN_ID = 31;
+  public static final int INDEXER_OUTPUT_CAN_ID = 35; 
+  //PID tuning constants for the NEO Motors, these are initial and WILL change
+  public static final double INDEXER_SPINNER_P = 0.01;
+  public static final double INDEXER_SPINNER_I = 0;
+  public static final double INDEXER_SPINNER_D = 0;
+   public static final double INDEXER_SPINNER_VELOCITY = 4000;
 
-    public static final double INDEXER_OUTPUT_P = 0.0001;
-    public static final double INDEXER_OUTPUT_I = 0;
-    public static final double INDEXER_OUTPUT_D = 0;
-    public static final double INDEXER_OUTPUT_VELOCITY = 5000;
-    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
-    public static final double MAX_ACCELERATION = 0;
+  public static final double INDEXER_OUTPUT_P = 0.0001;
+  public static final double INDEXER_OUTPUT_I = 0;
+  public static final double INDEXER_OUTPUT_D = 0;
+  public static final double INDEXER_OUTPUT_VELOCITY = 5000;
+  //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
+  public static final double MAX_ACCELERATION = 0;
 }
 
   public static final class SCORING{
