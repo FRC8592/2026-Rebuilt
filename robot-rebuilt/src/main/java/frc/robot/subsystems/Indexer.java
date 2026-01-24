@@ -34,8 +34,8 @@ public class Indexer extends SubsystemBase{
         outputMotor.withGains(MotorPID);
   
         // set idle modes
-        spinnerMotor.setIdleMode(IdleMode.kCoast);
-        outputMotor.setIdleMode(IdleMode.kCoast);
+        // spinnerMotor.setIdleMode(IdleMode.kCoast);
+        // outputMotor.setIdleMode(IdleMode.kCoast);
 
         // TODO: Determine an appropriate current limit for the indexer motors
         spinnerMotor.setCurrentLimit(80);
@@ -49,7 +49,7 @@ public class Indexer extends SubsystemBase{
 
         SmartDashboard.putNumber("P_OUTPUT", INDEXER.INDEXER_OUTPUT_P);
         SmartDashboard.putNumber("I_OUTPUT", INDEXER.INDEXER_OUTPUT_I);
-        SmartDashboard.putNumber("D_OUTPUT", INDEXER);
+        SmartDashboard.putNumber("D_OUTPUT", INDEXER.INDEXER_OUTPUT_D);
         SmartDashboard.putNumber("Vi_OUTPUT", INDEXER.INDEXER_OUTPUT_VELOCITY);
         //LeftIndexerMotor.configureMotionMagic(Indexer.MAX_ACCELERATION, Indexer.CRUISE_VELOCITY);
     }
