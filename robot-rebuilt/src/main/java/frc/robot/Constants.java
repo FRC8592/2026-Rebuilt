@@ -140,7 +140,12 @@ public final class SHOOTER {
 }
 
 public static class INTAKE{
+    // CAN ID for the Intake motor
     public static final int INTAKE_MOTOR_CAN_ID = 44;
+
+    // Current limit for the Intake motor
+    public static final int INTAKE_CURRENT_LIMIT = 80;
+
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
     public static final double INTAKE_I = 0;
@@ -151,24 +156,29 @@ public static class INTAKE{
   }
 
   public final class INDEXER {
-  //Left and right classifications are for looking from the robots viewpoint
-    public static final int INDEXER_SPINNER_CAN_ID = 31;
-    public static final int INDEXER_OUTPUT_CAN_ID = 35; 
-    //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double INDEXER_SPINNER_P = 0.01;
-    public static final double INDEXER_SPINNER_I = 0;
-    public static final double INDEXER_SPINNER_D = 0;
-     public static final double INDEXER_SPINNER_VELOCITY = 4000;
+    // CAN IDs for the Indexer motors
+    public static final int SPINNER_CAN_ID = 31;
+    public static final int OUTPUT_CAN_ID = 35;
 
-    public static final double INDEXER_OUTPUT_P = 0.0001;
-    public static final double INDEXER_OUTPUT_I = 0;
-    public static final double INDEXER_OUTPUT_D = 0;
-    public static final double INDEXER_OUTPUT_VELOCITY = 5000;
-    //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
-    public static final double MAX_ACCELERATION = 0;
+    // Current limts for the Indexer motors
+    public static final int SPINNER_CURRENT_LIMIT = 80;
+    public static final int OUTPUT_CURRENT_LIMIT = 80;
+
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double SPINNER_P = 0.01;
+    public static final double SPINNER_I = 0;
+    public static final double SPINNER_D = 0;
+    public static final double SPINNER_VI = 2000;
+
+    public static final double OUTPUT_P = 0.01;
+    public static final double OUTPUT_I = 0;
+    public static final double OUTPUT_D = 0;
+    public static final double OUTPUT_VI = 5000;
+    
+  public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
 }
 
   public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
   }
 }
