@@ -1,4 +1,7 @@
 package frc.robot.commands.largecommands;
+import frc.robot.Robot;
+import frc.robot.Constants.*;
+
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -16,11 +19,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Robot;
-import frc.robot.Constants.*;
-import frc.robot.subsystems.swerve.Swerve;
 
 public class FollowPathCommand extends LargeCommand {
+    private static String LOG_PATH = "CustomLogs/CurrentPathCommand/";
+
     // Pathing variables
     private Optional<Trajectory> trajectory;
     private Timer timer = new Timer();
@@ -95,17 +97,27 @@ public class FollowPathCommand extends LargeCommand {
         );
     }
 
-    public FollowPathCommand(Optional<Trajectory> trajectory, double secondsPastPathEndTolerated, boolean rollAtPathEnd){
-        this(trajectory);
-        this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
-        this.rollAtPathEnd = rollAtPathEnd;
-    }
+    /**
+     * Command to follow a trajectory
+     * 
+     * @param trajectory the trajectory to follow 
+     * @param secondsPastPathEndTolerated number of seconds 
+     * @param rollAtPathEnd (?)
+     */
+    // public FollowPathCommand(Optional<Trajectory> trajectory, double secondsPastPathEndTolerated, boolean rollAtPathEnd){
+    //     this(trajectory);
+    //     this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
+    //     this.rollAtPathEnd = rollAtPathEnd;
+    // }
 
+    /**
+     * Intiialized the FollowPathCommand with the provided trajectory
+     */
     public void initialize(){
         isRedAlliance = (DriverStation.getAlliance().isPresent() 
-                        && DriverStation.getAlliance().get() == Alliance.Red);
+                    && DriverStation.getAlliance().get() == Alliance.Red);
 
-        Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", this.getName());
+        Logger.recordOutput(LOG_PATH + "PathName", this.getName());
 
         if (trajectory.isEmpty()) {
             throw new Error("FollowPathCommand initialized with empty trajectory");
@@ -118,16 +130,22 @@ public class FollowPathCommand extends LargeCommand {
         Pose2d startPose = isRedAlliance ? flip(initial).poseMeters : initial.poseMeters;
 
         swerve.setKnownOdometryPose(startPose);
+        Logger.recordOutput(LOG_PATH + "intialX", startPose.getX());
+        Logger.recordOutput(LOG_PATH + "initialY", startPose.getY());
+        Logger.recordOutput(LOG_PATH + "intialRot", startPose.getRotation().getRadians());
 
-        //will retain values from previous FollowPathCommand if not reset in intialized
+        //will retain values from previous FollowPathCommand if not reset here and cause weird curving loopy paths
         xController.reset();
         yController.reset();
         turnController.reset(swerve.getCurrentOdometryPosition().getRotation().getRadians());
 
-        Logger.recordOutput("CustomLogs/CurrentPathCommand/FlipForRed", isRedAlliance);
+        Logger.recordOutput(LOG_PATH + "flipForRed", isRedAlliance);
         
     }
 
+    /**
+     * Run periodically until the trajectory is done
+     */
     public void execute(){
         //if the trajectory has no paths
         if(trajectory.isEmpty())
@@ -139,9 +157,9 @@ public class FollowPathCommand extends LargeCommand {
         if(isRedAlliance)
             desiredState = flip(desiredState);
 
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetPoseX", desiredState.poseMeters.getX());
-        Logger.recordOutput(SWERVE.LOG_PATH + "TargetPoseY", desiredState.poseMeters.getY());
-        Logger.recordOutput(SWERVE.LOG_PATH + "TargetPoseRot", desiredState.poseMeters.getRotation().getDegrees());
+        Logger.recordOutput(LOG_PATH + "TargetPoseX", desiredState.poseMeters.getX());
+        Logger.recordOutput(LOG_PATH + "TargetPoseY", desiredState.poseMeters.getY());
+        Logger.recordOutput(LOG_PATH + "TargetPoseRot", desiredState.poseMeters.getRotation().getDegrees());
         // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceX", desiredState.poseMeters.getX() - swerve.getCurrentOdometryPosition().getX());
         // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceY", desiredState.poseMeters.getY() - swerve.getCurrentOdometryPosition().getY());
         // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceRot", desiredState.poseMeters.getRotation().minus(swerve.getCurrentOdometryPosition().getRotation()).getDegrees());
@@ -164,6 +182,11 @@ public class FollowPathCommand extends LargeCommand {
         }
     }
 
+    /**
+     * Returns whether the FollowPathCommand is finished or not
+     * 
+     * @return if finished
+     */
     public boolean isFinished(){
         return ( // Only return true if enough time has elapsed, we're at the target location, and we're not using alternate movement.
             (
@@ -187,11 +210,13 @@ public class FollowPathCommand extends LargeCommand {
             state.timeSeconds,
             state.velocityMetersPerSecond,
             state.accelerationMetersPerSecondSq,
+
             new Pose2d(
                 MEASUREMENTS.FIELD_X_METERS - state.poseMeters.getX(),
                 state.poseMeters.getY(),
                 Rotation2d.fromRadians(Math.PI).minus(state.poseMeters.getRotation())
             ),
+
             -state.curvatureRadPerMeter
         );
     }
