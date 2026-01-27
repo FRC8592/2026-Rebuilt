@@ -34,9 +34,8 @@ public class FollowPathCommand extends LargeCommand {
     private double secondsPastPathEndTolerated = -1;
     private boolean rollAtPathEnd = false;
 
-    //check if red alliance when calling FollowPathCommand
-    //true when red, false when blue
-    private boolean isRedAlliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    //check if red alliance when calling FollowPathCommand: true when red, false when blue
+    private boolean isRedAlliance = false; 
 
     /**
      * Command to follow a trajectory
@@ -103,38 +102,42 @@ public class FollowPathCommand extends LargeCommand {
     }
 
     public void initialize(){
+        isRedAlliance = (DriverStation.getAlliance().isPresent() 
+                        && DriverStation.getAlliance().get() == Alliance.Red);
+
         Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", this.getName());
 
-        if(this.trajectory.isPresent()) {
-            Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", this.trajectory.get());
-        } else {
-            throw new Error("Could not find the trajectory " + trajectory + " provided in the constructor");
+        if (trajectory.isEmpty()) {
+            throw new Error("FollowPathCommand initialized with empty trajectory");
         }
-        
+
         timer.reset();
         timer.start();
 
-        if(isRedAlliance) { //if on red alliance, flip the intial position
-            swerve.setKnownOdometryPose(trajectory.get().sample(0).poseMeters);  
-        } else { //if on blue alliance, use the given pose from the trajectory without flipping
-            swerve.setKnownOdometryPose(trajectory.get().sample(0).poseMeters);
-        }
+        State initial = trajectory.get().sample(0.0);
+        Pose2d startPose = isRedAlliance ? flip(initial).poseMeters : initial.poseMeters;
+
+        swerve.setKnownOdometryPose(startPose);
+
+        //will retain values from previous FollowPathCommand if not reset in intialized
+        xController.reset();
+        yController.reset();
+        turnController.reset(swerve.getCurrentOdometryPosition().getRotation().getRadians());
+
+        Logger.recordOutput("CustomLogs/CurrentPathCommand/FlipForRed", isRedAlliance);
         
     }
 
     public void execute(){
         //if the trajectory has no paths
-        if(trajectory.isEmpty()) {
+        if(trajectory.isEmpty())
             return;
-        }
 
         // Instances of State contain information about pose, velocity, accelleration, curvature, etc.
         State desiredState = trajectory.get().sample(timer.get());
 
-        if(isRedAlliance){
+        if(isRedAlliance)
             desiredState = flip(desiredState);
-            swerve.setKnownOdometryPose(desiredState.poseMeters);
-        }
 
         Logger.recordOutput(SWERVE.LOG_PATH+"TargetPoseX", desiredState.poseMeters.getX());
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetPoseY", desiredState.poseMeters.getY());
@@ -185,7 +188,7 @@ public class FollowPathCommand extends LargeCommand {
             state.velocityMetersPerSecond,
             state.accelerationMetersPerSecondSq,
             new Pose2d(
-                MEASUREMENTS.FIELD_X_METERS + state.poseMeters.getX(),
+                MEASUREMENTS.FIELD_X_METERS - state.poseMeters.getX(),
                 state.poseMeters.getY(),
                 Rotation2d.fromRadians(Math.PI).minus(state.poseMeters.getRotation())
             ),
