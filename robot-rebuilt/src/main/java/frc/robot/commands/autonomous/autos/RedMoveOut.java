@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Rotation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Suppliers;
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.largecommands.*;
 

@@ -94,20 +94,17 @@ public final class SWERVE {
 
     public static final double JOYSTICK_EXPONENT = 1.75;
 
-    public static final Rotation2d BLUE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(0);
-    public static final Rotation2d RED_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180);
-
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 8d; // Was 8 in the last test
-    public static final double PATH_FOLLOW_TRANSLATE_kI = 0d;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0d;
+    public static final double PATH_FOLLOW_TRANSLATE_kP = 2.0; 
+    public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
+    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.0;
 
     //TODO: Double check that these still work
-    public static final double PATH_FOLLOW_ROTATE_kP = 12;
-    public static final double PATH_FOLLOW_ROTATE_kI = 0d;
-    public static final double PATH_FOLLOW_ROTATE_kD = 0;
+    public static final double PATH_FOLLOW_ROTATE_kP = 4.0;
+    public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
+    public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
 
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 2 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 2 * Math.PI;
 
     public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
     public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
