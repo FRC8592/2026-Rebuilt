@@ -47,11 +47,11 @@ public class RobotContainer {
       new CommandXboxController(0);
 
   // robot subsystems
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Swerve swerve;
-  public final Shooter shooter;
-  public final Intake intake;
-  public final Indexer indexer;
+  //public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  //private final Swerve swerve;
+  // public final Shooter shooter;
+  // public final Intake intake;
+  // public final Indexer indexer;
   public final Climb climb; 
 
   private final Trigger runIntake = driverController.rightBumper();
@@ -62,26 +62,26 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    swerve = new Swerve(drivetrain);
-    shooter = new Shooter();
-    intake = new Intake();
-    indexer = new Indexer();
+    // swerve = new Swerve(drivetrain);
+    // shooter = new Shooter();
+    // intake = new Intake();
+    // indexer = new Indexer();
     climb = new Climb();
     
     // Configure the trigger bindings
     configureBindings();
-    configureDefaults();
+    //configureDefaults();
     
-    LargeCommand.addSubsystems(swerve);
-    AutoCommand.addSubsystems(swerve);
+    // LargeCommand.addSubsystems(swerve);
+    // AutoCommand.addSubsystems(swerve);
 
-    passSubsystems();
-    AutoManager.prepare();
+    // passSubsystems();
+    // AutoManager.prepare();
   }
 
-    private void passSubsystems(){
-        LargeCommand.addSubsystems(swerve);
-    }
+    // private void passSubsystems(){
+    //     LargeCommand.addSubsystems(swerve);
+    // }
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -95,26 +95,26 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    runClimber.whileTrue(climb.setClimbCommand(0)).onFalse(climb.stopCommand());
-    reverseClimber.whileTrue(climb.setReverseCommand(0)).onFalse(climb.stopCommand());
-    runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    runClimber.whileTrue(climb.setClimbCommand(4)).onFalse(climb.stopCommand());
+    reverseClimber.whileTrue(climb.setReverseCommand(-4)).onFalse(climb.stopCommand());
+    //runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
+    //runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
+    //RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     
 
   }
 
-  private void configureDefaults() {
-        // Set the swerve's default command to drive with joysticks
+  // private void configureDefaults() {
+  //       // Set the swerve's default command to drive with joysticks
 
-        setDefaultCommand(swerve, swerve.run(() -> {
-            swerve.drive(swerve.processJoystickInputs(
-                    -driverController.getLeftX(),
-                    -driverController.getLeftY(),
-                    -driverController.getRightX()));
-        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+  //       setDefaultCommand(swerve, swerve.run(() -> {
+  //           swerve.drive(swerve.processJoystickInputs(
+  //                   -driverController.getLeftX(),
+  //                   -driverController.getLeftY(),
+  //                   -driverController.getRightX()));
+  //       }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    }
+  //   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
