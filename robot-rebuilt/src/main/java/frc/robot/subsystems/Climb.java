@@ -64,11 +64,11 @@ public class Climb extends SubsystemBase{
    }
 
     public Command setClimbCommand (double percent){
-    return this.runOnce(() -> setPercentOut(climbMotor, 4));
+    return this.runOnce(() -> setPercentOut(climbMotor, 3));
     }
 
     public Command setReverseCommand (double percent){
-    return this.runOnce (() -> setPercentOut(climbMotor, -2));
+    return this.runOnce (() -> setPercentOut(climbMotor, -1.5));
     }
 
    public Command stopCommand(){
