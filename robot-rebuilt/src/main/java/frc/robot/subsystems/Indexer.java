@@ -116,7 +116,8 @@ public class Indexer extends SubsystemBase{
      */
     public void stop(){
         spinnerMotor.setPercentOutput(0);
-        outputMotor.setVelocity(0.0);
+        //outputMotor.setVelocity(0.0);
+        outputMotor.setPercentOutput(0.0);
     }
 
 
@@ -150,8 +151,8 @@ public class Indexer extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        Logger.recordOutput("Spinner RPM", getVelocitySpinner());
-        Logger.recordOutput("Output RPM", getVelocityOutput());
+        SmartDashboard.putNumber("Spinner RPM", getVelocitySpinner());
+        SmartDashboard.putNumber("Output RPM", getVelocityOutput());
     }
         
 }

@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.shooter.updatePID();
+    //m_robotContainer.shooter.updatePID();
     m_robotContainer.indexer.updatePID();
     m_robotContainer.intake.updatePID();
 
