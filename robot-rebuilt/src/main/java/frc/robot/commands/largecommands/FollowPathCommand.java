@@ -165,6 +165,7 @@ public class FollowPathCommand extends LargeCommand {
 
     public void end(boolean interrupted){
         Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", "None");
+        swerve.drive(new ChassisSpeeds());
     }
 
     /**
@@ -173,13 +174,7 @@ public class FollowPathCommand extends LargeCommand {
      * @return if finished
      */
     public boolean isFinished(){
-        return ( // Only return true if enough time has elapsed, we're at the target location, and we're not using alternate movement.
-            (
-                trajectory.isEmpty() || (
-                timer.hasElapsed(trajectory.get().getTotalTimeSeconds())
-                && (drivePID.atReference() || !Robot.isReal())
-            ))
-        );
+        return timer.hasElapsed(trajectory.get().getTotalTimeSeconds());
     }
 
     /**
