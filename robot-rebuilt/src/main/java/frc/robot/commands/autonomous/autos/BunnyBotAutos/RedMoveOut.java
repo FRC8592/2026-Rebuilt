@@ -1,4 +1,4 @@
-package frc.robot.commands.autonomous.autos;
+package frc.robot.commands.autonomous.autos.BunnyBotAutos;
 
 
 import static edu.wpi.first.units.Units.Rotation;

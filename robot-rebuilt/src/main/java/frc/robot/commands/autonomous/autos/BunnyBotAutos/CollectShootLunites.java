@@ -1,4 +1,4 @@
-package frc.robot.commands.autonomous.autos;
+package frc.robot.commands.autonomous.autos.BunnyBotAutos;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Suppliers;
 import frc.robot.commands.autonomous.AutoCommand;
