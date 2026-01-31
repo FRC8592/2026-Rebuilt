@@ -21,8 +21,8 @@ public final class Constants {
 }
 
 public final class MEASUREMENTS {
-    public static final double FIELD_LENGTH_METERS = 27 * CONVERSIONS.FEET_TO_METERS;
-    public static final double FIELD_WIDTH_METERS = 54 * CONVERSIONS.FEET_TO_METERS;
+    public static final double FIELD_Y_METERS = 26.475 * CONVERSIONS.FEET_TO_METERS; 
+    public static final double FIELD_X_METERS = 54.2666667 * CONVERSIONS.FEET_TO_METERS;
     
 }
 
@@ -85,7 +85,7 @@ public final class SWERVE {
 
     //TODO: Tone these down appropriately as per BB rules
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 0.25; 
+    public static final double ROTATE_POWER_FAST = 0.5; 
     public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.3;
 
@@ -94,26 +94,23 @@ public final class SWERVE {
 
     public static final double JOYSTICK_EXPONENT = 1.75;
 
-    public static final Rotation2d BLUE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(0);
-    public static final Rotation2d RED_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180);
-
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 8d; // Was 8 in the last test
-    public static final double PATH_FOLLOW_TRANSLATE_kI = 0d;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0d;
+    public static final double PATH_FOLLOW_TRANSLATE_kP = 1.5; 
+    public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
+    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.15;
 
     //TODO: Double check that these still work
-    public static final double PATH_FOLLOW_ROTATE_kP = 12;
-    public static final double PATH_FOLLOW_ROTATE_kI = 0d;
-    public static final double PATH_FOLLOW_ROTATE_kD = 0;
+    public static final double PATH_FOLLOW_ROTATE_kP = 2.0;
+    public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
+    public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
 
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 1.5 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 1.5 * Math.PI;
 
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
+    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.03; // Meters
+    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.05;
 
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
+    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.04; // Radians
+    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.02;
 
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
