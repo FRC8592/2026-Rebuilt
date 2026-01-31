@@ -50,7 +50,7 @@ public class Vision extends SubsystemBase{
         al.add(new AprilTag(7, new Pose3d(4 * CONVERSIONS.INCHES_TO_METERS, 20.5 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, 0))));
         al.add(new AprilTag(8, new Pose3d(644 * CONVERSIONS.INCHES_TO_METERS, 20.5 * CONVERSIONS.INCHES_TO_METERS, 46 * CONVERSIONS.INCHES_TO_METERS, new Rotation3d(0, 0, Math.toRadians(180)))));
 
-        aprilTagFieldLayout = new AprilTagFieldLayout(al, MEASUREMENTS.FIELD_LENGTH_METERS, MEASUREMENTS.FIELD_WIDTH_METERS);
+        aprilTagFieldLayout = new AprilTagFieldLayout(al, MEASUREMENTS.FIELD_Y_METERS, MEASUREMENTS.FIELD_X_METERS);
 
         camera = new PhotonCamera(camName);
         estimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camOffsets);

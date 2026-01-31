@@ -1,7 +1,8 @@
 package frc.robot.commands.largecommands;
+import frc.robot.Robot;
+import frc.robot.Constants.*;
+
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -15,21 +16,16 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Robot;
-import frc.robot.Constants.*;
-import frc.robot.subsystems.swerve.Swerve;
 
-public class FollowPathCommand extends LargeCommand{
+public class FollowPathCommand extends LargeCommand {
+    private static String LOG_PATH = "CustomLogs/CurrentPathCommand/";
+
     // Pathing variables
     private Optional<Trajectory> trajectory;
     private Timer timer = new Timer();
-
-    // Alternate movement variables
-    private BooleanSupplier useAlternateRotation = () -> false;
-    private Supplier<Rotation2d> alternateRotation = () -> new Rotation2d();
-    private BooleanSupplier useAlternateTranslation = () -> false;
-    private Supplier<ChassisSpeeds> alternateTranslation = () -> new ChassisSpeeds();
 
     // PID controllers
     private ProfiledPIDController turnController;
@@ -37,33 +33,25 @@ public class FollowPathCommand extends LargeCommand{
     private PIDController xController;
     private PIDController yController;
 
-    // Whether to flip to the red side of the field
-    private BooleanSupplier flip;
-
-    private double secondsPastPathEndTolerated = -1;
-    private boolean rollAtPathEnd = false;
-
-    private boolean useVision = false;
+    //check if red alliance when calling FollowPathCommand: true when red, false when blue
+    private boolean isRedAlliance = false; 
 
     /**
      * Command to follow a trajectory
      *
-     * @param trajectory the trajectory to follow
-     * @param flip lambda that returns whether to mirror the path to the
-     * red side of the field.
+     * @param trajectory the trajectory to follow on the red side of the field.
      */
-    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName){
+    public FollowPathCommand(Optional<Trajectory> trajectory){
         super(swerve);
 
         this.trajectory = trajectory;
-
-        this.setName(commandName);
 
         this.xController = new PIDController(
             SWERVE.PATH_FOLLOW_TRANSLATE_kP,
             SWERVE.PATH_FOLLOW_TRANSLATE_kI,
             SWERVE.PATH_FOLLOW_TRANSLATE_kD
         );
+
         this.xController.setTolerance(
             SWERVE.PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE,
             SWERVE.PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE
@@ -74,6 +62,7 @@ public class FollowPathCommand extends LargeCommand{
             SWERVE.PATH_FOLLOW_TRANSLATE_kI,
             SWERVE.PATH_FOLLOW_TRANSLATE_kD
         );
+        
         this.yController.setTolerance(
             SWERVE.PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE,
             SWERVE.PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE
@@ -88,151 +77,107 @@ public class FollowPathCommand extends LargeCommand{
                 SWERVE.PATH_FOLLOW_ROTATE_MAX_ACCELLERATION
             )
         );
+
         this.turnController.setTolerance(
             SWERVE.PATH_FOLLOW_ROTATE_POSITION_TOLERANCE,
             SWERVE.PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE
         );
+
         this.turnController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.drivePID = new HolonomicDriveController(xController, yController, turnController);
         this.drivePID.setTolerance(
             new Pose2d(
-                new Translation2d(xController.getPositionTolerance(), yController.getPositionTolerance()),
+                new Translation2d(xController.getErrorTolerance(), yController.getErrorTolerance()),
                 new Rotation2d(turnController.getPositionTolerance())
             )
         );
-
-        this.flip = flip;
     }
 
     /**
-     * Command to follow a path with the option to deviate from it as configured by the parameters
-     *
-     * @param trajectory the path to follow
-     *
-     * @param flip lambda that returns whether the path should be mirrored to the red side of the
-     * field.
-     *
-     * @param useAlternateRotation a lambda that returns whether to use the alternate rotation
-     * provided by {@code rotationSupplier}
-     *
-     * @param rotationSupplier a lambda that returns the alternate rotation to be used when
-     * {@code useAlternateRotation} returns {@code true}. NOTE: The degree and radian values stored
-     * in the Rotation2d are used as a velocity setpoint, not a position setpoint, so you have to run
-     * your own control loop (as needed) for this to work.
-     *
-     * @param useAlternateTranslation a lambda that returns whether to use the alternate translation
-     * provided by {@code translationSupplier}
-     *
-     * @param translationSupplier a lambda that returns the alternate translation to be used when
-     * {@code useAlternatTranslation} returns {@code true}. The rotation component of the
-     * {@code ChassisSpeeds} is ignored.
+     * Intiialize the FollowPathCommand with the provided trajectory in th constructor
      */
-    public FollowPathCommand(
-        Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName,
-        BooleanSupplier useAlternateRotation, Supplier<Rotation2d> rotationSupplier,
-        BooleanSupplier useAlternateTranslation, Supplier<ChassisSpeeds> translationSupplier
-    ){
-        this(trajectory, flip, commandName);
-        this.useAlternateRotation = useAlternateRotation;
-        this.alternateRotation = rotationSupplier;
-        this.useAlternateTranslation = useAlternateTranslation;
-        this.alternateTranslation = translationSupplier;
-    }
-
-    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double secondsPastPathEndTolerated, boolean rollAtPathEnd, boolean useVision){
-        this(trajectory, flip, commandName);
-        this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
-        this.rollAtPathEnd = rollAtPathEnd;
-    }
-
     public void initialize(){
-        Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", this.getName());
-        if(this.trajectory.isPresent()) {
-            Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", this.trajectory.get());
-        } else {
-            Logger.recordOutput("CustomLogs/CurrentPathCommand/Trajectory", "Error: Is null");
+        isRedAlliance = (DriverStation.getAlliance().isPresent() 
+                    && DriverStation.getAlliance().get() == Alliance.Red);
+
+        //TODO: make this show the name of the choreo trajectory that its running
+        Logger.recordOutput(LOG_PATH + "PathName", this.getName());
+
+        if (trajectory.isEmpty()) {
+            throw new Error("FollowPathCommand initialized with empty trajectory");
         }
-        
+
         timer.reset();
         timer.start();
-        if(!Robot.isReal()){
-            if(this.trajectory.isPresent()) {
-            if(flip.getAsBoolean()){
-                swerve.setKnownOdometryPose(flip(trajectory.get().sample(0)).poseMeters);
-            }
-            else{
-                swerve.setKnownOdometryPose(trajectory.get().sample(0).poseMeters);
-            }
-        }
-        }
+
+        State initial = trajectory.get().sample(0.0);
+        State startPose = isRedAlliance ? flip(initial) : initial;
+
+        swerve.setKnownOdometryPose(startPose.poseMeters);
+        Logger.recordOutput(LOG_PATH + "intialX", startPose.poseMeters.getX());
+        Logger.recordOutput(LOG_PATH + "initialY", startPose.poseMeters.getY());
+        Logger.recordOutput(LOG_PATH + "intialRot", startPose.poseMeters.getRotation().getRadians());
+
+        //reset so that values aren't reused
+        xController.reset();
+        yController.reset();
+        turnController.reset(swerve.getCurrentOdometryPosition().getRotation().getRadians());
+
+        Logger.recordOutput(LOG_PATH + "flipForRed", isRedAlliance);
+        
     }
+
+    /**
+     * Run periodically until the trajectory is done
+     */
     public void execute(){
-
-        if(trajectory.isEmpty()) {
+        //if the trajectory has no paths
+        if(trajectory.isEmpty())
             return;
-        }
-        // Instances of State contain information about pose, velocity, accelleration, curvature, etc.
+
+        //Instances of State contain information about pose, velocity, accelleration, curvature, etc.
         State desiredState = trajectory.get().sample(timer.get());
-        //LEDs.setProgressBar(timer.get()/trajectory.getTotalTimeSeconds());
 
-
-        if(flip.getAsBoolean()){
+        if(isRedAlliance)
             desiredState = flip(desiredState);
-        }
 
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetPose", desiredState.poseMeters);
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceX", desiredState.poseMeters.getX()-swerve.getCurrentOdometryPosition().getX());
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceY", desiredState.poseMeters.getY()-swerve.getCurrentOdometryPosition().getY());
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceRot", desiredState.poseMeters.getRotation().minus(swerve.getCurrentOdometryPosition().getRotation()).getDegrees());
-        // double velocity = desiredState.
-        // Logger.recordOutput(SWERVE.LOG_PATH+"TargetVelocity", )
+        Logger.recordOutput(LOG_PATH + "TargetPoseX", desiredState.poseMeters.getX());
+        Logger.recordOutput(LOG_PATH + "TargetPoseY", desiredState.poseMeters.getY());
+        Logger.recordOutput(LOG_PATH + "TargetPoseRot", desiredState.poseMeters.getRotation().getRadians());
 
+        //robot-relative ChassisSpeeds object 
         ChassisSpeeds driveSpeeds = drivePID.calculate(
             swerve.getCurrentOdometryPosition(),
             desiredState,
             desiredState.poseMeters.getRotation()
         );
 
-        // Override the rotation speed (NOT position target) if useAlternativeRotation
-        // returns true.
-        if(useAlternateRotation.getAsBoolean()){
-            driveSpeeds.omegaRadiansPerSecond = alternateRotation.get().getRadians();
-        }
-
-        // Same, except overriding translation only
-        if(useAlternateTranslation.getAsBoolean()){
-            driveSpeeds.vxMetersPerSecond = alternateTranslation.get().vxMetersPerSecond;
-            driveSpeeds.vyMetersPerSecond = alternateTranslation.get().vyMetersPerSecond;
-        }
-        // if(useVision){
-        //     OdometryUpdates.setVision(scoreCoral);
-        // }
+        //negate y to ensure correct path following
+        driveSpeeds = new ChassisSpeeds(
+            driveSpeeds.vxMetersPerSecond,
+            -driveSpeeds.vyMetersPerSecond,
+            driveSpeeds.omegaRadiansPerSecond
+        );
 
         swerve.drive(driveSpeeds);
     }
-    public void end(boolean interrupted){
-        //LEDs.setProgressBar(-1);
-        Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", "None");
 
-        if(!rollAtPathEnd){
-            swerve.drive(new ChassisSpeeds());
-        }
+    public void end(boolean interrupted){
+        Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", "None");
     }
 
+    /**
+     * Returns whether the FollowPathCommand is finished or not
+     * 
+     * @return if finished
+     */
     public boolean isFinished(){
         return ( // Only return true if enough time has elapsed, we're at the target location, and we're not using alternate movement.
             (
                 trajectory.isEmpty() || (
                 timer.hasElapsed(trajectory.get().getTotalTimeSeconds())
-                && (
-                    (drivePID.atReference() || !Robot.isReal())
-                    // secondsPastPathEndTolerated != -1 || (
-                    //     (drivePID.atReference() || !Robot.isReal())
-                    //     && !useAlternateRotation.getAsBoolean()
-                    //     && !useAlternateTranslation.getAsBoolean()
-                  // )
-                )
+                && (drivePID.atReference() || !Robot.isReal())
             ))
         );
     }
@@ -249,9 +194,9 @@ public class FollowPathCommand extends LargeCommand{
             state.velocityMetersPerSecond,
             state.accelerationMetersPerSecondSq,
             new Pose2d(
-                MEASUREMENTS.FIELD_LENGTH_METERS - state.poseMeters.getX(),
+                MEASUREMENTS.FIELD_X_METERS - state.poseMeters.getX(),
                 state.poseMeters.getY(),
-                Rotation2d.fromRadians(Math.PI).minus(state.poseMeters.getRotation())
+                Rotation2d.fromRadians(Math.PI - state.poseMeters.getRotation().getRadians())
             ),
             -state.curvatureRadPerMeter
         );
