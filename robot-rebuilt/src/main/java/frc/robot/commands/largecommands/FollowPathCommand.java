@@ -33,9 +33,6 @@ public class FollowPathCommand extends LargeCommand {
     private PIDController xController;
     private PIDController yController;
 
-    private double secondsPastPathEndTolerated = -1;
-    private boolean rollAtPathEnd = false;
-
     //check if red alliance when calling FollowPathCommand: true when red, false when blue
     private boolean isRedAlliance = false; 
 
@@ -91,32 +88,20 @@ public class FollowPathCommand extends LargeCommand {
         this.drivePID = new HolonomicDriveController(xController, yController, turnController);
         this.drivePID.setTolerance(
             new Pose2d(
-                new Translation2d(xController.getPositionTolerance(), yController.getPositionTolerance()),
+                new Translation2d(xController.getErrorTolerance(), yController.getErrorTolerance()),
                 new Rotation2d(turnController.getPositionTolerance())
             )
         );
     }
 
     /**
-     * Command to follow a trajectory
-     * 
-     * @param trajectory the trajectory to follow 
-     * @param secondsPastPathEndTolerated number of seconds 
-     * @param rollAtPathEnd (?)
-     */
-    // public FollowPathCommand(Optional<Trajectory> trajectory, double secondsPastPathEndTolerated, boolean rollAtPathEnd){
-    //     this(trajectory);
-    //     this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
-    //     this.rollAtPathEnd = rollAtPathEnd;
-    // }
-
-    /**
-     * Intiialized the FollowPathCommand with the provided trajectory
+     * Intiialize the FollowPathCommand with the provided trajectory in th constructor
      */
     public void initialize(){
         isRedAlliance = (DriverStation.getAlliance().isPresent() 
                     && DriverStation.getAlliance().get() == Alliance.Red);
 
+        //TODO: make this show the name of the choreo trajectory that its running
         Logger.recordOutput(LOG_PATH + "PathName", this.getName());
 
         if (trajectory.isEmpty()) {
@@ -127,14 +112,14 @@ public class FollowPathCommand extends LargeCommand {
         timer.start();
 
         State initial = trajectory.get().sample(0.0);
-        Pose2d startPose = isRedAlliance ? flip(initial).poseMeters : initial.poseMeters;
+        State startPose = isRedAlliance ? flip(initial) : initial;
 
-        swerve.setKnownOdometryPose(startPose);
-        Logger.recordOutput(LOG_PATH + "intialX", startPose.getX());
-        Logger.recordOutput(LOG_PATH + "initialY", startPose.getY());
-        Logger.recordOutput(LOG_PATH + "intialRot", startPose.getRotation().getRadians());
+        swerve.setKnownOdometryPose(startPose.poseMeters);
+        Logger.recordOutput(LOG_PATH + "intialX", startPose.poseMeters.getX());
+        Logger.recordOutput(LOG_PATH + "initialY", startPose.poseMeters.getY());
+        Logger.recordOutput(LOG_PATH + "intialRot", startPose.poseMeters.getRotation().getRadians());
 
-        //will retain values from previous FollowPathCommand if not reset here and cause weird curving loopy paths
+        //reset so that values aren't reused
         xController.reset();
         yController.reset();
         turnController.reset(swerve.getCurrentOdometryPosition().getRotation().getRadians());
@@ -151,7 +136,7 @@ public class FollowPathCommand extends LargeCommand {
         if(trajectory.isEmpty())
             return;
 
-        // Instances of State contain information about pose, velocity, accelleration, curvature, etc.
+        //Instances of State contain information about pose, velocity, accelleration, curvature, etc.
         State desiredState = trajectory.get().sample(timer.get());
 
         if(isRedAlliance)
@@ -159,10 +144,7 @@ public class FollowPathCommand extends LargeCommand {
 
         Logger.recordOutput(LOG_PATH + "TargetPoseX", desiredState.poseMeters.getX());
         Logger.recordOutput(LOG_PATH + "TargetPoseY", desiredState.poseMeters.getY());
-        Logger.recordOutput(LOG_PATH + "TargetPoseRot", desiredState.poseMeters.getRotation().getDegrees());
-        // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceX", desiredState.poseMeters.getX() - swerve.getCurrentOdometryPosition().getX());
-        // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceY", desiredState.poseMeters.getY() - swerve.getCurrentOdometryPosition().getY());
-        // Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceRot", desiredState.poseMeters.getRotation().minus(swerve.getCurrentOdometryPosition().getRotation()).getDegrees());
+        Logger.recordOutput(LOG_PATH + "TargetPoseRot", desiredState.poseMeters.getRotation().getRadians());
 
         //robot-relative ChassisSpeeds object 
         ChassisSpeeds driveSpeeds = drivePID.calculate(
@@ -171,15 +153,18 @@ public class FollowPathCommand extends LargeCommand {
             desiredState.poseMeters.getRotation()
         );
 
+        //negate y to ensure correct path following
+        driveSpeeds = new ChassisSpeeds(
+            driveSpeeds.vxMetersPerSecond,
+            -driveSpeeds.vyMetersPerSecond,
+            driveSpeeds.omegaRadiansPerSecond
+        );
+
         swerve.drive(driveSpeeds);
     }
 
     public void end(boolean interrupted){
         Logger.recordOutput("CustomLogs/CurrentPathCommand/Name", "None");
-
-        if(!rollAtPathEnd){
-            swerve.drive(new ChassisSpeeds());
-        }
     }
 
     /**
@@ -192,9 +177,7 @@ public class FollowPathCommand extends LargeCommand {
             (
                 trajectory.isEmpty() || (
                 timer.hasElapsed(trajectory.get().getTotalTimeSeconds())
-                && (
-                    (drivePID.atReference() || !Robot.isReal())
-                )
+                && (drivePID.atReference() || !Robot.isReal())
             ))
         );
     }
@@ -210,15 +193,12 @@ public class FollowPathCommand extends LargeCommand {
             state.timeSeconds,
             state.velocityMetersPerSecond,
             state.accelerationMetersPerSecondSq,
-
             new Pose2d(
                 MEASUREMENTS.FIELD_X_METERS - state.poseMeters.getX(),
                 state.poseMeters.getY(),
-                Rotation2d.fromRadians(Math.PI).minus(state.poseMeters.getRotation())
+                Rotation2d.fromRadians(Math.PI - state.poseMeters.getRotation().getRadians())
             ),
-
             -state.curvatureRadPerMeter
         );
     }
-
 }

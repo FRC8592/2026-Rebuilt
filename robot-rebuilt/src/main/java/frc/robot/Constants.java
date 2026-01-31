@@ -94,23 +94,23 @@ public final class SWERVE {
 
     public static final double JOYSTICK_EXPONENT = 1.75;
 
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 2.0; 
+    public static final double PATH_FOLLOW_TRANSLATE_kP = 1.5; 
     public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.0;
+    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.15;
 
     //TODO: Double check that these still work
-    public static final double PATH_FOLLOW_ROTATE_kP = 4.0;
+    public static final double PATH_FOLLOW_ROTATE_kP = 2.0;
     public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
     public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
 
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 2 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 2 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 1.5 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 1.5 * Math.PI;
 
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
+    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.03; // Meters
+    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.05;
 
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
+    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.04; // Radians
+    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.02;
 
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
