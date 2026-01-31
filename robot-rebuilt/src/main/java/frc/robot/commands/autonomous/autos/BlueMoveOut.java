@@ -1,4 +1,4 @@
-package frc.robot.commands.autonomous.autos.BunnyBotAutos;
+package frc.robot.commands.autonomous.autos;
 
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.largecommands.FollowPathCommand;

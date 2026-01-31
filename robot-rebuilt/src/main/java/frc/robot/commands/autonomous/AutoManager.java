@@ -36,7 +36,6 @@ public final class AutoManager {
     public static void prepare(){
         SmartDashboard.putNumber("Auto Delay", 0);
         autoCommands = new ArrayList<>();
-        // autoCommands.add(new RedMoveOut());
         autoCommands.add(new BlueMoveOut());
 
         autoChooser = new SendableChooser<>();
