@@ -8,7 +8,7 @@ import frc.robot.commands.largecommands.FollowPathCommand;
 public class Testing extends AutoCommand {
     public Testing(){
         super(
-            new FollowPathCommand(getChoreoTrajectory("Testing"), Suppliers.isRedAlliance, "")
+            new FollowPathCommand(getChoreoTrajectory("Testing"), Suppliers.isRedAlliance, "",0.1)
 
 
 

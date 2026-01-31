@@ -16,9 +16,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.MEASUREMENTS;
+import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
-import frc.robot.Constants.*;
-import frc.robot.subsystems.swerve.Swerve;
 
 public class FollowPathCommand extends LargeCommand{
     // Pathing variables
@@ -44,6 +44,8 @@ public class FollowPathCommand extends LargeCommand{
     private boolean rollAtPathEnd = false;
 
     private boolean useVision = false;
+    private final double speedScale;
+    private double startTime;
 
     /**
      * Command to follow a trajectory
@@ -52,12 +54,15 @@ public class FollowPathCommand extends LargeCommand{
      * @param flip lambda that returns whether to mirror the path to the
      * red side of the field.
      */
-    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName){
-        super(swerve);
+   public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double speedScale){
+    super(swerve);
 
-        this.trajectory = trajectory;
+    this.trajectory = trajectory;
+    this.setName(commandName);
+    this.flip = flip;
 
-        this.setName(commandName);
+    this.speedScale = speedScale;
+
 
         this.xController = new PIDController(
             SWERVE.PATH_FOLLOW_TRANSLATE_kP,
@@ -102,8 +107,10 @@ public class FollowPathCommand extends LargeCommand{
             )
         );
 
-        this.flip = flip;
     }
+    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName){
+    this(trajectory, flip, commandName, 1.0);
+}
 
     /**
      * Command to follow a path with the option to deviate from it as configured by the parameters
@@ -129,19 +136,19 @@ public class FollowPathCommand extends LargeCommand{
      * {@code ChassisSpeeds} is ignored.
      */
     public FollowPathCommand(
-        Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName,
+        Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double speedScale,
         BooleanSupplier useAlternateRotation, Supplier<Rotation2d> rotationSupplier,
         BooleanSupplier useAlternateTranslation, Supplier<ChassisSpeeds> translationSupplier
     ){
-        this(trajectory, flip, commandName);
+        this(trajectory, flip, commandName, speedScale);
         this.useAlternateRotation = useAlternateRotation;
         this.alternateRotation = rotationSupplier;
         this.useAlternateTranslation = useAlternateTranslation;
         this.alternateTranslation = translationSupplier;
     }
 
-    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double secondsPastPathEndTolerated, boolean rollAtPathEnd, boolean useVision){
-        this(trajectory, flip, commandName);
+    public FollowPathCommand(Optional<Trajectory> trajectory, BooleanSupplier flip, String commandName, double speedScale, double secondsPastPathEndTolerated, boolean rollAtPathEnd, boolean useVision){
+        this(trajectory, flip, commandName, speedScale);
         this.secondsPastPathEndTolerated = secondsPastPathEndTolerated;
         this.rollAtPathEnd = rollAtPathEnd;
     }
@@ -166,6 +173,7 @@ public class FollowPathCommand extends LargeCommand{
             }
         }
         }
+        startTime = Timer.getFPGATimestamp();
     }
     public void execute(){
 
@@ -173,14 +181,23 @@ public class FollowPathCommand extends LargeCommand{
             return;
         }
         // Instances of State contain information about pose, velocity, accelleration, curvature, etc.
-        State desiredState = trajectory.get().sample(timer.get());
-        //LEDs.setProgressBar(timer.get()/trajectory.getTotalTimeSeconds());
+double t = (Timer.getFPGATimestamp() - startTime) * speedScale;
+State desiredState = trajectory.get().sample(t);        //LEDs.setProgressBar(timer.get()/trajectory.getTotalTimeSeconds());
 
 
         if(flip.getAsBoolean()){
             desiredState = flip(desiredState);
         }
+double v = desiredState.velocityMetersPerSecond * speedScale;
+double a = desiredState.accelerationMetersPerSecondSq * speedScale * speedScale;
 
+desiredState = new State(
+    desiredState.timeSeconds,  // timeSeconds doesn't matter much here
+    v,
+    a,
+    desiredState.poseMeters,
+    desiredState.curvatureRadPerMeter
+);
         Logger.recordOutput(SWERVE.LOG_PATH+"TargetPose", desiredState.poseMeters);
         Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceX", desiredState.poseMeters.getX()-swerve.getCurrentOdometryPosition().getX());
         Logger.recordOutput(SWERVE.LOG_PATH+"TargetActualDifferenceY", desiredState.poseMeters.getY()-swerve.getCurrentOdometryPosition().getY());
@@ -205,6 +222,7 @@ public class FollowPathCommand extends LargeCommand{
             driveSpeeds.vxMetersPerSecond = alternateTranslation.get().vxMetersPerSecond;
             driveSpeeds.vyMetersPerSecond = alternateTranslation.get().vyMetersPerSecond;
         }
+
         // if(useVision){
         //     OdometryUpdates.setVision(scoreCoral);
         // }
@@ -224,8 +242,7 @@ public class FollowPathCommand extends LargeCommand{
         return ( // Only return true if enough time has elapsed, we're at the target location, and we're not using alternate movement.
             (
                 trajectory.isEmpty() || (
-                timer.hasElapsed(trajectory.get().getTotalTimeSeconds())
-                && (
+((Timer.getFPGATimestamp() - startTime) * speedScale) >= trajectory.get().getTotalTimeSeconds()                && (
                     (drivePID.atReference() || !Robot.isReal())
                     // secondsPastPathEndTolerated != -1 || (
                     //     (drivePID.atReference() || !Robot.isReal())
