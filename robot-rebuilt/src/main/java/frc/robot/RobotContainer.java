@@ -5,14 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
-import frc.robot.commands.autonomous.AutoCommand;
-import frc.robot.commands.autonomous.AutoManager;
-import frc.robot.commands.largecommands.LargeCommand;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,24 +40,16 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    swerve = new Swerve(drivetrain);
-    shooter = new Shooter();
-    intake = new Intake();
-    indexer = new Indexer();
+  public RobotContainer(Swerve swerve, Shooter shooter, Intake intake, Indexer indexer) {
+    this.swerve = swerve;
+    this.shooter = shooter;
+    this.intake = intake;
+    this.indexer = indexer;
     
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-    passSubsystems();
-
-    AutoManager.prepare();
   }
-
-    private void passSubsystems(){
-        LargeCommand.addSubsystems(swerve);
-        AutoCommand.addSubsystems(swerve);
-    }
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -72,8 +61,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
     runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
     runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
@@ -90,15 +77,6 @@ public class RobotContainer {
         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-        return AutoManager.getAutonomousCommand();
-  }
 
   private void setDefaultCommand(SubsystemBase subsystem, Command command) {
         if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {

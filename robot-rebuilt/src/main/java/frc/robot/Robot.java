@@ -23,34 +23,47 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer; 
+
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
+  private final RobotContainer robotContainer;
+  private final AutoContainer autoContainer;
 
   /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+    private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
         .withTimestampReplay()
         .withJoystickReplay();
 
 
   public static Field2d FIELD = new Field2d();
 
+  //subsystems below
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final Swerve swerve;
+  private final Shooter shooter;
+  private final Intake intake;
+  private final Indexer indexer;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-
+    //logging for the USB in the rio, as well as adding advantagescope logging capabilities. 
     CanBridge.runTCP();
-    Logger.recordMetadata("Game", "BunnyBots");
+    Logger.recordMetadata("Game", "Rebuilt");
     Logger.recordMetadata("Year", "2026");
     Logger.recordMetadata("Team", "8592");
 
@@ -80,7 +93,16 @@ public class Robot extends LoggedRobot {
       Logger.start();
           
       SmartDashboard.putData(FIELD);
-      m_robotContainer = new RobotContainer();
+
+    //instantiate subsystems
+    swerve = new Swerve(drivetrain);
+    shooter = new Shooter();
+    intake = new Intake();
+    indexer = new Indexer();
+
+    //PASS SUBYSTEMS HERE
+    robotContainer = new RobotContainer(swerve, shooter, intake, indexer);
+    autoContainer = new AutoContainer(swerve, shooter, intake, indexer);
   }
 
   /**
@@ -96,7 +118,7 @@ public class Robot extends LoggedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    m_timeAndJoystickReplay.update();
+    timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
     
   }
@@ -105,25 +127,25 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {}
 
-    @Override
-    public void disabledExit() {}
+  @Override
+  public void disabledExit() {}
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.shooter.updatePID();
-    m_robotContainer.indexer.updatePID();
-    m_robotContainer.intake.updatePID();
+    robotContainer.shooter.updatePID();
+    robotContainer.indexer.updatePID();
+    robotContainer.intake.updatePID();
 
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    autonomousCommand = autoContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(autonomousCommand);
     }
   }
 
@@ -140,9 +162,8 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().cancel(m_autonomousCommand);
-     //   m_autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(autonomousCommand);
     }
   }
 

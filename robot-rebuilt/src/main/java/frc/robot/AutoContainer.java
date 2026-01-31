@@ -1,8 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.commands.autonomous;
+package frc.robot;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -13,17 +9,40 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Robot;
+
+import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.autonomous.autos.BlueMoveOut;
+import frc.robot.commands.largecommands.LargeCommand;
+import frc.robot.commands.proxies.MultiComposableCommand;
 import frc.robot.commands.proxies.*;
 
-/**
- * General class for autonomous management (loading autos, sending the chooser, getting the
- * user-selected auto command, etc).
- */
-public final class AutoManager {
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.Robot;
+
+
+public class AutoContainer {
     private static SendableChooser<AutoCommand> autoChooser;
     private static ArrayList<AutoCommand> autoCommands = new ArrayList<>();
+    
+    private final Swerve swerve;
+    public final Shooter shooter;
+    public final Intake intake;
+    public final Indexer indexer;
+
+
+    public AutoContainer(Swerve swerve, Shooter shooter, Intake intake, Indexer indexer){
+        this.swerve = swerve;
+        this.shooter = shooter;
+        this.intake = intake;
+        this.indexer = indexer;
+
+        LargeCommand.addSubsystems(swerve);
+        AutoCommand.addSubsystems(swerve);
+        prepare();
+    }
 
     /**
      * Load all autos and broadcast the chooser.
@@ -54,7 +73,7 @@ public final class AutoManager {
      *
      * @return the command
      */
-    public static Command getAutonomousCommand(){
+    public Command getAutonomousCommand(){
         AutoCommand autoCommand = autoChooser.getSelected();
         return getAutonomousInitCommand().andThen(
             // If we don't keep this command from registering as composed,
@@ -69,11 +88,17 @@ public final class AutoManager {
      *
      * @return the command
      */
-    private static Command getAutonomousInitCommand(){
-        return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
+    private Command getAutonomousInitCommand(){
+        
     }
 
-    private AutoManager() {
-        throw new UnsupportedOperationException("This is a utility class!");
-    }
+    /**
+    * Use this to pass the autonomous command to the main {@link Robot} class.
+    *
+    * @return the command to run in autonomous
+    */
+    // public Command getAutonomousCommand() {
+    //     return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
+    // }
+        
 }
