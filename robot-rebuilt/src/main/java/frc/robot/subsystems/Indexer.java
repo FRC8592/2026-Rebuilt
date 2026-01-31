@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.estimator.SteadyStateKalmanFilter;
+//import edu.wpi.first.math.estimator.SteadyStateKalmanFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,17 +8,31 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.lang.management.MemoryNotificationInfo;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
+//import com.revrobotics.spark.SparkBase.ResetMode;;
+import com.revrobotics.spark.config.SparkParameters;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import frc.robot.Constants.*;
 import frc.robot.helpers.PIDProfile;
 import frc.robot.helpers.motor.NewtonMotor;
 import frc.robot.helpers.motor.spark.SparkFlexMotor;
 
-
 public class Indexer extends SubsystemBase{
     private SparkFlexMotor spinnerMotor;
     private SparkFlexMotor outputMotor;
-    private PIDProfile MotorPID;
+    private PIDProfile MotorPID; 
+
+    private SparkFlexConfig spinnerConfig;
+    private SparkFlexConfig outputConfig;
 
     /**
      * Constructor for the Indexer subsystem
@@ -26,25 +40,57 @@ public class Indexer extends SubsystemBase{
      * Instatiate the motors with initial PID values from the CONSTANTS class
      */
     public Indexer(){
-        spinnerMotor = new SparkFlexMotor(INDEXER.SPINNER_CAN_ID, false);
-        outputMotor = new SparkFlexMotor(INDEXER.OUTPUT_CAN_ID, false);
 
-        MotorPID = new PIDProfile();
-        MotorPID.setSlot(0);
-        MotorPID.setPID(INDEXER.SPINNER_P, INDEXER.SPINNER_I,INDEXER.SPINNER_D);
-        spinnerMotor.withGains(MotorPID);
+        /*
+         * Create the Spinner motor and instatiate the following features
+         *  * Reset to safe factory configuration
+         *  * Store persistant configuration (Flash)
+         *  * Place in COAST mode (Can coast to a stop)
+         *  * Set current limits
+         *  * Set VELOCITY PID parameters
+         */
+        spinnerMotor = new SparkFlexMotor(INDEXER.SPINNER_CAN_ID, false);
+        spinnerConfig = new SparkFlexConfig();
+        spinnerConfig.idleMode(IdleMode.kCoast);
+        // TODO: Set appropriate current limits
+        spinnerConfig.smartCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT_STALL, INDEXER.SPINNER_CURRENT_LIMIT_FREE);
+        // TODO: Set PID gains
+        spinnerConfig.closedLoop.pid(INDEXER.SPINNER_P, INDEXER.SPINNER_I, INDEXER.SPINNER_D);
+        spinnerMotor.configure(spinnerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        /*
+         * Create the Output motor and instatiate the following features
+         *  * Reset to safe factory configuration
+         *  * Store persistant configuration (Flash)
+         *  * Place in BRAKE mode (stop feeding fuel to the shooter quickly)
+         *  * Set current limits
+         *  * Set VELOCITY PID parameters
+         */
+        outputMotor = new SparkFlexMotor(INDEXER.OUTPUT_CAN_ID, false);
+        outputConfig = new SparkFlexConfig();
+        outputConfig.idleMode(IdleMode.kBrake);
+        // TODO: Set appropriate current limits
+        outputConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL, INDEXER.OUTPUT_CURRENT_LIMIT_FREE);
+        // TODO: Tune PID gains.  Temporarily set to full output
+        outputConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
+        outputMotor.configure(outputConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);   
+
+        // MotorPID = new PIDProfile();
+        // MotorPID.setSlot(0);
+        // MotorPID.setPID(INDEXER.SPINNER_P, INDEXER.SPINNER_I,INDEXER.SPINNER_D);
+        // spinnerMotor.withGains(MotorPID);
         
-        MotorPID.setSlot(0);
-        MotorPID.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I,INDEXER.OUTPUT_D);
-        outputMotor.withGains(MotorPID);
+        // MotorPID.setSlot(0);
+        // MotorPID.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I,INDEXER.OUTPUT_D);
+        // outputMotor.withGains(MotorPID);
   
         // TODO: set idle modes
         //spinnerMotor.setIdleMode(IdleMode.kCoast);
         //outputMotor.setIdleMode(IdleMode.kCoast);
 
         // TODO: Determine an appropriate current limit for the indexer motors
-        spinnerMotor.setCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT);
-        outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        // spinnerMotor.setCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT);
+        // outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPINNER_P);

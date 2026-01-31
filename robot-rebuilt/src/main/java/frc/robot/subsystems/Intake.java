@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase{
      */
     public void runAtSpeed() {
         double RPM = SmartDashboard.getNumber("Vi_INTAKE", INTAKE.INTAKE_VI); // TODO: Remove this before competition
-        IntakeMotor.setPercentOutput(0.8); // TODO: Temporary fix to prevent oscillation.  Tune PID and run in velocity mode.
+        IntakeMotor.setPercentOutput(1.0); // TODO: Temporary fix to prevent oscillation.  Tune PID and run in velocity mode.
         // TODO: Tune PID for the intake to prevent oscillation.  
         // IntakeMotor.setVelocity(RPM);
     }

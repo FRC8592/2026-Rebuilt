@@ -161,8 +161,10 @@ public static class INTAKE{
     public static final int OUTPUT_CAN_ID = 35;
 
     // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
+    public static final int SPINNER_CURRENT_LIMIT_STALL = 80;
+    public static final int SPINNER_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double SPINNER_P = 0.00045;
@@ -179,6 +181,6 @@ public static class INTAKE{
 }
 
   public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoringgit p/";
   }
 }
