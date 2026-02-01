@@ -5,10 +5,10 @@ package frc.robot.commands.autonomous.autos;
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.largecommands.FollowPathCommand;
 
-public class MoveCollect extends AutoCommand {
-    public MoveCollect(){
+public class MoveCollectReturn extends AutoCommand {
+    public MoveCollectReturn(){
         super(
-            new FollowPathCommand(getChoreoTrajectory("MoveCollect"))
+            new FollowPathCommand(getChoreoTrajectory("MoveCollectReturn"))
          );
     }
 }
