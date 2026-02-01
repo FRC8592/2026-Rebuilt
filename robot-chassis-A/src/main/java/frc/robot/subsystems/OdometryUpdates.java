@@ -118,7 +118,8 @@ public class OdometryUpdates extends SubsystemBase {
                 timeStamp = robotPose.get().timestampSeconds;
 
                 if ((vision.getTargets().size() >= 1)){
-                    Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/DistanceMeters", vision.getTargets().get(0).bestCameraToTarget.getX());
+                    // TODO: sometimes throws indexoutofbounds exception error
+                    // Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/DistanceMeters", vision.getTargets().get(0).bestCameraToTarget.getX());
                     Logger.recordOutput(SHARED.LOG_FOLDER+"/Vision/VisionPose", robotPosition);
                 }
 
