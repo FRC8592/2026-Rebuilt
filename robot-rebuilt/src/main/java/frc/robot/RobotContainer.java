@@ -15,6 +15,9 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // Replace with CommandPS4Controller or CommandJoystick if needed
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
 
   // robot subsystems
@@ -48,6 +50,13 @@ public class RobotContainer {
     shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
+
+    //Register commands that are going to be used in auto here BEFORE initializing autos
+    //i.e. NamedCommands.registerCommand("commandName", exampleSubsystem.exampleCommand());
+    NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
+    NamedCommands.registerCommand("stopIntake", intake.stopCommand());
+
+    // new EventTrigger(null)
     
     // Configure the trigger bindings
     configureBindings();

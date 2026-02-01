@@ -114,7 +114,7 @@ public class FollowPathCommand extends LargeCommand {
         State initial = trajectory.get().sample(0.0);
         State startPose = isRedAlliance ? flip(initial) : initial;
 
-        swerve.setKnownOdometryPose(startPose.poseMeters);
+        swerve.resetPose(startPose.poseMeters);
         Logger.recordOutput(LOG_PATH + "intialX", startPose.poseMeters.getX());
         Logger.recordOutput(LOG_PATH + "initialY", startPose.poseMeters.getY());
         Logger.recordOutput(LOG_PATH + "intialRot", startPose.poseMeters.getRotation().getRadians());
@@ -122,7 +122,7 @@ public class FollowPathCommand extends LargeCommand {
         //reset so that values aren't reused
         xController.reset();
         yController.reset();
-        turnController.reset(swerve.getCurrentOdometryPosition().getRotation().getRadians());
+        turnController.reset(swerve.getPose().getRotation().getRadians());
 
         Logger.recordOutput(LOG_PATH + "flipForRed", isRedAlliance);
         
@@ -148,7 +148,7 @@ public class FollowPathCommand extends LargeCommand {
 
         //robot-relative ChassisSpeeds object 
         ChassisSpeeds driveSpeeds = drivePID.calculate(
-            swerve.getCurrentOdometryPosition(),
+            swerve.getPose(),
             desiredState,
             desiredState.poseMeters.getRotation()
         );

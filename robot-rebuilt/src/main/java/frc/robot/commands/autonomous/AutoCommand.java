@@ -121,18 +121,6 @@ public class AutoCommand extends WrapperCommand{
     }
 
     /**
-     * Set the start pose of this auto to the first pose of a Choreo path.
-     *
-     * @param name the name of the Choreo path to get the start pose from
-     */
-    protected void setStartStateFromChoreoTrajectory(String name){
-        if(!cachedChoreoTrajectories.containsKey(name)){
-            getChoreoTrajectory(name); // Adds the path to the cached trajectory map
-        }
-        this.startPose = cachedChoreoTrajectories.get(name).getInitialPose();
-    }
-
-    /**
      * Convert a PathPlanner path into a WPILib trajectory
      *
      * @param path the PathPlannerPath to convert

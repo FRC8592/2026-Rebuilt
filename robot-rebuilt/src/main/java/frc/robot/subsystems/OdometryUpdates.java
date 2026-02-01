@@ -124,7 +124,7 @@ public class OdometryUpdates extends SubsystemBase {
                 // Set the initial pose for the robot before the competition starts.  It must be able to see an AprilTag
                 if (DriverStation.isDisabled() && !robotPosition.equals(new Pose2d())) {
                     initialPose = robotPoseAverager(robotPose);
-                    swerve.setKnownOdometryPose(initialPose);
+                    swerve.resetPose(initialPose);
                 }
 
                 if (!DriverStation.isDisabled() && !robotPosition.equals(new Pose2d())) {
@@ -147,7 +147,7 @@ public class OdometryUpdates extends SubsystemBase {
         
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/TagsInView1", vision1.getTargets().size());
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/VisionPose1", robotPosition);
-            Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/OdometryPose", swerve.getCurrentOdometryPosition());
+            Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/OdometryPose", swerve.getPose());
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/AmbiguityRatio1", ambiguity);
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/InitialPose", initialPose);
         }
