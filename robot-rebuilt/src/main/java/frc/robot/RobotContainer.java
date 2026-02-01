@@ -5,31 +5,25 @@
 
 package frc.robot;
 
-import java.util.Set;
-
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.Constants.CONTROLLERS;
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.commands.largecommands.LargeCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Feeder;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-// import frc.robot.subsystems.vision.Vision;
-import frc.robot.Constants.*;
-// import frc.robot.commands.autonomous.AutoCommand;
-// import frc.robot.commands.autonomous.AutoManager;
-// import frc.robot.commands.largecommands.LargeCommand;
-import frc.robot.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

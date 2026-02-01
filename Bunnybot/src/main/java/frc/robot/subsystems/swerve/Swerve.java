@@ -32,7 +32,7 @@ public class Swerve extends SubsystemBase {
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
             .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
