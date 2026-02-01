@@ -34,9 +34,9 @@ public class RobotContainer {
   // robot subsystems
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  public final Shooter shooter;
-  public final Intake intake;
-  public final Indexer indexer;
+  //public final Shooter shooter;
+  //public final Intake intake;
+  //public final Indexer indexer;
 
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
@@ -45,9 +45,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve = new Swerve(drivetrain);
-    shooter = new Shooter();
-    intake = new Intake();
-    indexer = new Indexer();
+    // shooter = new Shooter();
+    // intake = new Intake();
+    // indexer = new Indexer();
     
     // Configure the trigger bindings
     configureBindings();
@@ -74,8 +74,9 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
+    //runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
+    //
+    //runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
   }
