@@ -25,6 +25,7 @@ public abstract class TalonFXMotor extends NewtonMotor {
     private VelocityVoltage velocityOutput;
     private DutyCycleOut percentOutput;
     private MotionMagicVoltage motionMagicOutput;
+    private MotionMagicVelocityVoltage motionMagicVelocityOutput;
 
     protected TalonFXMotor(int motorID, MotorConstants constants) {
         this(motorID, false, constants);
@@ -150,6 +151,7 @@ public abstract class TalonFXMotor extends NewtonMotor {
             );
         }
         this.motor.setControl(velocityOutput.withSlot(pidSlot).withVelocity(desiredRPS));
+        //this.motor.setControl(motionMagicVelocityOutput.withSlot(pidSlot).withVelocity(desiredRPS));
     }
 
     @Override

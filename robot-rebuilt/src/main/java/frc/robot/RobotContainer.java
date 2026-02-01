@@ -63,14 +63,19 @@ public class RobotContainer {
 //     private final Vision vision;
         // public final Indexer indexer;
         // public final Intake intake;
-//     private final Launcher launcher;
+//     private final Launcher launcher;x
 //     private final Scoring scoring;
-        // public final Shooter shooter;
+        public final Shooter shooter;
         public final Turret turret;
+        public final Feeder feeder;
 
 //     // robot button triggers
         private final Trigger TESTING_TURRET = driverController.rightBumper();
         private final Trigger TESTING_TURRET_BACK = driverController.leftBumper();
+        private final Trigger TESTING_SHOOTER = driverController.x();
+        private final Trigger STOP_SHOOTER = driverController.a();
+        private final Trigger RESET_POS = driverController.back();
+        private final Trigger TESTING_FEEDER = driverController.b();
 //     private final Trigger RESET_HEADING = driverController.back();
 //     // private final Trigger SLOW_MODE = driverController.leftBumper();
 //     // TODO: map these to the operator controller
@@ -102,8 +107,9 @@ public class RobotContainer {
         // indexer = new Indexer();
         // intake = new Intake();
         // scoring = new Scoring(intake, indexer, launcher);
-        // shooter = new Shooter();
+        shooter = new Shooter();
         turret = new Turret();
+        feeder = new Feeder();
 
         configureBindings();
 //         configureDefaults();
@@ -150,8 +156,11 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_TURRET.onTrue(turret.TurrettoPosCommand(1.5)).onFalse(turret.stopTurretCommand());
-        TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1.5)).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET.onTrue(turret.TurrettoPosCommand(1)).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
+        TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
+        RESET_POS.onTrue(turret.resetPosCommand());
+        TESTING_FEEDER.onTrue(feeder.runAtSpeedCommand()).onFalse(feeder.stopCommand());
 
         // LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
         //         .onFalse(launcher.stopLauncherCommand());

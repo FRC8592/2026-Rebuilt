@@ -130,8 +130,8 @@ public class SUPPLIERS{
 
 public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
-    public static final int RIGHT_SHOOTER_MOTOR = 38;
-    public static final int LEFT_SHOOTER_MOTOR = 36;
+    public static final int RIGHT_SHOOTER_MOTOR = 10;
+    public static final int LEFT_SHOOTER_MOTOR = 11;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double MOTOR_P = 0.01;
     public static final double MOTOR_I = 0;
@@ -148,6 +148,10 @@ public final class TURRET{
     public static final double TURRET_P = 2;
     public static final double TURRET_I = 0;
     public static final double TURRET_D = 0;
+    public static final double TURRET_TG = 96;
+    public static final double TURRET_G1 = 10;
+    public static final double TURRET_G2 = 11;
+    public static final double TURRET_TOTAL = TURRET_G1 * TURRET_G2;
 }
 
 
