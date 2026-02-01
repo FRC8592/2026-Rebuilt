@@ -2,25 +2,28 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.swerve;
-import frc.robot.Constants.*;
-import frc.robot.Robot;
-import frc.robot.helpers.SmoothingFilter;
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import frc.robot.Constants.SWERVE;
+import frc.robot.Robot;
+import frc.robot.helpers.SmoothingFilter;
 
 public class Swerve extends SubsystemBase {
 
@@ -43,6 +46,8 @@ public class Swerve extends SubsystemBase {
 
     private ChassisSpeeds currentSpeeds = new ChassisSpeeds();
 
+    private RobotConfig config = null;
+
     public Swerve(CommandSwerveDrivetrain drivetrain) {
         smoothingFilter = new SmoothingFilter(
             SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
@@ -55,13 +60,15 @@ public class Swerve extends SubsystemBase {
 
         swerve = drivetrain;
 
-        //sample code taken from pathplanner below 
-        RobotConfig config = null;
+        //PathPlanner AutoBuilder configuration below. 
+        //https://pathplanner.dev/pplib-build-an-auto.html
         try {
             config = RobotConfig.fromGUISettings(); 
         } catch (Exception e) {
             // Handle exception as needed
             e.printStackTrace();
+            //end method to prevent NullPointerException
+            return;
         }
 
         // Configure AutoBuilder
@@ -71,7 +78,7 @@ public class Swerve extends SubsystemBase {
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            
+            //TODO: replace pid constants
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(2.0, 0.0, 0.0) // Rotation PID constants
@@ -134,6 +141,7 @@ public class Swerve extends SubsystemBase {
 
         currentSpeeds = speeds;
     }
+
     /**
      * Define whatever direction the robot is facing as forward
      */
@@ -273,6 +281,45 @@ public class Swerve extends SubsystemBase {
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return currentSpeeds;
     }
+
+    //TODO: implement the followPathCommand
+    // public Command followPathCommand(String pathName) {
+    //     try{
+    //         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+    //         return new FollowPathCommand(
+    //                 path,
+    //                 this::getPose, // Robot pose supplier
+    //                 this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //                 this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+                    
+    //                 new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+    //                         new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+    //                         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+    //                 ),
+
+    //                 config, // The robot configuration
+
+    //                 () -> {
+    //                 // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //                 // This will flip the path being followed to the red side of the field.
+    //                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    //                     var alliance = DriverStation.getAlliance();
+    //                     if (alliance.isPresent()) {
+    //                         return alliance.get() == DriverStation.Alliance.Red;
+    //                     }
+
+    //                     return false;
+    //                 },
+                    
+    //                 this // Reference to this subsystem to set requirements
+    //         );
+
+    //     } catch (Exception e) {
+    //         DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+    //         return Commands.none();
+    //     }
+    // }
 
     /**
      * Corrects the robot odometry using vision

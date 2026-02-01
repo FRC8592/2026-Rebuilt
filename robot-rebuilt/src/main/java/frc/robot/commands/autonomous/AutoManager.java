@@ -4,16 +4,16 @@
 
 package frc.robot.commands.autonomous;
 
-import java.util.Set;
+// import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+// import edu.wpi.first.wpilibj2.command.DeferredCommand;
+// import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 
 /**
@@ -65,7 +65,7 @@ public final class AutoManager {
         //     // restarting robot code.
         //     new MultiComposableCommand(autoCommand)
         // );
-        
+
     }
 
     /**
@@ -73,9 +73,9 @@ public final class AutoManager {
      *
      * @return the command
      */
-    private static Command getAutonomousInitCommand(){
-        return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
-    }
+    // private static Command getAutonomousInitCommand(){
+    //     return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
+    // }
 
     private AutoManager() {
         throw new UnsupportedOperationException("This is a utility class!");
