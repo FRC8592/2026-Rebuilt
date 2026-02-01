@@ -179,6 +179,6 @@ public static class INTAKE{
 }
 
   public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoringgit p/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
   }
 }
