@@ -32,8 +32,12 @@ public class Swerve extends SubsystemBase {
     
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+        .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+
+    private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1)
+        .withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
@@ -66,7 +70,7 @@ public class Swerve extends SubsystemBase {
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             
-            (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
@@ -85,7 +89,7 @@ public class Swerve extends SubsystemBase {
                 return false;
                 
             },
-            
+
             this // Reference to this subsystem to set requirements
         );
     }
@@ -115,10 +119,21 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
+    }
+
+    /**
+     * Sends a robot-relative ChassisSpeeds to the drivetrain
+     * @param speeds robot-relative ChassisSpeeds to run the drivetrain at
+     */
+    public void driveRobotRelative(ChassisSpeeds speeds){
+        swerve.setControl(
+            robotCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(speeds.omegaRadiansPerSecond)
+        );
 
         currentSpeeds = speeds;
     }
-
     /**
      * Define whatever direction the robot is facing as forward
      */
