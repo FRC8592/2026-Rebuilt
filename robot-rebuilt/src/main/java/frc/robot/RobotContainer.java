@@ -52,11 +52,8 @@ public class RobotContainer {
     indexer = new Indexer();
 
     //Register commands that are going to be used in auto here BEFORE initializing autos
-    //i.e. NamedCommands.registerCommand("commandName", exampleSubsystem.exampleCommand());
     NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
     NamedCommands.registerCommand("stopIntake", intake.stopCommand());
-
-    // new EventTrigger(null)
     
     // Configure the trigger bindings
     configureBindings();

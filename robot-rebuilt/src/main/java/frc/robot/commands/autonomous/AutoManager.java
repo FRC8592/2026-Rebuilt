@@ -65,6 +65,7 @@ public final class AutoManager {
         //     // restarting robot code.
         //     new MultiComposableCommand(autoCommand)
         // );
+        
     }
 
     /**
