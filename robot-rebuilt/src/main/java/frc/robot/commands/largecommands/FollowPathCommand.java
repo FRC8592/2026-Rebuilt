@@ -160,6 +160,10 @@ public class FollowPathCommand extends LargeCommand {
             driveSpeeds.omegaRadiansPerSecond
         );
 
+        Logger.recordOutput(LOG_PATH + "vxMetersPerSecond", driveSpeeds.vxMetersPerSecond);
+        Logger.recordOutput(LOG_PATH + "vyMetersPerSecond", driveSpeeds.vyMetersPerSecond);
+        Logger.recordOutput(LOG_PATH + "omegaMetersPerSecond", driveSpeeds.omegaRadiansPerSecond);
+
         swerve.drive(driveSpeeds);
     }
 
