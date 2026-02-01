@@ -5,31 +5,37 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.lang.management.MemoryNotificationInfo;
+//import java.lang.management.MemoryNotificationInfo;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.ResetMode;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.revrobotics.PersistMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-//import com.revrobotics.spark.SparkBase.ResetMode;;
 import com.revrobotics.spark.config.SparkParameters;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import frc.robot.Constants.INDEXER;
 
-import frc.robot.Constants.*;
-import frc.robot.helpers.PIDProfile;
-import frc.robot.helpers.motor.NewtonMotor;
-import frc.robot.helpers.motor.spark.SparkFlexMotor;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.FeedbackSensor;
+
+
+//import frc.robot.helpers.PIDProfile;
+//import frc.robot.helpers.motor.NewtonMotor;
+//import frc.robot.helpers.motor.spark.SparkFlexMotor;
 
 public class Indexer extends SubsystemBase{
-    private SparkFlexMotor spinnerMotor;
-    private SparkFlexMotor outputMotor;
-    private PIDProfile MotorPID; 
+    private SparkFlex spinnerMotor;
+    private SparkFlex outputMotor;
+ //   private PIDProfile MotorPID; 
 
     private SparkFlexConfig spinnerConfig;
     private SparkFlexConfig outputConfig;
@@ -39,7 +45,7 @@ public class Indexer extends SubsystemBase{
      * 
      * Instatiate the motors with initial PID values from the CONSTANTS class
      */
-    public Indexer(){
+    public Indexer() {
 
         /*
          * Create the Spinner motor and instatiate the following features
@@ -49,13 +55,11 @@ public class Indexer extends SubsystemBase{
          *  * Set current limits
          *  * Set VELOCITY PID parameters
          */
-        spinnerMotor = new SparkFlexMotor(INDEXER.SPINNER_CAN_ID, false);
+        spinnerMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
         spinnerConfig = new SparkFlexConfig();
         spinnerConfig.idleMode(IdleMode.kCoast);
-        // TODO: Set appropriate current limits
-        spinnerConfig.smartCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT_STALL, INDEXER.SPINNER_CURRENT_LIMIT_FREE);
-        // TODO: Set PID gains
-        spinnerConfig.closedLoop.pid(INDEXER.SPINNER_P, INDEXER.SPINNER_I, INDEXER.SPINNER_D);
+        spinnerConfig.smartCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT_STALL, INDEXER.SPINNER_CURRENT_LIMIT_FREE); // TODO: Set appropriate current limits
+        spinnerConfig.closedLoop.pid(INDEXER.SPINNER_P, INDEXER.SPINNER_I, INDEXER.SPINNER_D);     // TODO: Tune PID gains
         spinnerMotor.configure(spinnerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         /*
@@ -66,13 +70,11 @@ public class Indexer extends SubsystemBase{
          *  * Set current limits
          *  * Set VELOCITY PID parameters
          */
-        outputMotor = new SparkFlexMotor(INDEXER.OUTPUT_CAN_ID, false);
+        outputMotor = new SparkFlex(INDEXER.OUTPUT_CAN_ID, false);
         outputConfig = new SparkFlexConfig();
         outputConfig.idleMode(IdleMode.kBrake);
-        // TODO: Set appropriate current limits
-        outputConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL, INDEXER.OUTPUT_CURRENT_LIMIT_FREE);
-        // TODO: Tune PID gains.  Temporarily set to full output
-        outputConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
+        outputConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL, INDEXER.OUTPUT_CURRENT_LIMIT_FREE); // TODO: Set appropriate current limits
+        outputConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D); // TODO: Tune PID gains.  Temporarily set to full output
         outputMotor.configure(outputConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);   
 
         // MotorPID = new PIDProfile();
@@ -113,6 +115,8 @@ public class Indexer extends SubsystemBase{
         double RPM_OUTPUT = SmartDashboard.getNumber("Vi_OUTPUT", INDEXER.OUTPUT_VI);
 
         spinnerMotor.setVelocity(RPM_SPINNER);
+        
+        spinnerMotor.setSetpoint(RPM_SPINNER, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
         // TODO: Put output motor into velocity control
         //outputMotor.setVelocity(RPM_OUTPUT);
         outputMotor.setPercentOutput(1.0);
