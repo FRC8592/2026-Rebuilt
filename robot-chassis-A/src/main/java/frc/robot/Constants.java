@@ -50,12 +50,12 @@ public final class VISION {
     public static final int MAX_LOCK_LOSS_TICKS = 20;
 
     public static final Transform3d CAMERA_OFFSETS = (
-        new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
+        new Transform3d(new Translation3d(0.14, 0.325, 0.22), new Rotation3d(0, Math.toRadians(-36), 0))
+        // new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
     );
 
-
     public static final String CAMERA_NAME = (
-        "Arducam_OV9782_B" 
+        "Arducam_OV9782_H" 
     );
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;

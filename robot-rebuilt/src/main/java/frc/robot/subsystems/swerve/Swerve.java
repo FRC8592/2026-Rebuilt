@@ -44,6 +44,7 @@ public class Swerve extends SubsystemBase {
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
+    //tracks the current robot-relative chassisSpeeds
     private ChassisSpeeds currentSpeeds = new ChassisSpeeds();
 
     private RobotConfig config = null;
@@ -60,7 +61,7 @@ public class Swerve extends SubsystemBase {
 
         swerve = drivetrain;
 
-        //PathPlanner AutoBuilder configuration below. 
+        //PathPlanner example AutoBuilder configuration code below. 
         //https://pathplanner.dev/pplib-build-an-auto.html
         try {
             config = RobotConfig.fromGUISettings(); 
