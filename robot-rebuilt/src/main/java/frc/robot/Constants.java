@@ -141,7 +141,8 @@ public static class INTAKE{
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
