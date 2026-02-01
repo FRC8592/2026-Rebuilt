@@ -145,10 +145,10 @@ public final class TURRET{
     public static final double TURRET_P = 2;
     public static final double TURRET_I = 0;
     public static final double TURRET_D = 0;
-    public static final double TURRET_TG = 96;
-    public static final double TURRET_G1 = 10;
-    public static final double TURRET_G2 = 11;
-    public static final double TURRET_TOTAL = TURRET_G1 * TURRET_G2;
+    public static final int TURRET_TG = 96;
+    public static final int TURRET_G1 = 10;
+    public static final int TURRET_G2 = 11;
+    public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
 }
 
 

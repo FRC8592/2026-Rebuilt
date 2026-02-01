@@ -13,8 +13,8 @@ public class Turret extends SubsystemBase{
     private DutyCycleEncoder E2;
 
     public Turret(){
-        E1 = new DutyCycleEncoder(0, 360, 0);
-        E2 = new DutyCycleEncoder(1, 360, 0);
+        E1 = new DutyCycleEncoder(0, 1, 0);
+        E2 = new DutyCycleEncoder(1, 1, 0);
         tMotor = new KrakenX44Motor(TURRET.TURRET_MOTOR, true);
         PIDProfile gains = new PIDProfile();
         gains.setPID(TURRET.TURRET_P, TURRET.TURRET_I, TURRET.TURRET_D);
@@ -47,22 +47,20 @@ public class Turret extends SubsystemBase{
     }
 
     public static double CRTTypeOne(double E1, double E2){
-        double R1 = E1 / 360 * TURRET.TURRET_G1; 
-        double R2 = E2 / 360 * TURRET.TURRET_G2;
+        int R1 = (int)(E1 * TURRET.TURRET_G1); 
+        int R2 = (int)(E2 * TURRET.TURRET_G2);
         System.out.println("R1: " + R1 + " R2: " + R2);
-        double M1 = TURRET.TURRET_TOTAL / TURRET.TURRET_G1;
-        double M2 = TURRET.TURRET_TOTAL / TURRET.TURRET_G2;
-        // double M1Inverse = 1;
-        // double M2Inverse = 1;
-        int M1Total = 1;
-        int M2Total = 1;
-        while(M1Total % M1 != 0){
-            M1Total += TURRET.TURRET_G1;
-        }
+        int M1 = TURRET.TURRET_TOTAL / TURRET.TURRET_G1;
+        int M2 = TURRET.TURRET_TOTAL / TURRET.TURRET_G2;
+        // int M1Total = 1;
+        // int M2Total = 1;
+        // while(M1Total % M1 != 0){
+        //     M1Total += TURRET.TURRET_G1;
+        // }
         // M1Inverse = M1Total/M1;
-        while(M2Total % M2 != 0){
-            M2Total += TURRET.TURRET_G2;
-        }
+        // while(M2Total % M2 != 0){
+        //     M2Total += TURRET.TURRET_G2;
+        // }
         // M2Inverse = M2Total/M2;
         double GearRotation = (R1 * M1 * 1 + R2 * M2 * 10) % TURRET.TURRET_TOTAL;
         return GearRotation;
