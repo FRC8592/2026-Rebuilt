@@ -22,6 +22,7 @@ import org.photonvision.EstimatedRobotPose;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.Constants.*;
+import frc.robot.Robot;
 
 
 public class OdometryUpdates extends SubsystemBase {
@@ -102,7 +103,7 @@ public class OdometryUpdates extends SubsystemBase {
     }
 
     public void runVision(Vision vision) {
-        if (RobotBase.isReal()) {
+        if (Robot.isReal()) {
             Pose2d robotPosition = new Pose2d();
             double ambiguity = -1d;
             double timeStamp = 0.0;

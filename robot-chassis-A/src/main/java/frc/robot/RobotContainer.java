@@ -5,14 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
+import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
-
+import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,6 +37,8 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
+  public final Vision vision;
+  public final OdometryUpdates odometryUpdates;
 
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
@@ -46,6 +50,8 @@ public class RobotContainer {
     shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
+    vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+    odometryUpdates = new OdometryUpdates(vision, swerve);
     
     // Configure the trigger bindings
     configureBindings();
@@ -66,8 +72,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
+    // runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
+    // runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
   }
