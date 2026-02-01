@@ -5,9 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
-import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.autonomous.AutoManager;
-import frc.robot.commands.largecommands.LargeCommand;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.Shooter;
@@ -58,15 +56,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-    passSubsystems();
-
     AutoManager.prepare();
   }
-
-    private void passSubsystems(){
-        LargeCommand.addSubsystems(swerve);
-        AutoCommand.addSubsystems(swerve);
-    }
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
