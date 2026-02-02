@@ -1,19 +1,28 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants.*;
-import frc.robot.helpers.PIDProfile;
-import frc.robot.helpers.motor.NewtonMotor;
-import frc.robot.helpers.motor.spark.SparkFlexMotor;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import frc.robot.Constants.INTAKE;
 
 
 public class Intake extends SubsystemBase{
-    private SparkFlexMotor IntakeMotor; 
-    private PIDProfile MotorPID;
+    private SparkFlex intakeMotor;
+    private SparkFlexConfig intakeConfig;
+    private SparkClosedLoopController intakeController;
+    private RelativeEncoder intakeEncoder;
  
     /**
      * Constructor for the Intake subsystem
@@ -21,17 +30,24 @@ public class Intake extends SubsystemBase{
      * Instatiate the motor with initial PID values from the CONSTANTS class
      */
     public Intake() {
-        IntakeMotor = new SparkFlexMotor(INTAKE.INTAKE_MOTOR_CAN_ID, false);
-        MotorPID = new PIDProfile();
-        MotorPID.setSlot(0);
-        MotorPID.setPID(INTAKE.INTAKE_P, INTAKE.INTAKE_I, INTAKE.INTAKE_D);
-        IntakeMotor.withGains(MotorPID);
 
-        // TODO: Set idle mode
-        //IntakeMotor.setIdleMode(IdleMode.kCoast);
-  
-        // TODO: Determine an appropriate current limit for the intake motor
-        IntakeMotor.setCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT);
+        /*
+         * Create the Intake motor and instatiate the following features
+         *   Reset to safe factory configuration
+         *   Store persistant configuration (Flash)
+         *   Place in COAST mode (Can coast to a stop)
+         *   Set current limits
+         *   Set VELOCITY PID parameters
+         */
+        intakeMotor = new SparkFlex(INTAKE.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
+        intakeConfig = new SparkFlexConfig();
+        intakeConfig.idleMode(IdleMode.kCoast);
+        intakeConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL, INTAKE.INTAKE_CURRENT_LIMIT_FREE);    // TODO: Set appropriate current limits
+        intakeConfig.closedLoop.pid(INTAKE.INTAKE_P, INTAKE.INTAKE_I, INTAKE.INTAKE_D);                         // TODO: Tune PID gains
+        
+        intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeController = intakeMotor.getClosedLoopController();
+        intakeEncoder = intakeMotor.getEncoder();
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
         SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_P);
@@ -46,9 +62,7 @@ public class Intake extends SubsystemBase{
      */
     public void runAtSpeed() {
         double RPM = SmartDashboard.getNumber("Vi_INTAKE", INTAKE.INTAKE_VI); // TODO: Remove this before competition
-        IntakeMotor.setPercentOutput(0.8); // TODO: Temporary fix to prevent oscillation.  Tune PID and run in velocity mode.
-        // TODO: Tune PID for the intake to prevent oscillation.  
-        // IntakeMotor.setVelocity(RPM);
+        intakeController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
 
@@ -61,30 +75,13 @@ public class Intake extends SubsystemBase{
 
 
     /**
-     * Update the PID constants for the intake motor from SmartDashboard values
-     * 
-     * The Neo Vortex motors will not accept a change to the PID parameters while running.
-     * Thusly, this method must be called from disabledPeriod() in Robot.java.
-     */
-    public void updatePID() {
-        double P = SmartDashboard.getNumber("P_INTAKE", INTAKE.INTAKE_P);
-        double I = SmartDashboard.getNumber("I_INTAKE", INTAKE.INTAKE_I);
-        double D = SmartDashboard.getNumber("D_INTAKE", INTAKE.INTAKE_D);
-    
-        MotorPID.setSlot(0);
-        MotorPID.setPID(P, I, D);
-        IntakeMotor.withGains(MotorPID);
-        }
-    
-
-    /**
      * Stop the intake motor
      * 
-     * We do this using % ouptput so that the motor will slow to a stop naturally
+     * We do this using voltage mode so that the motor will slow to a stop naturally
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stop() {
-        IntakeMotor.setPercentOutput(0);
+        intakeMotor.setVoltage(0.0);
     }
 
 
@@ -102,7 +99,23 @@ public class Intake extends SubsystemBase{
     * @return velocity in RPM
     */
     public double getVelocity(){
-        return IntakeMotor.getVelocityRPM();
+        return intakeEncoder.getVelocity();
+    }
+
+
+    /**
+     * Update the PID constants for the intake motor from SmartDashboard values
+     * 
+     * The Neo Vortex motors will not accept a change to the PID parameters while running.
+     * Thusly, this method must be called from disabledPeriod() in Robot.java.
+     */
+    public void updatePID() {
+        double P = SmartDashboard.getNumber("P_INTAKE", INTAKE.INTAKE_P);
+        double I = SmartDashboard.getNumber("I_INTAKE", INTAKE.INTAKE_I);
+        double D = SmartDashboard.getNumber("D_INTAKE", INTAKE.INTAKE_D);
+    
+        intakeConfig.closedLoop.pid(P, I, D);
+        intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
 

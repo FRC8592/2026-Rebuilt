@@ -141,7 +141,8 @@ public static class INTAKE{
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
@@ -158,14 +159,16 @@ public static class INTAKE{
     public static final int OUTPUT_CAN_ID = 35;
 
     // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
+    public static final int SPINNER_CURRENT_LIMIT_STALL = 80;
+    public static final int SPINNER_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.01;
+    public static final double SPINNER_P = 0.00045;
     public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0;
-    public static final double SPINNER_VI = 2000;
+    public static final double SPINNER_D = 0.003;
+    public static final double SPINNER_VI = 5000;
 
     public static final double OUTPUT_P = 0.01;
     public static final double OUTPUT_I = 0;
