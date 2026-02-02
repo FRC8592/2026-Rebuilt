@@ -12,7 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import java.util.Optional;
 
@@ -35,7 +37,7 @@ public class Swerve extends SubsystemBase {
     
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 10% deadband
+            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
@@ -100,8 +102,17 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    //TODO: make it when also driving in field centric (currently only returns a valid value if running driveRobotRelative())
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return currentSpeeds;
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
+        return swerve.sysIdQuasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction){
+        return swerve.sysIdDynamic(direction);
     }
 
     @Override
@@ -160,10 +171,17 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Commands the swerve to stop
+     * @return a command to stop the drivetrain
+     */
+    public Command stopCommand(){
+        return swerve.runOnce(() -> stop());
+    }
+
+    /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
-    //TODO: will the robot 
     public SwerveRequest brake(){
         return new SwerveRequest.SwerveDriveBrake(){};
     }

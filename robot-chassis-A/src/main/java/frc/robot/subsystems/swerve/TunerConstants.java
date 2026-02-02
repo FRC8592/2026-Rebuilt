@@ -64,6 +64,7 @@ public class TunerConstants {
                 .withStatorCurrentLimit(Amps.of(60))
                 .withStatorCurrentLimitEnable(true)
         );
+
     private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
     // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
     private static final Pigeon2Configuration pigeonConfigs = null;
@@ -82,7 +83,8 @@ public class TunerConstants {
 
     private static final double kDriveGearRatio = 6.746031746031747;
     private static final double kSteerGearRatio = 21.428571428571427;
-    private static final Distance kWheelRadius = Inches.of(2);
+    //TODO: change back the wheel radius when changing to non-worn wheels
+    private static final Distance kWheelRadius = Inches.of(1.85);
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;

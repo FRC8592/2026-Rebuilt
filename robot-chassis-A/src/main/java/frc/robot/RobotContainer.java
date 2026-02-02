@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +44,8 @@ public class RobotContainer {
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
   private final Trigger RESET_HEADING = driverController.back();
+  private final Trigger SYS_QUASISTATIC = driverController.a();
+  private final Trigger SYS_DYNAMIC = driverController.b();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -75,6 +78,9 @@ public class RobotContainer {
     // runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
     // runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+
+    SYS_QUASISTATIC.whileTrue(swerve.sysIdQuasistatic(Direction.kForward)).onFalse(swerve.stopCommand());
+    SYS_DYNAMIC.whileTrue(swerve.sysIdDynamic(Direction.kForward)).onFalse(swerve.stopCommand());
 
   }
 
