@@ -98,14 +98,11 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
         // if (feedForward.size() > 0) {
         //     arbFF = feedForward.get(pidSlot).calculate(getVelocityRPM(), Robot.CLOCK.dt());
         // }
-        System.out.println("RPM of Shooter Motor " + desiredVelocityRPM);
         this.motorCtrl.setSetpoint(
             desiredVelocityRPM, 
             SparkBase.ControlType.kVelocity, 
             slot
         );
-
-        System.out.println("Control type of shooter motor " + this.motorCtrl.getControlType());
     }
 
     @Override

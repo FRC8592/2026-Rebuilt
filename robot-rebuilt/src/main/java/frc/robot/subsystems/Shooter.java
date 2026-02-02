@@ -35,15 +35,15 @@ public class Shooter extends SubsystemBase{
         //TODO: Implement Kraken Motors
         //TODO: Possibly implement Motion Magic
         //TODO: Remove one of the shooter motors if necessary
-        RightShooterMotor = new KrakenX60Motor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
-        LeftShooterMotor = new KrakenX60Motor(SHOOTER.LEFT_SHOOTER_MOTOR, false);
+        //RightShooterMotor = new KrakenX60Motor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
+        //LeftShooterMotor = new KrakenX60Motor(SHOOTER.LEFT_SHOOTER_MOTOR, false);
         MotorPID = new PIDProfile();
         MotorPID.setSlot(0);
         MotorPID.setPID(SHOOTER.MOTOR_P, SHOOTER.MOTOR_I, SHOOTER.MOTOR_D);
-        LeftShooterMotor.withGains(MotorPID);
-        LeftShooterMotor.setCurrentLimit(40);
+        //LeftShooterMotor.withGains(MotorPID);
+        //LeftShooterMotor.setCurrentLimit(40);
         //LeftShooterMotor.configureMotionMagic(10, 5);
-        RightShooterMotor.setCurrentLimit(40);
+        //RightShooterMotor.setCurrentLimit(40);
 
         // TODO: For tuning, PID and velocity values are displayed on SmartDashboard, remove before competition
         SmartDashboard.putNumber("P", 0.1);
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase{
     public void runAtSpeed(double desiredRPM){
         double RPM = SmartDashboard.getNumber("Vi", 0);
         //LeftShooterMotor.setVelocity(RPM);
-        RightShooterMotor.setVelocity(RPM);
+        //RightShooterMotor.setVelocity(RPM);
     }
 
 
@@ -88,7 +88,7 @@ public class Shooter extends SubsystemBase{
         double D = SmartDashboard.getNumber("D", 0.0);
         MotorPID.setPID(P, I, D);
         //LeftShooterMotor.withGains(MotorPID);
-        RightShooterMotor.withGains(MotorPID);
+        //RightShooterMotor.withGains(MotorPID);
     }
 
 
@@ -98,7 +98,7 @@ public class Shooter extends SubsystemBase{
      * Utilized PercentOutput instead of Velocity Control to prevent power being used to stop flywheel.
      */
     public void stopShooter(){
-        RightShooterMotor.setPercentOutput(0);
+        //RightShooterMotor.setPercentOutput(0);
         //LeftShooterMotor.setPercentOutput(0);
     }
 
@@ -116,9 +116,9 @@ public class Shooter extends SubsystemBase{
      * Purpose is to see if the motor is achieving the
      * @return Returns velocity of the shooter motor.
      */
-    public double getVelocity(){
-        return RightShooterMotor.getVelocityRPM();
-    }
+    // public double getVelocity(){
+    //     return RightShooterMotor.getVelocityRPM();
+    // }
 
 
     /**
@@ -136,10 +136,10 @@ public class Shooter extends SubsystemBase{
     /**
      * Periodic method, primarily for logging.
      */
-    @Override
-    public void periodic(){
-        System.out.println("Velocity: " + getVelocity() * 60);
-        SmartDashboard.putNumber("Motor Velocity RPM", getVelocity() * 60);
-    }
+    // @Override
+    // public void periodic(){
+    //     System.out.println("Velocity: " + getVelocity() * 60);
+    //     SmartDashboard.putNumber("Motor Velocity RPM", getVelocity() * 60);
+    // }
         
 }

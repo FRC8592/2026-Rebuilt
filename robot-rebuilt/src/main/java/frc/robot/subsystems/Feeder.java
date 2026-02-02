@@ -21,7 +21,7 @@ public class Feeder extends SubsystemBase{
      * Instatiate the motor with initial PID values from the CONSTANTS class
      */
     public Feeder() {
-        FeederMotor = new KrakenX60Motor(14, false);
+        //FeederMotor = new KrakenX60Motor(14, false);
 
     }
 
@@ -30,7 +30,7 @@ public class Feeder extends SubsystemBase{
      * Run the intake at a set speed
      */
     public void runAtSpeed() {
-        FeederMotor.setPercentOutput(0.2);
+        //FeederMotor.setPercentOutput(0.2);
     }
 
 
@@ -51,7 +51,7 @@ public class Feeder extends SubsystemBase{
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stop() {
-        FeederMotor.setPercentOutput(0);
+        //FeederMotor.setPercentOutput(0);
     }
 
 
