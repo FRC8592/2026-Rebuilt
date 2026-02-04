@@ -15,6 +15,9 @@ import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
+
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -44,8 +47,13 @@ public class RobotContainer {
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
   private final Trigger RESET_HEADING = driverController.back();
-  private final Trigger SYS_QUASISTATIC = driverController.a();
-  private final Trigger SYS_DYNAMIC = driverController.b();
+  private final Trigger QUASI_FORWARD = driverController.a();
+  private final Trigger QUASI_REVERSE = driverController.y();
+  private final Trigger DYNAMIC_FORWARD = driverController.b();
+  private final Trigger DYNAMIC_REVERSE = driverController.x();
+
+  private final Trigger LOGGER_START = driverController.rightBumper();
+  private final Trigger LOGGER_STOP = driverController.rightTrigger();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -73,15 +81,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    // runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    // runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
-    SYS_QUASISTATIC.whileTrue(swerve.sysIdQuasistatic(Direction.kForward)).onFalse(swerve.stopCommand());
-    SYS_DYNAMIC.whileTrue(swerve.sysIdDynamic(Direction.kForward)).onFalse(swerve.stopCommand());
-
+    QUASI_FORWARD.whileTrue(swerve.sysIdQuasistatic(Direction.kForward));
+    QUASI_REVERSE.whileTrue(swerve.sysIdQuasistatic(Direction.kReverse));
+    DYNAMIC_FORWARD.whileTrue(swerve.sysIdDynamic(Direction.kForward));
+    DYNAMIC_REVERSE.whileTrue(swerve.sysIdDynamic(Direction.kReverse));
   }
 
   private void configureDefaults() {

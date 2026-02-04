@@ -15,12 +15,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -108,10 +110,19 @@ public class Swerve extends SubsystemBase {
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
+        if(direction == Direction.kForward)
+            SignalLogger.writeString("test-mode", "quasistatic-forward");
+        else
+            SignalLogger.writeString("test-mode", "quasistatic-reverse");
         return swerve.sysIdQuasistatic(direction);
     }
 
     public Command sysIdDynamic(SysIdRoutine.Direction direction){
+        // SignalLogger.writeString("test-mode", "dynamic-forward");
+        if(direction == Direction.kForward)
+            SignalLogger.writeString("test-mode", "dynamic-forward");
+        else
+            SignalLogger.writeString("test-mode", "dynamic-reverse");
         return swerve.sysIdDynamic(direction);
     }
 
