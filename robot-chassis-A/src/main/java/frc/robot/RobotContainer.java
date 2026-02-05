@@ -52,8 +52,7 @@ public class RobotContainer {
   private final Trigger DYNAMIC_FORWARD = driverController.b();
   private final Trigger DYNAMIC_REVERSE = driverController.x();
 
-  private final Trigger LOGGER_START = driverController.rightBumper();
-  private final Trigger LOGGER_STOP = driverController.rightTrigger();
+  private final Trigger SLOW_MODE = driverController.leftTrigger();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -82,6 +81,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
+             .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
     QUASI_FORWARD.whileTrue(swerve.sysIdQuasistatic(Direction.kForward));
     QUASI_REVERSE.whileTrue(swerve.sysIdQuasistatic(Direction.kReverse));

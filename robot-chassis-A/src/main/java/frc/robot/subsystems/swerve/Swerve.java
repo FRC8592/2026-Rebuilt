@@ -110,19 +110,19 @@ public class Swerve extends SubsystemBase {
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
-        if(direction == Direction.kForward)
-            SignalLogger.writeString("test-mode", "quasistatic-forward");
-        else
-            SignalLogger.writeString("test-mode", "quasistatic-reverse");
+    //     if(direction == Direction.kForward)
+    //         SignalLogger.writeString("test-mode", "quasistatic-forward");
+    //     else
+    //         SignalLogger.writeString("test-mode", "quasistatic-reverse");
         return swerve.sysIdQuasistatic(direction);
     }
 
     public Command sysIdDynamic(SysIdRoutine.Direction direction){
         // SignalLogger.writeString("test-mode", "dynamic-forward");
-        if(direction == Direction.kForward)
-            SignalLogger.writeString("test-mode", "dynamic-forward");
-        else
-            SignalLogger.writeString("test-mode", "dynamic-reverse");
+        // if(direction == Direction.kForward)
+        //     SignalLogger.writeString("test-mode", "dynamic-forward");
+        // else
+        //     SignalLogger.writeString("test-mode", "dynamic-reverse");
         return swerve.sysIdDynamic(direction);
     }
 

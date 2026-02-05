@@ -79,8 +79,6 @@ public class Robot extends LoggedRobot {
     }
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       Logger.start();
-
-      // SignalLogger.start();
           
       SmartDashboard.putData(FIELD);
       m_robotContainer = new RobotContainer();
