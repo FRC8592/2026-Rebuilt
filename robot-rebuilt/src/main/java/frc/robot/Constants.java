@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.swerve.TunerConstants;
 
 
@@ -181,4 +182,19 @@ public static class INTAKE{
   public static final class SCORING{
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
   }
+
+public final class LEDS{
+    public static final Color TEAL = new Color(0, 64, 192);
+    public static final Color ORANGE = new Color(192, 64, 0);
+    public static final Color WHITE = new Color(255, 255, 255);
+    public static final Color GREEN = new Color(0,255,0);
+    public static final Color RED = new Color(255, 0, 0);
+    public static final Color OFF = new Color(0, 0, 0);
+    public static final Color YELLOW = new Color(255,255,0);
+    public static final Color PURPLE = new Color(255,0,255);
+    public static final int LED_STRIP_LENGTH = 52;
+    public static final int LED_CANDLE_COUNT= 8;
+    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH+LED_CANDLE_COUNT;
+    }
+
 }
