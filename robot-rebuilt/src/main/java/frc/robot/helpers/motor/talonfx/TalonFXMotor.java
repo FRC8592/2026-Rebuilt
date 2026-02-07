@@ -162,7 +162,6 @@ public abstract class TalonFXMotor extends NewtonMotor {
                 motorPIDGains.get(pidSlot).softLimitMax
             );
         }
-        System.out.println("Going into helper method.");
         this.motor.setControl(motionMagicOutput.withSlot(pidSlot).withPosition(desiredRotations));
     }
 

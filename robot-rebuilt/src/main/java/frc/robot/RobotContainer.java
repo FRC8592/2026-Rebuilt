@@ -17,6 +17,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Feeder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -104,6 +105,7 @@ public class RobotContainer {
         //shooter = new Shooter();
         turret = new Turret();
         feeder = new Feeder();
+        SmartDashboard.putNumber("Position Value", 0);
 
         configureBindings();
 //         configureDefaults();
@@ -150,8 +152,8 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_TURRET.onTrue(turret.TurrettoPosCommand(1)).onFalse(turret.stopTurretCommand());
-        TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand(SmartDashboard.getNumber("Position Value", 0))).onFalse(turret.stopTurretCommand());
+        //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
         RESET_POS.onTrue(turret.resetPosCommand());
         //TESTING_FEEDER.onTrue(feeder.runAtSpeedCommand()).onFalse(feeder.stopCommand());
