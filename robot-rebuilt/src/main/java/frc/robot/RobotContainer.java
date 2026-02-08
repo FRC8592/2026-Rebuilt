@@ -57,8 +57,8 @@ public class RobotContainer {
     odometryUpdates = new OdometryUpdates(vision, swerve);
 
     //Register commands that are going to be used in auto here BEFORE initializing autos
-    NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
-    NamedCommands.registerCommand("stopIntake", intake.stopCommand());
+    // NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
+    // NamedCommands.registerCommand("stopIntake", intake.stopCommand());
     
     // Configure the trigger bindings
     configureBindings();
@@ -78,8 +78,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
+    // runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
+    // runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
   }

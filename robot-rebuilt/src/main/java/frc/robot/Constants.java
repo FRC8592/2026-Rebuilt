@@ -18,37 +18,35 @@ public final class Constants {
   }
 
   public final class MEASUREMENTS {
-      public static final double FIELD_Y_METERS = 26.475 * CONVERSIONS.FEET_TO_METERS; 
-      public static final double FIELD_X_METERS = 54.2666667 * CONVERSIONS.FEET_TO_METERS;
-      
+    public static final double FIELD_Y_METERS = 26.475 * CONVERSIONS.FEET_TO_METERS; 
+    public static final double FIELD_X_METERS = 54.2666667 * CONVERSIONS.FEET_TO_METERS;
   }
 
   public final class CONVERSIONS {
-      public static final double METERS_TO_FEET = 3.28084;
-      public static final double FEET_TO_METERS = 0.3048;
-      public static final double INCHES_TO_METERS = 0.0254;
+    public static final double METERS_TO_FEET = 3.28084;
+    public static final double FEET_TO_METERS = 0.3048;
+    public static final double INCHES_TO_METERS = 0.0254;
   }
 
   public final class CONTROLLERS {
-      public static final int DRIVER_PORT = 0;
-      public static final int OPERATOR_PORT = 1;
+    public static final int DRIVER_PORT = 0;
+    public static final int OPERATOR_PORT = 1;
   }
 
-
   public final class VISION {
-      public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
-      public static final Transform3d CAMERA_OFFSETS = (
-          new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
-      );
+    public static final Transform3d CAMERA_OFFSETS = (
+      new Transform3d(new Translation3d(0.51, -0.31, 0.27), new Rotation3d(0, Math.toRadians(-15), 0))
+    );
 
-      public static final String CAMERA_NAME = (
-          "Arducam_OV9782_B" 
-      );
-      
-      public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
-      public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
-      public static final int POSE_AVERAGER_VALUE = 50;
+    public static final String CAMERA_NAME = (
+        "Arducam_OV9782_B" 
+    );
+    
+    public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
+    public static final int POSE_AVERAGER_VALUE = 50;
   }
     
   public final class SWERVE {
