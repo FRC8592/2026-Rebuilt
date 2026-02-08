@@ -6,14 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.List;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -22,6 +17,7 @@ import org.photonvision.EstimatedRobotPose;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.Constants.*;
+import frc.robot.Robot;
 
 
 public class OdometryUpdates extends SubsystemBase {
@@ -102,7 +98,7 @@ public class OdometryUpdates extends SubsystemBase {
     }
 
     public void runVision(Vision vision) {
-        if (RobotBase.isReal()) {
+        if (Robot.isReal()) {
             Pose2d robotPosition = new Pose2d();
             double ambiguity = -1d;
             double timeStamp = 0.0;
@@ -117,7 +113,8 @@ public class OdometryUpdates extends SubsystemBase {
                 timeStamp = robotPose.get().timestampSeconds;
 
                 if ((vision.getTargets().size() >= 1)){
-                    Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/DistanceMeters", vision.getTargets().get(0).bestCameraToTarget.getX());
+                    // TODO: sometimes throws indexoutofbounds exception error
+                    // Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/DistanceMeters", vision.getTargets().get(0).bestCameraToTarget.getX());
                     Logger.recordOutput(SHARED.LOG_FOLDER+"/Vision/VisionPose", robotPosition);
                 }
 
