@@ -16,8 +16,6 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 
-import com.ctre.phoenix6.SignalLogger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;

@@ -78,8 +78,8 @@ public class Swerve extends SubsystemBase {
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             //TODO: replace pid constants
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(2.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(SWERVE.DRIVE_KP, SWERVE.DRIVE_KI, SWERVE.DRIVE_KD), // Translation PID constants
+                    new PIDConstants(SWERVE.STEER_KP, SWERVE.STEER_KI, SWERVE.STEER_KD) // Rotation PID constants
             ),
 
             config, // The robot configuration
@@ -150,20 +150,6 @@ public class Swerve extends SubsystemBase {
         swerve.setControl(
             fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
             .withVelocityY(speeds.vyMetersPerSecond) 
-            .withRotationalRate(speeds.omegaRadiansPerSecond)
-        );
-
-        currentSpeeds = speeds;
-    }
-
-    /**
-     * Sends a robot-relative ChassisSpeeds to the drivetrain
-     * @param speeds robot-relative ChassisSpeeds to run the drivetrain at
-     */
-    public void driveRobotRelative(ChassisSpeeds speeds){
-        swerve.setControl(
-            robotCentric.withVelocityX(speeds.vxMetersPerSecond)
-            .withVelocityY(speeds.vyMetersPerSecond)
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
 

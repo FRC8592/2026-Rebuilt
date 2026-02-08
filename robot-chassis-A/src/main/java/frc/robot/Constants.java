@@ -37,7 +37,6 @@ public final class Constants {
 
     public static final Transform3d CAMERA_OFFSETS = (
         new Transform3d(new Translation3d(0.14, 0.325, 0.22), new Rotation3d(0, Math.toRadians(-36), 0))
-        // new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
     );
 
     public static final String CAMERA_NAME = (
@@ -151,7 +150,4 @@ public final class Constants {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/"; 
   }
 
-  public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
-  }
 }

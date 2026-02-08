@@ -15,7 +15,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.HootAutoReplay;
-import com.ctre.phoenix6.SignalLogger;
 
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -105,11 +104,10 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // SignalLogger.stop();
   }
 
-    @Override
-    public void disabledExit() {}
+  @Override
+  public void disabledExit() {}
 
   @Override
   public void disabledPeriodic() {
