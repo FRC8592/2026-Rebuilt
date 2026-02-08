@@ -110,8 +110,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.shooter.updatePID();
-    m_robotContainer.indexer.updatePID();
     m_robotContainer.intake.updatePID();
 
   }
