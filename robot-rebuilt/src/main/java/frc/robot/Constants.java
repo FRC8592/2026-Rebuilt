@@ -41,28 +41,33 @@ public final class SWERVE {
     public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
     public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = RadiansPerSecond.of(720).baseUnitMagnitude();
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 0.25; 
+    public static final double ROTATE_POWER_FAST = 0.5; 
     public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.3;
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
     public static final double JOYSTICK_EXPONENT = 1.75;
-    public static final Rotation2d BLUE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(0);
-    public static final Rotation2d RED_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180);
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 8d; // Was 8 in the last test
-    public static final double PATH_FOLLOW_TRANSLATE_kI = 0d;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0d;
-    public static final double PATH_FOLLOW_ROTATE_kP = 12;
-    public static final double PATH_FOLLOW_ROTATE_kI = 0d;
-    public static final double PATH_FOLLOW_ROTATE_kD = 0;
-    public static final double MAX_SPEED_METERS_PER_SECOND = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    public static final double MAX_ANGULAR_RATE_RADIANS_PER_SECOND = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.01; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.02;
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 4 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 4 * Math.PI;
+
+    public static final double PATH_FOLLOW_TRANSLATE_kP = 1.5; 
+    public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
+    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.15;
+
+    //TODO: Double check that these still work
+    public static final double PATH_FOLLOW_ROTATE_kP = 2.0;
+    public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
+    public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
+
+    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 1.5 * Math.PI;
+    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 1.5 * Math.PI;
+
+    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.03; // Meters
+    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.05;
+
+    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.04; // Radians
+    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.02;
+
+    public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
     
 public class SUPPLIERS{
@@ -86,7 +91,13 @@ public final class SHOOTER {
 }
 
 public static class INTAKE{
+    // CAN ID for the Intake motor
     public static final int INTAKE_MOTOR_CAN_ID = 44;
+
+    // Current limit for the Intake motor
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 80;
+
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
     public static final double INTAKE_I = 0;
@@ -115,6 +126,6 @@ public final class INDEXER {
 }
 
   public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
   }
 }

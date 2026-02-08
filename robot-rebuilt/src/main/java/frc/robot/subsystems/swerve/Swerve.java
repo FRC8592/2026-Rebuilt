@@ -2,23 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.swerve;
+import frc.robot.Constants.*;
+import frc.robot.Robot;
+import frc.robot.helpers.SmoothingFilter;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.Meters;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import frc.robot.Constants.*;
-import frc.robot.Robot;
-import frc.robot.helpers.SmoothingFilter;
 
 public class Swerve extends SubsystemBase {
 
@@ -29,9 +31,11 @@ public class Swerve extends SubsystemBase {
     private SmoothingFilter smoothingFilter;
     
     private CommandSwerveDrivetrain swerve;
+    
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED_METERS_PER_SECOND * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE_RADIANS_PER_SECOND * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
@@ -43,24 +47,41 @@ public class Swerve extends SubsystemBase {
 
         snapToController = new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns the robot to a set heading
 
-        // TODO: Any initialization code needed for the new swerve stuff
         swerve = drivetrain;
     }
 
     @Override
     public void periodic() {
-        // TODO: Periodic logging
         Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getCurrentOdometryPosition());
+
         swerve.periodic();
     }
 
+    @Override
     public void simulationPeriodic() {
-        Pose2d pose = new Pose2d(
-            getCurrentOdometryPosition().getTranslation(),
-            getCurrentOdometryPosition().getRotation()
-        );
+        Robot.FIELD.setRobotPose(getCurrentOdometryPosition());
+    }
 
-        Robot.FIELD.setRobotPose(pose==null ? new Pose2d() : pose);
+    /**
+     * Send a {@code ChassisSpeeds} to the drivetrain, field-relative
+     *
+     * @param speeds robot-relative ChassisSpeeds speed to run the drivetrain at
+     */
+    public void drive(ChassisSpeeds speeds) {
+        Logger.recordOutput(SWERVE.LOG_PATH+"TargetSpeeds", speeds); 
+
+        swerve.setControl(
+            fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond) 
+            .withRotationalRate(speeds.omegaRadiansPerSecond)
+        );
+    }
+
+    /**
+     * Define whatever direction the robot is facing as forward
+     */
+    public void resetHeading(){
+        swerve.seedFieldCentric();
     }
 
     /**
@@ -71,71 +92,48 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Send a {@code ChassisSpeeds} to the drivetrain, robot-relative
-     *
-     * @param speeds the speeds to run the drivetrain at
+     * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    public void drive(ChassisSpeeds speeds) {
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetSpeeds", speeds); 
-
-        swerve.setControl(
-            fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
-            .withVelocityY(speeds.vyMetersPerSecond) 
-            .withRotationalRate(speeds.omegaRadiansPerSecond));
+    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
+    //TODO: will the robot 
+    public SwerveRequest brake(){
+        return new SwerveRequest.SwerveDriveBrake(){};
     }
-
 
     /**
-     * Define whatever direction the robot is facing as forward
+     * Get the rotation of the current robot pose
+     * @return Roration2d robot rotation
      */
-    public void resetHeading(){
-        System.out.println("Running reset heading");
-        // TODO: implement something that allows the commented code to work
-        swerve.seedFieldCentric();
-    }
-
     public Rotation2d getYaw() {
         return swerve.getState().Pose.getRotation();
     };
 
+    /**
+     * Get the current pose of the robot
+     * @return Pose2d robot pose
+     */
     public Pose2d getCurrentOdometryPosition() {
         return swerve.getState().Pose;
     }
 
-    public void setKnownOdometryPose(Pose2d currentPose) {      //????   
+    public void setKnownOdometryPose(Pose2d currentPose) { 
         swerve.resetPose(currentPose);
+
         Logger.recordOutput(
             SWERVE.LOG_PATH+"Console", (
-                "Current pose reset to X: "+
-                -currentPose.getX()+
+                "X: "+
+                currentPose.getX()+
                 "; Y: "+
-                -currentPose.getY()+
+                currentPose.getY()+
                 "; Rotation: "+
-                -currentPose.getRotation().getDegrees()+
+                currentPose.getRotation().getDegrees()+
                 "°."
             )
         );
     }
-    
-    public void resetPose(Pose2d pose, boolean flip) {
-        // // TODO: implement something that allows the commented code to work
-        if(flip){
-            Pose2d flipped = new Pose2d(
-                new Translation2d(
-                    MEASUREMENTS.FIELD_LENGTH.in(Meters)-pose.getX(),
-                    pose.getY()
-                ),
-                Rotation2d.fromDegrees(180).minus(pose.getRotation())
-            );
-            setKnownOdometryPose(flipped);
-            return;
-        }
-        setKnownOdometryPose(pose);
-
-    }
 
     /**
-     * Sets whether or not the input joystick is slowed
+     * Sets whether or not the robot runs at a slower speed
      * 
      * @param slowMode whether to slow the drivetrain
      */
@@ -154,10 +152,10 @@ public class Swerve extends SubsystemBase {
         double errorAngle = setpoint.getRadians() - currYaw;
 
         if(errorAngle > Math.PI){
-            errorAngle -= 2*Math.PI;
+            errorAngle -= 2 * Math.PI;
         }
         else if(errorAngle <= -Math.PI){
-            errorAngle += 2*Math.PI;
+            errorAngle += 2 * Math.PI;
         }
 
         double out = snapToController.calculate(0, errorAngle);
@@ -166,28 +164,25 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Process joystick inputs for human control
+     * Process joystick inputs for swerve control
      *
-     * @param rawX the raw X input from a joystick. Should be -1 to 1
-     * @param rawY the raw Y input from a joystick. Should be -1 to 1
+     * @param rawX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
+     * @param rawY the raw Y input from a joystick. Should be -1 to 1 (FORWARD motion)
      * @param rawRot the raw rotation input from a joystick. Should be -1 to 1
-     * @param fieldRelativeAllowed if this is true, switch between field- and
-     * robot-relative based on {@link Swerve#robotRelative}. Otherwise, force
-     * robot-relative.
      *
-     * @return a ChassisSpeeds ready to be sent to the swerve.
+     * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot){
-        double driveTranslateY = (
-            rawY >= 0
-            ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
-            : -(Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
-        );
-
         double driveTranslateX = (
             rawX >= 0
             ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
             : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
+        );
+        
+        double driveTranslateY = (
+            rawY >= 0
+            ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
+            : -(Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
         );
 
         double driveRotate = (
@@ -196,30 +191,30 @@ public class Swerve extends SubsystemBase {
             : -(Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
         );
 
-        Logger.recordOutput(SWERVE.LOG_PATH+"TranslateY", driveTranslateY);
-        Logger.recordOutput(SWERVE.LOG_PATH+"TranslateX", driveTranslateX);
-        Logger.recordOutput(SWERVE.LOG_PATH+"driveRotate", driveRotate);
-
-        ChassisSpeeds currentSpeeds;
-
-        if (isSlowMode) {
-            currentSpeeds = smoothingFilter.smooth(new ChassisSpeeds(
-                driveTranslateY * SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND * 0.5,
-                driveTranslateX * SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND * 0.5,
-                driveRotate * SWERVE.ROTATE_POWER_SLOW * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND * 0.5
-            ));
-        }
-        else {
-            currentSpeeds = smoothingFilter.smooth(new ChassisSpeeds(
-                driveTranslateY * SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND,
-                driveTranslateX * SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND,
-                driveRotate * SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND
-            ));
+        if(isSlowMode){
+            driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveTranslateY *= SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveRotate *= SWERVE.ROTATE_POWER_SLOW * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
+        } else {
+            driveTranslateX *= SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveTranslateY *= SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveRotate *= SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
         }
 
-        return currentSpeeds;
+        Logger.recordOutput(SWERVE.LOG_PATH + "TranslateY", driveTranslateY);
+        Logger.recordOutput(SWERVE.LOG_PATH + "TranslateX", driveTranslateX);
+        Logger.recordOutput(SWERVE.LOG_PATH + "driveRotate", driveRotate);
+
+        //returns a robot-relative ChassisSpeeds object
+        //ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) -> (translateY, translateX, rotate)
+        return smoothingFilter.smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
 
+    /**
+     * Corrects the robot odometry using vision
+     * @param visionRobotPoseMeters The robot pose using vision measuremnets
+     * @param timestampSeconds Timestamp of the vision measurement in seconds
+     */
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         swerve.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
     }
