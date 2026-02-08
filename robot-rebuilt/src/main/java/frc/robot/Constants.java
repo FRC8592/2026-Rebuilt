@@ -4,9 +4,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.pathplanner.lib.config.RobotConfig;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -39,9 +36,7 @@ public final class Constants {
 
 
   public final class VISION {
-      public static final String LOG_PATH = SHARED.LOG_FOLDER+"ScoreCoral";
-
-      public static final int MAX_LOCK_LOSS_TICKS = 20;
+      public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
       public static final Transform3d CAMERA_OFFSETS = (
           new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
@@ -68,9 +63,6 @@ public final class Constants {
     public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
     public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = Math.toRadians(720);
 
-    public static final boolean INVERT_LEFT_SIDE = false;
-    public static final boolean INVERT_RIGHT_SIDE = true;
-
     public static final double SIMULATED_STEER_INERTIA = 0.00001;
     public static final double SIMULATED_DRIVE_INERTIA = 0.06;
     public static final double SIMULATION_LOOP_PERIOD = 0.005;
@@ -88,30 +80,8 @@ public final class Constants {
 
     public static final double JOYSTICK_EXPONENT = 1.75;
 
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 1.5; 
-    public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.15;
-
-    //TODO: Double check that these still work
-    public static final double PATH_FOLLOW_ROTATE_kP = 2.0;
-    public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
-    public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
-
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 1.5 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 1.5 * Math.PI;
-
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.03; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.05;
-
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.04; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.02;
-
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-  }
-
-  public class SUPPLIERS{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
   }
 
   public final class SHOOTER {
@@ -135,7 +105,8 @@ public final class Constants {
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
@@ -152,14 +123,16 @@ public final class Constants {
     public static final int OUTPUT_CAN_ID = 35;
 
     // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
+    public static final int SPINNER_CURRENT_LIMIT_STALL = 80;
+    public static final int SPINNER_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.01;
+    public static final double SPINNER_P = 0.00045;
     public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0;
-    public static final double SPINNER_VI = 2000;
+    public static final double SPINNER_D = 0.003;
+    public static final double SPINNER_VI = 5000;
 
     public static final double OUTPUT_P = 0.01;
     public static final double OUTPUT_I = 0;
