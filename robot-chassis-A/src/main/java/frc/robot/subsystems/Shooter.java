@@ -26,13 +26,13 @@ public class Shooter extends SubsystemBase{
     private double DOld = SHOOTER.MOTOR_D;
 
     public Shooter(){
-        RightShooterMotor = new SparkFlexMotor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
-        LeftShooterMotor = new SparkFlexMotor(SHOOTER.LEFT_SHOOTER_MOTOR, false);
-        MotorPID = new PIDProfile();
-        MotorPID.setSlot(0);
-        MotorPID.setPID(SHOOTER.MOTOR_P, SHOOTER.MOTOR_I, SHOOTER.MOTOR_D);
-        LeftShooterMotor.withGains(MotorPID);
-        LeftShooterMotor.setCurrentLimit(80);
+        // RightShooterMotor = new SparkFlexMotor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
+        // LeftShooterMotor = new SparkFlexMotor(SHOOTER.LEFT_SHOOTER_MOTOR, false);
+        // MotorPID = new PIDProfile();
+        // MotorPID.setSlot(0);
+        // MotorPID.setPID(SHOOTER.MOTOR_P, SHOOTER.MOTOR_I, SHOOTER.MOTOR_D);
+        // LeftShooterMotor.withGains(MotorPID);
+        // LeftShooterMotor.setCurrentLimit(80);
         //RightShooterMotor.setFollowerTo(LeftShooterMotor, true);
         SmartDashboard.putNumber("P", 0.01);
         SmartDashboard.putNumber("I", 0.0);

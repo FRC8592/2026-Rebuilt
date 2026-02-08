@@ -26,25 +26,25 @@ public class Indexer extends SubsystemBase{
      * Instatiate the motors with initial PID values from the CONSTANTS class
      */
     public Indexer(){
-        spinnerMotor = new SparkFlexMotor(INDEXER.SPINNER_CAN_ID, false);
-        outputMotor = new SparkFlexMotor(INDEXER.OUTPUT_CAN_ID, false);
+        // spinnerMotor = new SparkFlexMotor(INDEXER.SPINNER_CAN_ID, false);
+        // outputMotor = new SparkFlexMotor(INDEXER.OUTPUT_CAN_ID, false);
 
-        MotorPID = new PIDProfile();
-        MotorPID.setSlot(0);
-        MotorPID.setPID(INDEXER.SPINNER_P, INDEXER.SPINNER_I,INDEXER.SPINNER_D);
-        spinnerMotor.withGains(MotorPID);
+        // MotorPID = new PIDProfile();
+        // MotorPID.setSlot(0);
+        // MotorPID.setPID(INDEXER.SPINNER_P, INDEXER.SPINNER_I,INDEXER.SPINNER_D);
+        // spinnerMotor.withGains(MotorPID);
         
-        MotorPID.setSlot(0);
-        MotorPID.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I,INDEXER.OUTPUT_D);
-        outputMotor.withGains(MotorPID);
+        // MotorPID.setSlot(0);
+        // MotorPID.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I,INDEXER.OUTPUT_D);
+        // outputMotor.withGains(MotorPID);
   
-        // TODO: set idle modes
-        //spinnerMotor.setIdleMode(IdleMode.kCoast);
-        //outputMotor.setIdleMode(IdleMode.kCoast);
+        // // TODO: set idle modes
+        // //spinnerMotor.setIdleMode(IdleMode.kCoast);
+        // //outputMotor.setIdleMode(IdleMode.kCoast);
 
-        // TODO: Determine an appropriate current limit for the indexer motors
-        spinnerMotor.setCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT);
-        outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        // // TODO: Determine an appropriate current limit for the indexer motors
+        // spinnerMotor.setCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT);
+        // outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPINNER_P);
