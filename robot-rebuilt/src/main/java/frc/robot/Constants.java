@@ -63,9 +63,6 @@ public final class Constants {
     public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
     public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = Math.toRadians(720);
 
-    public static final boolean INVERT_LEFT_SIDE = false;
-    public static final boolean INVERT_RIGHT_SIDE = true;
-
     public static final double SIMULATED_STEER_INERTIA = 0.00001;
     public static final double SIMULATED_DRIVE_INERTIA = 0.06;
     public static final double SIMULATION_LOOP_PERIOD = 0.005;
@@ -108,7 +105,8 @@ public final class Constants {
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_P = 0.01;
@@ -125,14 +123,16 @@ public final class Constants {
     public static final int OUTPUT_CAN_ID = 35;
 
     // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
+    public static final int SPINNER_CURRENT_LIMIT_STALL = 80;
+    public static final int SPINNER_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_FREE = 80;
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.01;
+    public static final double SPINNER_P = 0.00045;
     public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0;
-    public static final double SPINNER_VI = 2000;
+    public static final double SPINNER_D = 0.003;
+    public static final double SPINNER_VI = 5000;
 
     public static final double OUTPUT_P = 0.01;
     public static final double OUTPUT_I = 0;

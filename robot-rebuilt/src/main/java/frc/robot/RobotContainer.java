@@ -9,7 +9,7 @@ import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.Shooter;
+//import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
@@ -37,7 +37,7 @@ public class RobotContainer {
   // robot subsystems
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  public final Shooter shooter;
+  //public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
   public final Vision vision;
@@ -50,7 +50,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve = new Swerve(drivetrain);
-    shooter = new Shooter();
+    // shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
     vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
