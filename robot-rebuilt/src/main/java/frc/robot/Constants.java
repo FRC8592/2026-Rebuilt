@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-// import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.swerve.TunerConstants;
 
 
 public final class Constants {
@@ -128,7 +128,7 @@ public final class SWERVE {
     public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.05; // Radians
     public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.03;
 
-    // public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 }
 
