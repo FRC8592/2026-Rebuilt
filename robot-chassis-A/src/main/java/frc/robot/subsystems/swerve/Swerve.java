@@ -11,10 +11,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.Optional;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -35,11 +34,11 @@ public class Swerve extends SubsystemBase {
     
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
-        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1)
+        .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
         .withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
@@ -100,14 +99,38 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    //TODO: calculate the robot relative speed instead
+    /**
+     * Gets robot relative speeds commanded to the robot (NOT the calculated robot relative speeds)
+     * @return current ChassisSpeeds
+     */
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return currentSpeeds;
+    }
+
+    /**
+     * Runs the SysId Quasistatic test in the given direction for the routine specified in the parameters 
+     * @param direction Direction of the Quasistatic routine
+     * @return Command to run
+     */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
+        return swerve.sysIdQuasistatic(direction);
+    }
+
+    /**
+     * Runs the SysId Dynamic test in the given direction for the routine specified in the parameters
+     * @param direction Direction of the Dynamic routine
+     * @return Command to run
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction){
+        return swerve.sysIdDynamic(direction);
     }
 
     @Override
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getCurrentOdometryPosition());
 
+        //TODO: do we really need to run this? 
         swerve.periodic();
     }
 
@@ -129,6 +152,22 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
+
+        currentSpeeds = speeds;
+    }
+
+    /**
+     * Sends a robot-relative ChassisSpeeds to the drivetrain
+     * @param speeds robot-relative ChassisSpeeds to run the drivetrain at
+     */
+    public void driveRobotRelative(ChassisSpeeds speeds){
+        swerve.setControl(
+            robotCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(speeds.omegaRadiansPerSecond)
+        );
+
+        currentSpeeds = speeds;
     }
 
     /**
@@ -160,17 +199,23 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Commands the swerve to stop
+     * @return a command to stop the drivetrain
+     */
+    public Command stopCommand(){
+        return swerve.runOnce(() -> stop());
+    }
+
+    /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
-    //TODO: will the robot 
     public SwerveRequest brake(){
         return new SwerveRequest.SwerveDriveBrake(){};
     }
 
     /**
      * Get the rotation of the current robot pose
-     * @return Roration2d robot rotation
+     * @return Rotation2d robot rotation
      */
     public Rotation2d getYaw() {
         return swerve.getState().Pose.getRotation();
@@ -189,12 +234,12 @@ public class Swerve extends SubsystemBase {
 
         Logger.recordOutput(
             SWERVE.LOG_PATH+"Console", (
-                "X: "+
+                "X: " +
                 currentPose.getX()+
-                "; Y: "+
-                currentPose.getY()+
-                "; Rotation: "+
-                currentPose.getRotation().getDegrees()+
+                "; Y: " +
+                currentPose.getY() +
+                "; Rotation: " +
+                currentPose.getRotation().getDegrees() +
                 "°."
             )
         );

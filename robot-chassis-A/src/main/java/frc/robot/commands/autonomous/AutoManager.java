@@ -10,10 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.DeferredCommand;
-// import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 
 /**
@@ -25,28 +22,10 @@ public final class AutoManager {
 
     /**
      * Load all autos and broadcast the chooser.
-     *<p>
-     * * This is where programmers should add new autos.
-     *
      * @apiNote This should be called on {@link Robot#robotInit()} only;
      * this function will have relatively long delays due to loading paths.
      */
     public static void prepare(){
-        // SmartDashboard.putNumber("Auto Delay", 0);
-        // autoCommands = new ArrayList<>();
-
-        // autoCommands.add(new MoveCollect());
-
-        // autoChooser = new SendableChooser<>();
-        
-        // autoChooser.setDefaultOption("DEFAULT - No auto", new AutoCommand());
-        // for(AutoCommand c : autoCommands){
-        //     autoChooser.addOption(
-        //         c.getAutoName(), c
-        //     );
-        // }
-        // Shuffleboard.getTab("Autonomous Config").add(autoChooser);
-
         pathPlannerAutos = AutoBuilder.buildAutoChooser("DefaultAuto");
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
     }
@@ -58,24 +37,7 @@ public final class AutoManager {
      */
     public static Command getAutonomousCommand(){
         return pathPlannerAutos.getSelected();
-        // AutoCommand autoCommand = pathPlannerAutos.getSelected();
-        // return getAutonomousInitCommand().andThen(
-        //     // If we don't keep this command from registering as composed,
-        //     // the code will crash if we try to run an auto twice without
-        //     // restarting robot code.
-        //     new MultiComposableCommand(autoCommand)
-        // );
-
     }
-
-    /**
-     * Parallel command group that runs all subsystems' autonomous init commands.
-     *
-     * @return the command
-     */
-    // private static Command getAutonomousInitCommand(){
-    //     return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
-    // }
 
     private AutoManager() {
         throw new UnsupportedOperationException("This is a utility class!");
