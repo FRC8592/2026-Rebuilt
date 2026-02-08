@@ -58,8 +58,8 @@ public class RobotContainer {
 
 //     // robot subsystems
         private final Swerve swerve;
-//     private final OdometryUpdates odometryUpdates;
-//     private final Vision vision;
+        private final OdometryUpdates odometryUpdates;
+        private final Vision vision;
         // public final Indexer indexer;
         // public final Intake intake;
 //     private final Launcher launcher;x
@@ -100,8 +100,8 @@ public class RobotContainer {
      */
     public RobotContainer() {
         swerve = new Swerve(drivetrain);
-        // vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
-        // odometryUpdates = new OdometryUpdates(vision, swerve);
+        vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+        odometryUpdates = new OdometryUpdates(vision, swerve);
         // launcher = new Launcher();
         // indexer = new Indexer();
         // intake = new Intake();

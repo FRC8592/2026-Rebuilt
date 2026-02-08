@@ -72,6 +72,7 @@ public class Turret extends SubsystemBase{
     }
 
     public void resetPos(){
+        System.out.println("Resetting Pose");
         tMotor.resetEncoderPosition(0);
     }
 
