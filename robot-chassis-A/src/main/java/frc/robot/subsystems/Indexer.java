@@ -40,10 +40,11 @@ public class Indexer extends SubsystemBase{
         // MotorPID.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I,INDEXER.OUTPUT_D);
         // outputMotor.withGains(MotorPID);
   
-        // TODO: set idle modes
-        //spinnerMotor.setIdleMode(IdleMode.kCoast);
-        //outputMotor.setIdleMode(IdleMode.kCoast);
+        // // TODO: set idle modes
+        // //spinnerMotor.setIdleMode(IdleMode.kCoast);
+        // //outputMotor.setIdleMode(IdleMode.kCoast);
 
+        // // TODO: Determine an appropriate current limit for the indexer motors
         // TODO: Determine an appropriate current limit for the indexer motors
         // spinnerMotor.setCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT);
         // outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);

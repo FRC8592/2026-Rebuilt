@@ -27,10 +27,10 @@ public class Intake extends SubsystemBase{
         // MotorPID.setPID(INTAKE.INTAKE_P, INTAKE.INTAKE_I, INTAKE.INTAKE_D);
         // IntakeMotor.withGains(MotorPID);
 
-        // // TODO: Set idle mode
-        // //IntakeMotor.setIdleMode(IdleMode.kCoast);
+        // TODO: Set idle mode
+        //IntakeMotor.setIdleMode(IdleMode.kCoast);
   
-        // // TODO: Determine an appropriate current limit for the intake motor
+        // TODO: Determine an appropriate current limit for the intake motor
         // IntakeMotor.setCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT);
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
