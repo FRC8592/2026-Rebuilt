@@ -41,18 +41,19 @@ public class Shooter extends SubsystemBase{
         //LeftShooterMotor.configureMotionMagic(SHOOTER.MAX_ACCELERATION, SHOOTER.CRUISE_VELOCITY);
     }
 
-    // public void runAtSpeed(double desiredRPM){
+    public void runAtSpeed(double desiredRPM){
     //     double RPM = SmartDashboard.getNumber("Vi", 0);
     //     System.out.println("Shooter method is running");
     //     System.out.println("RPM Set " + RPM);
     //     LeftShooterMotor.setVelocity(RPM);
-    // }
+    }
 
     // public Command runAtSpeedCommand(){
     //     double RPM = SmartDashboard.getNumber("Vi", 0);
-    //     return this.runOnce(() -> runAtSpeed(RPM));
+        // return this.runOnce(() -> runAtSpeed(RPM));
     // }
-    // public void updatePID(){
+
+    public void updatePID(){
     //     //System.out.println("Going into updatePID Method");
     //     double P = SmartDashboard.getNumber("P", 0.001);
     //     double I = SmartDashboard.getNumber("I", 0.0);
@@ -66,7 +67,8 @@ public class Shooter extends SubsystemBase{
     //         IOld = I;
     //         DOld = D;
     //     }
-    // }
+    }
+
     // public void stopShooter(){
     //     LeftShooterMotor.setPercentOutput(0);
     // }
@@ -78,6 +80,7 @@ public class Shooter extends SubsystemBase{
     // public double getVelocity(){
     //     return LeftShooterMotor.getVelocityRPM();
     // }
+
     // //This is simply for calculation to get the ball landing in the center of the goal, based on the distance to the hub
     // //This is very much a theoretical implementation, simply putting in just the math
     // public double DistanceToRPM(double theta, double dis){

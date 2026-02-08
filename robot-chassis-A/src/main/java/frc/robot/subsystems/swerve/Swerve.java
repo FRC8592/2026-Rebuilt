@@ -78,8 +78,8 @@ public class Swerve extends SubsystemBase {
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             //TODO: replace pid constants
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(2.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(SWERVE.DRIVE_KP, SWERVE.DRIVE_KI, SWERVE.DRIVE_KD), // Translation PID constants
+                    new PIDConstants(SWERVE.STEER_KP, SWERVE.STEER_KI, SWERVE.STEER_KD) // Rotation PID constants
             ),
 
             config, // The robot configuration
@@ -99,15 +99,29 @@ public class Swerve extends SubsystemBase {
         );
     }
 
-    //TODO: make it when also driving in field centric (currently only returns a valid value if running driveRobotRelative())
+    //TODO: calculate the robot relative speed instead
+    /**
+     * Gets robot relative speeds commanded to the robot (NOT the calculated robot relative speeds)
+     * @return current ChassisSpeeds
+     */
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return currentSpeeds;
     }
 
+    /**
+     * Runs the SysId Quasistatic test in the given direction for the routine specified in the parameters 
+     * @param direction Direction of the Quasistatic routine
+     * @return Command to run
+     */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
         return swerve.sysIdQuasistatic(direction);
     }
 
+    /**
+     * Runs the SysId Dynamic test in the given direction for the routine specified in the parameters
+     * @param direction Direction of the Dynamic routine
+     * @return Command to run
+     */
     public Command sysIdDynamic(SysIdRoutine.Direction direction){
         return swerve.sysIdDynamic(direction);
     }
@@ -116,6 +130,7 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getCurrentOdometryPosition());
 
+        //TODO: do we really need to run this? 
         swerve.periodic();
     }
 
@@ -137,6 +152,8 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
+
+        currentSpeeds = speeds;
     }
 
     /**
@@ -178,14 +195,13 @@ public class Swerve extends SubsystemBase {
     /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
     public SwerveRequest brake(){
         return new SwerveRequest.SwerveDriveBrake(){};
     }
 
     /**
      * Get the rotation of the current robot pose
-     * @return Roration2d robot rotation
+     * @return Rotation2d robot rotation
      */
     public Rotation2d getYaw() {
         return swerve.getState().Pose.getRotation();
@@ -204,12 +220,12 @@ public class Swerve extends SubsystemBase {
 
         Logger.recordOutput(
             SWERVE.LOG_PATH+"Console", (
-                "X: "+
+                "X: " +
                 currentPose.getX()+
-                "; Y: "+
-                currentPose.getY()+
-                "; Rotation: "+
-                currentPose.getRotation().getDegrees()+
+                "; Y: " +
+                currentPose.getY() +
+                "; Rotation: " +
+                currentPose.getRotation().getDegrees() +
                 "°."
             )
         );
