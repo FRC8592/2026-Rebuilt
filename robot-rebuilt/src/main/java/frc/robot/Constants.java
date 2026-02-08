@@ -47,7 +47,8 @@ public final class VISION {
     public static final int MAX_LOCK_LOSS_TICKS = 20;
 
     public static final Transform3d CAMERA_OFFSETS = (
-        new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
+        //new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
+        new Transform3d(new Translation3d(0.51, -0.31, 0.27), new Rotation3d(0, Math.toRadians(-15), 0))
     );
 
 
