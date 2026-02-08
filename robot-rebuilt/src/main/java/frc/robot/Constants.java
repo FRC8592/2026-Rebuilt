@@ -13,9 +13,6 @@ import frc.robot.subsystems.swerve.TunerConstants;
 
 
 public final class Constants {
-
-  
-
   public final class SHARED {
     public static final String LOG_FOLDER = "CustomLogs";
 }
