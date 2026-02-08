@@ -142,13 +142,17 @@ public final class SHOOTER {
 
 public final class TURRET{
     public static final int TURRET_MOTOR = 19;
-    public static final double TURRET_P = 2;
-    public static final double TURRET_I = 0;
-    public static final double TURRET_D = 0.015;
+    public static final double TURRET_P = 4;
+    public static final double TURRET_I = 3;
+    public static final double TURRET_D = 0.2;
+    public static final double TURRET_V = 0.7;
     public static final int TURRET_TG = 96;
     public static final int TURRET_G1 = 10;
     public static final int TURRET_G2 = 11;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;
+    public static final int INITIAL_MAX_ACCELERATION = 60;
+    public static final int INITIAL_CRUISE_VELOCITY = 6;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
 }

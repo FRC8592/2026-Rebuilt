@@ -50,10 +50,10 @@ public class RobotContainer {
     // );
 
 //     private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
-//     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+       public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
 //     // robot subsystems
-//     private final Swerve swerve;
+        private final Swerve swerve;
 //     private final OdometryUpdates odometryUpdates;
 //     private final Vision vision;
         // public final Indexer indexer;
@@ -95,7 +95,7 @@ public class RobotContainer {
      * up button bindings, and prepares for autonomous.
      */
     public RobotContainer() {
-        // swerve = new Swerve(drivetrain);
+        swerve = new Swerve(drivetrain);
         // vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
         // odometryUpdates = new OdometryUpdates(vision, swerve);
         // launcher = new Launcher();
@@ -103,12 +103,11 @@ public class RobotContainer {
         // intake = new Intake();
         // scoring = new Scoring(intake, indexer, launcher);
         //shooter = new Shooter();
-        turret = new Turret();
+        turret = new Turret(swerve);
         feeder = new Feeder();
-        SmartDashboard.putNumber("Position Value", 0);
 
         configureBindings();
-//         configureDefaults();
+        configureDefaults();
 //         passSubsystems();
 
 //         AutoManager.prepare();
@@ -122,15 +121,15 @@ public class RobotContainer {
     /**
      * Configure default commands for the subsystems
      */
-//     private void configureDefaults() {
-//         // Set the swerve's default command to drive with joysticks
+    private void configureDefaults() {
+        // Set the swerve's default command to drive with joysticks
 
-//         setDefaultCommand(swerve, swerve.run(() -> {
-//             swerve.drive(swerve.processJoystickInputs(
-//                     -driverController.getLeftX(),
-//                     -driverController.getLeftY(),
-//                     -driverController.getRightX()));
-//         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        setDefaultCommand(swerve, swerve.run(() -> {
+            swerve.drive(swerve.processJoystickInputs(
+                    -driverController.getLeftX(),
+                    -driverController.getLeftY(),
+                    -driverController.getRightX()));
+        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 //         indexer.setDefaultCommand(
 //                 new RunCommand(() -> indexer.autoIndex(), indexer));
@@ -138,7 +137,7 @@ public class RobotContainer {
 //         launcher.setDefaultCommand(
 //                 new RunCommand(() -> launcher.setLauncherPercentOutput(0.4, 0.4), launcher));
 
-//     }
+    }
 
     /**
      * Configure all button bindings
@@ -152,7 +151,7 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand(SmartDashboard.getNumber("Position Value", 0))).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
         RESET_POS.onTrue(turret.resetPosCommand());
