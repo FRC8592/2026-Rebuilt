@@ -6,15 +6,19 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
-import frc.robot.commands.autonomous.AutoCommand;
+import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
-import frc.robot.commands.largecommands.LargeCommand;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.Shooter;
+//import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.vision.Vision;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Feeder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

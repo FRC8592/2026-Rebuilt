@@ -103,16 +103,17 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
-    @Override
-    public void disabledExit() {}
+  @Override
+  public void disabledExit() {}
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.shooter.updatePID();
-    m_robotContainer.indexer.updatePID();
-    m_robotContainer.intake.updatePID();
+    // m_robotContainer.shooter.updatePID();
+    // m_robotContainer.indexer.updatePID();
+    // m_robotContainer.intake.updatePID();
 
   }
 

@@ -6,14 +6,10 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.List;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -25,7 +21,6 @@ import frc.robot.Constants.*;
 
 
 public class OdometryUpdates extends SubsystemBase {
-
     private Swerve swerve;
     private Vision vision1;
     private Pose2d initialPose;
@@ -124,7 +119,7 @@ public class OdometryUpdates extends SubsystemBase {
                 // Set the initial pose for the robot before the competition starts.  It must be able to see an AprilTag
                 if (DriverStation.isDisabled() && !robotPosition.equals(new Pose2d())) {
                     initialPose = robotPoseAverager(robotPose);
-                    swerve.setKnownOdometryPose(initialPose);
+                    swerve.resetPose(initialPose);
                 }
 
                 if (!DriverStation.isDisabled() && !robotPosition.equals(new Pose2d())) {
@@ -147,7 +142,7 @@ public class OdometryUpdates extends SubsystemBase {
         
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/TagsInView1", vision1.getTargets().size());
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/VisionPose1", robotPosition);
-            Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/OdometryPose", swerve.getCurrentOdometryPosition());
+            Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/OdometryPose", swerve.getPose());
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/AmbiguityRatio1", ambiguity);
             Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/InitialPose", initialPose);
         }

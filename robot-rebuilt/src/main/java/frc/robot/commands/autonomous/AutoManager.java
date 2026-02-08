@@ -4,26 +4,19 @@
 
 package frc.robot.commands.autonomous;
 
-import java.util.ArrayList;
-import java.util.Set;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
-import frc.robot.commands.autonomous.autos.MoveCollect;
-import frc.robot.commands.proxies.*;
 
 /**
  * General class for autonomous management (loading autos, sending the chooser, getting the
  * user-selected auto command, etc).
  */
 public final class AutoManager {
-    private static SendableChooser<AutoCommand> autoChooser;
-    private static ArrayList<AutoCommand> autoCommands = new ArrayList<>();
+    private static SendableChooser<Command> pathPlannerAutos;
 
     /**
      * Load all autos and broadcast the chooser.
@@ -34,19 +27,8 @@ public final class AutoManager {
      * this function will have relatively long delays due to loading paths.
      */
     public static void prepare(){
-        SmartDashboard.putNumber("Auto Delay", 0);
-        autoCommands = new ArrayList<>();
-        autoCommands.add(new MoveCollect());
-
-        autoChooser = new SendableChooser<>();
-        
-        autoChooser.setDefaultOption("DEFAULT - No auto", new AutoCommand());
-        for(AutoCommand c : autoCommands){
-            autoChooser.addOption(
-                c.getAutoName(), c
-            );
-        }
-        Shuffleboard.getTab("Autonomous Config").add(autoChooser);
+        pathPlannerAutos = AutoBuilder.buildAutoChooser("DefaultAuto");
+        Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
     }
 
     /**
@@ -55,22 +37,8 @@ public final class AutoManager {
      * @return the command
      */
     public static Command getAutonomousCommand(){
-        AutoCommand autoCommand = autoChooser.getSelected();
-        return getAutonomousInitCommand().andThen(
-            // If we don't keep this command from registering as composed,
-            // the code will crash if we try to run an auto twice without
-            // restarting robot code.
-            new MultiComposableCommand(autoCommand)
-        );
-    }
+        return pathPlannerAutos.getSelected();
 
-    /**
-     * Parallel command group that runs all subsystems' autonomous init commands.
-     *
-     * @return the command
-     */
-    private static Command getAutonomousInitCommand(){
-        return new DeferredCommand(()->new WaitCommand(SmartDashboard.getNumber("Auto Delay", 0)), Set.of());
     }
 
     private AutoManager() {
