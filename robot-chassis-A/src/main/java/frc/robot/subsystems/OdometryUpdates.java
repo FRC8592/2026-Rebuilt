@@ -28,6 +28,8 @@ public class OdometryUpdates extends SubsystemBase {
     private static boolean useVision;
     private double ambiguity;
     private Pose2d robotPosition;
+
+    //variables for the averager method
     private int IteratorCounter = 0;
     private double[] rawXData = new double[VISION.POSE_AVERAGER_VALUE];
     private double[] rawYData = new double[VISION.POSE_AVERAGER_VALUE];
@@ -45,10 +47,6 @@ public class OdometryUpdates extends SubsystemBase {
     
     public void simulationPeriodic() {
 
-    }
-
-    public static void setVision(){
-        useVision = true;
     }
 
     public Pose2d robotPoseAverager(Optional<EstimatedRobotPose> robotPose) {
