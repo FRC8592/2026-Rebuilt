@@ -4,9 +4,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.pathplanner.lib.config.RobotConfig;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -39,9 +36,7 @@ public final class Constants {
 
 
   public final class VISION {
-      public static final String LOG_PATH = SHARED.LOG_FOLDER+"ScoreCoral";
-
-      public static final int MAX_LOCK_LOSS_TICKS = 20;
+      public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
       public static final Transform3d CAMERA_OFFSETS = (
           new Transform3d(new Translation3d(0.17145, 0.20955, 0.2286), new Rotation3d(0, Math.toRadians(-13), Math.toRadians(-3)))
@@ -88,30 +83,8 @@ public final class Constants {
 
     public static final double JOYSTICK_EXPONENT = 1.75;
 
-    public static final double PATH_FOLLOW_TRANSLATE_kP = 1.5; 
-    public static final double PATH_FOLLOW_TRANSLATE_kI = 0.0;
-    public static final double PATH_FOLLOW_TRANSLATE_kD = 0.15;
-
-    //TODO: Double check that these still work
-    public static final double PATH_FOLLOW_ROTATE_kP = 2.0;
-    public static final double PATH_FOLLOW_ROTATE_kI = 0.0;
-    public static final double PATH_FOLLOW_ROTATE_kD = 0.0;
-
-    public static final double PATH_FOLLOW_ROTATE_MAX_VELOCITY = 1.5 * Math.PI;
-    public static final double PATH_FOLLOW_ROTATE_MAX_ACCELLERATION = 1.5 * Math.PI;
-
-    public static final double PATH_FOLLOW_TRANSLATE_POSITION_TOLERANCE = 0.03; // Meters
-    public static final double PATH_FOLLOW_TRANSLATE_VELOCITY_TOLERANCE = 0.05;
-
-    public static final double PATH_FOLLOW_ROTATE_POSITION_TOLERANCE = 0.04; // Radians
-    public static final double PATH_FOLLOW_ROTATE_VELOCITY_TOLERANCE = 0.02;
-
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-  }
-
-  public class SUPPLIERS{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER+"/Suppliers/";
   }
 
   public final class SHOOTER {
