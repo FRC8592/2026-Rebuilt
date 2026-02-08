@@ -4,8 +4,6 @@
 
 package frc.robot.commands.autonomous;
 
-// import java.util.Set;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,9 +20,6 @@ public final class AutoManager {
 
     /**
      * Load all autos and broadcast the chooser.
-     *<p>
-     * * This is where programmers should add new autos.
-     *
      * @apiNote This should be called on {@link Robot#robotInit()} only;
      * this function will have relatively long delays due to loading paths.
      */

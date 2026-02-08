@@ -84,7 +84,10 @@ public class TunerConstants {
                 .withStatorCurrentLimit(Amps.of(60))
                 .withStatorCurrentLimitEnable(true)
         )
-        .withClosedLoopRamps(new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(0.025));
+        .withClosedLoopRamps(
+            new ClosedLoopRampsConfigs()
+            .withVoltageClosedLoopRampPeriod(0.025)
+        );
 
     private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
     // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
