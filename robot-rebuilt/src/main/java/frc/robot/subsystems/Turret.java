@@ -73,7 +73,12 @@ public class Turret extends SubsystemBase{
 
     public void resetPos(){
         System.out.println("Resetting Pose");
-        tMotor.resetEncoderPosition(0);
+        //tMotor.resetEncoderPosition(0);
+        tMotor.resetEncoderPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
+        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
+        //To make sure this works!
+        //tMotor.setPosition(0);
     }
 
     public void updateMotionMagic(){
@@ -159,8 +164,9 @@ public class Turret extends SubsystemBase{
         //Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
         //Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
         //Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-        //Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - 146.2, E2R - 142.6));
-        Logger.recordOutput("Motor Angle", tMotor.getRotations() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
+        //Logger.recordOutput("Motor Angle", tMotor.getRotations() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput("Motor Rotations", tMotor.getRotations());
         //updateMotionMagic();
     }
 }

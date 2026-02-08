@@ -14,6 +14,8 @@ import frc.robot.subsystems.swerve.Swerve;
 public class AutoTurretAngle extends SubsystemBase{
     private double hubLocationX = 4.02844;
     private double hubLocationY = 4.445;
+    private double locationX = 1;
+    private double locationY = 3;
     public double rawAngle = 0;
 
     Swerve swerve;
