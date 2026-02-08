@@ -11,15 +11,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.Optional;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class Swerve extends SubsystemBase {
 
@@ -31,10 +34,18 @@ public class Swerve extends SubsystemBase {
     
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
+    private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+        .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
+        .withDriveRequestType(DriveRequestType.Velocity);
+
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
+
+    private ChassisSpeeds currentSpeeds = new ChassisSpeeds();
+
+    private RobotConfig config = null;
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
         smoothingFilter = new SmoothingFilter(
@@ -46,12 +57,80 @@ public class Swerve extends SubsystemBase {
         snapToController = new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns the robot to a set heading
 
         swerve = drivetrain;
+
+        //PathPlanner AutoBuilder configuration below. 
+        //https://pathplanner.dev/pplib-build-an-auto.html
+        try {
+            config = RobotConfig.fromGUISettings(); 
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+            //end method to prevent NullPointerException
+            return;
+        }
+
+        // Configure AutoBuilder
+        AutoBuilder.configure(
+            this::getCurrentOdometryPosition, // Robot pose supplier
+            this::setKnownOdometryPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            //TODO: replace pid constants
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(SWERVE.DRIVE_KP, SWERVE.DRIVE_KI, SWERVE.DRIVE_KD), // Translation PID constants
+                    new PIDConstants(SWERVE.STEER_KP, SWERVE.STEER_KI, SWERVE.STEER_KD) // Rotation PID constants
+            ),
+
+            config, // The robot configuration
+
+            () -> {
+                // Boolean supplier that controls when the path will be mirrored for the red alliance
+                // This will flip the path being followed to the red side of the field.
+                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent())
+                    return alliance.get() == DriverStation.Alliance.Red;
+                return false;
+                
+            },
+
+            this // Reference to this subsystem to set requirements
+        );
+    }
+
+    //TODO: calculate the robot relative speed instead
+    /**
+     * Gets robot relative speeds commanded to the robot (NOT the calculated robot relative speeds)
+     * @return current ChassisSpeeds
+     */
+    public ChassisSpeeds getRobotRelativeSpeeds(){
+        return currentSpeeds;
+    }
+
+    /**
+     * Runs the SysId Quasistatic test in the given direction for the routine specified in the parameters 
+     * @param direction Direction of the Quasistatic routine
+     * @return Command to run
+     */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
+        return swerve.sysIdQuasistatic(direction);
+    }
+
+    /**
+     * Runs the SysId Dynamic test in the given direction for the routine specified in the parameters
+     * @param direction Direction of the Dynamic routine
+     * @return Command to run
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction){
+        return swerve.sysIdDynamic(direction);
     }
 
     @Override
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getCurrentOdometryPosition());
 
+        //TODO: do we really need to run this? 
         swerve.periodic();
     }
 
@@ -73,6 +152,22 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
+
+        currentSpeeds = speeds;
+    }
+
+    /**
+     * Sends a robot-relative ChassisSpeeds to the drivetrain
+     * @param speeds robot-relative ChassisSpeeds to run the drivetrain at
+     */
+    public void driveRobotRelative(ChassisSpeeds speeds){
+        swerve.setControl(
+            robotCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(speeds.omegaRadiansPerSecond)
+        );
+
+        currentSpeeds = speeds;
     }
 
     /**
@@ -90,17 +185,23 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Commands the swerve to stop
+     * @return a command to stop the drivetrain
+     */
+    public Command stopCommand(){
+        return swerve.runOnce(() -> stop());
+    }
+
+    /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
-    //TODO: will the robot 
     public SwerveRequest brake(){
         return new SwerveRequest.SwerveDriveBrake(){};
     }
 
     /**
      * Get the rotation of the current robot pose
-     * @return Roration2d robot rotation
+     * @return Rotation2d robot rotation
      */
     public Rotation2d getYaw() {
         return swerve.getState().Pose.getRotation();
@@ -119,12 +220,12 @@ public class Swerve extends SubsystemBase {
 
         Logger.recordOutput(
             SWERVE.LOG_PATH+"Console", (
-                "X: "+
+                "X: " +
                 currentPose.getX()+
-                "; Y: "+
-                currentPose.getY()+
-                "; Rotation: "+
-                currentPose.getRotation().getDegrees()+
+                "; Y: " +
+                currentPose.getY() +
+                "; Rotation: " +
+                currentPose.getRotation().getDegrees() +
                 "°."
             )
         );

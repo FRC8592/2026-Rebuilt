@@ -1,39 +1,10 @@
 {
- "name":"AutoPathsBB",
+ "name":"AutoPaths",
  "version":2,
  "type":"Swerve",
  "variables":{
   "expressions":{},
-  "poses":{
-   "REDANGLEDINIT":{
-    "x":{
-     "exp":"14.854490280151367 m",
-     "val":14.854490280151367
-    },
-    "y":{
-     "exp":"1.9225120544433594 m",
-     "val":1.9225120544433592
-    },
-    "heading":{
-     "exp":"-1.0088755438018266 rad",
-     "val":-1.0088755438018266
-    }
-   },
-   "REDINIT":{
-    "x":{
-     "exp":"14.825297355651855 m",
-     "val":14.825297355651855
-    },
-    "y":{
-     "exp":"0.5065649747848511 m",
-     "val":0.5065649747848511
-    },
-    "heading":{
-     "exp":"0 rad",
-     "val":0.0
-    }
-   }
-  }
+  "poses":{}
  },
  "config":{
   "frontLeft":{
@@ -57,8 +28,8 @@
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"30 lbs",
+   "val":13.6077711
   },
   "inertia":{
    "exp":"6 kg m ^ 2",
@@ -105,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":null,
+  "root":"Users/rohanagarwal/Documents/FRC/2026-Rebuilt/robot-rebuilt/src/deploy/choreo",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
