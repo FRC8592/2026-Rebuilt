@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.Shooter;
 
 
 public final class Constants {
@@ -82,24 +83,48 @@ public final class Constants {
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
   }
 
-  public final class SHOOTER {
-    //Left and right classifications are for looking from the robots viewpoint
-    public static final int RIGHT_SHOOTER_MOTOR = 38;
-    public static final int LEFT_SHOOTER_MOTOR = 36;
+public final class SHOOTER {
+  //Left and right classifications are for looking from the robots viewpoint
+    public static final int RIGHT_SHOOTER_MOTOR = 10;
+    public static final int LEFT_SHOOTER_MOTOR = 11;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double MOTOR_P = 0.01;
     public static final double MOTOR_I = 0;
     public static final double MOTOR_D = 0;
     //These are to use motion magic for the shooter with Kraken X60's, easier than PID tuning
     public static final double MAX_ACCELERATION = 0;
-    //For velocity control, cruise velocity is not needed, but it might throw errors if not included so this is here as a placeholder
     public static final double CRUISE_VELOCITY = 0;
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
   }
 
-  public static class INTAKE{
-    // CAN ID for the Intake motor
+  public final class TURRET{
+    public static final int TURRET_MOTOR = 19;
+    public static final double TURRET_P = 4;
+    public static final double TURRET_I = 3;
+    public static final double TURRET_D = 0.2;
+    public static final double TURRET_V = 0.7;
+    public static final int TURRET_TG = 96;
+    public static final int TURRET_G1 = 10;
+    public static final int TURRET_G2 = 11;
+    public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;
+    public static final int INITIAL_MAX_ACCELERATION = 60;
+    public static final int INITIAL_CRUISE_VELOCITY = 6;
+    public static final double E1_OFFSET = 286;
+    public static final double E2_OFFSET = 323.4;
+
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
+}
+
+
+  public static final class SCORING{
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+  }
+
+
+
+public final class INTAKE{
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
@@ -140,7 +165,7 @@ public final class Constants {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
   }
 
-  public static final class SCORING{
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
-  }
+  // public static final class SCORING{
+  //   public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
+  // }
 }

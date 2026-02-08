@@ -22,14 +22,20 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.*;
+import au.grapplerobotics.CanBridge;
 
 /**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
- * this project, you must also update the Main.java file in the project.
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
+ * project.
  */
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
@@ -39,7 +45,7 @@ public class Robot extends LoggedRobot {
         .withJoystickReplay();
 
 
-  public static Field2d FIELD = new Field2d();
+    public static Field2d FIELD = new Field2d();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -101,9 +107,10 @@ public class Robot extends LoggedRobot {
     
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {}
+    /** This function is called once each time the robot enters Disabled mode. */
+    @Override
+    public void disabledInit() {
+    }
 
     @Override
     public void disabledExit() {}
@@ -116,20 +123,23 @@ public class Robot extends LoggedRobot {
 
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    /**
+     * This autonomous runs the autonomous command selected by your
+     * {@link RobotContainer} class.
+     */
+    @Override
+    public void autonomousInit() {
+        //autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
+        }
     }
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic() {
+    }
 
   @Override
     public void autonomousExit() {}
@@ -140,15 +150,17 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().cancel(m_autonomousCommand);
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(autonomousCommand);
      //   m_autonomousCommand.cancel();
     }
   }
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+    /** This function is called periodically during operator control. */
+    @Override
+    public void teleopPeriodic() {
+
+    }
 
   @Override
     public void teleopExit() {}
@@ -159,9 +171,10 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+    /** This function is called periodically during test mode. */
+    @Override
+    public void testPeriodic() {
+    }
 
    @Override
     public void testExit() {}

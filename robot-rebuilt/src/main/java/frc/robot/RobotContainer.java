@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -18,74 +19,115 @@ import frc.robot.subsystems.vision.Vision;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Feeder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
+
 public class RobotContainer {
-  private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
+    private static final CommandXboxController driverController = new CommandXboxController(
+            CONTROLLERS.DRIVER_PORT);
 
-  // robot subsystems
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Swerve swerve;
-  //public final Shooter shooter;
-  public final Intake intake;
-  public final Indexer indexer;
-  public final Vision vision;
-  public final OdometryUpdates odometryUpdates;
+    private static final CommandXboxController operatorController = new CommandXboxController(
+            CONTROLLERS.OPERATOR_PORT);
 
-  private final Trigger runIntake = driverController.rightBumper();
-  private final Trigger runIndexer = driverController.leftBumper();
-  private final Trigger RESET_HEADING = driverController.back();
+    // TODO: implement the operator controller
+    // private static final CommandGenericHID operatorController = new
+    // CommandXboxController(
+    // CONTROLLERS.OPERATOR_PORT
+    // );
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    swerve = new Swerve(drivetrain);
-    // shooter = new Shooter();
-    intake = new Intake();
-    indexer = new Indexer();
-    vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
-    odometryUpdates = new OdometryUpdates(vision, swerve);
+//     private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
+       public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    //Register commands that are going to be used in auto here BEFORE initializing autos
-    // NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
-    // NamedCommands.registerCommand("stopIntake", intake.stopCommand());
-    
-    // Configure the trigger bindings
-    configureBindings();
-    configureDefaults();
-    AutoManager.prepare();
-  }
+//     // robot subsystems
+        private final Swerve swerve;
+        private final OdometryUpdates odometryUpdates;
+        private final Vision vision;
+        // public final Indexer indexer;
+        // public final Intake intake;
+//     private final Launcher launcher;x
+//     private final Scoring scoring;
+        //public final Shooter shooter;
+        public final Turret turret;
+        public final Feeder feeder;
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-  private void configureBindings() {
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    // runIntake.whileTrue(intake.runAtSpeedCommand()).onFalse(intake.stopCommand());
-    // runIndexer.whileTrue(indexer.runAtSpeedCommand()).onFalse(indexer.stopCommand());
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+//     // robot button triggers
+        private final Trigger TESTING_TURRET = driverController.rightBumper();
+        private final Trigger TESTING_TURRET_BACK = driverController.leftBumper();
+        //private final Trigger TESTING_SHOOTER = driverController.x();
+        //private final Trigger STOP_SHOOTER = driverController.a();
+        private final Trigger RESET_POS = driverController.back();
+        //private final Trigger TESTING_FEEDER = driverController.b();
+//     private final Trigger RESET_HEADING = driverController.back();
+//     // private final Trigger SLOW_MODE = driverController.leftBumper();
+//     // TODO: map these to the operator controller
+//     private final Trigger LAUNCH_NORMAL = operatorController.b();
+//     private final Trigger LAUNCH_CLOSE = operatorController.x();
+//     private final Trigger LAUNCH_HIGH = operatorController.y();
+//     private final Trigger LAUNCH_LOW = operatorController.a();
 
-  }
+//     private final Trigger RUN_INDEXER = driverController.rightTrigger();
+//     // private final Trigger INTAKE_TO_INDEXER = driverController.leftBumper();
 
-  private void configureDefaults() {
+//     private final Trigger INTAKE_DEPLOY = driverController.leftBumper();
+//     private final Trigger INTAKE_STOW = driverController.rightBumper();
+
+//     private final Trigger INTAKE = driverController.leftTrigger();
+//     private final Trigger OUTTAKE = driverController.povUp();
+//     private final Trigger REVERSE_INTAKE = driverController.povLeft();
+    // private final
+
+    /**
+     * Create the robot container. This creates and configures subsystems, sets
+     * up button bindings, and prepares for autonomous.
+     */
+    public RobotContainer() {
+        swerve = new Swerve(drivetrain);
+        vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+        odometryUpdates = new OdometryUpdates(vision, swerve);
+        // launcher = new Launcher();
+        // indexer = new Indexer();
+        // intake = new Intake();
+        // scoring = new Scoring(intake, indexer, launcher);
+        //shooter = new Shooter();
+        turret = new Turret(swerve);
+        feeder = new Feeder();
+
+        configureBindings();
+        configureDefaults();
+//         passSubsystems();
+
+//         AutoManager.prepare();
+//     }
+
+//     private void passSubsystems(){
+//         LargeCommand.addSubsystems(swerve);
+//         AutoCommand.addSubsystems(swerve, launcher, indexer, intake);
+     }
+
+    /**
+     * Configure default commands for the subsystems
+     */
+    private void configureDefaults() {
         // Set the swerve's default command to drive with joysticks
+
         setDefaultCommand(swerve, swerve.run(() -> {
             swerve.drive(swerve.processJoystickInputs(
                     -driverController.getLeftX(),
@@ -93,6 +135,68 @@ public class RobotContainer {
                     -driverController.getRightX()));
         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
+        //turret.setDefaultCommand(turret.TurrettoPosCommand());
+
+//         indexer.setDefaultCommand(
+//                 new RunCommand(() -> indexer.autoIndex(), indexer));
+
+//         launcher.setDefaultCommand(
+//                 new RunCommand(() -> launcher.setLauncherPercentOutput(0.4, 0.4), launcher));
+
+    }
+
+    /**
+     * Configure all button bindings
+     */
+    private void configureBindings() {
+        // SLOW_MODE.onTrue(Commands.runOnce(() ->
+        // swerve.setSlowMode(true)).ignoringDisable(true))
+        // .onFalse(Commands.runOnce(() ->
+        // swerve.setSlowMode(false)).ignoringDisable(true));
+
+        // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+
+        //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
+        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
+        //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
+       // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
+        RESET_POS.onTrue(turret.resetPosCommand());
+        //TESTING_FEEDER.onTrue(feeder.runAtSpeedCommand()).onFalse(feeder.stopCommand());
+
+        // LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
+        //         .onFalse(launcher.stopLauncherCommand());
+
+        // LAUNCH_CLOSE.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.44, 0.3), Set.of(launcher)))
+        //         .onFalse(launcher.stopLauncherCommand());
+
+        // LAUNCH_LOW.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.23, 0.23), Set.of(launcher)))
+        //         .onFalse(launcher.stopLauncherCommand());
+
+        // LAUNCH_HIGH.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
+        //         .onFalse(launcher.stopLauncherCommand());
+
+        // RUN_INDEXER
+        //         .whileTrue(new RunCommand(() -> indexer.run(3, 1)).alongWith(new RunCommand(() -> indexer.run(2, 1))))
+        //         .onFalse(indexer.stopMotorCommand(3));
+
+        // // RUN_INDEXER
+        // //         .whileTrue(new RunCommand(() -> indexer.shoot(1)))
+        // //         .onFalse(new RunCommand(() -> indexer.stopShoot()));
+
+        // INTAKE_DEPLOY.whileTrue(intake.deployIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
+
+        // INTAKE_STOW.whileTrue(intake.stowIntakeCommand()).onFalse(intake.stopIntakePivotCommand());
+
+        // INTAKE.whileTrue(intake.runIntakeCommand()).onFalse(intake.stopIntakeCommand());
+
+        // OUTTAKE.whileTrue(intake.reverseIntakeCommand().alongWith(indexer.setIndexerReverseCommand()))
+        //         .onFalse(intake.stopIntakeCommand().alongWith(indexer.setIndexerNormalCommand()));
+
+        // REVERSE_INTAKE.whileTrue(indexer.setIndexerReverseCommand()).onFalse(indexer.setIndexerNormalCommand());
+
+        // INTAKE_TO_INDEXER.whileTrue(new DeferredCommand(() -> scoring.intakeLunite(),
+        // Set.of(scoring))
+        // ).onFalse(scoring.stowIntake());
     }
 
   /**
