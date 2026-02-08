@@ -5,13 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
+import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.vision.Vision;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
@@ -37,6 +40,8 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
+  public final Vision vision;
+  public final OdometryUpdates odometryUpdates;
 
   private final Trigger runIntake = driverController.rightBumper();
   private final Trigger runIndexer = driverController.leftBumper();
@@ -48,6 +53,8 @@ public class RobotContainer {
     shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
+    vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+    odometryUpdates = new OdometryUpdates(vision, swerve);
 
     //Register commands that are going to be used in auto here BEFORE initializing autos
     NamedCommands.registerCommand("runIntake", intake.runAtSpeedCommand());
