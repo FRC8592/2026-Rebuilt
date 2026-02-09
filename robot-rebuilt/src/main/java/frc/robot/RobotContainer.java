@@ -13,6 +13,7 @@ import frc.robot.subsystems.swerve.Swerve;
 //import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OdometryUpdates;
+import frc.robot.subsystems.Scoring;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -62,10 +63,9 @@ public class RobotContainer {
         private final Vision vision;
         // public final Indexer indexer;
         // public final Intake intake;
-//     private final Launcher launcher;x
-//     private final Scoring scoring;
+//     private final Launcher launcher;
+        private final Scoring scoring;
         //public final Shooter shooter;
-        public final Turret turret;
         public final Feeder feeder;
 
 //     // robot button triggers
@@ -105,9 +105,8 @@ public class RobotContainer {
         // launcher = new Launcher();
         // indexer = new Indexer();
         // intake = new Intake();
-        // scoring = new Scoring(intake, indexer, launcher);
+        scoring = new Scoring(swerve);
         //shooter = new Shooter();
-        turret = new Turret(swerve);
         feeder = new Feeder();
 
         configureBindings();
@@ -157,10 +156,10 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
+        //TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-        RESET_POS.onTrue(turret.resetPosCommand());
+        //RESET_POS.onTrue(turret.resetPosCommand());
         //TESTING_FEEDER.onTrue(feeder.runAtSpeedCommand()).onFalse(feeder.stopCommand());
 
         // LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))

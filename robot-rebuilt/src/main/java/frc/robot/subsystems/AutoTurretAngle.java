@@ -12,51 +12,51 @@ import frc.robot.Constants.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class AutoTurretAngle extends SubsystemBase{
-    private double hubLocationX = 4.02844;
-    private double hubLocationY = 4.445;
-    private double locationX = 1;
-    private double locationY = 3;
+    //private double hubLocationX = 4.02844;
+    //private double hubLocationY = 4.445;
+    // private double locationX = 1;
+    // private double locationY = 3;
     public double rawAngle = 0;
 
     Swerve swerve;
 
-    public AutoTurretAngle(Swerve swerve){
-        this.swerve = swerve;
-    }
-
-    @Override
-    public void periodic(){
-        rawAngle = TurretAngleCalc(swerve.getPose());
+    public AutoTurretAngle(){
 
     }
 
-    public double TurretAngleCalc(Pose2d robotPosition){
+    // @Override
+    // public void periodic(){
+    //     rawAngle = TurretAngleCalc(swerve.getPose());
+
+    // }
+
+    public double turretAngleCalc(Pose2d robotPosition, Pose2d targetPosition){
         //System.out.println("Swerve Position Fed X, Y" + robotPosition.getX() + ", " + robotPosition.getY());
-        double hubRelativeX = hubLocationX - robotPosition.getX();
-        double hubRelativeY = hubLocationY - robotPosition.getY();
+        double targetRelativeX = targetPosition.getX() - robotPosition.getX();
+        double targetRelativeY = targetPosition.getY() - robotPosition.getY();
 
-        double triangleAngle = Math.toDegrees(Math.atan(hubRelativeY/hubRelativeX));
+        double triangleAngle = Math.toDegrees(Math.atan(targetRelativeY/targetRelativeX));
         SmartDashboard.putNumber("Triangle Angle", triangleAngle);
 
         //angle robot has to turn if it is at angle 0
         double thetaR = 0;
 
-        if (hubRelativeX > 0 && hubRelativeY >= 0){
+        if (targetRelativeX > 0 && targetRelativeY >= 0){
             thetaR = triangleAngle;
         }
-        else if (hubRelativeX < 0 && hubRelativeY >= 0){
+        else if (targetRelativeX < 0 && targetRelativeY >= 0){
             thetaR = 180 + triangleAngle;
         }
-        else if (hubRelativeX > 0 && hubRelativeY <= 0){
+        else if (targetRelativeX > 0 && targetRelativeY <= 0){
             thetaR = triangleAngle;
         }
-        else if (hubRelativeX < 0 && hubRelativeY <= 0){
+        else if (targetRelativeX < 0 && targetRelativeY <= 0){
             thetaR = -180 + triangleAngle;
         }
-        else if (hubRelativeX == 0 && hubRelativeY > 0){
+        else if (targetRelativeX == 0 && targetRelativeY > 0){
             thetaR = 270;
         }
-        else if (hubRelativeX == 0 && hubRelativeY < 0){
+        else if (targetRelativeX == 0 && targetRelativeY < 0){
             thetaR = 90;
         }
         else{

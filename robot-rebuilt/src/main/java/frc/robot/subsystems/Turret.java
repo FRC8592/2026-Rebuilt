@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.helpers.motor.talonfx.KrakenX44Motor;
 import edu.wpi.first.hal.simulation.SpiReadAutoReceiveBufferCallback;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,9 +23,10 @@ public class Turret extends SubsystemBase{
     private DutyCycleEncoder E2;
     private double AOriginal = TURRET.INITIAL_MAX_ACCELERATION;
     private double VOriginal = TURRET.INITIAL_CRUISE_VELOCITY;
-    private AutoTurretAngle AngleCalc;
+    private double AngleCalc;
     private Swerve swerve;
     private PIDProfile gains;
+    private AutoTurretAngle autoTurretAngle;
 
     public Turret(Swerve swerve){
         this.swerve = swerve;
@@ -40,12 +42,16 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("Position Value", 0);
 
         //tMotor.configureMotionMagic(80, 6);
-        AngleCalc = new AutoTurretAngle(this.swerve);
+        
+        //AngleCalc = new AutoTurretAngle(this.swerve);
+        autoTurretAngle = new AutoTurretAngle();
     }
-    public void TurrettoPos(){
-        double initialPos = AngleCalc.rawAngle;
-        if(Math.abs(AngleCalc.rawAngle) > 180){
-            if(AngleCalc.rawAngle < 0)
+
+    public void TurrettoPos(Pose2d targetLocation){
+        double AngleCalc = autoTurretAngle.turretAngleCalc(swerve.getPose(), targetLocation);
+        double initialPos = AngleCalc;
+        if(Math.abs(AngleCalc) > 180){
+            if(AngleCalc < 0)
                 initialPos+=360;
             else
                 initialPos-=360;
@@ -55,6 +61,7 @@ public class Turret extends SubsystemBase{
         System.out.println("Position: " + initialPos/360);
         //tMotor.setPosition(position);
     }
+
     public void stop(){
         tMotor.setPercentOutput(0);
     }
