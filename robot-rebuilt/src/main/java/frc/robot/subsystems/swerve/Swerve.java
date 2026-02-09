@@ -7,22 +7,26 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
 import frc.robot.helpers.SmoothingFilter;
 
 public class Swerve extends SubsystemBase {
-
     private PIDController snapToController;
 
     private boolean isSlowMode;
@@ -32,11 +36,11 @@ public class Swerve extends SubsystemBase {
     private CommandSwerveDrivetrain swerve;
     
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 10% deadband
         .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
-        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.1)
+        .withDeadband(SWERVE.MAX_SPEED * 0.1).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
         .withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
@@ -71,7 +75,7 @@ public class Swerve extends SubsystemBase {
 
         // Configure AutoBuilder
         AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
+            this::getCurrentOdometryPosition, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             
@@ -101,14 +105,14 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getPose());
+        Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
 
         swerve.periodic();
     }
 
     @Override
     public void simulationPeriodic() {
-        Robot.FIELD.setRobotPose(getPose());
+        Robot.FIELD.setRobotPose(getCurrentOdometryPosition());
     }
 
     /**
@@ -124,6 +128,8 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
+
+        currentSpeeds = speeds;
     }
 
     /**
@@ -138,6 +144,12 @@ public class Swerve extends SubsystemBase {
         );
 
         currentSpeeds = speeds;
+    }
+
+    //TODO: figure out how to implement the feedforwards object to drive the swerve
+    //required for the pathplanner to have the feedforwards object
+    public void driveRobotRelative(ChassisSpeeds speeds, DriveFeedforwards feedforwards){
+        driveRobotRelative(speeds);
     }
 
     /**
@@ -157,13 +169,13 @@ public class Swerve extends SubsystemBase {
     /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    // TODO: does the robot have trouble turning back to its regular rotation after the request runs?
     public SwerveRequest brake(){
         return new SwerveRequest.SwerveDriveBrake(){};
     }
 
     /**
      * Get the rotation of the current robot pose
+     * 
      * @return Roration2d robot rotation
      */
     public Rotation2d getYaw() {
@@ -172,14 +184,16 @@ public class Swerve extends SubsystemBase {
 
     /**
      * Get the current pose of the robot
+     * 
      * @return Pose2d robot pose
      */
-    public Pose2d getPose() {
+    public Pose2d getCurrentOdometryPosition() {
         return swerve.getState().Pose;
     }
 
     /**
      * Sets the odometry pose of the robot to the given pose
+     * 
      * @param currentPose new robot pose
      */
     public void resetPose(Pose2d currentPose) { 
@@ -208,14 +222,14 @@ public class Swerve extends SubsystemBase {
     }
     
     /**
-     * Use PID to snap the robot to a rotational setpoint
+     * Use PID to snap the robot to a targeted rotational heading
      *
-     * @param setpoint the setpoint to snap to
+     * @param targetHeading the heading to snap to
      * @return the rotational velocity setpoint as a Rotation2d
      */
-    public double snapToAngle(Rotation2d setpoint) {
-        double currYaw = Math.toRadians(getYaw().getDegrees()%360);
-        double errorAngle = setpoint.getRadians() - currYaw;
+    public double snapToAngle(Rotation2d targetHeading) {
+        double currYaw = getYaw().getRadians();
+        double errorAngle = targetHeading.getRadians() - currYaw;
 
         if(errorAngle > Math.PI){
             errorAngle -= 2 * Math.PI;
@@ -276,51 +290,66 @@ public class Swerve extends SubsystemBase {
         return smoothingFilter.smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
 
+    /**
+     * Gets the current robot-relative speed of the robot
+     * 
+     * @return a ChassisSpeeds speed
+     */
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return currentSpeeds;
     }
 
-    //TODO: implement the followPathCommand
-    // public Command followPathCommand(String pathName) {
-    //     try{
-    //         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    /**
+     * A followPathCommand by PathPlanner that allows you to run a path in PathPlanner outside of autos
+     * 
+     * @param pathName the name of the path to run
+     * @return a command to run the swerve along the path
+     */
+    public Command followPathCommand(String pathName) {
+        try{
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-    //         return new FollowPathCommand(
-    //                 path,
-    //                 this::getPose, // Robot pose supplier
-    //                 this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-    //                 this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+            return new FollowPathCommand(
+                    path,
+                    this::getCurrentOdometryPosition, // Robot pose supplier
+                    this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+                    //TODO: tune the pid constants
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    ),
+
+                    config, // The robot configuration
+
+                    () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                        var alliance = DriverStation.getAlliance();
+                        if (alliance.isPresent()) {
+                            return alliance.get() == DriverStation.Alliance.Red;
+                        }
+
+                        return false;
+                    },
                     
-    //                 new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-    //                         new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-    //                         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-    //                 ),
+                    this // Reference to this subsystem to set requirements
+            );
 
-    //                 config, // The robot configuration
+        } catch (Exception e) {
+            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+            return Commands.none();
+        }
+    }
 
-    //                 () -> {
-    //                 // Boolean supplier that controls when the path will be mirrored for the red alliance
-    //                 // This will flip the path being followed to the red side of the field.
-    //                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    //                     var alliance = DriverStation.getAlliance();
-    //                     if (alliance.isPresent()) {
-    //                         return alliance.get() == DriverStation.Alliance.Red;
-    //                     }
-
-    //                     return false;
-    //                 },
-                    
-    //                 this // Reference to this subsystem to set requirements
-    //         );
-
-    //     } catch (Exception e) {
-    //         DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-    //         return Commands.none();
-    //     }
-    // }
+    //TODO: method to generate a pathplanner path based on a list of waypoints
+    //TODO: a method for on the fly pathing (i.e. from current position to xx position)
+    //TODO: making sure that the robot wont' drive into the obstacles during trajectory making stuff
 
     /**
      * Corrects the robot odometry using vision
+     * 
      * @param visionRobotPoseMeters The robot pose using vision measuremnets
      * @param timestampSeconds Timestamp of the vision measurement in seconds
      */
