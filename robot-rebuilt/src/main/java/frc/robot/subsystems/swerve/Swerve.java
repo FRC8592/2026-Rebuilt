@@ -300,7 +300,7 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * A followPathCommand by PathPlanner that allows you to run a path in PathPlanner outside of autos
+     * A method by PathPlanner that allows you to run a path from PathPlanner outside of autos
      * 
      * @param pathName the name of the path to run
      * @return a command to run the swerve along the path
