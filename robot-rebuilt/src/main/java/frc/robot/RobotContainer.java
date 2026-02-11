@@ -18,6 +18,8 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import frc.robot.subsystems.Turret;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -67,6 +70,7 @@ public class RobotContainer {
         private final Scoring scoring;
         //public final Shooter shooter;
         public final Feeder feeder;
+        private final Turret turret;
 
 //     // robot button triggers
         private final Trigger TESTING_TURRET = driverController.rightBumper();
@@ -108,6 +112,7 @@ public class RobotContainer {
         scoring = new Scoring(swerve);
         //shooter = new Shooter();
         feeder = new Feeder();
+        turret = new Turret(swerve);
 
         configureBindings();
         configureDefaults();
@@ -154,7 +159,8 @@ public class RobotContainer {
         // swerve.setSlowMode(false)).ignoringDisable(true));
 
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-
+        //TESTING_TURRET.onTrue(new DeferredCommand(() -> scoring.autoTurretCommand(), Set.of(scoring)));
+         TESTING_TURRET.whileTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
         //TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());

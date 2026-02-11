@@ -47,7 +47,8 @@ public class Turret extends SubsystemBase{
         autoTurretAngle = new AutoTurretAngle();
     }
 
-    public void TurrettoPos(Pose2d targetLocation){
+    public void setToTarget(Pose2d targetLocation){
+        System.out.println("Going into setToTarget, not coming out");
         double AngleCalc = autoTurretAngle.turretAngleCalc(swerve.getPose(), targetLocation);
         double initialPos = AngleCalc;
         if(Math.abs(AngleCalc) > 180){
@@ -63,11 +64,12 @@ public class Turret extends SubsystemBase{
     }
 
     public void stop(){
-        tMotor.setPercentOutput(0);
+        tMotor.setPercentOutput(0.2);
     }
 
-    public Command TurrettoPosCommand(){
-        return this.run(() -> TurrettoPos());
+    public Command setToTargetCommand(Pose2d targetLocation){
+        System.out.println("Going into setToTargetCommand");
+        return this.runOnce(() -> setToTarget(targetLocation));
     }
 
     public Command stopTurretCommand(){
