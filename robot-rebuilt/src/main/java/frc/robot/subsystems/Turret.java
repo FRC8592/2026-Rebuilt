@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.helpers.motor.talonfx.KrakenX44Motor;
 import edu.wpi.first.hal.simulation.SpiReadAutoReceiveBufferCallback;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,8 +43,8 @@ public class Turret extends SubsystemBase{
         //tMotor.configureMotionMagic(80, 6);
         AngleCalc = new AutoTurretAngle(this.swerve);
     }
-    public void TurrettoPos(){
-        double initialPos = AngleCalc.rawAngle;
+    public void TurrettoPos(Pose2d targetLocation){
+        double initialPos = AngleCalc.TurretAngleCalc(swerve.getPose(), targetLocation);
         if(Math.abs(AngleCalc.rawAngle) > 180){
             if(AngleCalc.rawAngle < 0)
                 initialPos+=360;
@@ -59,8 +60,8 @@ public class Turret extends SubsystemBase{
         tMotor.setPercentOutput(0);
     }
 
-    public Command TurrettoPosCommand(){
-        return this.run(() -> TurrettoPos());
+    public Command TurrettoPosCommand(Pose2d targetLocation){
+        return this.run(() -> TurrettoPos(targetLocation));
     }
 
     public Command stopTurretCommand(){

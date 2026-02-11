@@ -104,6 +104,8 @@ public class OdometryUpdates extends SubsystemBase {
             IteratorCounter++;
     
             Optional<EstimatedRobotPose> robotPose = vision.getRobotPoseVision();
+
+            int targetListSize = vision.getTargets().size();
             
             if (robotPose.isPresent()) {
                 Pose2d placeHolder = robotPoseAverager(robotPose);
@@ -111,7 +113,7 @@ public class OdometryUpdates extends SubsystemBase {
                 ambiguity = vision.getPoseAmbiguityRatio();
                 timeStamp = robotPose.get().timestampSeconds;
 
-                if ((vision.getTargets().size() >= 1)){
+                if ((targetListSize >= 1)){
                     Logger.recordOutput(SHARED.LOG_FOLDER+"/Navigation/DistanceMeters", vision.getTargets().get(0).bestCameraToTarget.getX());
                     Logger.recordOutput(SHARED.LOG_FOLDER+"/Vision/VisionPose", robotPosition);
                 }
@@ -125,14 +127,14 @@ public class OdometryUpdates extends SubsystemBase {
                 if (!DriverStation.isDisabled() && !robotPosition.equals(new Pose2d())) {
                     // If we have more than one target in view, we always seem to get reliable vision poses.
                     // Use the multi-target pose without further qualification
-                    if (vision.getTargets().size() > 1) {
+                    if (targetListSize > 1) {
                         swerve.addVisionMeasurement(robotPosition, timeStamp);
                     }
 
                     // If we don't have a multi-target pose, we need to add qualifying checks to ensure we have a good pose
                     else {
                         if ((Math.abs(ambiguity) < VISION.MAX_ACCEPTABLE_AMBIGUITY) && 
-                            (vision.getTargets().size() > 0) && 
+                            (targetListSize > 0) && 
                             (vision.getTargets().get(0).bestCameraToTarget.getX() < VISION.REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE)) {
                                 swerve.addVisionMeasurement(robotPosition, timeStamp); 
                         }

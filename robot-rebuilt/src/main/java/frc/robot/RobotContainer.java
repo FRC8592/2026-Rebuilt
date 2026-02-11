@@ -17,10 +17,13 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 
+import frc.robot.subsystems.Scoring;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Feeder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -63,7 +66,7 @@ public class RobotContainer {
         // public final Indexer indexer;
         // public final Intake intake;
 //     private final Launcher launcher;x
-//     private final Scoring scoring;
+    private final Scoring scoring;
         //public final Shooter shooter;
         public final Turret turret;
         public final Feeder feeder;
@@ -105,9 +108,9 @@ public class RobotContainer {
         // launcher = new Launcher();
         // indexer = new Indexer();
         // intake = new Intake();
-        // scoring = new Scoring(intake, indexer, launcher);
         //shooter = new Shooter();
         turret = new Turret(swerve);
+        scoring = new Scoring(swerve, turret);
         feeder = new Feeder();
 
         configureBindings();
@@ -157,7 +160,7 @@ public class RobotContainer {
         // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET.whileTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
         RESET_POS.onTrue(turret.resetPosCommand());
