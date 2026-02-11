@@ -26,8 +26,7 @@ public class Scoring extends SubsystemBase{
     // }
 
     public Command autoTurretCommand(){
-        System.out.println("Auto turret command");
-        return this.runOnce(() -> turret.setToTargetCommand(new Pose2d(SCORING.HUB_X, SCORING.HUB_Y, swerve.getYaw())));
+        return turret.setToTargetCommand(new Pose2d(SCORING.HUB_X, SCORING.HUB_Y, swerve.getYaw()));
     }
 
 }
