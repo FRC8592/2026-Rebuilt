@@ -111,8 +111,8 @@ public final class SHOOTER {
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;
     public static final int INITIAL_MAX_ACCELERATION = 60;
     public static final int INITIAL_CRUISE_VELOCITY = 6;
-    public static final double E1_OFFSET = 70.7;
-    public static final double E2_OFFSET = 139.5;
+    public static final double E1_OFFSET = 356.3;
+    public static final double E2_OFFSET = 202.56;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
 }

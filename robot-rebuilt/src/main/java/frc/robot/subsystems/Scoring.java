@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -13,9 +14,9 @@ public class Scoring extends SubsystemBase{
     private Turret turret;
     private Pose2d targetPosition;
     
-    public Scoring(Swerve swerve){
+    public Scoring(Swerve swerve, Turret turret){
         this.swerve = swerve;
-        turret = new Turret(swerve);
+        this.turret = turret;
     }
 
     // @Override
@@ -25,6 +26,7 @@ public class Scoring extends SubsystemBase{
     // }
 
     public Command autoTurretCommand(){
+        System.out.println("Auto turret command");
         return this.runOnce(() -> turret.setToTargetCommand(new Pose2d(SCORING.HUB_X, SCORING.HUB_Y, swerve.getYaw())));
     }
 

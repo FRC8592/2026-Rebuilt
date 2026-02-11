@@ -18,7 +18,7 @@ public class AutoTurretAngle extends SubsystemBase{
     // private double locationY = 3;
     public double rawAngle = 0;
 
-    Swerve swerve;
+    // Swerve swerve;
 
     public AutoTurretAngle(){
 

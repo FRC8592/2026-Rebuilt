@@ -109,10 +109,10 @@ public class RobotContainer {
         // launcher = new Launcher();
         // indexer = new Indexer();
         // intake = new Intake();
-        scoring = new Scoring(swerve);
         //shooter = new Shooter();
         feeder = new Feeder();
         turret = new Turret(swerve);
+        scoring = new Scoring(swerve, turret);
 
         configureBindings();
         configureDefaults();
@@ -165,7 +165,7 @@ public class RobotContainer {
         //TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-        //RESET_POS.onTrue(turret.resetPosCommand());
+        RESET_POS.onTrue(turret.resetPosCommand());
         //TESTING_FEEDER.onTrue(feeder.runAtSpeedCommand()).onFalse(feeder.stopCommand());
 
         // LAUNCH_NORMAL.whileTrue(new DeferredCommand(() -> launcher.setLauncherCommand(0.4, 0.4), Set.of(launcher)))
