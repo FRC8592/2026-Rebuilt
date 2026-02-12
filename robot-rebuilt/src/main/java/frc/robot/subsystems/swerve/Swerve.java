@@ -2,6 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.swerve;
+import frc.robot.Constants.SWERVE;
+import frc.robot.Robot;
+import frc.robot.helpers.SmoothingFilter;
+
+import java.util.List;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -11,20 +17,22 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.SWERVE;
-import frc.robot.Robot;
-import frc.robot.helpers.SmoothingFilter;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class Swerve extends SubsystemBase {
     private PIDController snapToController;
@@ -59,6 +67,8 @@ public class Swerve extends SubsystemBase {
 
         //TODO: check of the pid values are still valid
         snapToController = new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns the robot to a set heading
+        snapToController.enableContinuousInput(-Math.PI, Math.PI); //makes -pi and pi friendly neighbors :)
+        snapToController.setTolerance(Math.toRadians(2.0)); //prevent chatter and oscillation
 
         swerve = drivetrain;
 
@@ -116,6 +126,24 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Runs the SysId Quasistatic test in the given direction for the routine specified in the parameters 
+     * @param direction Direction of the Quasistatic routine
+     * @return Command to run
+     */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction){
+        return swerve.sysIdQuasistatic(direction);
+    }
+
+    /**
+     * Runs the SysId Dynamic test in the given direction for the routine specified in the parameters
+     * @param direction Direction of the Dynamic routine
+     * @return Command to run
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction){
+        return swerve.sysIdDynamic(direction);
+    }
+
+    /**
      * Send a {@code ChassisSpeeds} to the drivetrain, field-relative
      *
      * @param speeds robot-relative ChassisSpeeds speed to run the drivetrain at
@@ -149,7 +177,22 @@ public class Swerve extends SubsystemBase {
     //TODO: figure out how to implement the feedforwards object to drive the swerve
     //required for the pathplanner to have the feedforwards object
     public void driveRobotRelative(ChassisSpeeds speeds, DriveFeedforwards feedforwards){
-        driveRobotRelative(speeds);
+        swerve.setControl(
+            robotCentric.withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(speeds.omegaRadiansPerSecond)
+        );
+
+        currentSpeeds = speeds;
+    }
+
+    /**
+     * Gets the current robot-relative speed of the robot
+     * 
+     * @return a ChassisSpeeds speed
+     */
+    public ChassisSpeeds getRobotRelativeSpeeds(){
+        return currentSpeeds;
     }
 
     /**
@@ -291,23 +334,29 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Gets the current robot-relative speed of the robot
+     * Corrects the robot odometry using vision
      * 
-     * @return a ChassisSpeeds speed
+     * @param visionRobotPoseMeters The robot pose using vision measuremnets
+     * @param timestampSeconds Timestamp of the vision measurement in seconds
      */
-    public ChassisSpeeds getRobotRelativeSpeeds(){
-        return currentSpeeds;
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        swerve.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
     }
 
     /**
-     * A method by PathPlanner that allows you to run a path from PathPlanner outside of autos
+     * A method by PathPlanner that allows you to run a path outside of autos
      * 
-     * @param pathName the name of the path to run
+     * @param pathName name of path to run
+     * @param choreoPath whether the path is from Choreo or not
      * @return a command to run the swerve along the path
      */
-    public Command followPathCommand(String pathName) {
+    public Command followPathCommand(String pathName, boolean choreoPath) {
         try{
-            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            PathPlannerPath path;
+            if(!choreoPath)
+                path = PathPlannerPath.fromPathFile(pathName);
+            else 
+                path = PathPlannerPath.fromChoreoTrajectory(pathName);
 
             return new FollowPathCommand(
                     path,
@@ -343,17 +392,28 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    //TODO: method to generate a pathplanner path based on a list of waypoints
-    //TODO: a method for on the fly pathing (i.e. from current position to xx position)
-    //TODO: making sure that the robot wont' drive into the obstacles during trajectory making stuff
+    //TODO: don't let the robot drive into obstacles...
+    public Command generatePath(List<Pose2d> poses){
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
+        PathConstraints constaints = new PathConstraints(null, null, null, null);
 
-    /**
-     * Corrects the robot odometry using vision
-     * 
-     * @param visionRobotPoseMeters The robot pose using vision measuremnets
-     * @param timestampSeconds Timestamp of the vision measurement in seconds
-     */
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        swerve.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+        PathPlannerPath path = new PathPlannerPath(
+            waypoints, 
+            constaints, 
+            null, //null in order to start from your location on the field
+            new GoalEndState(0, poses.get(poses.size() - 1).getRotation())
+        );
+
+        return AutoBuilder.followPath(path);
     }
+
+    //TODO: a method for on the fly pathing (i.e. from current position to xx position)
+    //TODO: don't let it drive into obstacles!
+    public Command pathfindToTarget(Pose2d targetPose){
+
+        return Commands.none();
+    }
+
 }
+
+    
