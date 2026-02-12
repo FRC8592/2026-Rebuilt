@@ -114,13 +114,6 @@ public class Swerve extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
-
-        swerve.periodic();
-    }
-
-    @Override
     public void simulationPeriodic() {
         Robot.FIELD.setRobotPose(getCurrentOdometryPosition());
     }
