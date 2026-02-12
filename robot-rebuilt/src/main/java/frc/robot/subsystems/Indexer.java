@@ -64,7 +64,8 @@ public class Indexer extends SubsystemBase{
         double spinMotorSpeed = SmartDashboard.getNumber("Spin Motor Speed", 0);
         double outputMotorSpeed = SmartDashboard.getNumber("Output Motor Speed", 0);
 
-        
+        runSpinIndexer(spinMotorSpeed);
+        runOutputIndexer(outputMotorSpeed);
     }
 
     /**
@@ -91,6 +92,58 @@ public class Indexer extends SubsystemBase{
      */
     public Command stopCommand(){
         return this.runOnce(() -> stop());
+    }
+
+    /**
+     * Runs the spin motor on the indexer at given speed
+     * @param speed speed to run the motor at
+     */
+    public void runSpinIndexer(double speed){
+        spinMotor.setPercentOutput(speed);
+    }
+
+    /**
+     * Command to run the spin motor on the indexer at the provided speed
+     * @param speed speed to run the motor at
+     * @return a command to run the spin motor on the indexer at given speed
+     */
+    public Command runSpinIndexerCommand(double speed){
+        return this.run(() -> runSpinIndexer(speed));
+    }
+
+    /**
+     * Runs the output motor on the indexer at given speed
+     * @param speed speed to run the motor at
+     */
+    public void runOutputIndexer(double speed){
+        outputMotor.setPercentOutput(speed);
+    }
+
+    /**
+     * Command to run the output motor on the indexer at the provided speed
+     * @param speed speed to run the motor at
+     * @return a Command to run the output motor on the indexer at given speed
+     */
+    public Command runOutputIndexerCommand(double speed){
+        return this.run(() -> runOutputIndexer(speed));
+    }
+
+    /**
+     * Runs both motors on the indexer at the given speed
+     * @param speed speed to run the motor at
+     */
+    public void runIndexer(double speed){
+        spinMotor.setPercentOutput(speed);
+        outputMotor.setPercentOutput(speed);
+    }
+
+    /**
+     * Command to run both motors on the indexer at the given speed
+     * @param speed speed to run the motors at
+     * @return a command to run the motors
+     */
+    public Command runIndexerCommand(double speed){
+        return this.run(() -> runIndexer(speed));
     }
 
     /**
