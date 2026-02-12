@@ -14,11 +14,11 @@ public class Indexer extends SubsystemBase{
     // private KrakenX60Motor spinMotor;
     // private KrakenX60Motor outputMotor;
     //may be 
-    private TalonFXMotor spinMotor = new TalonFXMotor(0, false, MotorConstants) {    };
-    private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
-    private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
+    // private TalonFXMotor spinMotor = new TalonFXMotor(0, false, MotorConstants) {    };
+    // private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
+    // private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
 
-    private PIDProfile gains = new PIDProfile();
+    // private PIDProfile gains = new PIDProfile();
 
     /**
      * Constructor for the Indexer subsystem
@@ -36,8 +36,6 @@ public class Indexer extends SubsystemBase{
         // outputMotor.setIdleMode(IdleMode.kBrake); //the motor must stop pushing out fuel immediately
         // outputMotor.configureMotionMagic(getVelocitySpinner(), getVelocityOutput());
 
-        spinMotor.
-
         // TODO: For tuning, put the PID and velocity values on the dashboard.
         // SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
         // SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
@@ -52,17 +50,17 @@ public class Indexer extends SubsystemBase{
      * Run the indexer at a set speed from the SmartDashboard
      */
     public void runAtSpeed(){
-        double RPM_SPINNER = SmartDashboard.getNumber("SPINNER", INDEXER.SPINNER_VI);
-        double RPM_OUTPUT = SmartDashboard.getNumber("Vi_OUTPUT", INDEXER.OUTPUT_VI);
+        // double RPM_SPINNER = SmartDashboard.getNumber("SPINNER", INDEXER.SPINNER_VI);
+        // double RPM_OUTPUT = SmartDashboard.getNumber("Vi_OUTPUT", INDEXER.OUTPUT_VI);
     }
 
     /**
      * Command to run the indexer at a set speed
      * @return
-     */
-    public Command runAtSpeedCommand(){
-        return this.runOnce(() -> runAtSpeed());
-    }
+    //  */
+    // public Command runAtSpeedCommand(){
+    //     return this.runOnce(() -> runAtSpeed());
+    // }
 
     /**
      * Stop the indexer motors
@@ -71,35 +69,35 @@ public class Indexer extends SubsystemBase{
      * The output motor must stop immeidately so we do not continue to feed the shooter
      */
     public void stop(){
-        spinMotor.setPercentOutput(0);
-        outputMotor.setPercentOutput(0);
+        // spinMotor.setPercentOutput(0);
+        // outputMotor.setPercentOutput(0);
     }
 
     /**
      * Stop command for the indexer motors
      * @return stop command
      */
-    public Command stopCommand(){
-        return this.runOnce(() -> stop());
-    }
+    // public Command stopCommand(){
+    //     return this.runOnce(() -> stop());
+    // }
 
     /**
      * Get the velocity of the spinner motor in RPM
      * @return velocity in RPM
      */
-    public double getVelocitySpinner(){
-        return spinMotor.getVelocityRPM();
+    // public double getVelocitySpinner(){
+        // return spinMotor.getVelocityRPM();
         // return spinnerEncoder.getVelocity();
-    }
+    // }
 
     /**
      * Get the velocity of the output motor in RPM
      * @return velocity in RPM
      */
-    public double getVelocityOutput(){
-        return outputMotor.getVelocityRPM();
+    // public double getVelocityOutput(){
+        // return outputMotor.getVelocityRPM();
         // return outputEncoder.getVelocity();
-    }
+    // }
 
     /**
      * Periodic method, primarily used for logging
@@ -107,8 +105,8 @@ public class Indexer extends SubsystemBase{
     @Override
     public void periodic(){
         // Get motors speeds in RPM
-        SmartDashboard.putNumber("Spinner RPM", getVelocitySpinner());
-        SmartDashboard.putNumber("Output RPM", getVelocityOutput());
+        // SmartDashboard.putNumber("Spinner RPM", getVelocitySpinner());
+        // SmartDashboard.putNumber("Output RPM", getVelocityOutput());
     }
         
 }
