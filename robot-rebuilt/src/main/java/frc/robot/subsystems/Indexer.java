@@ -10,8 +10,10 @@ import frc.robot.helpers.motor.NewtonMotor.IdleMode;
 import frc.robot.helpers.motor.talonfx.TalonFXMotor;
 
 public class Indexer extends SubsystemBase{    
+    //TODO: must add the numbers for motor constants
     MotorConstants spinMotorConstants = new MotorConstants(0, 0, 0, 0);
     MotorConstants outputMotorConstants = new MotorConstants(0, 0, 0, 0);
+    //TODO: confirm CAN IDs
     private TalonFXMotor spinMotor = new TalonFXMotor(INDEXER.SPINNER_CAN_ID, spinMotorConstants) {};
     private TalonFXMotor outputMotor = new TalonFXMotor(INDEXER.OUTPUT_CAN_ID, outputMotorConstants) {};
 
@@ -31,7 +33,7 @@ public class Indexer extends SubsystemBase{
         outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL);
         outputMotor.setIdleMode(IdleMode.kBrake); //the motor must stop pushing out fuel immediately
 
-        // TODO: For tuning, put the PID and velocity values on the dashboard.
+        // TODO: Tune pid with logging (?)
         // SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
         // SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
         // SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
@@ -96,7 +98,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Runs the spin motor on the indexer at given speed
-     * @param speed speed to run the motor at
+     * @param speed new motor speed
      */
     public void runSpinIndexer(double speed){
         spinMotor.setPercentOutput(speed);
@@ -104,7 +106,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Command to run the spin motor on the indexer at the provided speed
-     * @param speed speed to run the motor at
+     * @param speed new motor speed
      * @return a command to run the spin motor on the indexer at given speed
      */
     public Command runSpinIndexerCommand(double speed){
@@ -113,7 +115,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Runs the output motor on the indexer at given speed
-     * @param speed speed to run the motor at
+     * @param speed new motor speed
      */
     public void runOutputIndexer(double speed){
         outputMotor.setPercentOutput(speed);
@@ -121,7 +123,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Command to run the output motor on the indexer at the provided speed
-     * @param speed speed to run the motor at
+     * @param speed new motor speed
      * @return a Command to run the output motor on the indexer at given speed
      */
     public Command runOutputIndexerCommand(double speed){
@@ -130,7 +132,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Runs both motors on the indexer at the given speed
-     * @param speed speed to run the motor at
+     * @param speed new motor speed
      */
     public void runIndexer(double speed){
         spinMotor.setPercentOutput(speed);
@@ -139,7 +141,7 @@ public class Indexer extends SubsystemBase{
 
     /**
      * Command to run both motors on the indexer at the given speed
-     * @param speed speed to run the motors at
+     * @param speed new motor speed
      * @return a command to run the motors
      */
     public Command runIndexerCommand(double speed){
