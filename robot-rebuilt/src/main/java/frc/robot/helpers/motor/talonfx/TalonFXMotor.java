@@ -27,11 +27,11 @@ public abstract class TalonFXMotor extends NewtonMotor {
     private MotionMagicVoltage motionMagicOutput;
     private MotionMagicVelocityVoltage motionMagicVelocityOutput;
 
-    protected TalonFXMotor(int motorID, MotorConstants constants) {
+    public TalonFXMotor(int motorID, MotorConstants constants) {
         this(motorID, false, constants);
     }
 
-    protected TalonFXMotor(int motorID, boolean inverted, MotorConstants constants) {
+    public TalonFXMotor(int motorID, boolean inverted, MotorConstants constants) {
         super(motorID, inverted, constants);
         this.motor = new TalonFX(motorID);
         this.configuration = new TalonFXConfiguration();
@@ -49,7 +49,7 @@ public abstract class TalonFXMotor extends NewtonMotor {
         this.positionOutput.OverrideBrakeDurNeutral = true;
         this.velocityOutput.OverrideBrakeDurNeutral = true;
         this.motionMagicOutput.OverrideBrakeDurNeutral = true;
-       }
+    }
        
     public void configureMotionMagic(double maxAcceleration, double cruiseVelocity){
         MotionMagicConfigs motionMagicConfig = configuration.MotionMagic;
@@ -68,8 +68,6 @@ public abstract class TalonFXMotor extends NewtonMotor {
 
         this.motor.getConfigurator().apply(configuration);
     }
-
-    
 
     @Override
     public void withGains(PIDProfile gains) {
@@ -120,7 +118,6 @@ public abstract class TalonFXMotor extends NewtonMotor {
                 this.motor.getConfigurator().apply(slotConfig);
                 break;
         }
-
         
     }
 
