@@ -395,6 +395,7 @@ public class Swerve extends SubsystemBase {
     //TODO: don't let the robot drive into obstacles...
     public Command generatePath(List<Pose2d> poses){
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
+        //TODO: figure out how to set these values correctly for path constraints
         PathConstraints constaints = new PathConstraints(null, null, null, null);
 
         PathPlannerPath path = new PathPlannerPath(
