@@ -68,7 +68,7 @@ public class Turret extends SubsystemBase{
     }
 
     public Command setToTargetCommand(Pose2d targetLocation){
-       // System.out.println("Going into setToTargetCommand");
+        System.out.println("This command is being called");
         return this.run(() -> setToTarget(targetLocation));
     }
 

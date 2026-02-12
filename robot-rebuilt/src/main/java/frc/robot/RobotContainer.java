@@ -6,6 +6,7 @@
 package frc.robot;
 
 import frc.robot.Constants.CONTROLLERS;
+import frc.robot.Constants.SCORING;
 import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -24,6 +25,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Feeder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -148,6 +150,7 @@ public class RobotContainer {
 //                 new RunCommand(() -> launcher.setLauncherPercentOutput(0.4, 0.4), launcher));
 
     }
+
 
     /**
      * Configure all button bindings
