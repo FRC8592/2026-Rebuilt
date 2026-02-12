@@ -17,7 +17,7 @@ import frc.robot.helpers.motor.MotorConstants;
 import frc.robot.helpers.motor.NewtonMotor;
 
 public abstract class TalonFXMotor extends NewtonMotor {
-    protected TalonFX motor;
+    public TalonFX motor;
 
     private TalonFXConfiguration configuration;
 

@@ -45,19 +45,8 @@ public class Intake extends SubsystemBase{
         RollerMotorLeftPID.setPID(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D);
         RollerMotorRightPID.setPID(INTAKE.INTAKE_RIGHT_P, INTAKE.INTAKE_RIGHT_I, INTAKE.INTAKE_RIGHT_D);
         ExtendMotorPID.setPID(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I, INTAKE.INTAKE_EXTEND_D);
-
-        // RollerMotorLeft.withGains(RollerMotorLeftPID);
-        // RollerMotorRight.withGains(RollerMotorRightPID); 
-        // ExtendMotor.withGains(ExtendMotorPID); 
-
-
-        // // TODO: Set idle mode
-        // RollerMotorRight.setIdleMode(IdleMode.kCoast);
-        // RollerMotorLeft.setIdleMode(IdleMode.kCoast);
-        // ExtendMotor.setIdleMode(IdleMode.kCoast);
   
         // // TODO: Determine an appropriate current limit for the intake motor
-        // ExtendMotor.setCurrentLimit(INTAKE.INTAKE_EXTEND_LIMIT);
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
         SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_LEFT_P);
@@ -130,11 +119,8 @@ public class Intake extends SubsystemBase{
         // RollerMotorLeftPID.setPID(Left_P,Left_I ,Left_D);
         // RollerRightPID.setPID(Right_P,Right_I,Right_D); 
         // ExtendPID.setPID(Extend_P,Extend_I,Extend_D); 
-
-        // RollerMotorLeft.withGains(RollerMotorLeftPID);
-        // RollerMotorRight.withGains(RollerRightPID); 
-        // ExtendMotor.withGains(ExtendMotorPID); 
-        // }
+        
+        }
     
 
     /**
@@ -143,20 +129,20 @@ public class Intake extends SubsystemBase{
      * We do this using % ouptput so that the motor will slow to a stop naturally
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
-    // public void stop() {
-    //     RollerMotorLeft.setPercentOutput(0);
-    //     RollerMotorRight.setPercentOutput(0);
-    //     ExtendMotor.setPercentOutput(0);
-    // }
+    public void stop() {
+        RollerMotorLeft.setVoltage(0);
+        RollerMotorRight.setVoltage(0);
+        ExtendMotor.setVoltage(0);
+    }
 
 
     /**
      * Stop command for the intake motor
      * @return stop command
      */
-    // public Command stopCommand(){
-    //     return this.runOnce(() -> stop());
-    // }
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
+    }
 
 
 //    /**
@@ -184,6 +170,6 @@ public class Intake extends SubsystemBase{
     //     Logger.recordOutput("RollerLeft RPM", getLeftVelocity());
     //     Logger.recordOutput("RollerRight RPM", getRightVelocity());
     //     Logger.recordOutput("RollerExtend RPM", getExtendVelocity());
-     }
+    //  }
         
 }
