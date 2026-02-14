@@ -21,7 +21,10 @@ public class Intake extends SubsystemBase{
     private SparkMax RollerMotorRight; 
 
     private TalonFX ExtendMotor; 
- 
+    
+    PIDProfile RollerMotorLeftPID = new PIDProfile(); 
+    PIDProfile RollerMotorRightPID = new PIDProfile(); 
+    PIDProfile ExtendMotorPID = new PIDProfile(); 
     /**
      * Constructor for the Intake subsystem
      * 
@@ -31,16 +34,12 @@ public class Intake extends SubsystemBase{
         RollerMotorLeft = new SparkMax (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
         RollerMotorRight = new SparkMax (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
 
-        //ExtendMotor = new TalonFX (INTAKE.INTAKE_EXTEND_CAN_ID, CANBus); 
-    
+        ExtendMotor = new TalonFX (INTAKE.INTAKE_EXTEND_CAN_ID); 
 
-        PIDProfile RollerMotorLeftPID = new PIDProfile(); 
-        PIDProfile RollerMotorRightPID = new PIDProfile(); 
-        PIDProfile ExtendMotorPID = new PIDProfile(); 
 
         RollerMotorLeftPID.setSlot(0);
         RollerMotorRightPID.setSlot(0);
-        //ExtendMotorPID.set(0);
+        ExtendMotorPID.setSlot(0);
 
         RollerMotorLeftPID.setPID(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D);
         RollerMotorRightPID.setPID(INTAKE.INTAKE_RIGHT_P, INTAKE.INTAKE_RIGHT_I, INTAKE.INTAKE_RIGHT_D);
@@ -112,13 +111,13 @@ public class Intake extends SubsystemBase{
         double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
         double Extend_Vi = SmartDashboard.getNumber("Vi_INTAKE_EXTEND",INTAKE.INTAKE_EXTEND_VI);
     
-        // RollerMotorLeft.setSlot(0);
-        // RollerMotorRight.setSlot(0); 
-        // ExtendMotor.setSlot(0); 
+        RollerMotorLeft.setSlot(0);
+        RollerMotorRight.setSlot(0); 
+        ExtendMotor.setSlot(0); 
 
-        // RollerMotorLeftPID.setPID(Left_P,Left_I ,Left_D);
-        // RollerRightPID.setPID(Right_P,Right_I,Right_D); 
-        // ExtendPID.setPID(Extend_P,Extend_I,Extend_D); 
+        RollerMotorLeftPID.setPID(Left_P,Left_I ,Left_D);
+        RollerRightPID.setPID(Right_P,Right_I,Right_D); 
+        ExtendPID.setPID(Extend_P,Extend_I,Extend_D); 
         
         }
     
@@ -149,27 +148,27 @@ public class Intake extends SubsystemBase{
 //     * Get the velocity of the intake motor in RPM
 //     * @return velocity in RPM
 //     */
-//     public double getLeftVelocity(){
-//         return RollerMotorLeft.getVelocityRPM();
-//     }
+    public double getLeftVelocity(){
+        return RollerMotorLeft.getVelocityRPM();
+    }
 
-//     public double getRightVelocity(){
-//         return RollerMotorRight.getVelocityRPM();
-//     }
+    public double getRightVelocity(){
+        return RollerMotorRight.getVelocityRPM();
+    }
 
-//     public double getExtendVelocity(){
-//         return ExtendMotor.getVelocityRPM();
-//     }
+    public double getExtendVelocity(){
+        return ExtendMotor.getVelocityRPM();
+    }
 
 
     /*
      * Periodic method, primarily used for logging
      */
-    // @Override
-    // public void periodic(){
-    //     Logger.recordOutput("RollerLeft RPM", getLeftVelocity());
-    //     Logger.recordOutput("RollerRight RPM", getRightVelocity());
-    //     Logger.recordOutput("RollerExtend RPM", getExtendVelocity());
-    //  }
+    @Override
+    public void periodic(){
+        Logger.recordOutput("RollerLeft RPM", getLeftVelocity());
+        Logger.recordOutput("RollerRight RPM", getRightVelocity());
+        Logger.recordOutput("RollerExtend RPM", getExtendVelocity());
+     }
         
 }
