@@ -11,8 +11,9 @@ import frc.robot.helpers.motor.talonfx.TalonFXMotor;
 
 public class Indexer extends SubsystemBase{    
     //TODO: must add the numbers for motor constants
-    MotorConstants spinMotorConstants = new MotorConstants(0, 0, 0, 0);
+    MotorConstants spinMotorConstants = new MotorConstants(6380, 0, 4.69, 0);
     MotorConstants outputMotorConstants = new MotorConstants(0, 0, 0, 0);
+    
     //TODO: confirm CAN IDs
     private TalonFXMotor spinMotor = new TalonFXMotor(INDEXER.SPINNER_CAN_ID, spinMotorConstants) {};
     private TalonFXMotor outputMotor = new TalonFXMotor(INDEXER.OUTPUT_CAN_ID, outputMotorConstants) {};
@@ -27,33 +28,34 @@ public class Indexer extends SubsystemBase{
      */
     public Indexer() {
         //TODO: consider adding a software stop for rotations if not in the hardware already
+        //TODO: change the current limits
         spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT_FREE);
         spinMotor.setIdleMode(IdleMode.kCoast); //the spin can cruise to a stop
         
         outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL);
         outputMotor.setIdleMode(IdleMode.kBrake); //the motor must stop pushing out fuel immediately
 
-        // TODO: Tune pid with logging (?)
-        // SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
-        // SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
-        // SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
+        // TODO: Tune pid
+        SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
+        SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
+        SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
 
-        // SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-        // SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-        // SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
+        SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
+        SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
+        SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
 
         spinMotorGains.setPID(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D);
-        spinMotor.withGains(spinMotorGains);
+        spinMotorGains.setSlot(0);
+        spinMotor.withGains(spinMotorGains);        
 
         outputMotorGains.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
+        outputMotorGains.setSlot(1);
         outputMotor.withGains(outputMotorGains);
 
     }
 
     @Override
     public void periodic(){
-        runAtSpeed();
-
         // Get motors speeds in RPM
         SmartDashboard.putNumber("Spinner RPM", getSpinnerVelocity());
         SmartDashboard.putNumber("Output RPM", getOutputVelocity());
@@ -62,21 +64,18 @@ public class Indexer extends SubsystemBase{
     /**
      * Run the indexer at a set speed from the SmartDashboard
      */
-    public void runAtSpeed(){
-        double spinMotorSpeed = SmartDashboard.getNumber("Spin Motor Speed", 0);
-        double outputMotorSpeed = SmartDashboard.getNumber("Output Motor Speed", 0);
-
-        runSpinIndexer(spinMotorSpeed);
-        runOutputIndexer(outputMotorSpeed);
-    }
+    // public void runAtSpeed(){
+    //     runSpinIndexer();
+    //     runOutputIndexer();
+    // }
 
     /**
      * Runs the indexer at a set speed from the SmartDashboard
      * @return a command to run the motors at the desired speed
      */
-    public Command runAtSpeedCommand(){
-        return this.runOnce(() -> runAtSpeed());
-    }
+    // public Command runAtSpeedCommand(){
+    //     return this.runOnce(() -> runAtSpeed());
+    // }
 
     /**
      * Stop the indexer motors; 
@@ -84,8 +83,8 @@ public class Indexer extends SubsystemBase{
      * The output motor must stop immeidately so we do not continue to feed the shooter
      */
     public void stop(){
-        spinMotor.setPercentOutput(0);
-        outputMotor.setPercentOutput(0);
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_STOP_SPEED, 0);
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_STOP_SPEED, 1);
     }
 
     /**
@@ -97,55 +96,49 @@ public class Indexer extends SubsystemBase{
     }
 
     /**
-     * Runs the spin motor on the indexer at given speed
-     * @param speed new motor speed
+     * Runs the spin motor on the indexer
      */
-    public void runSpinIndexer(double speed){
-        spinMotor.setPercentOutput(speed);
+    public void runSpinIndexer(){
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_SPEED, 0);
     }
 
     /**
-     * Command to run the spin motor on the indexer at the provided speed
-     * @param speed new motor speed
-     * @return a command to run the spin motor on the indexer at given speed
+     * Command to run the spin motor on the indexer 
+     * @return a command to run the spin motor on the indexer
      */
-    public Command runSpinIndexerCommand(double speed){
-        return this.run(() -> runSpinIndexer(speed));
+    public Command runSpinIndexerCommand(){
+        return this.run(() -> runSpinIndexer());
     }
 
     /**
      * Runs the output motor on the indexer at given speed
-     * @param speed new motor speed
      */
-    public void runOutputIndexer(double speed){
-        outputMotor.setPercentOutput(speed);
+    public void runOutputIndexer(){
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_SPEED, 1);
     }
 
     /**
-     * Command to run the output motor on the indexer at the provided speed
-     * @param speed new motor speed
-     * @return a Command to run the output motor on the indexer at given speed
+     * Command to run the output motor on the indexer 
+     * @return a Command to run the output motor on the indexer 
      */
-    public Command runOutputIndexerCommand(double speed){
-        return this.run(() -> runOutputIndexer(speed));
+    public Command runOutputIndexerCommand(){
+        return this.run(() -> runOutputIndexer());
     }
 
     /**
-     * Runs both motors on the indexer at the given speed
-     * @param speed new motor speed
+     * Runs both motors on the indexer 
      */
-    public void runIndexer(double speed){
-        spinMotor.setPercentOutput(speed);
-        outputMotor.setPercentOutput(speed);
+    public void runIndexer(){
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_SPEED, 0);
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_SPEED, 1);
     }
 
     /**
-     * Command to run both motors on the indexer at the given speed
-     * @param speed new motor speed
+     * Command to run both motors on the indexer 
      * @return a command to run the motors
      */
-    public Command runIndexerCommand(double speed){
-        return this.run(() -> runIndexer(speed));
+    public Command runIndexerCommand(){
+        return this.run(() -> runIndexer());
     }
 
     /**
