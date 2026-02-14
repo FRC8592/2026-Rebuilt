@@ -155,6 +155,11 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_STALL = 80;
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+
+    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
+    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
       
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
   }
