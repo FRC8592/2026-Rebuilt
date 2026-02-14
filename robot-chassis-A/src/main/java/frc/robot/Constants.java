@@ -119,8 +119,11 @@ public final class Constants {
     public static final int INTAKE_EXTEND_CAN_ID = 0; 
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
-    public static final int INTAKE_EXTEND_LIMIT = 0; 
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 0; 
+    
+    public static final int EXTEND_CURRENT_LIMIT_STALL = 0; 
+    public static final int EXTEND_CURRENT_LIMIT_FREE = 0; 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;

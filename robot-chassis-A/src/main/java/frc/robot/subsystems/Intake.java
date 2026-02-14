@@ -1,91 +1,164 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.hardware.TalonFX;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.INTAKE;
-import frc.robot.helpers.PIDProfile;
+import frc.robot.helpers.motor.talonfx.TalonFXMotor;
+
+import com.ctre.phoenix6.CANBus;
 
 
 public class Intake extends SubsystemBase{
+    private SparkFlex RollerMotorLeft; 
+    private SparkFlex RollerMotorRight; 
 
-    private SparkMax RollerMotorLeft; 
-    private SparkMax RollerMotorRight; 
+    private TalonFXMotor ExtendMotor; 
 
-    private TalonFX ExtendMotor; 
-    
-    PIDProfile RollerMotorLeftPID = new PIDProfile(); 
-    PIDProfile RollerMotorRightPID = new PIDProfile(); 
-    PIDProfile ExtendMotorPID = new PIDProfile(); 
+    private SparkFlexConfig rollerMotorRightConfig; 
+    private SparkFlexConfig rollerMotorLeftConfig; 
+
+    private SparkClosedLoopController rollerMotorRightClosedLoopController;
+    private SparkClosedLoopController rollerMotorLeftClosedLoopController; 
+
+    private RelativeEncoder rollerMotorRighRelativeEncoder;
+    private RelativeEncoder rollerMotorLefRelativeEncoder; 
+ 
     /**
      * Constructor for the Intake subsystem
      * 
      * Instatiate the motor with initial PID values from the CONSTANTS class
      */
     public Intake() {
-        RollerMotorLeft = new SparkMax (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
-        RollerMotorRight = new SparkMax (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
 
-        ExtendMotor = new TalonFX (INTAKE.INTAKE_EXTEND_CAN_ID); 
+        /*
+         * Create the Intake motor and instatiate the following features
+         *   Reset to safe factory configuration
+         *   Store persistant configuration (Flash)
+         *   Place in COAST mode (Can coast to a stop)
+         *   Set current limits
+         *   Set VELOCITY PID parameters
+         */
 
+        RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
+        RollerMotorRight = new SparkFlex (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
 
-        RollerMotorLeftPID.setSlot(0);
-        RollerMotorRightPID.setSlot(0);
-        ExtendMotorPID.setSlot(0);
+        //ExtendMotor = new TalonFXMotor (INTAKE.INTAKE_EXTEND_CAN_ID); 
 
-        RollerMotorLeftPID.setPID(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D);
-        RollerMotorRightPID.setPID(INTAKE.INTAKE_RIGHT_P, INTAKE.INTAKE_RIGHT_I, INTAKE.INTAKE_RIGHT_D);
-        ExtendMotorPID.setPID(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I, INTAKE.INTAKE_EXTEND_D);
+        rollerMotorLeftConfig = new SparkFlexConfig(); 
+        rollerMotorRightConfig = new SparkFlexConfig(); 
+
+        // extendMotorPID = new PIDProfile();
+        // ExtendMotorPID.setSlot(0);
+        // ExtendMotor.setPID(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
+        // ExtendMotor.withGains(ExtendMotorPID); 
+
+        rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
+        rollerMotorRightConfig.closedLoop.pid(INTAKE.INTAKE_RIGHT_P,INTAKE.INTAKE_RIGHT_I,INTAKE.INTAKE_RIGHT_D);
+
+        rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
+        rollerMotorRightConfig.idleMode(IdleMode.kCoast); 
+
+        rollerMotorLeftConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
+        rollerMotorRightConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
+
+        RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+        RollerMotorRight.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
+
+        rollerMotorLeftClosedLoopController = RollerMotorLeft.getClosedLoopController(); 
+        rollerMotorRightClosedLoopController = RollerMotorRight.getClosedLoopController(); 
+
+        rollerMotorLefRelativeEncoder = RollerMotorLeft.getEncoder(); 
+        rollerMotorRighRelativeEncoder = RollerMotorRight.getEncoder(); 
   
         // // TODO: Determine an appropriate current limit for the intake motor
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-        SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_LEFT_P);
-        SmartDashboard.putNumber("I_INTAKE", INTAKE.INTAKE_LEFT_I);
-        SmartDashboard.putNumber("D_INTAKE", INTAKE.INTAKE_LEFT_D);
-        SmartDashboard.putNumber("Vi_INTAKE",INTAKE.INTAKE_LEFT_VI);
+        SmartDashboard.putNumber("P_INTAKE_LEFT", INTAKE.INTAKE_LEFT_P);
+        SmartDashboard.putNumber("I_INTAKE_LEFT", INTAKE.INTAKE_LEFT_I);
+        SmartDashboard.putNumber("D_INTAKE_LEFT", INTAKE.INTAKE_LEFT_D);
+        SmartDashboard.putNumber("Vi_INTAKE_LEFT",INTAKE.INTAKE_LEFT_VI);
 
-        SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_RIGHT_P);
-        SmartDashboard.putNumber("I_INTAKE", INTAKE.INTAKE_RIGHT_I);
-        SmartDashboard.putNumber("D_INTAKE", INTAKE.INTAKE_RIGHT_D);
-        SmartDashboard.putNumber("Vi_INTAKE",INTAKE.INTAKE_RIGHT_VI);
+        SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
+        SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
+        SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
+        SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
 
-        SmartDashboard.putNumber("P_INTAKE", INTAKE.INTAKE_EXTEND_P);
-        SmartDashboard.putNumber("I_INTAKE", INTAKE.INTAKE_EXTEND_I);
-        SmartDashboard.putNumber("D_INTAKE", INTAKE.INTAKE_EXTEND_D);
-        SmartDashboard.putNumber("Vi_INTAKE",INTAKE.INTAKE_EXTEND_VI);
+        SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+        SmartDashboard.putNumber("Vi_INTAKE_EXTEND",INTAKE.INTAKE_EXTEND_VI);
     }
-
 
     /**
      * Run the intake at a set speed
      */
-    public void runAtSpeed() {
-        double LeftRPM = SmartDashboard.getNumber("Vi_INTAKE_LEFT", INTAKE.INTAKE_LEFT_VI);
-        
-        double RightRPM = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI);
+    public void runAtSpeedLeft() {
+        double RPM = SmartDashboard.getNumber("Vi_INTAKE_LEFT", INTAKE.INTAKE_LEFT_VI); // TODO: Remove this before competition
+        rollerMotorLeftClosedLoopController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    }
 
-        double ExtendRPM = SmartDashboard.getNumber("Vi_INTAKE_EXTEND",INTAKE.INTAKE_EXTEND_VI);
-        // TODO: Remove this before competition
-        // IntakeMotor.setPercentOutput(0.8); // TODO: Temporary fix to prevent oscillation.  Tune PID and run in velocity mode.
-        // TODO: Tune PID for the intake to prevent oscillation.  
-        // IntakeMotor.setVelocity(RPM);
+    public void runAtSpeedRight() {
+        double RPM = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI); // TODO: Remove this before competition
+        rollerMotorRightClosedLoopController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
 
     /**
      * Command to run the intake at a set speed
      */
-    public Command runAtSpeedCommand() {
-        return this.runOnce(() -> runAtSpeed());
+    public Command runAtSpeedLeftCommand() {
+        return this.runOnce(() -> runAtSpeedLeft());
+    }
+
+    public Command runAtSpeedRightCommand() {
+        return this.runOnce(() -> runAtSpeedRight());
+    }
+
+
+    /**
+     * Stop the intake motor
+     * 
+     * We do this using voltage mode so that the motor will slow to a stop naturally
+     * Using setVelocity() will cause the motor to stop abruptly using battery power
+     */
+    public void stop() {
+        RollerMotorLeft.setVoltage(0.0);
+        RollerMotorRight.setVoltage(0.0);
+    }
+
+
+    /**
+     * Stop command for the intake motor
+     * @return stop command
+     */
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
+    }
+
+
+   /**
+    * Get the velocity of the intake motor in RPM
+    * @return velocity in RPM
+    */
+    public double getLeftVelocity(){
+        return rollerMotorLefRelativeEncoder.getVelocity();
+    }
+
+    public double getRightVelocity(){
+        return rollerMotorRighRelativeEncoder.getVelocity();
     }
 
 
@@ -99,65 +172,16 @@ public class Intake extends SubsystemBase{
         double Left_P = SmartDashboard.getNumber("P_INTAKE_LEFT", INTAKE.INTAKE_LEFT_P);
         double Left_I = SmartDashboard.getNumber("I_INTAKE_LEFT", INTAKE.INTAKE_LEFT_I);
         double Left_D = SmartDashboard.getNumber("D_INTAKE_LEFT", INTAKE.INTAKE_LEFT_D);
-        double Left_Vi = SmartDashboard.getNumber("Vi_INTAKE_LEFT",INTAKE.INTAKE_LEFT_VI);
 
         double Right_P = SmartDashboard.getNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
-        double Right_I = SmartDashboard.getNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
+        double Right_I = SmartDashboard.getNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_LEFT_I);
         double Right_D = SmartDashboard.getNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
-        double Right_Vi = SmartDashboard.getNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
-
-        double Extend_P = SmartDashboard.getNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
-        double Extend_Vi = SmartDashboard.getNumber("Vi_INTAKE_EXTEND",INTAKE.INTAKE_EXTEND_VI);
     
-        RollerMotorLeft.setSlot(0);
-        RollerMotorRight.setSlot(0); 
-        ExtendMotor.setSlot(0); 
+        rollerMotorLeftConfig.closedLoop.pid(Left_P, Left_I, Left_D);
+        rollerMotorRightConfig.closedLoop.pid(Right_P, Right_I, Right_D);
 
-        RollerMotorLeftPID.setPID(Left_P,Left_I ,Left_D);
-        RollerRightPID.setPID(Right_P,Right_I,Right_D); 
-        ExtendPID.setPID(Extend_P,Extend_I,Extend_D); 
-        
-        }
-    
-
-    /**
-     * Stop the intake motor
-     * 
-     * We do this using % ouptput so that the motor will slow to a stop naturally
-     * Using setVelocity() will cause the motor to stop abruptly using battery power
-     */
-    public void stop() {
-        RollerMotorLeft.setVoltage(0);
-        RollerMotorRight.setVoltage(0);
-        ExtendMotor.setVoltage(0);
-    }
-
-
-    /**
-     * Stop command for the intake motor
-     * @return stop command
-     */
-    public Command stopCommand(){
-        return this.runOnce(() -> stop());
-    }
-
-
-//    /**
-//     * Get the velocity of the intake motor in RPM
-//     * @return velocity in RPM
-//     */
-    public double getLeftVelocity(){
-        return RollerMotorLeft.getVelocityRPM();
-    }
-
-    public double getRightVelocity(){
-        return RollerMotorRight.getVelocityRPM();
-    }
-
-    public double getExtendVelocity(){
-        return ExtendMotor.getVelocityRPM();
+        RollerMotorLeft.configure(rollerMotorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        RollerMotorRight.configure(rollerMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
 
@@ -166,9 +190,8 @@ public class Intake extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        Logger.recordOutput("RollerLeft RPM", getLeftVelocity());
-        Logger.recordOutput("RollerRight RPM", getRightVelocity());
-        Logger.recordOutput("RollerExtend RPM", getExtendVelocity());
-     }
+        Logger.recordOutput("Intake Left RPM", getLeftVelocity());
+        Logger.recordOutput("Intake Right RPM", getRightVelocity());
+    }
         
 }
