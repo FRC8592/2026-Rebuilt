@@ -69,9 +69,9 @@ public class Intake extends SubsystemBase{
         rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
         rollerMotorRightConfig.closedLoop.pid(INTAKE.INTAKE_RIGHT_P,INTAKE.INTAKE_RIGHT_I,INTAKE.INTAKE_RIGHT_D);
 
-        extendConfiguration.Slot0.kP = 0; 
-        extendConfiguration.Slot0.kI = 0;
-        extendConfiguration.Slot0.kD = 0; 
+        extendConfiguration.Slot0.kP = INTAKE.INTAKE_EXTEND_P; 
+        extendConfiguration.Slot0.kI = INTAKE.INTAKE_EXTEND_I;
+        extendConfiguration.Slot0.kD = INTAKE.INTAKE_EXTEND_D; 
 
         rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
         rollerMotorRightConfig.idleMode(IdleMode.kCoast);
