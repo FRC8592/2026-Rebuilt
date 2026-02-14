@@ -12,8 +12,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.*;
 import frc.robot.helpers.PIDProfile;
-import frc.robot.helpers.motor.NewtonMotor;
-import frc.robot.helpers.motor.talonfx.KrakenX60Motor;
 // import frc.robot.helpers.motor.spark.SparkFlexMotor;
 
 
