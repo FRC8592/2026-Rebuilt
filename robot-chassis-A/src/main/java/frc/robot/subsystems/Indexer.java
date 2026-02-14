@@ -9,16 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
+public class Indexer extends SubsystemBase {    
+    //TODO: confirm CAN IDs
+    private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
+    private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
 
-import java.lang.management.MemoryNotificationInfo;
-
-import org.littletonrobotics.junction.Logger;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants.*;
-import frc.robot.helpers.PIDProfile;
-// import frc.robot.helpers.motor.spark.SparkFlexMotor;
-
-public class Indexer extends SubsystemBase{
     private TalonFXConfiguration spinMotorConfiguration = new TalonFXConfiguration();
     private TalonFXConfiguration outputMotorConfiguration = new TalonFXConfiguration();
 
