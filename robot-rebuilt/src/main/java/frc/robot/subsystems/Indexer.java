@@ -1,22 +1,21 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
 import frc.robot.helpers.PIDProfile;
-import frc.robot.helpers.motor.MotorConstants;
-import frc.robot.helpers.motor.NewtonMotor.IdleMode;
-import frc.robot.helpers.motor.talonfx.TalonFXMotor;
 
-public class Indexer extends SubsystemBase{    
-    //TODO: must add the numbers for motor constants
-    MotorConstants spinMotorConstants = new MotorConstants(6380, 0, 4.69, 0);
-    MotorConstants outputMotorConstants = new MotorConstants(0, 0, 0, 0);
-    
+public class Indexer extends SubsystemBase {    
     //TODO: confirm CAN IDs
-    private TalonFXMotor spinMotor = new TalonFXMotor(INDEXER.SPINNER_CAN_ID, spinMotorConstants) {};
-    private TalonFXMotor outputMotor = new TalonFXMotor(INDEXER.OUTPUT_CAN_ID, outputMotorConstants) {};
+    private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
+    private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
+
+    private TalonFXConfiguration spinMotorConfiguration = new TalonFXConfiguration();
+    private TalonFXConfiguration outputMotorConfiguration = new TalonFXConfiguration();
 
     private PIDProfile spinMotorGains = new PIDProfile();
     private PIDProfile outputMotorGains = new PIDProfile();
@@ -29,6 +28,7 @@ public class Indexer extends SubsystemBase{
     public Indexer() {
         //TODO: consider adding a software stop for rotations if not in the hardware already
         //TODO: change the current limits
+
         spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT_FREE);
         spinMotor.setIdleMode(IdleMode.kCoast); //the spin can cruise to a stop
         
