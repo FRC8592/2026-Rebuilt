@@ -115,16 +115,14 @@ public final class SHOOTER {
     public static final double E2_OFFSET = 323.4;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
-}
+  }
 
 
   public static final class SCORING{
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
   }
 
-
-
-public final class INTAKE{
+  public final class INTAKE{
     public static final int INTAKE_MOTOR_CAN_ID = 44;
 
     // Current limit for the Intake motor
@@ -145,27 +143,25 @@ public final class INTAKE{
     public static final int SPINNER_CAN_ID = 31;
     public static final int OUTPUT_CAN_ID = 35;
 
-    // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT_STALL = 80;
-    public static final int SPINNER_CURRENT_LIMIT_FREE = 80;
-    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
-    public static final int OUTPUT_CURRENT_LIMIT_FREE = 80;
+    public static final double SPIN_P = 0;
+    public static final double SPIN_I = 0;
+    public static final double SPIN_D = 0;
 
-    //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.00045;
-    public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0.003;
-    public static final double SPINNER_VI = 5000;
-
-    public static final double OUTPUT_P = 0.01;
+    public static final double OUTPUT_P = 0;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
-    public static final double OUTPUT_VI = 5000;
+
+    // Current limts for the Indexer motors
+    public static final int SPIN_CURRENT_LIMIT_STALL = 80;
+    public static final int SPIN_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+
+    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
+    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
       
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
   }
 
-  // public static final class SCORING{
-  //   public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Scoring/";
-  // }
 }

@@ -4,8 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.CONTROLLERS;
-import frc.robot.Constants.VISION;
+import frc.robot.Constants.*;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
@@ -23,14 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-  // Replace with CommandPS4Controller or CommandJoystick if needed
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
 
   // robot subsystems
@@ -42,15 +34,15 @@ public class RobotContainer {
   public final Vision vision;
   public final OdometryUpdates odometryUpdates;
 
-  private final Trigger runIntake = driverController.rightBumper();
-  private final Trigger runIndexer = driverController.leftBumper();
   private final Trigger RESET_HEADING = driverController.back();
+  private final Trigger SLOW_MODE = driverController.leftTrigger();
+
+  //used in sysId testing
   private final Trigger QUASI_FORWARD = driverController.a();
   private final Trigger QUASI_REVERSE = driverController.y();
   private final Trigger DYNAMIC_FORWARD = driverController.b();
   private final Trigger DYNAMIC_REVERSE = driverController.x();
 
-  private final Trigger SLOW_MODE = driverController.leftTrigger();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
