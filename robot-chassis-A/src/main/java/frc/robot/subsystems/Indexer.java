@@ -18,6 +18,7 @@ import frc.robot.Constants.*;
 import frc.robot.helpers.PIDProfile;
 // import frc.robot.helpers.motor.spark.SparkFlexMotor;
 
+public class Indexer extends SubsystemBase{
     private TalonFXConfiguration spinMotorConfiguration = new TalonFXConfiguration();
     private TalonFXConfiguration outputMotorConfiguration = new TalonFXConfiguration();
 
