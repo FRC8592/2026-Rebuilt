@@ -16,26 +16,32 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.INTAKE;
-import frc.robot.helpers.motor.talonfx.TalonFXMotor;
 
-import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 public class Intake extends SubsystemBase{
     private SparkFlex RollerMotorLeft; 
     private SparkFlex RollerMotorRight; 
 
-    private TalonFXMotor ExtendMotor; 
+    private TalonFX ExtendMotor; 
 
     private SparkFlexConfig rollerMotorRightConfig; 
     private SparkFlexConfig rollerMotorLeftConfig; 
+    private TalonFXConfiguration extendConfiguration; 
 
     private SparkClosedLoopController rollerMotorRightClosedLoopController;
     private SparkClosedLoopController rollerMotorLeftClosedLoopController; 
+    private PositionVoltage extendMotorController = new PositionVoltage(INTAKE.EXTEND_ROTATIONS); 
 
     private RelativeEncoder rollerMotorRighRelativeEncoder;
     private RelativeEncoder rollerMotorLefRelativeEncoder; 
  
+    private final NeutralOut extend_brake = new NeutralOut(); 
     /**
      * Constructor for the Intake subsystem
      * 
@@ -54,32 +60,37 @@ public class Intake extends SubsystemBase{
 
         RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
         RollerMotorRight = new SparkFlex (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
-
-        //ExtendMotor = new TalonFXMotor (INTAKE.INTAKE_EXTEND_CAN_ID); 
+        ExtendMotor = new TalonFX(INTAKE.INTAKE_EXTEND_CAN_ID); 
 
         rollerMotorLeftConfig = new SparkFlexConfig(); 
         rollerMotorRightConfig = new SparkFlexConfig(); 
-
-        // extendMotorPID = new PIDProfile();
-        // ExtendMotorPID.setSlot(0);
-        // ExtendMotor.setPID(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
-        // ExtendMotor.withGains(ExtendMotorPID); 
+        extendConfiguration = new TalonFXConfiguration(); 
 
         rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
         rollerMotorRightConfig.closedLoop.pid(INTAKE.INTAKE_RIGHT_P,INTAKE.INTAKE_RIGHT_I,INTAKE.INTAKE_RIGHT_D);
 
+        extendConfiguration.Slot0.kP = 0; 
+        extendConfiguration.Slot0.kI = 0;
+        extendConfiguration.Slot0.kD = 0; 
+
         rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
-        rollerMotorRightConfig.idleMode(IdleMode.kCoast); 
+        rollerMotorRightConfig.idleMode(IdleMode.kCoast);
+
+        extendConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         rollerMotorLeftConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
         rollerMotorRightConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
 
+        extendConfiguration.TorqueCurrent.withPeakForwardTorqueCurrent(INTAKE.EXTEND_TORQUE_CURRENT)
+        .withPeakReverseTorqueCurrent(-INTAKE.EXTEND_TORQUE_CURRENT); 
+
         RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
         RollerMotorRight.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
+        ExtendMotor.getConfigurator().apply(extendConfiguration); 
 
         rollerMotorLeftClosedLoopController = RollerMotorLeft.getClosedLoopController(); 
         rollerMotorRightClosedLoopController = RollerMotorRight.getClosedLoopController(); 
-
+        
         rollerMotorLefRelativeEncoder = RollerMotorLeft.getEncoder(); 
         rollerMotorRighRelativeEncoder = RollerMotorRight.getEncoder(); 
   
@@ -106,13 +117,17 @@ public class Intake extends SubsystemBase{
      * Run the intake at a set speed
      */
     public void runAtSpeedLeft() {
-        double RPM = SmartDashboard.getNumber("Vi_INTAKE_LEFT", INTAKE.INTAKE_LEFT_VI); // TODO: Remove this before competition
-        rollerMotorLeftClosedLoopController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+        double RPMLeft = SmartDashboard.getNumber("Vi_INTAKE_LEFT", INTAKE.INTAKE_LEFT_VI); // TODO: Remove this before competition
+        rollerMotorLeftClosedLoopController.setSetpoint(RPMLeft, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
     public void runAtSpeedRight() {
-        double RPM = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI); // TODO: Remove this before competition
-        rollerMotorRightClosedLoopController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+        double RPMRight = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI); // TODO: Remove this before competition
+        rollerMotorRightClosedLoopController.setSetpoint(RPMRight, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    }
+
+    public void runToPositionExt(){
+         ExtendMotor.setControl(extendMotorController.withPosition(INTAKE.DESIRED_ROTATIONS_EXTEND));
     }
 
 
@@ -127,6 +142,9 @@ public class Intake extends SubsystemBase{
         return this.runOnce(() -> runAtSpeedRight());
     }
 
+    public Command runExtendCommand (){
+        return this.runOnce(()->runToPositionExt()); 
+    }
 
     /**
      * Stop the intake motor
@@ -137,6 +155,7 @@ public class Intake extends SubsystemBase{
     public void stop() {
         RollerMotorLeft.setVoltage(0.0);
         RollerMotorRight.setVoltage(0.0);
+        ExtendMotor.setControl(extend_brake);
     }
 
 

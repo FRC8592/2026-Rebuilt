@@ -139,6 +139,11 @@ public final class Constants {
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_VI = 3000;
+
+    public static final double EXTEND_ROTATIONS = 2; 
+    public static final double DESIRED_ROTATIONS_EXTEND = 0; 
+
+    public static final double EXTEND_TORQUE_CURRENT = 0; 
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
 
