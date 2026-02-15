@@ -11,6 +11,10 @@ public class Utils {
      * Clamps the value between a given range
      */
     public static double clamp(double value, double min, double max) {
+        //Simple implementation for easier debugging to ascertain why motor is not achieving speed
+        if(Math.min(value, max) == max){
+            System.out.println("DesiredRPS is beyond maxRPM limit of motor!");
+        }
         return Math.max(Math.min(value, max), min);
     }
 

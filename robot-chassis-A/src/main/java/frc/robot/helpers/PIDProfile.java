@@ -17,7 +17,9 @@ public class PIDProfile implements Sendable {
     public double kG = 0;
 
     public double maxAcceleration = Double.POSITIVE_INFINITY;
+    public double maxNegAcceleration = Double.NEGATIVE_INFINITY;
     public double maxVelocity = Double.POSITIVE_INFINITY;
+    public double maxNegVelocity = Double.NEGATIVE_INFINITY;
 
     public double tolerance = 0.1; // Set to 0.1 units at default
 
@@ -116,9 +118,21 @@ public class PIDProfile implements Sendable {
         useSmartMotion = true;
         return this;
     }
+    
+    //Method added by Ashwin Potluri
+    public PIDProfile setMaxNegAcceleration(double gain){
+        this.maxNegAcceleration = gain;
+        useSmartMotion = true;
+        return this;
+    }
 
     public double getMaxAcceleration() {
         return maxAcceleration;
+    }
+
+    //Method added by Ashwin Potluri
+    public double getMaxNegAcceleration(){
+        return maxNegAcceleration;
     }
 
     public PIDProfile setMaxVelocity(double gain) {
@@ -126,9 +140,20 @@ public class PIDProfile implements Sendable {
         useSmartMotion = true;
         return this;
     }
+    
+    public PIDProfile setMaxNegVelocity(double gain){
+        maxNegVelocity = gain;
+        useSmartMotion = true;
+        return this;
+    }
 
     public double getMaxVelocity() {
         return maxVelocity;
+    }
+
+    //Method added by Ashwin Potluri
+    public double getMaxNegVelocity(){
+        return maxNegVelocity;
     }
 
     public PIDProfile setSlot(int slot) {
@@ -225,6 +250,7 @@ public class PIDProfile implements Sendable {
      * Creates a PID controller with the specified constants and configurations
      */
     public ProfiledPIDController toProfiledPIDController() {
+        //TODO: See how maxNegativeVelocity fits into this?
         ProfiledPIDController pidCtrl = new ProfiledPIDController(kP, kI, kD, new Constraints(maxVelocity * scale, maxAcceleration * scale));
         pidCtrl.setTolerance(tolerance);
         if (continuousInput) {
