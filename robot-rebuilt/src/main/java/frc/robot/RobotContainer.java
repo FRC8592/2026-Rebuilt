@@ -15,10 +15,14 @@ import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 
+import frc.robot.subsystems.Scoring;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-// import frc.robot.subsystems.Turret;
-// import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Feeder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -44,15 +48,17 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(SWERVE.MAX_SPEED);
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    // robot subsystems
-    private final Swerve swerve;
-    private final OdometryUpdates odometryUpdates;
-    private final Vision vision;
-    // public final Indexer indexer;
-    // public final Intake intake;
-    //public final Shooter shooter;
-    // public final Turret turret;
-    // public final Feeder feeder;
+//     // robot subsystems
+        private final Swerve swerve;
+        private final OdometryUpdates odometryUpdates;
+        private final Vision vision;
+        // public final Indexer indexer;
+        // public final Intake intake;
+//     private final Launcher launcher;x
+    private final Scoring scoring;
+        //public final Shooter shooter;
+        public final Turret turret;
+        public final Feeder feeder;
 
     // robot button triggers
     private final Trigger TESTING_TURRET = driverController.rightBumper();
@@ -75,8 +81,9 @@ public class RobotContainer {
         // indexer = new Indexer();
         // intake = new Intake();
         //shooter = new Shooter();
-        // turret = new Turret(swerve);
-        // feeder = new Feeder();
+        turret = new Turret(swerve);
+        scoring = new Scoring(swerve, turret);
+        feeder = new Feeder();
 
         configureBindings();
         configureDefaults();
@@ -111,7 +118,7 @@ public class RobotContainer {
         RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
         //TESTING_SHOOTER.whileTrue(new DeferredCommand(() -> shooter.runAtSpeedCommand(1000), Set.of(shooter))).onFalse(shooter.stopShooterCommand());
-        // TESTING_TURRET.whileTrue(turret.TurrettoPosCommand()).onFalse(turret.stopTurretCommand());
+        TESTING_TURRET.whileTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
         //TESTING_TURRET_BACK.onTrue(turret.TurrettoPosCommand(-1)).onFalse(turret.stopTurretCommand());
        // TESTING_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
         // RESET_POS.onTrue(turret.resetPosCommand());

@@ -24,16 +24,16 @@ public class AutoTurretAngle extends SubsystemBase{
         this.swerve = swerve;
     }
 
-    @Override
-    public void periodic(){
-        rawAngle = TurretAngleCalc(swerve.getPose());
+    // @Override
+    // public void periodic(){
+    //     rawAngle = TurretAngleCalc(swerve.getPose(), new Pose2d(hubLocationX, hubLocationY, swerve.getYaw()));
 
-    }
+    // }
 
-    public double TurretAngleCalc(Pose2d robotPosition){
+    public double TurretAngleCalc(Pose2d robotPosition, Pose2d targetLocation){
         //System.out.println("Swerve Position Fed X, Y" + robotPosition.getX() + ", " + robotPosition.getY());
-        double hubRelativeX = hubLocationX - robotPosition.getX();
-        double hubRelativeY = hubLocationY - robotPosition.getY();
+        double hubRelativeX = targetLocation.getX() - robotPosition.getX();
+        double hubRelativeY = targetLocation.getY() - robotPosition.getY();
 
         double triangleAngle = Math.toDegrees(Math.atan(hubRelativeY/hubRelativeX));
         SmartDashboard.putNumber("Triangle Angle", triangleAngle);
