@@ -114,16 +114,40 @@ public final class Constants {
   public static class INTAKE{
     // CAN ID for the Intake motor
     public static final int INTAKE_MOTOR_CAN_ID = 44;
+    public static final int INTAKE_ROLLER_LEFT_CAN_ID = 0; 
+    public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 0;
+    public static final int INTAKE_EXTEND_CAN_ID = 0; 
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT = 80;
-
+    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
+    public static final int INTAKE_CURRENT_LIMIT_FREE = 0; 
+    
+    public static final int EXTEND_CURRENT_LIMIT_STALL = 0; 
+    public static final int EXTEND_CURRENT_LIMIT_FREE = 0; 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double INTAKE_P = 0.01;
-    public static final double INTAKE_I = 0;
-    public static final double INTAKE_D = 0;
-    public static final double INTAKE_VI = 3000;
+    public static final double INTAKE_LEFT_P = 0.01;
+    public static final double INTAKE_LEFT_I = 0;
+    public static final double INTAKE_LEFT_D = 0;
+    public static final double INTAKE_LEFT_VI = 3000;
+
+    public static final double INTAKE_RIGHT_P = 0.01;
+    public static final double INTAKE_RIGHT_I = 0;
+    public static final double INTAKE_RIGHT_D = 0;
+    public static final double INTAKE_RIGHT_VI = 3000;
+
+    public static final double INTAKE_EXTEND_P = 0.01;
+    public static final double INTAKE_EXTEND_I = 0;
+    public static final double INTAKE_EXTEND_D = 0;
+    public static final double INTAKE_EXTEND_VI = 3000;
+
+    public static final double EXTEND_ROTATIONS = 2; 
+    public static final double DESIRED_ROTATIONS_EXTEND = 0; 
+
+    public static final double EXTEND_TORQUE_CURRENT = 0; 
+    
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
+
+
 
   }
 
@@ -132,22 +156,31 @@ public final class Constants {
     public static final int SPINNER_CAN_ID = 31;
     public static final int OUTPUT_CAN_ID = 35;
 
-    // Current limts for the Indexer motors
-    public static final int SPINNER_CURRENT_LIMIT = 80;
-    public static final int OUTPUT_CURRENT_LIMIT = 80;
+    public static final double SPIN_P = 0;
+    public static final double SPIN_I = 0;
+    public static final double SPIN_D = 0;
 
-    //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double SPINNER_P = 0.01;
-    public static final double SPINNER_I = 0;
-    public static final double SPINNER_D = 0;
-    public static final double SPINNER_VI = 2000;
-
-    public static final double OUTPUT_P = 0.01;
+    public static final double OUTPUT_P = 0;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
-    public static final double OUTPUT_VI = 5000;
+
+    // Current limts for the Indexer motors
+    public static final int SPIN_CURRENT_LIMIT_STALL = 80;
+    public static final int SPIN_CURRENT_LIMIT_FREE = 80;
+    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+
+    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
+    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/"; 
+    public static final double MOTOR_MAX_RPS = 6380 / 60;
+
+    public static final double SPIN_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
+    public static final double OUTPUT_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
+      
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
+
   }
 
 }

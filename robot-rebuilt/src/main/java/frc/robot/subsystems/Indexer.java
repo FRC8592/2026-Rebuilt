@@ -1,187 +1,161 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.ResetMode;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.INDEXER;
+import frc.robot.helpers.PIDProfile;
 
+public class Indexer extends SubsystemBase {    
+    //TODO: confirm CAN IDs
+    private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
+    private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
 
-public class Indexer extends SubsystemBase{
-//     private SparkFlex spinnerMotor;
-//     private SparkFlexConfig spinnerConfig;
-//     private SparkClosedLoopController spinnerController;
-//     private RelativeEncoder spinnerEncoder;
-    
-//     private SparkFlex outputMotor;
-//     private SparkFlexConfig outputConfig;
-//     private SparkClosedLoopController outputController;
-//     private RelativeEncoder outputEncoder;
+    private TalonFXConfiguration spinMotorConfiguration = new TalonFXConfiguration();
+    private TalonFXConfiguration outputMotorConfiguration = new TalonFXConfiguration();
 
-//  //   private PIDProfile MotorPID; 
+    private PIDProfile spinMotorGains = new PIDProfile();
+    private PIDProfile outputMotorGains = new PIDProfile();
 
-//     /**
-//      * Constructor for the Indexer subsystem
-//      * 
-//      * Instatiate the motors with initial PID values from the CONSTANTS class
-//      */
-//     public Indexer() {
+    /**
+     * Constructor for the Indexer subsystem
+     * 
+     * Instatiate the motors with initial PID values from the CONSTANTS class
+     */
+    public Indexer() {
+        //TODO: consider adding a software stop for rotations if not in the hardware already
+        //TODO: change the current limits
 
-//         /*
-//          * Create the Spinner motor and instatiate the following features
-//          *   Reset to safe factory configuration
-//          *   Store persistant configuration (Flash)
-//          *   Place in COAST mode (Can coast to a stop)
-//          *   Set current limits
-//          *   Set VELOCITY PID parameters
-//          */
-//         spinnerMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
-//         spinnerConfig = new SparkFlexConfig();
-//         spinnerConfig.idleMode(IdleMode.kCoast);
-//         spinnerConfig.smartCurrentLimit(INDEXER.SPINNER_CURRENT_LIMIT_STALL, INDEXER.SPINNER_CURRENT_LIMIT_FREE);   // TODO: Set appropriate current limits
-//         spinnerConfig.closedLoop.pid(INDEXER.SPINNER_P, INDEXER.SPINNER_I, INDEXER.SPINNER_D);                      // TODO: Tune PID gains
-                            
-//         spinnerMotor.configure(spinnerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-//         spinnerController = spinnerMotor.getClosedLoopController();
-//         spinnerEncoder = spinnerMotor.getEncoder();
+        spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT_FREE);
+        spinMotor.setIdleMode(IdleMode.kCoast); //the spin can cruise to a stop
         
-//         /*
-//          * Create the Output motor and instatiate the following features
-//          *   Reset to safe factory configuration
-//          *   Store persistant configuration (Flash)
-//          *   Place in BRAKE mode (stop feeding fuel to the shooter quickly)
-//          *   Set current limits
-//          *   Set VELOCITY PID parameters
-//          */
-//         outputMotor = new SparkFlex(INDEXER.OUTPUT_CAN_ID, MotorType.kBrushless);
-//         outputConfig = new SparkFlexConfig();
-//         outputConfig.idleMode(IdleMode.kBrake);
-//         outputConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL, INDEXER.OUTPUT_CURRENT_LIMIT_FREE);  // TODO: Set appropriate current limits
-//         outputConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);                      // TODO: Tune PID gains
+        outputMotor.setCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL);
+        outputMotor.setIdleMode(IdleMode.kBrake); //the motor must stop pushing out fuel immediately
 
-//         outputMotor.configure(outputConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-//         outputController = outputMotor.getClosedLoopController();
-//         outputEncoder = outputMotor.getEncoder();
+        // TODO: Tune pid
+        SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
+        SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
+        SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
 
-//         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-//         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPINNER_P);
-//         SmartDashboard.putNumber("I_SPINNER", INDEXER.SPINNER_I);
-//         SmartDashboard.putNumber("D_SPINNER", INDEXER.SPINNER_D);
-//         SmartDashboard.putNumber("Vi_SPINNER", INDEXER.SPINNER_VI);
+        SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
+        SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
+        SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
 
-//         SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-//         SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-//         SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
-//         SmartDashboard.putNumber("Vi_OUTPUT", INDEXER.OUTPUT_VI);
-//     }
+        spinMotorGains.setPID(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D);
+        spinMotorGains.setSlot(0);
+        spinMotor.withGains(spinMotorGains);        
 
+        outputMotorGains.setPID(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
+        outputMotorGains.setSlot(1);
+        outputMotor.withGains(outputMotorGains);
 
-//     /**
-//      * Run the indexer at a set speed
-//      */
-//     public void runAtSpeed(){
-//         double RPM_SPINNER = SmartDashboard.getNumber("Vi_SPINNER", INDEXER.SPINNER_VI);
-//         double RPM_OUTPUT = SmartDashboard.getNumber("Vi_OUTPUT", INDEXER.OUTPUT_VI);
+    }
 
-//         // Apply closed loop controls to the Controller, not directly to the motor
-//         spinnerController.setSetpoint(RPM_SPINNER, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-//         // TODO: Put output motor into velocity control
-//         //outputController.setSetpoint(RPM_OUTPUT, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-//         outputMotor.setVoltage(13); // Run at full power
-//     }
+    @Override
+    public void periodic(){
+        // Get motors speeds in RPM
+        SmartDashboard.putNumber("Spinner RPM", getSpinnerVelocity());
+        SmartDashboard.putNumber("Output RPM", getOutputVelocity());
+    }
 
+    /**
+     * Run the indexer at a set speed from the SmartDashboard
+     */
+    // public void runAtSpeed(){
+    //     runSpinIndexer();
+    //     runOutputIndexer();
+    // }
 
-//     /**
-//      * Command to run the indexer at a set speed
-//      * @return
-//      */
-//     public Command runAtSpeedCommand(){
-//         return this.runOnce(() -> runAtSpeed());
-//     }
+    /**
+     * Runs the indexer at a set speed from the SmartDashboard
+     * @return a command to run the motors at the desired speed
+     */
+    // public Command runAtSpeedCommand(){
+    //     return this.runOnce(() -> runAtSpeed());
+    // }
 
+    /**
+     * Stop the indexer motors; 
+     * The spinnner will spin down naturally
+     * The output motor must stop immeidately so we do not continue to feed the shooter
+     */
+    public void stop(){
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_STOP_SPEED, 0);
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_STOP_SPEED, 1);
+    }
 
-//     /**
-//      * Stop the indexer motors
-//      * 
-//      * The spinnner can spin down naturally
-//      * The output motor must stop immeidately so we do not continue to feed the shooter
-//      */
-//     public void stop(){
-//         spinnerMotor.setVoltage(0.0);
-//         outputMotor.setVoltage(0.0); // In brake mode, should stop quickly
-//     }
+    /**
+     * Command to stop the indexer motors
+     * @return a command to stop the indexer motors
+     */
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
+    }
 
+    /**
+     * Runs the spin motor on the indexer
+     */
+    public void runSpinIndexer(){
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_SPEED, 0);
+    }
 
-//     /**
-//      * Stop command for the indexer motors
-//      * @return stop command
-//      */
-//     public Command stopCommand(){
-//         return this.runOnce(() -> stop());
-//     }
+    /**
+     * Command to run the spin motor on the indexer 
+     * @return a command to run the spin motor on the indexer
+     */
+    public Command runSpinIndexerCommand(){
+        return this.run(() -> runSpinIndexer());
+    }
 
+    /**
+     * Runs the output motor on the indexer at given speed
+     */
+    public void runOutputIndexer(){
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_SPEED, 1);
+    }
 
-//     /**
-//      * Get the velocity of the spinner motor in RPM
-//      * @return velocity in RPM
-//      */
-//     public double getVelocitySpinner(){
-//         return spinnerEncoder.getVelocity();
-//     }
+    /**
+     * Command to run the output motor on the indexer 
+     * @return a Command to run the output motor on the indexer 
+     */
+    public Command runOutputIndexerCommand(){
+        return this.run(() -> runOutputIndexer());
+    }
 
-//     /**
-//      * Get the velocity of the output motor in RPM
-//      * @return velocity in RPM
-//      */
-//     public double getVelocityOutput(){
-//         return outputEncoder.getVelocity();
-//     }
+    /**
+     * Runs both motors on the indexer 
+     */
+    public void runIndexer(){
+        spinMotor.setVelocity(INDEXER.SPIN_MOTOR_SPEED, 0);
+        outputMotor.setVelocity(INDEXER.OUTPUT_MOTOR_SPEED, 1);
+    }
 
+    /**
+     * Command to run both motors on the indexer 
+     * @return a command to run the motors
+     */
+    public Command runIndexerCommand(){
+        return this.run(() -> runIndexer());
+    }
 
-// /**
-//      * Update the PID constants for the indexer motors from SmartDashboard values
-//      * 
-//      * The Neo Vortex motors will not accept a change to the PID parameters while running.
-//      * Thusly, this method must be called from disabledPeriod() in Robot.java.
-//      */
-//     public void updatePID(){
-//         //System.out.println("Going into updatePID Method");
-//         double P_SPINNER = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPINNER_P);
-//         double I_SPINNER = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPINNER_I);
-//         double D_SPINNER = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPINNER_D);
+    /**
+     * Get the velocity of the spinner motor in RPM
+     * @return spinner motor velocity in RPM
+     */
+    public double getSpinnerVelocity(){
+        return spinMotor.getVelocityRPM();
+    }
 
-//         spinnerConfig.closedLoop.pid(P_SPINNER, I_SPINNER, D_SPINNER);
-//         spinnerMotor.configure(spinnerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-
-//         double P_OUTPUT = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-//         double I_OUTPUT = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-//         double D_OUTPUT = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
-
-//         outputConfig.closedLoop.pid(P_OUTPUT, I_OUTPUT, D_OUTPUT);
-//         outputMotor.configure(outputConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);    
-//     }
-
-
-//     /**
-//      * Periodic method, primarily used for logging
-//      */
-//     @Override
-//     public void periodic(){
-//         // Get motors speeds in RPM
-//         SmartDashboard.putNumber("Spinner RPM", getVelocitySpinner());
-//         SmartDashboard.putNumber("Output RPM", getVelocityOutput());
-//     }
+    /**
+     * Get the velocity of the output motor in RPM
+     * @return output motor velocity in RPM
+     */
+    public double getOutputVelocity(){
+        return outputMotor.getVelocityRPM();
+    }
+    
         
 }
