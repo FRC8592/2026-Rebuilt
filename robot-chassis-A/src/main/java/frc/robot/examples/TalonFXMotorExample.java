@@ -3,7 +3,7 @@ package frc.robot.examples;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -19,7 +19,7 @@ public class TalonFXMotorExample {
     //configuration defines motor properties including inversion, pid, and current limits
     private TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
 
-    //Below are different control types that you can utilize (so don't use multiple at once)
+    //Below are different control types that you can utilize
 
     //this is the controller that will drive the motor using velocity controls
     //you should use this when you care about the motor speed but not which position it ends at
@@ -27,17 +27,14 @@ public class TalonFXMotorExample {
     private VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
     //this is the controller that can drive the motor using motion magic, and also uses FOC (field-oriented control)
-    //this is in essance an improved version of VelocityVoltage
+    //this is an improved VelocityVoltage
     //i.e. conveyer belts with gentle start and stop to prevent mechanical duress
     private MotionMagicVelocityVoltage motionMagicRequest = new MotionMagicVelocityVoltage(0);
 
     //this is the controller that drives the motor to a certain position
     //i.e. arm with set positions, elevators with set heights, intakes that retract
-    private PositionVoltage positionRequest = new PositionVoltage(0);
+    private MotionMagicVoltage positionRequest = new MotionMagicVoltage(0);
 
-    /**
-     * In the constructor of your susbsystem class, you will want to set all your motor configurations and apply 
-     */
     public TalonFXMotorExample(){
         //<------------ SET IDLE MODE ------------>
         //Brake: doesn't move in disabled, "brakes" to a stop
@@ -50,8 +47,8 @@ public class TalonFXMotorExample {
         motorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <- i.e. this inverts the motor
 
         //<-------------- SET FOLLOWER MOTORS -------------->
-        //use MotorAlignmentValue.Aligned when the motors spin in the same direction mechanically
-        //use MotorAlignmentValue.Opposed when the motors spin in the opposite direction mechanically
+        //use MotorAlignmentValue.Aligned when the motors spin in the same direction 
+        //use MotorAlignmentValue.Opposed when the motors spin in the opposite direction
         followerMotor.setControl(new Follower(motor.getDeviceID(), MotorAlignmentValue.Aligned));
 
         //<-------------- SET CURRENT LIMITS -------------->
@@ -60,10 +57,10 @@ public class TalonFXMotorExample {
 
         //<-------------- SET SOFT LIMITS -------------->
         motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true; 
-        motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0; //threshold in rotations (the "highest" position)
+        motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0; //threshold in rotations (the "furthest" position)
 
         motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0; //threshold in rotations (the "lowest" position)
+        motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0; //threshold in rotations
 
         //<-------------- SET PID VALUES -------------->
         //You typically will only need to use one slot for PID
