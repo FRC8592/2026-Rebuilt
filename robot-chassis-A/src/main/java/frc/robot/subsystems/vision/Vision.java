@@ -1,26 +1,24 @@
-
 package frc.robot.subsystems.vision;    
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.*;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Vision extends SubsystemBase{
+public class Vision extends SubsystemBase {
     PhotonCamera camera;
     PhotonPoseEstimator estimator;
 
@@ -33,80 +31,113 @@ public class Vision extends SubsystemBase{
     PhotonCameraSim cameraSim;
     AprilTagFieldLayout aprilTagFieldLayout;
 
-    List<AprilTag> al = new ArrayList<>();
-
+    /**
+     * Creates a vision subsystem for a camera on the robot
+     * @param camName name of the camera
+     * @param camOffsets camera position relative to the robot center
+     */
     public Vision(String camName, Transform3d camOffsets){
         aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
         camera = new PhotonCamera(camName);
-        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camOffsets);
-        visionSim = new VisionSystemSim("photonvision");
+        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, camOffsets);
+    }
 
+    /**
+     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation 
+     * @param camName name of the camera
+     * @param camOffsets camera position relative to the robot center
+     * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
+     * @param calibrationHeight height of the calibration (i.e. the 480 of 840x480)
+     * @param calibrationAvgErrorPx average error of the calibration in pixels
+     * @param calibrationErrorStdPx std in error of the calibration in pixels
+     * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
+     */
+    public Vision(String camName, Transform3d camOffsets, int calibrationWidth, int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx, int fps){
+        visionSim = new VisionSystemSim("photonvision");
         visionSim.addAprilTags(aprilTagFieldLayout);
 
         cameraProperties = new SimCameraProperties();
-
-        //TODO: redo calibration and reset values for sim
-        // A 1280 x 800 camera with a 100 degree diagonal FOV.
-        cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(72.56));
-        cameraProperties.setCalibError(0.39, 0.08);
-        cameraProperties.setFPS(100);
-        cameraProperties.setAvgLatencyMs(22);
-        cameraProperties.setLatencyStdDevMs(2);
+        cameraProperties.setCalibration(calibrationWidth, calibrationHeight, Rotation2d.fromDegrees(70));
+        cameraProperties.setCalibError(calibrationAvgErrorPx, calibrationErrorStdPx);
+        cameraProperties.setFPS(fps);
 
         cameraSim = new PhotonCameraSim(camera, cameraProperties);
-
-        visionSim.addCamera(cameraSim, camOffsets);
-        visionSim.getDebugField();
-
-        cameraSim.enableRawStream(true);
+        cameraSim.enableRawStream(false);
         cameraSim.enableProcessedStream(true);
         cameraSim.enableDrawWireframe(true);
-        
+
+        visionSim.addCamera(cameraSim, camOffsets);
     }
 
     @Override
     public void periodic(){
-         // Read in relevant data from the Camera
-         results = camera.getAllUnreadResults();
-         if (!results.isEmpty()) {
-             // Camera processed a new frame since last
-             // Get the last one in the list.
-             var result = results.get(results.size() - 1);
-             targetVisible = result.hasTargets();
-             if (targetVisible) {
-                // At least one AprilTag was seen by the camera
-                PhotonTrackedTarget target = result.getBestTarget();
-                targetAmbiguity = target.getPoseAmbiguity();
-                    
-                 }
-             }
-             
+        results = camera.getAllUnreadResults(); //MUST ONLY CALL THIS METHOD ONCE PER LOOP
+
+        if (!results.isEmpty()) {
+            //Get the latest result from the camera and check if it contains an apriltag
+            var result = results.get(results.size() - 1);
+            targetVisible = result.hasTargets();
+
+            if (targetVisible) { // At least one AprilTag was seen by the camera
+                targetAmbiguity = result.getBestTarget().getPoseAmbiguity();     
+            } else {
+                targetAmbiguity = -10.0;
+            }
+        }
+          
         SmartDashboard.putBoolean("Has one tag", getTargets().size() > 0);
         SmartDashboard.putBoolean("Has two tags", getTargets().size() > 1);
+        SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+    }
+
+    @Override
+    public void simulationPeriodic(){}
+
+    /**
+     * Updates the vision simulation with the current swerve odometry pose
+     * @param robotPose swerve odometry pose
+     */
+    public void simulationUpdatePose(Pose2d robotPose){
+        visionSim.update(robotPose);
     }
 
     /**
      * Gets the pose ambiguity ratio.
-     * @return Returns the pose ambiguity ratio.
+     * @return Returns the pose ambiguity ratio. -10 if there are no apriltags
      */
     public double getPoseAmbiguityRatio(){
         return targetAmbiguity;
     }
 
     /**
-     * Lists the targets visible by the camera.
-     * @return Returns a list of the targets visible by the camera.
+     * Lists the targets visible by the camera
+     * @return Returns a list of the targets visible by the camera
      */
     public List<PhotonTrackedTarget> getTargets() {
-        return camera.getLatestResult().getTargets();
+        if(results == null || results.isEmpty())
+            return List.of();
+
+        var result = results.get(results.size() - 1);
+        return result.getTargets();
     }
 
     /**
-     * Gets the current vision pose.
-     * @return Returns the current vision pose.
+     * Gets the current vision pose
+     * @return Returns the current vision pose
      */
     public Optional<EstimatedRobotPose> getRobotPoseVision() {
-       return estimator.update(camera.getLatestResult());
+        if(results == null || results.isEmpty()){
+            return Optional.empty();
+        }
+
+        PhotonPipelineResult latest = results.get(results.size() - 1);
+        Optional<EstimatedRobotPose> pose = estimator.estimateCoprocMultiTagPose(latest);
+
+        if(pose.isEmpty()){
+            pose = estimator.estimateLowestAmbiguityPose(latest);
+        }
+
+        return pose;
     }
 }
