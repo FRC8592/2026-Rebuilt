@@ -5,20 +5,20 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-//this code will work for SparkMax (not SparkFlex/NEO VORTEX)
-public class SparkMaxMotorExample {
+//this code will work for SparkFlex and NEO VORTEX
+public class SparkFlexMotorExample {
     //instantiate SparkMax motors here
-    SparkMax motor;
-    SparkMax leaderMotor;
+    SparkFlex motor;
+    SparkFlex leaderMotor;
 
     //configuration defines motor properties including inversion, soft limits, limit switches, and encoder properties
-    SparkMaxConfig motorConfiguration;
+    SparkFlexConfig motorConfiguration;
 
     //this controller will allow you to drive the motor using closed loop values (i.e. position and pid control)
     SparkClosedLoopController controller;
@@ -26,13 +26,13 @@ public class SparkMaxMotorExample {
     //the encoder on the motor will allow you to track the position of the subsystem by counting ticks on the motor
     RelativeEncoder encoder;
 
-    public SparkMaxMotorExample(){
+    public SparkFlexMotorExample(){
         //In general, the motors we use will be Brushless. Brushed motors consume a lot of power and are complaint-worthy
-        motor = new SparkMax(9, MotorType.kBrushless);
-        leaderMotor = new SparkMax(10, MotorType.kBrushless);
+        motor = new SparkFlex(9, MotorType.kBrushless);
+        leaderMotor = new SparkFlex(10, MotorType.kBrushless);
 
         //instantiate the motor configuration
-        motorConfiguration = new SparkMaxConfig();
+        motorConfiguration = new SparkFlexConfig();
 
         //instantiate the motor contoroller
         controller = motor.getClosedLoopController();

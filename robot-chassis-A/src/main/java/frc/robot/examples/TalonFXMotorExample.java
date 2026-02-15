@@ -69,6 +69,7 @@ public class TalonFXMotorExample {
         motorConfiguration.Slot0.kP = 0.0; 
         motorConfiguration.Slot0.kI = 0.0;
         motorConfiguration.Slot0.kD = 0.0;
+        motorConfiguration.Slot0.kV = 0.0;
 
         //<-------------- CONFIGURE MOTION MAGIC -------------->
         //Motion Magic provides smoother acceleration/deacceleration, and can build on top of pid or be used independently
@@ -86,6 +87,11 @@ public class TalonFXMotorExample {
         //if you're using position control, you might want to zero its position when you start the robot
         motor.setPosition(0);
 
+    }
+
+    //basic method to run the motor without using velocity or position control
+    public void run(){
+        motor.set(1); //set speed from -1 to 1
     }
 
     public void runVelocityControl(double rps){
@@ -113,8 +119,13 @@ public class TalonFXMotorExample {
                                         .withSlot(0));
     }
 
+    //basic method to stop the motor when not position/velocity control
+    public void stop(){
+        motor.stopMotor();
+    }
+
     //stops motors (both position and velocity control)
-    public void stop() {
+    public void stopWithControl() {
         motor.setControl(velocityRequest.withSlot(0).withVelocity(0));
     }
 
