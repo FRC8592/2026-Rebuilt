@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.swerve;
 
+import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
 import frc.robot.helpers.SmoothingFilter;
@@ -181,10 +182,23 @@ public class Swerve extends SubsystemBase {
         return swerve.getState().Speeds;
     }
 
-    //TODO: method to drive swerve in a circle around the hub from the current position
-    public ChassisSpeeds driveInCircle(){
-        double hubLocationX = 4.02844;
-        double hubLocationY = 4.445;
+    /**
+     * Drives the swerve in a circle around the correct alliance's hub
+     */
+    public void driveInCircle(){
+        double hubLocationX = 0;
+        double hubLocationY = 0;
+
+        var alliance = DriverStation.getAlliance();
+        if(alliance.isPresent()){
+            if(alliance.get() == DriverStation.Alliance.Red){
+                hubLocationX = 4.02844;
+                hubLocationY = 4.445;
+            } else {
+                hubLocationX = MEASUREMENTS.FIELD_X_METERS - 4.02844;
+                hubLocationY = MEASUREMENTS.FIELD_Y_METERS - 4.445;
+            }
+        }
 
         double robotX = getCurrentOdometryPosition().getX();
         double robotY = getCurrentOdometryPosition().getY();
@@ -193,6 +207,32 @@ public class Swerve extends SubsystemBase {
         double dy = robotY - hubLocationY;
 
         double radius = Math.hypot(dx, dy);
+
+        //add check to see if the robot is too close, modify this value later
+        if(radius < 0.05)
+            return;
+
+        //this is the angular speed around the hub, so the higher this is the faster the robot will spin around the hub
+        double omega = 1.0; //should probably be tuned
+
+        //convert to field velocity
+        double vxField = -dx * omega;
+        double vyField = dy * omega;
+
+        //find the rotation of the robot so the front of the robot is facing the hub
+        Rotation2d angleToHub = new Rotation2d(hubLocationX - robotX, hubLocationY - robotY);
+
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, snapToAngle(angleToHub), getYaw());
+        drive(speeds);
+
+    }
+
+    /**
+     * Drives the swerve in a circle from its current position around the hub
+     * @return 
+     */
+    public Command driveInCircleCommand(){
+        return swerve.run(() -> driveInCircle());
     }
 
     /**
@@ -374,9 +414,15 @@ public class Swerve extends SubsystemBase {
     //TODO: don't let the robot drive into obstacles...
     public Command generatePath(List<Pose2d> poses){
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
-        //TODO: figure out how to set these values correctly for path constraints
-        PathConstraints constaints = new PathConstraints(null, null, null, null);
 
+        //TODO: figure out how to calculate these values correctly
+        PathConstraints constaints = new PathConstraints(
+            null, 
+            null, 
+            null,
+            null
+        );
+        
         PathPlannerPath path = new PathPlannerPath(
             waypoints, 
             constaints, 
@@ -387,15 +433,41 @@ public class Swerve extends SubsystemBase {
         return AutoBuilder.followPath(path);
     }
 
-    //TODO: a method for on the fly pathing (i.e. from current position to xx position)
-    //TODO: don't let it drive into obstacles!
+    //TODO: does avoiding obstacles also mean avoiding the bump...?
+    //TODO: the robot can't go under the bar thing
+    /**
+     * A method that returns a Command with a path for the robot to drive to the target pose. 
+     * This method will avoid known field obstacles, but in rare cases could have odd behavior because 
+     * the algorithm pathfinds while the robot moves. This method won't end with the desired robot heading, 
+     * so it's reccomended that you use this to drive to an initial point of a path,  
+     * then use that path to get the final pose with the desired robot heading.
+     * @param targetPose the pose for the robot to move to
+     * @return a command to drive the robot to that pose 
+     */
     public Command pathfindToTarget(Pose2d targetPose){
+        //TODO: calculate the correct values for the constraint
+        PathConstraints constaints = new PathConstraints(
+            null, 
+            null, 
+            null,
+            null
+        );
 
-        return Commands.none();
+        return AutoBuilder.pathfindToPose(targetPose, constaints, 0.0);
+    }
+
+    public Command pathfindToTargetWithAlignment(PathPlannerPath path){
+        PathConstraints constaints = new PathConstraints(
+            null, 
+            null, 
+            null,
+            null
+        );
+
+        return AutoBuilder.pathfindThenFollowPath(path, constaints);
+
     }
 
     
 
 }
-
-    
