@@ -111,8 +111,8 @@ public class Intake extends SubsystemBase{
      * Run the intake at a set speed
      */
     
-    public void runAtSpeedIntake(double velocity) {
-        double RPMRight = velocity; // TODO: Remove this before competition
+    public void runAtSpeedIntake() {
+        double RPMRight = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI); // TODO: Remove this before competition
         rollerMotorRightClosedLoopController.setSetpoint(RPMRight, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
@@ -125,7 +125,7 @@ public class Intake extends SubsystemBase{
      * Command to run the intake at a set speed
      */
     public Command runAtSpeedRightCommand() {
-        return this.runOnce(() -> runAtSpeedIntake(SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI)));
+        return this.runOnce(() -> runAtSpeedIntake());
     }
 
     public Command runExtendCommand (){
