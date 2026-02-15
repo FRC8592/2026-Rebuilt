@@ -8,6 +8,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 
 import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import frc.robot.helpers.PIDProfile;
@@ -22,7 +25,7 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
     protected C config;
 
     private ClosedLoopSlot slot;
-    private FeedForwardConfig ff;
+    private FeedForwardConfig feedForwardConfig;
     private MAXMotionConfig motionConfig;
 
     protected SparkBaseMotor(M motor, C config, boolean inverted){ //MotorConstants constants) {
@@ -32,13 +35,13 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
         this.encoder = motor.getEncoder();
         this.config = config;
         this.config.inverted(inverted);
-        this.ff = new FeedForwardConfig();
+        this.feedForwardConfig = new FeedForwardConfig();
     }
 
     @Override
     public void setInverted(boolean inverted) {
         this.config.inverted(inverted);
-        this.motor.configure(config, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -65,7 +68,7 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
         //     slot = ClosedLoopSlot.kSlot0;
         // }
 
-        ff.kA(gains.kA)
+        feedForwardConfig.kA(gains.kA)
         .kV(gains.kV)
         .kS(gains.kS)
         .kG(gains.kG);
@@ -74,7 +77,7 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
             .p(gains.kP, slot)
             .i(gains.kI, slot)
             .d(gains.kD, slot)
-            .apply(ff);
+            .feedForward.apply(feedForwardConfig)
             //Being deprecated so we cannot include
             //.velocityFF(gains.kV, slot)
             ;
@@ -83,20 +86,19 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
             this.config.softLimit.forwardSoftLimitEnabled(gains.softLimit);
             this.config.softLimit.forwardSoftLimit(gains.softLimitMax);
             this.config.softLimit.reverseSoftLimitEnabled(gains.softLimit);
-            this.config.softLimit.reverseSoftLimit(gains.softLimitMax);
+            this.config.softLimit.reverseSoftLimit(gains.softLimitMin);
         }
 
 
         this.motionConfig = new MAXMotionConfig();
         motionConfig.cruiseVelocity(gains.maxVelocity, slot)
             .maxAcceleration(gains.maxAcceleration, slot)
-            .positionMode(com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal, slot)
+            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, slot)
             .allowedProfileError(gains.tolerance, slot);
 
         this.config.closedLoop.apply(motionConfig);
-        ;
 
-        this.motor.configure(config, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -173,14 +175,14 @@ public abstract class SparkBaseMotor<M extends SparkBase, C extends SparkBaseCon
     //TODO: See if this method works and try implementing SparkMax too
     public void setFollowerTo(NewtonMotor master, boolean reversed) {
         this.config.follow(master.getAsSparkFlex().motor);
-        this.motor.configure(config, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     
     @Override
     public void setCurrentLimit(int currentAmps) {
         this.config.smartCurrentLimit(currentAmps);
         this.config.secondaryCurrentLimit(currentAmps);
-        this.motor.configure(config, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+        this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
