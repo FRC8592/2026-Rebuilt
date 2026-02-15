@@ -212,4 +212,9 @@ public final class SHOOTER {
 
   }
 
+  public final class RANGE_TABLE {
+    public static final double RANGE_TABLE_STEP = 0.2; //meters
+    public static final double MAX_TABLE_DISTANCE = 10.0; //meters 
+  }
+
 }
