@@ -1,94 +1,172 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import org.littletonrobotics.junction.Logger;
-
-import java.lang.Math;
-
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import frc.robot.Constants.*;
-import frc.robot.helpers.PIDProfile;
-// import frc.robot.helpers.motor.spark.SparkFlexMotor;
+import frc.robot.Constants.SHOOTER;
 
 
 public class Shooter extends SubsystemBase{
-    // private SparkFlexMotor LeftShooterMotor;
-    // private SparkFlexMotor RightShooterMotor;
-    private PIDProfile MotorPID;
-    private double POld = SHOOTER.MOTOR_P;
-    private double IOld = SHOOTER.MOTOR_I;
-    private double DOld = SHOOTER.MOTOR_D;
+    private TalonFX flywheelMotor;  //big one
+    private TalonFX backwheelMotor; //smaller wheels
+    private TalonFXConfiguration flywheelConfiguration;
+    private TalonFXConfiguration backwheelConfiguration;
 
+    private VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(0);
+    private VelocityVoltage backwheelVelocityRequest = new VelocityVoltage(0);
+
+    private final double WHEEL_RATIO = SHOOTER.FLYWHEEL_DIAMETER_INCHES/SHOOTER.BACKWHEEL_DIAMETER_INCHES;
+
+    /**
+     * Constructor for the Shooter subsystem
+     * 
+     * Instantiate the motor with Initial PID values from the CONSTANTS Class
+     * 
+     * Display PID Values on SmartDashboard
+     * 
+     * Set the current limit of the shooter motor
+     * 
+     */
     public Shooter(){
-        // RightShooterMotor = new SparkFlexMotor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
-        // LeftShooterMotor = new SparkFlexMotor(SHOOTER.LEFT_SHOOTER_MOTOR, false);
-        // MotorPID = new PIDProfile();
-        // MotorPID.setSlot(0);
-        // MotorPID.setPID(SHOOTER.MOTOR_P, SHOOTER.MOTOR_I, SHOOTER.MOTOR_D);
-        // LeftShooterMotor.withGains(MotorPID);
-        // LeftShooterMotor.setCurrentLimit(80);
-        //RightShooterMotor.setFollowerTo(LeftShooterMotor, true);
-        SmartDashboard.putNumber("P", 0.01);
-        SmartDashboard.putNumber("I", 0.0);
-        SmartDashboard.putNumber("D", 0.0);
-        SmartDashboard.putNumber("Vi", 3000);
-        //LeftShooterMotor.configureMotionMagic(SHOOTER.MAX_ACCELERATION, SHOOTER.CRUISE_VELOCITY);
+
+        flywheelMotor = new TalonFX(SHOOTER.FLYWHEEL_MOTOR_CAN_ID);
+        backwheelMotor = new TalonFX(SHOOTER.BACKWHEEL_MOTOR_CAN_ID);
+        flywheelConfiguration = new TalonFXConfiguration();
+        backwheelConfiguration = new TalonFXConfiguration();
+
+        flywheelConfiguration.Slot0.kP = SHOOTER.FLYWHEEL_P; 
+        flywheelConfiguration.Slot0.kI = SHOOTER.FLYWHEEL_I;
+        flywheelConfiguration.Slot0.kD = SHOOTER.FLYWHEEL_D;
+        flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V; 
+
+        backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
+        backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
+        backwheelConfiguration.Slot0.kD = SHOOTER.BACKWHEEL_D;
+        backwheelConfiguration.Slot0.kV = SHOOTER.BACKWHEEL_V;
+
+        flywheelMotor.getConfigurator().apply(flywheelConfiguration);
+        backwheelMotor.getConfigurator().apply(backwheelConfiguration);
+
+        // TODO: For tuning, PID and velocity values are displayed on SmartDashboard, remove before competition
+        SmartDashboard.putNumber("fP", SHOOTER.FLYWHEEL_P);
+        SmartDashboard.putNumber("fI", SHOOTER.FLYWHEEL_I);
+        SmartDashboard.putNumber("fD", SHOOTER.FLYWHEEL_D);
+        SmartDashboard.putNumber("fV", SHOOTER.FLYWHEEL_V);
+
+        SmartDashboard.putNumber("bP", SHOOTER.BACKWHEEL_P);
+        SmartDashboard.putNumber("bI", SHOOTER.BACKWHEEL_I);
+        SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
+        SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
+
+        SmartDashboard.putNumber("Vi", SHOOTER.FLYWHEEL_VI);
     }
 
+
+    /**
+     * Run the shooter motor at a set speed in RPM.
+     * The left shooter motor is the only motor in use on the Shooter.
+     * Utilizing both motors proved to be too powerful for the shooter.
+     * @param desiredRPM The desired RPM we want the shooter motor to achieve.
+     */
     public void runAtSpeed(double desiredRPM){
-    //     double RPM = SmartDashboard.getNumber("Vi", 0);
-    //     System.out.println("Shooter method is running");
-    //     System.out.println("RPM Set " + RPM);
-    //     LeftShooterMotor.setVelocity(RPM);
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
+
+        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
-    // public Command runAtSpeedCommand(){
-    //     double RPM = SmartDashboard.getNumber("Vi", 0);
-        // return this.runOnce(() -> runAtSpeed(RPM));
-    // }
 
+    /**
+     * Command to run the shooter motor at a set speed.
+     * @return Returns a command for running the RunAtSpeed method once.
+     */
+    public Command runAtSpeedCommand(){
+        return this.runOnce(() -> runAtSpeed(SHOOTER.FLYWHEEL_VI));
+    }
+
+
+    /**
+     * Update the PID values on the fly on the shooter motor.
+     * The NEO Motors do not allowed their PID Profile to be updated while running.
+     * 
+     * Thus, this method is called in disabledPeriodic() within Robot.java.
+     */
     public void updatePID(){
-    //     //System.out.println("Going into updatePID Method");
-    //     double P = SmartDashboard.getNumber("P", 0.001);
-    //     double I = SmartDashboard.getNumber("I", 0.0);
-    //     double D = SmartDashboard.getNumber("D", 0.0);
-    //     //System.out.println("P Value from SmartDashboard "+ P + " P Old Value " + POld);
-    //     if((P != POld) || (I!= IOld) || (D!= DOld)){
-    //         System.out.println("Going into if statement in updatePID method");
-    //         MotorPID.setPID(P, I, D);
-    //         LeftShooterMotor.withGains(MotorPID);
-    //         POld = P;
-    //         IOld = I;
-    //         DOld = D;
-    //     }
+        flywheelConfiguration.Slot0.kP = SmartDashboard.getNumber("fP", SHOOTER.FLYWHEEL_P); 
+        flywheelConfiguration.Slot0.kI = SmartDashboard.getNumber("fI", SHOOTER.FLYWHEEL_I); 
+        flywheelConfiguration.Slot0.kD = SmartDashboard.getNumber("fD", SHOOTER.FLYWHEEL_D); 
+        flywheelConfiguration.Slot0.kV = SmartDashboard.getNumber("fV", SHOOTER.FLYWHEEL_V); 
+
+        backwheelConfiguration.Slot0.kP = SmartDashboard.getNumber("bP", SHOOTER.BACKWHEEL_P); 
+        backwheelConfiguration.Slot0.kI = SmartDashboard.getNumber("bI", SHOOTER.BACKWHEEL_I); 
+        backwheelConfiguration.Slot0.kD = SmartDashboard.getNumber("bD", SHOOTER.BACKWHEEL_D); 
+        backwheelConfiguration.Slot0.kV = SmartDashboard.getNumber("bV", SHOOTER.BACKWHEEL_V); 
+
+        flywheelMotor.getConfigurator().apply(flywheelConfiguration);
+        backwheelMotor.getConfigurator().apply(backwheelConfiguration);
     }
 
-    // public void stopShooter(){
-    //     LeftShooterMotor.setPercentOutput(0);
-    // }
 
-    // public Command stopShooterCommand(){
-    //     return this.runOnce(() -> stopShooter());
-    // }
+    /**
+     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
+     * 
+     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
+     */
+    public void stopShooter(){
+        flywheelMotor.setVoltage(0.0);
+        backwheelMotor.setVoltage(0.0);
+    }
 
-    // public double getVelocity(){
-    //     return LeftShooterMotor.getVelocityRPM();
-    // }
 
-    // //This is simply for calculation to get the ball landing in the center of the goal, based on the distance to the hub
-    // //This is very much a theoretical implementation, simply putting in just the math
+    /**
+     * Command form of the stopShooter method.
+     * @return Returns a command to run the stopShooter method once.
+     */
+    public Command stopShooterCommand(){
+        return this.runOnce(() -> stopShooter());
+    }
+
+
+    /**
+     * Purpose is to see if the motor is achieving the
+     * @return Returns velocity of the flywheel motor in RPS.
+     */
+    public double getVelocityFlywheel(){
+        return flywheelMotor.getVelocity().getValueAsDouble();
+    }
+
+    /**
+     * Purpose is to see if the motor is achieving the
+     * @return Returns velocity of the backwheel motor in RPS.
+     */
+    public double getVelocityBackwheel(){
+        return backwheelMotor.getVelocity().getValueAsDouble();
+    }
+
+    /**
+     * Simply for calculation to get the ball landing in the center of the goal, based on the distance to the hub.
+     * Very much a theoretical implementation, simply putting in just the math.
+     * @param theta The angle of the shooter.
+     * @param dis The distance from the shooter to the center of the hub.
+     * @return Returns velocity ball needs to achieve.
+     */
     // public double DistanceToRPM(double theta, double dis){
     //     return (1/Math.cos(theta))* (Math.sqrt((0.5 * 9.81 * Math.pow(dis,2))/(SHOOTER.SHOOTER_HEIGHT + Math.tan(theta) - SHOOTER.HUB_HEIGHT)));
     // }
 
-    // @Override
-    // public void periodic(){
-    //     // updatePID();
-    //     Logger.recordOutput("Motor Velocity RPM", getVelocity());
-    // }
+
+    /**
+     * Periodic method, primarily for logging.
+     */
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Flywheel Velocity RPM", getVelocityFlywheel() * 60);
+        SmartDashboard.putNumber("Backwheel Velocity RPM", getVelocityBackwheel() * 60);
+    }
         
 }
