@@ -11,15 +11,19 @@ import org.littletonrobotics.junction.Logger;
 import frc.robot.subsystems.AutoTurretAngle;
 import frc.robot.subsystems.swerve.Swerve;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 
 import java.lang.Math;
-import java.lang.ModuleLayer.Controller;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -34,21 +38,31 @@ public class Turret extends SubsystemBase{
     private Swerve swerve;
     private TalonFXConfiguration tMotorConfiguration; 
 
-    private MotionMagicVoltage motionMagicRequest;
+    private MotionMagicConfigs motionMagicConfig;
+
+    private PositionVoltage positionOutput;
+
+    private MotionMagicVoltage motionMagicOutput;
+
+    private VoltageOut voltageOutput;
 
     public Turret(Swerve swerve){
         this.swerve = swerve;
         E1 = new DutyCycleEncoder(0, 360, 0);
         E2 = new DutyCycleEncoder(1, 360, 0);
-
         tMotor = new TalonFX(TURRET.TURRET_MOTOR);
-        motionMagicRequest = new MotionMagicVoltage(0);
         tMotorConfiguration = new TalonFXConfiguration();
-        tMotorConfiguration.MotionMagic.MotionMagicAcceleration = 50; //80
-        tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = 6;
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
         tMotorConfiguration.Slot0.kI = TURRET.TURRET_I;
-        tMotorConfiguration.Slot0.kD = TURRET.TURRET_D; 
+        tMotorConfiguration.Slot0.kD = TURRET.TURRET_D;
+        positionOutput = new PositionVoltage(0.0);
+
+        //TODO: Change this to utilize Motion Magic Expo instead for better flywheel adjustment
+        motionMagicConfig = tMotorConfiguration.MotionMagic;
+        motionMagicConfig.withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(AOriginal))
+        .withMotionMagicCruiseVelocity(RotationsPerSecond.of(VOriginal))
+        .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100 * AOriginal));
+        motionMagicOutput = new MotionMagicVoltage(0);
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
         SmartDashboard.putNumber("Acceleration", 80);
@@ -65,13 +79,16 @@ public class Turret extends SubsystemBase{
             else
                 initialPos-=360;
         }
-        tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        //tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         Logger.recordOutput("Motor Set Position", initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         System.out.println("Position: " + initialPos/360);
-        //tMotor.setPosition(position);
+        //tMotor.setControl(positionOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+
+        //TODO: Implement Motion Magic
+        tMotor.setControl(motionMagicOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
     public void stop(){
-        tMotor.setVoltage(0);
+        tMotor.setControl(voltageOutput.withOutput(0));
     }
 
     public Command TurrettoPosCommand(Pose2d targetLocation){
@@ -88,76 +105,37 @@ public class Turret extends SubsystemBase{
 
     public void resetPos(){
         System.out.println("Resetting Pose");
-        //tMotor.resetEncoderPosition(0);
-        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * TURRET.TG / TURRET.GM);
         System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
-        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
-        //To make sure this works!
-        //tMotor.setPosition(0);
+        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * TURRET.TG / TURRET.GM);
     }
 
-    // public void updateMotionMagic(){
-    //     double acceleration = SmartDashboard.getNumber("Acceleration", 80);
-    //     double cruiseVelocity = SmartDashboard.getNumber("CruiseVelocity", 6);
-    //     if(acceleration != AOriginal || cruiseVelocity != VOriginal){
-    //         tMotor.configureMotionMagic(acceleration, cruiseVelocity);
-    //         AOriginal = acceleration;
-    //         VOriginal = cruiseVelocity;
-    //     }
-    // }
-
-    // public double CRTTypeOne(double E1, double E2){
-    //     int R1 = (int)(E1 * TURRET.TURRET_G1); 
-    //     int R2 = (int)(E2 * TURRET.TURRET_G2);
-    //     Logger.recordOutput("R1Filtered", R1);
-    //     Logger.recordOutput("R2Filtered", R2);
-    //     double RawRotation = (R1 * 11 * 1.0 + R2 * 10 * 10.0);
-    //     Logger.recordOutput("Raw Calculation", RawRotation);
-    //     //System.out.println("R1: " + R1 + " R2: " + R2);
-    //     int M1 = TURRET.TURRET_TOTAL / TURRET.TURRET_G1;
-    //     int M2 = TURRET.TURRET_TOTAL / TURRET.TURRET_G2;
-    //     // int M1Total = 1;
-    //     // int M2Total = 1;
-    //     // while(M1Total % M1 != 0){
-    //     //     M1Total += TURRET.TURRET_G1;
-    //     // }
-    //     // M1Inverse = M1Total/M1;
-    //     // while(M2Total % M2 != 0){
-    //     //     M2Total += TURRET.TURRET_G2
-    //     // }
-    //     // M2Inverse = M2Total/M2;
-    //     //System.out.println("Term 1: " + R1 * 11 * 1.0);
-    //     double GearRotation = (R1 * M1 * 1.0 + R2 * M2 * 10.0) % TURRET.TURRET_TOTAL;
-    //     return GearRotation; 
-    // }
+    public void updateMotionMagic(){
+        double acceleration = SmartDashboard.getNumber("Acceleration", 80);
+        double cruiseVelocity = SmartDashboard.getNumber("CruiseVelocity", 6);
+        if(acceleration != AOriginal || cruiseVelocity != VOriginal){
+            motionMagicConfig.withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(acceleration))
+            .withMotionMagicCruiseVelocity(RotationsPerSecond.of(cruiseVelocity))
+            .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100 * acceleration));
+            AOriginal = acceleration;
+            VOriginal = cruiseVelocity;
+        }
+    }
 
     public static double CRTTypeTwo(double E1, double E2){
-        double R1 = E1/360.0;
-        double R2 = E2/360.0;
-        double G1 = 10.0/96;
-        double G2 = 11.0/96;
-        // double[] Encoder1Val = new double[97];
-        // double[] Encoder2Val = new double[97];
-        for(int i = 0; i <= 96; i++){
+        double R1 = E1 * TURRET.TO_ROTATIONS;
+        double R2 = E2 * TURRET.TO_ROTATIONS;
+        double G1 = TURRET.G1/TURRET.TG;
+        double G2 = TURRET.G2/TURRET.TG;
+        for(int i = 0; i <= (int)(TURRET.TG); i++){
             double V1 = (i + R1) * G1;
             double V2 = (i + R2) * G2;
             double V1New = (i + 1 + R1) * G1;
             double V2Old = (i - 1 + R2) * G2;
-            // int V1Process = (int)(V1 * 1000);
-            // int V2Process = (int)(V2 * 1000);
-            // double V1Filter = V1Process / 1000.0;
-            // double V2Filter = V2Process / 1000.0;
-            // Encoder1Val[i] = V1;
-            // Encoder2Val[i] = V2;
-            //Logger.recordOutput("V1Filtered", V1Filter);
-            //Logger.recordOutput("V2Filtered", V2Filter);
-            //System.out.println("Value 1: " + V1Filter);
-            //System.out.println("Value 2: " + V2Filter);
-            if((Math.abs(V1 - V2) <= 0.006) || (Math.abs(V1 - V2Old) <= 0.006)){
-                //System.out.println("Going in and I Value: " + i);
+            if((Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE) || (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE)){
                 return V1;
             }
-            if(Math.abs(V1New - V2) <= 0.006){
+            if(Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE){
                 return V2;
             }
         }
@@ -170,10 +148,6 @@ public class Turret extends SubsystemBase{
     public void periodic(){
         double E1R = E1.get();
         double E2R = E2.get();
-        // int E1Process = (int)(E1Raw * 1000);
-        // int E2Process = (int)(E2Raw * 1000);
-        // double E1Filter = E1Process / 1000.0;
-        // double E2Filter = E2Process / 1000.0;
         Logger.recordOutput("E1", E1.get());
         Logger.recordOutput("E2", E2.get());
         //Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));

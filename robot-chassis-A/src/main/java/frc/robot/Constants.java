@@ -123,21 +123,28 @@ public final class SHOOTER {
     public static final double TURRET_I = 3;
     public static final double TURRET_D = 0.2;
     public static final double TURRET_V = 0.7;
-    public static final int TURRET_TG = 96;
-    public static final int TURRET_G1 = 10;
-    public static final int TURRET_G2 = 11;
-    public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
+    public static final double TG = 96.0;
+    public static final int G1 = 10;
+    public static final int G2 = 11;
+    public static final int TURRET_TOTAL = G1 * G2;
+    public static final int GM = 10;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;
-    public static final int INITIAL_MAX_ACCELERATION = 60;
-    public static final int INITIAL_CRUISE_VELOCITY = 6;
+    public static final double TO_ROTATIONS = 1/360.0;
+    //TODO:NEED to tune these values
+    public static final double INITIAL_MAX_ACCELERATION = 5.0;
+    public static final double INITIAL_CRUISE_VELOCITY = 0.5;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
+    public static final double CRT_TOLERANCE = 0.006;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
   }
 
   public static final class SCORING{
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+
+    public static final double HUB_X = 4.02844;
+    public static final double HUB_Y = 4.445;
   }
 
   public static class INTAKE{
