@@ -1,24 +1,13 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-
-import java.lang.Math;
-
-import frc.robot.Constants.*;
+import frc.robot.Constants.SHOOTER;
 
 
 public class Shooter extends SubsystemBase{
@@ -27,8 +16,10 @@ public class Shooter extends SubsystemBase{
     private TalonFXConfiguration flywheelConfiguration;
     private TalonFXConfiguration backwheelConfiguration;
 
-    private VelocityVoltage flywheelVelocityRequest;
-    private VelocityVoltage backwheelVelocityRequest;
+    private VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(0);
+    private VelocityVoltage backwheelVelocityRequest = new VelocityVoltage(0);
+
+    private final double WHEEL_RATIO = SHOOTER.FLYWHEEL_DIAMETER_INCHES/SHOOTER.BACKWHEEL_DIAMETER_INCHES;
 
     /**
      * Constructor for the Shooter subsystem
@@ -70,6 +61,8 @@ public class Shooter extends SubsystemBase{
         SmartDashboard.putNumber("bI", SHOOTER.BACKWHEEL_I);
         SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
         SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
+
+        SmartDashboard.putNumber("Vi", SHOOTER.FLYWHEEL_VI);
     }
 
 
@@ -80,9 +73,11 @@ public class Shooter extends SubsystemBase{
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM){
-        double RPM = SmartDashboard.getNumber("Vi", 0);
-        //LeftShooterMotor.setVelocity(RPM);
-        //RightShooterMotor.setVelocity(RPM);
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
+
+        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
 
@@ -91,8 +86,7 @@ public class Shooter extends SubsystemBase{
      * @return Returns a command for running the RunAtSpeed method once.
      */
     public Command runAtSpeedCommand(){
-        double RPM = SmartDashboard.getNumber("Vi", 0);
-        return this.runOnce(() -> runAtSpeed(RPM));
+        return this.runOnce(() -> runAtSpeed(SHOOTER.FLYWHEEL_VI));
     }
 
 
@@ -103,10 +97,6 @@ public class Shooter extends SubsystemBase{
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
     public void updatePID(){
-        double P = SmartDashboard.getNumber("P", 0.001);
-        double I = SmartDashboard.getNumber("I", 0.0);
-        double D = SmartDashboard.getNumber("D", 0.0);
-
         flywheelConfiguration.Slot0.kP = SmartDashboard.getNumber("fP", SHOOTER.FLYWHEEL_P); 
         flywheelConfiguration.Slot0.kI = SmartDashboard.getNumber("fI", SHOOTER.FLYWHEEL_I); 
         flywheelConfiguration.Slot0.kD = SmartDashboard.getNumber("fD", SHOOTER.FLYWHEEL_D); 
@@ -125,7 +115,7 @@ public class Shooter extends SubsystemBase{
     /**
      * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
      * 
-     * Utilized PercentOutput instead of Velocity Control to prevent power being used to stop flywheel.
+     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
      */
     public void stopShooter(){
         flywheelMotor.setVoltage(0.0);

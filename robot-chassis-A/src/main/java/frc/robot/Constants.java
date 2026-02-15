@@ -108,6 +108,8 @@ public final class SHOOTER {
     public static final double BACKWHEEL_D = 0;
     public static final double BACKWHEEL_V = 0;
 
+    public static final double FLYWHEEL_VI = 0;
+
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
 
