@@ -1,27 +1,27 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.ResetMode;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import frc.robot.Constants.INTAKE;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.INTAKE;
 
 
 public class Intake extends SubsystemBase{
@@ -35,11 +35,9 @@ public class Intake extends SubsystemBase{
     private TalonFXConfiguration extendConfiguration; 
 
     private SparkClosedLoopController rollerMotorRightClosedLoopController;
-    private SparkClosedLoopController rollerMotorLeftClosedLoopController; 
     private PositionVoltage extendMotorController = new PositionVoltage(INTAKE.EXTEND_ROTATIONS); 
 
     private RelativeEncoder rollerMotorRighRelativeEncoder;
-    private RelativeEncoder rollerMotorLefRelativeEncoder; 
  
     private final NeutralOut extend_brake = new NeutralOut(); 
     /**
@@ -90,19 +88,13 @@ public class Intake extends SubsystemBase{
         RollerMotorRight.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         ExtendMotor.getConfigurator().apply(extendConfiguration); 
 
-        rollerMotorLeftClosedLoopController = RollerMotorLeft.getClosedLoopController(); 
         rollerMotorRightClosedLoopController = RollerMotorRight.getClosedLoopController(); 
         
-        rollerMotorLefRelativeEncoder = RollerMotorLeft.getEncoder(); 
         rollerMotorRighRelativeEncoder = RollerMotorRight.getEncoder(); 
   
         // // TODO: Determine an appropriate current limit for the intake motor
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-        SmartDashboard.putNumber("P_INTAKE_LEFT", INTAKE.INTAKE_LEFT_P);
-        SmartDashboard.putNumber("I_INTAKE_LEFT", INTAKE.INTAKE_LEFT_I);
-        SmartDashboard.putNumber("D_INTAKE_LEFT", INTAKE.INTAKE_LEFT_D);
-        SmartDashboard.putNumber("Vi_INTAKE_LEFT",INTAKE.INTAKE_LEFT_VI);
 
         SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
         SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
@@ -112,15 +104,15 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
         SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
         SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
-        SmartDashboard.putNumber("Vi_INTAKE_EXTEND",INTAKE.INTAKE_EXTEND_VI);
+        SmartDashboard.putNumber("Pos_INTAKE_EXTEND",INTAKE.DESIRED_ROTATIONS_EXTEND);
     }
 
     /**
      * Run the intake at a set speed
      */
     
-    public void runAtSpeedIntake() {
-        double RPMRight = SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI); // TODO: Remove this before competition
+    public void runAtSpeedIntake(double velocity) {
+        double RPMRight = velocity; // TODO: Remove this before competition
         rollerMotorRightClosedLoopController.setSetpoint(RPMRight, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
@@ -133,7 +125,7 @@ public class Intake extends SubsystemBase{
      * Command to run the intake at a set speed
      */
     public Command runAtSpeedRightCommand() {
-        return this.runOnce(() -> runAtSpeedIntake());
+        return this.runOnce(() -> runAtSpeedIntake(SmartDashboard.getNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI)));
     }
 
     public Command runExtendCommand (){
@@ -148,7 +140,6 @@ public class Intake extends SubsystemBase{
      */
     public void stop() {
         RollerMotorRight.setVoltage(0.0);
-        ExtendMotor.setControl(extend_brake);
     }
 
 
@@ -181,9 +172,18 @@ public class Intake extends SubsystemBase{
         double Right_I = SmartDashboard.getNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_LEFT_I);
         double Right_D = SmartDashboard.getNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
     
+        double Extend_P = SmartDashboard.getNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+
         rollerMotorRightConfig.closedLoop.pid(Right_P, Right_I, Right_D);
 
+        extendConfiguration.Slot0.kP = Extend_P; 
+        extendConfiguration.Slot0.kI = Extend_I;
+        extendConfiguration.Slot0.kD = Extend_D; 
+
         RollerMotorRight.configure(rollerMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        ExtendMotor.getConfigurator().apply(extendConfiguration); 
     }
 
 

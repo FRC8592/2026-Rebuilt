@@ -1,13 +1,12 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import frc.robot.subsystems.swerve.TunerConstants;
 
 public final class Constants {
@@ -166,7 +165,7 @@ public final class SHOOTER {
     public static final double INTAKE_EXTEND_P = 0.01;
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
-    public static final double INTAKE_EXTEND_VI = 3000;
+    public static final double INTAKE_EXTEND_POS = 3000;
 
     public static final double EXTEND_ROTATIONS = 2; 
     public static final double DESIRED_ROTATIONS_EXTEND = 0; 
