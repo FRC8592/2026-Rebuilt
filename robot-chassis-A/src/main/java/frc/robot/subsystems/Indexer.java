@@ -39,10 +39,12 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
         SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
         SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
+        SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
         SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
         SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
         SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
+        SmartDashboard.putNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED);
 
         spinMotorConfiguration.Slot0.kP  = INDEXER.SPIN_P;
         spinMotorConfiguration.Slot0.kI  = INDEXER.SPIN_I;
@@ -86,8 +88,8 @@ public class Indexer extends SubsystemBase {
     /**
      * Runs the spin motor on the indexer
      */
-    public void runSpinIndexer(){
-        spinMotor.setControl(spinMotorSlot0VelocityRequest.withVelocity(INDEXER.SPIN_MOTOR_RPS));
+    public void runSpinIndexer(double velocity){
+        spinMotor.setControl(spinMotorSlot0VelocityRequest.withVelocity(velocity));
     }
 
     /**
@@ -95,14 +97,14 @@ public class Indexer extends SubsystemBase {
      * @return a command to run the spin motor on the indexer
      */
     public Command runSpinIndexerCommand(){
-        return this.run(() -> runSpinIndexer());
+        return this.run(() -> runSpinIndexer(INDEXER.SPIN_MOTOR_RPS));
     }
 
     /**
      * Runs the output motor on the indexer at given speed
      */
-    public void runOutputIndexer(){
-        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(INDEXER.OUTPUT_MOTOR_RPS));
+    public void runOutputIndexer(double velocity){
+        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(velocity));
     }
 
     /**
@@ -110,15 +112,15 @@ public class Indexer extends SubsystemBase {
      * @return a Command to run the output motor on the indexer 
      */
     public Command runOutputIndexerCommand(){
-        return this.run(() -> runOutputIndexer());
+        return this.run(() -> runOutputIndexer(INDEXER.OUTPUT_MOTOR_RPS));
     }
 
     /**
      * Runs both motors on the indexer 
      */
     public void runIndexer(){
-        runSpinIndexer();
-        runOutputIndexer();
+        runSpinIndexer(INDEXER.SPIN_MOTOR_RPS);
+        runOutputIndexer(INDEXER.OUTPUT_MOTOR_RPS);
     }
 
     /**
@@ -145,5 +147,20 @@ public class Indexer extends SubsystemBase {
         return outputMotor.getVelocity().getValueAsDouble();
     }
     
+    public void updatePID(){
+
+        spinMotorConfiguration.Slot0.kP  = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
+        spinMotorConfiguration.Slot0.kI  = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
+        spinMotorConfiguration.Slot0.kD  = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
+
+        outputMotorConfiguration.Slot0.kP = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
+        outputMotorConfiguration.Slot0.kI = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
+        outputMotorConfiguration.Slot0.kD = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
         
+        spinMotor.getConfigurator().apply(spinMotorConfiguration);
+        outputMotor.getConfigurator().apply(outputMotorConfiguration);
+        
+        runSpinIndexer(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED));
+        runOutputIndexer(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED));  
+    }
 }
