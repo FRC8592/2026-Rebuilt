@@ -64,16 +64,9 @@ public class RangeTable {
     }
 
     /**
-     * @param distance TEMPORARY: index in the range table to return.
-     * @return the RangeEntry at index {@code distance} in the range table
+     * @param distance in meters
+     * @return flywheel speed in RPM from the RangeTable
      */
-    // /**
-    // * Returns a RangeEntry representing the flywheel speed and pivot angle that
-    // * should be used for the inputted distance
-    // * @param distance the distance to the target IN INCHES
-    // * @return a RangeEntry with flywheel speed in RPM and pivot angle in degrees.
-    // * If the distance is too far, returns {@code null}; MAKE SURE TO CHECK FOR THIS
-    // */
     public static double get(double distance) {
         Logger.recordOutput("CustomLogs/RangeTable/InputDistance", distance);
         if(distance <= 0){
