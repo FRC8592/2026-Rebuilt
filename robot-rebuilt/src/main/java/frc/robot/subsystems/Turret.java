@@ -40,7 +40,7 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("CruiseVelocity", 6);
         SmartDashboard.putNumber("Position Value", 0);
 
-        //tMotor.configureMotionMagic(80, 6);
+        tMotor.configureMotionMagic(80, 6);
         AngleCalc = new AutoTurretAngle(this.swerve);
     }
     public void TurrettoPos(Pose2d targetLocation){

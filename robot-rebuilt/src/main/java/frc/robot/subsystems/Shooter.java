@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase{
     public Shooter(){
 
         //TODO: Implement Kraken Motors
-        //TODO: Possibly implement Motion Magic
+        //TODO: Implement Motion Magic Expo, figure out our kV and kA values
         //TODO: Remove one of the shooter motors if necessary
         //RightShooterMotor = new KrakenX60Motor(SHOOTER.RIGHT_SHOOTER_MOTOR, true);
         //LeftShooterMotor = new KrakenX60Motor(SHOOTER.LEFT_SHOOTER_MOTOR, false);

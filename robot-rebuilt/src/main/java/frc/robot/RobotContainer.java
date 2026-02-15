@@ -20,7 +20,7 @@ import frc.robot.subsystems.Scoring;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Feeder;
+//import frc.robot.subsystems.Feeder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -58,7 +58,7 @@ public class RobotContainer {
     private final Scoring scoring;
         //public final Shooter shooter;
         public final Turret turret;
-        public final Feeder feeder;
+        //public final Feeder feeder;
 
     // robot button triggers
     private final Trigger TESTING_TURRET = driverController.rightBumper();
@@ -83,7 +83,7 @@ public class RobotContainer {
         //shooter = new Shooter();
         turret = new Turret(swerve);
         scoring = new Scoring(swerve, turret);
-        feeder = new Feeder();
+        //feeder = new Feeder();
 
         configureBindings();
         configureDefaults();
