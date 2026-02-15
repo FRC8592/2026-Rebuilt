@@ -6,6 +6,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.helpers.PIDProfile;
+import frc.robot.helpers.motor.spark.SparkFlexMotor;
 import frc.robot.helpers.motor.talonfx.TalonFXMotor;
 
 public abstract class NewtonMotor {
@@ -112,4 +113,10 @@ public abstract class NewtonMotor {
     public TalonFXMotor getAsTalonFX() {
         return (TalonFXMotor)this;
     }
+
+    //TODO: Check if this method works
+    public SparkFlexMotor getAsSparkFlex(){
+        return (SparkFlexMotor)this;
+    }
+
 }

@@ -326,6 +326,20 @@ public abstract class TalonFXMotor extends NewtonMotor {
 
     }
 
+    //Alternate implementation, changing after initialization perhaps
+    public void setPositionSoftLimit(PIDProfile gains, int slot){
+        if(super.motorPIDGains.get(slot).softLimit){
+          SoftwareLimitSwitchConfigs soft_limit_motor = new SoftwareLimitSwitchConfigs();
+          soft_limit_motor.withForwardSoftLimitThreshold(gains.softLimitMax)
+          .withForwardSoftLimitEnable(true)
+          .withReverseSoftLimitThreshold(gains.softLimitMin)
+          .withReverseSoftLimitEnable(true);
+
+          this.configuration.withSoftwareLimitSwitch(soft_limit_motor);
+          this.motor.getConfigurator().apply(configuration);
+        }
+    }
+
     @Override
     //Fixed the setIdleMode so there is the option of using coast mode
     public void setIdleMode(IdleMode idleMode) {
