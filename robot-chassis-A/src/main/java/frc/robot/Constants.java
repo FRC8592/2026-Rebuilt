@@ -96,8 +96,8 @@ public final class Constants {
 
 public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
-    public static final int BACKWHEEL_MOTOR_CAN_ID = 10;
-    public static final int FLYWHEEL_MOTOR_CAN_ID = 11;
+    public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
+    public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double FLYWHEEL_P = 0.01;
     public static final double FLYWHEEL_I = 0;
@@ -118,7 +118,7 @@ public final class SHOOTER {
   }
 
   public final class TURRET{
-    public static final int TURRET_MOTOR = 19;
+    public static final int TURRET_MOTOR = 20;
     public static final double TURRET_P = 4;
     public static final double TURRET_I = 3;
     public static final double TURRET_D = 0.2;
@@ -144,8 +144,8 @@ public final class SHOOTER {
     // CAN ID for the Intake motor
     public static final int INTAKE_MOTOR_CAN_ID = 44;
     public static final int INTAKE_ROLLER_LEFT_CAN_ID = 0; 
-    public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 0;
-    public static final int INTAKE_EXTEND_CAN_ID = 0; 
+    public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
+    public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
     public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
@@ -175,15 +175,12 @@ public final class SHOOTER {
     public static final double EXTEND_TORQUE_CURRENT = 0; 
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
-
-
-
   }
 
   public final class INDEXER {
     // CAN IDs for the Indexer motors
-    public static final int SPINNER_CAN_ID = 31;
-    public static final int OUTPUT_CAN_ID = 35;
+    public static final int SPINNER_CAN_ID = 16;
+    public static final int OUTPUT_CAN_ID = 30;
 
     public static final double SPIN_P = 0;
     public static final double SPIN_I = 0;

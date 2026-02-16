@@ -35,7 +35,8 @@ public class Intake extends SubsystemBase{
     private TalonFXConfiguration extendConfiguration; 
 
     private SparkClosedLoopController rollerMotorRightClosedLoopController;
-    private PositionVoltage extendMotorController = new PositionVoltage(INTAKE.EXTEND_ROTATIONS); 
+    private PositionVoltage extendMotorController = new PositionVoltage(0);
+    //private PositionVoltage extendMotorController = new PositionVoltage(INTAKE.EXTEND_ROTATIONS); 
 
     private RelativeEncoder rollerMotorRighRelativeEncoder;
  
@@ -56,35 +57,35 @@ public class Intake extends SubsystemBase{
          *   Set VELOCITY PID parameters
          */
 
-        RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
+        //RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
         RollerMotorRight = new SparkFlex (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
         ExtendMotor = new TalonFX(INTAKE.INTAKE_EXTEND_CAN_ID); 
 
-        rollerMotorLeftConfig = new SparkFlexConfig(); 
+        //rollerMotorLeftConfig = new SparkFlexConfig(); 
         rollerMotorRightConfig = new SparkFlexConfig(); 
         extendConfiguration = new TalonFXConfiguration(); 
 
-        rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
+        //rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
         rollerMotorRightConfig.closedLoop.pid(INTAKE.INTAKE_RIGHT_P,INTAKE.INTAKE_RIGHT_I,INTAKE.INTAKE_RIGHT_D);
 
-        rollerMotorLeftConfig.follow(RollerMotorRight);
+        //rollerMotorLeftConfig.follow(RollerMotorRight);
 
         extendConfiguration.Slot0.kP = INTAKE.INTAKE_EXTEND_P; 
         extendConfiguration.Slot0.kI = INTAKE.INTAKE_EXTEND_I;
         extendConfiguration.Slot0.kD = INTAKE.INTAKE_EXTEND_D; 
 
-        rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
+        //rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
         rollerMotorRightConfig.idleMode(IdleMode.kCoast);
 
         extendConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        rollerMotorLeftConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
+        //rollerMotorLeftConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
         rollerMotorRightConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
 
         extendConfiguration.TorqueCurrent.withPeakForwardTorqueCurrent(INTAKE.EXTEND_TORQUE_CURRENT)
         .withPeakReverseTorqueCurrent(-INTAKE.EXTEND_TORQUE_CURRENT); 
 
-        RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+        //RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
         RollerMotorRight.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         ExtendMotor.getConfigurator().apply(extendConfiguration); 
 
