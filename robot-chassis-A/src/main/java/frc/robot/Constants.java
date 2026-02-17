@@ -96,8 +96,8 @@ public final class Constants {
 
 public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
-    public static final int BACKWHEEL_MOTOR_CAN_ID = 10;
-    public static final int FLYWHEEL_MOTOR_CAN_ID = 11;
+    public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
+    public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double FLYWHEEL_P = 0.01;
     public static final double FLYWHEEL_I = 0;
@@ -118,14 +118,15 @@ public final class SHOOTER {
   }
 
   public final class TURRET{
-    public static final int TURRET_MOTOR = 19;
+    public static final int TURRET_MOTOR = 20;
     public static final double TURRET_P = 4;
     public static final double TURRET_I = 3;
     public static final double TURRET_D = 0.2;
     public static final double TURRET_V = 0.7;
-    public static final double TG = 96.0;
-    public static final int G1 = 10;
-    public static final int G2 = 11;
+    public static final double TG = 80.0;
+    //TODO: Figure out which encoder is which!
+    public static final int G1 = 19;
+    public static final int G2 = 23;
     public static final int TURRET_TOTAL = G1 * G2;
     public static final int GM = 10;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;

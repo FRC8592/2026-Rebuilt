@@ -9,8 +9,10 @@ import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.OdometryUpdates;
+import frc.robot.subsystems.Scoring;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -33,15 +35,19 @@ public class RobotContainer {
   public final Indexer indexer;
   public final Vision vision;
   public final OdometryUpdates odometryUpdates;
+  public final Turret turret;
+  public final Scoring scoring;
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
 
   //used in sysId testing
-  private final Trigger QUASI_FORWARD = driverController.a();
-  private final Trigger QUASI_REVERSE = driverController.y();
-  private final Trigger DYNAMIC_FORWARD = driverController.b();
-  private final Trigger DYNAMIC_REVERSE = driverController.x();
+  // private final Trigger QUASI_FORWARD = driverController.a();
+  // private final Trigger QUASI_REVERSE = driverController.y();
+  // private final Trigger DYNAMIC_FORWARD = driverController.b();
+  // private final Trigger DYNAMIC_REVERSE = driverController.x();
+  private final Trigger TURRET_TESTING = driverController.a();
+  private final Trigger TURRET_TESTING_REVERSE = driverController.b();
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -51,6 +57,8 @@ public class RobotContainer {
     intake = new Intake();
     indexer = new Indexer();
     vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
+    turret = new Turret(swerve);
+    scoring = new Scoring(swerve, turret, shooter);
     odometryUpdates = new OdometryUpdates(vision, swerve);
     
     // Configure the trigger bindings
@@ -70,14 +78,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    //RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    QUASI_FORWARD.whileTrue(swerve.sysIdQuasistatic(Direction.kForward));
-    QUASI_REVERSE.whileTrue(swerve.sysIdQuasistatic(Direction.kReverse));
-    DYNAMIC_FORWARD.whileTrue(swerve.sysIdDynamic(Direction.kForward));
-    DYNAMIC_REVERSE.whileTrue(swerve.sysIdDynamic(Direction.kReverse));
+    // QUASI_FORWARD.whileTrue(swerve.sysIdQuasistatic(Direction.kForward));
+    // QUASI_REVERSE.whileTrue(swerve.sysIdQuasistatic(Direction.kReverse));
+    // DYNAMIC_FORWARD.whileTrue(swerve.sysIdDynamic(Direction.kForward));
+    // DYNAMIC_REVERSE.whileTrue(swerve.sysIdDynamic(Direction.kReverse));
+    RESET_HEADING.onTrue(turret.resetPosCommand());
+    TURRET_TESTING.onTrue(turret.basicTurretToPosCommand(1)).onFalse(turret.stopTurretCommand());
+    TURRET_TESTING_REVERSE.onTrue(turret.basicTurretToPosCommand(-1)).onFalse(turret.stopTurretCommand());
+
+
+
   }
 
   private void configureDefaults() {

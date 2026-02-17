@@ -79,13 +79,12 @@ public class Turret extends SubsystemBase{
             else
                 initialPos-=360;
         }
-        //tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         Logger.recordOutput("Motor Set Position", initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         System.out.println("Position: " + initialPos/360);
-        //tMotor.setControl(positionOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        tMotor.setControl(positionOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
 
         //TODO: Implement Motion Magic
-        tMotor.setControl(motionMagicOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        //tMotor.setControl(motionMagicOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
     public void stop(){
         tMotor.setControl(voltageOutput.withOutput(0));
@@ -93,6 +92,14 @@ public class Turret extends SubsystemBase{
 
     public Command TurrettoPosCommand(Pose2d targetLocation){
         return this.run(() -> TurrettoPos(targetLocation));
+    }
+
+    public void basicTurretToPos(double position){
+        tMotor.setControl(positionOutput.withSlot(0).withPosition(position));
+    }
+
+    public Command basicTurretToPosCommand(double position){
+    return this.runOnce(() -> basicTurretToPos(position));
     }
 
     public Command stopTurretCommand(){
