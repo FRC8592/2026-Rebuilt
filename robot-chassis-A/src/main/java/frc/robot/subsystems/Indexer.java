@@ -111,8 +111,9 @@ public class Indexer extends SubsystemBase {
      * Runs the output motor on the indexer at given speed
      */
     public void runOutputIndexer(){
-        outputMotor.setVoltage(6);
-        //outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
+        //To run at raw power
+        //outputMotor.setVoltage(12);
+        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
     }
 
     /**

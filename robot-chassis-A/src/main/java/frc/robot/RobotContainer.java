@@ -14,6 +14,8 @@ import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.Scoring;
+import frc.robot.subsystems.Turret;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -33,6 +35,8 @@ public class RobotContainer {
   public final Indexer indexer;
   public final Vision vision;
   public final OdometryUpdates odometryUpdates;
+  public final Scoring scoring;
+  public final Turret turret;
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
@@ -40,6 +44,7 @@ public class RobotContainer {
   private final Trigger RUN_INDEXER = driverController.a();
   private final Trigger RUN_SHOOTER = driverController.b();
   private final Trigger INTAKE_RUN = driverController.leftBumper();
+  private final Trigger TURRET_TEST = driverController.x();
 
   // //used in sysId testing
   // private final Trigger QUASI_FORWARD = driverController.a();
@@ -56,6 +61,8 @@ public class RobotContainer {
     indexer = new Indexer();
     vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
     odometryUpdates = new OdometryUpdates(vision, swerve);
+    turret = new Turret(swerve);
+    scoring = new Scoring(swerve, turret);
     
     // Configure the trigger bindings
     configureBindings();
@@ -81,6 +88,7 @@ public class RobotContainer {
     RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
     INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
     RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
+    TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
   }
 
   private void configureDefaults() {

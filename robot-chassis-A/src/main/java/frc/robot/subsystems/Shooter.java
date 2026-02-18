@@ -66,6 +66,8 @@ public class Shooter extends SubsystemBase{
         backwheelConfiguration.Slot0.kD = SHOOTER.BACKWHEEL_D;
         backwheelConfiguration.Slot0.kV = SHOOTER.BACKWHEEL_V;
 
+        backwheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);
 
@@ -93,7 +95,9 @@ public class Shooter extends SubsystemBase{
     public void runAtSpeed(double desiredRPM){
         double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
         double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
-
+        //To run at raw power
+        //flywheelMotor.setVoltage(12);
+        //backwheelMotor.setVoltage(12);
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
