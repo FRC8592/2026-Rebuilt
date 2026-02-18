@@ -159,18 +159,18 @@ public final class SHOOTER {
     public static final double INTAKE_LEFT_D = 0;
     public static final double INTAKE_LEFT_VI = 3000;
 
-    public static final double INTAKE_RIGHT_P = 0.01;
+    public static final double INTAKE_RIGHT_P = 0.0002;
     public static final double INTAKE_RIGHT_I = 0;
     public static final double INTAKE_RIGHT_D = 0;
     public static final double INTAKE_RIGHT_VI = 3000;
 
-    public static final double INTAKE_EXTEND_P = 0.01;
+    public static final double INTAKE_EXTEND_P = 5;
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
     public static final double EXTEND_ROTATIONS = 2; 
-    public static final double DESIRED_ROTATIONS_EXTEND = 0; 
+    public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
 
     public static final double EXTEND_TORQUE_CURRENT = 0; 
     
@@ -182,7 +182,7 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 30;
 
-    public static final double SPIN_P = 0;
+    public static final double SPIN_P = 0.3;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
 
@@ -195,7 +195,7 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_SPEED = 100;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
     public static final double OUTPUT_MOTOR_SPEED = 1.0;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
