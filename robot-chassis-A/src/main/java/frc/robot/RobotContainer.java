@@ -45,6 +45,7 @@ public class RobotContainer {
   private final Trigger RUN_SHOOTER = driverController.b();
   private final Trigger INTAKE_RUN = driverController.leftBumper();
   private final Trigger TURRET_TEST = driverController.x();
+  private final Trigger TURRET_TEST_REVERSE = driverController.y();
 
   // //used in sysId testing
   // private final Trigger QUASI_FORWARD = driverController.a();
@@ -81,14 +82,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
-             .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
+    //RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
+    //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
     
     RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
     INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
     RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-    TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
+    TURRET_TEST.onTrue(turret.basicTurretToPosCommand(1)).onFalse(turret.stopTurretCommand());
+    TURRET_TEST_REVERSE.onTrue(turret.basicTurretToPosCommand(-1)).onFalse(turret.stopTurretCommand());
+    RESET_HEADING.onTrue(turret.resetPosCommand());
   }
 
   private void configureDefaults() {

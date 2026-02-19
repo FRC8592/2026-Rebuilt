@@ -34,7 +34,14 @@ public class Turret extends SubsystemBase{
     private Swerve swerve;
     private TalonFXConfiguration tMotorConfiguration; 
 
+    private double P_OLD;
+    private double I_OLD;
+    private double D_OLD;
+
+    private PositionVoltage motorOutput;
+
     private MotionMagicVoltage motionMagicRequest;
+
 
     public Turret(Swerve swerve){
         this.swerve = swerve;
@@ -43,17 +50,21 @@ public class Turret extends SubsystemBase{
 
         tMotor = new TalonFX(TURRET.TURRET_MOTOR);
         motionMagicRequest = new MotionMagicVoltage(0);
+        motorOutput = new PositionVoltage(0);
         tMotorConfiguration = new TalonFXConfiguration();
         tMotorConfiguration.MotionMagic.MotionMagicAcceleration = 50; //80
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = 6;
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
         tMotorConfiguration.Slot0.kI = TURRET.TURRET_I;
         tMotorConfiguration.Slot0.kD = TURRET.TURRET_D; 
+        tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
-        SmartDashboard.putNumber("Acceleration", 80);
-        SmartDashboard.putNumber("CruiseVelocity", 6);
-        SmartDashboard.putNumber("Position Value", 0);
+        // SmartDashboard.putNumber("Acceleration", 80);
+        // SmartDashboard.putNumber("CruiseVelocity", 6);
+        SmartDashboard.putNumber("TURRET_P", TURRET.TURRET_P);
+        SmartDashboard.putNumber("TURRET_I", TURRET.TURRET_I);
+        SmartDashboard.putNumber("TURRET_D", TURRET.TURRET_D);
 
         AngleCalc = new AutoTurretAngle(this.swerve);
     }
@@ -65,7 +76,7 @@ public class Turret extends SubsystemBase{
             else
                 initialPos-=360;
         }
-        tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        tMotor.setControl(motorOutput.withSlot(0).withPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         System.out.println("Position: " + initialPos/360);
         //tMotor.setPosition(position);
@@ -82,6 +93,14 @@ public class Turret extends SubsystemBase{
         return this.runOnce(() -> stop());
     }
 
+    public void basicTurretToPos(double position){
+        tMotor.setControl(motorOutput.withPosition(position * 90 * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+    }
+
+    public Command basicTurretToPosCommand(double position){
+        return this.runOnce(()-> basicTurretToPos(position));
+    }
+
     public Command resetPosCommand(){
         return this.runOnce(() -> resetPos());
     }
@@ -89,9 +108,9 @@ public class Turret extends SubsystemBase{
     public void resetPos(){
         System.out.println("Resetting Pose");
         //tMotor.resetEncoderPosition(0);
-        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 80.0 / 23.0);
         System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
-        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
+        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 80.0 / 23.0);
         //To make sure this works!
         //tMotor.setPosition(0);
     }
@@ -105,6 +124,29 @@ public class Turret extends SubsystemBase{
     //         VOriginal = cruiseVelocity;
     //     }
     // }
+
+     public void updatePID(){
+
+
+        double TURRET_P  = SmartDashboard.getNumber("TURRET_P", TURRET.TURRET_P);
+        double TURRET_I  = SmartDashboard.getNumber("TURRET_I", TURRET.TURRET_I);
+        double TURRET_D  = SmartDashboard.getNumber("TURRET_D", TURRET.TURRET_D);
+
+
+        if(TURRET_P != P_OLD || TURRET_I != I_OLD || TURRET_D != D_OLD){
+            tMotorConfiguration.Slot0.kP = TURRET_P; 
+            tMotorConfiguration.Slot0.kI = TURRET_I;
+            tMotorConfiguration.Slot0.kD = TURRET_D; 
+
+            P_OLD = TURRET_P;
+            I_OLD = TURRET_I;
+            D_OLD = TURRET_D;
+            tMotor.getConfigurator().apply(tMotorConfiguration);
+
+        }
+        
+        
+    }
 
     // public double CRTTypeOne(double E1, double E2){
     //     int R1 = (int)(E1 * TURRET.TURRET_G1); 
