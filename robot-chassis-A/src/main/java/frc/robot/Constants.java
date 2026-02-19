@@ -96,8 +96,8 @@ public final class Constants {
 
 public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
-    public static final int BACKWHEEL_MOTOR_CAN_ID = 10;
-    public static final int FLYWHEEL_MOTOR_CAN_ID = 11;
+    public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
+    public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double FLYWHEEL_P = 0.01;
     public static final double FLYWHEEL_I = 0;
@@ -118,16 +118,16 @@ public final class SHOOTER {
   }
 
   public final class TURRET{
-    public static final int TURRET_MOTOR = 19;
+    public static final int TURRET_MOTOR = 20;
     public static final double TURRET_P = 4;
     public static final double TURRET_I = 3;
     public static final double TURRET_D = 0.2;
     public static final double TURRET_V = 0.7;
-    public static final int TURRET_TG = 96;
-    public static final int TURRET_G1 = 10;
-    public static final int TURRET_G2 = 11;
+    public static final int TURRET_TG = 80;
+    public static final int TURRET_G1 = 19;
+    public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (96.0/10)/360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0/23)/360;
     public static final int INITIAL_MAX_ACCELERATION = 60;
     public static final int INITIAL_CRUISE_VELOCITY = 6;
     public static final double E1_OFFSET = 286;
@@ -144,8 +144,8 @@ public final class SHOOTER {
     // CAN ID for the Intake motor
     public static final int INTAKE_MOTOR_CAN_ID = 44;
     public static final int INTAKE_ROLLER_LEFT_CAN_ID = 0; 
-    public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 0;
-    public static final int INTAKE_EXTEND_CAN_ID = 0; 
+    public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
+    public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
     public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
@@ -159,33 +159,30 @@ public final class SHOOTER {
     public static final double INTAKE_LEFT_D = 0;
     public static final double INTAKE_LEFT_VI = 3000;
 
-    public static final double INTAKE_RIGHT_P = 0.01;
+    public static final double INTAKE_RIGHT_P = 0.0002;
     public static final double INTAKE_RIGHT_I = 0;
     public static final double INTAKE_RIGHT_D = 0;
     public static final double INTAKE_RIGHT_VI = 3000;
 
-    public static final double INTAKE_EXTEND_P = 0.01;
+    public static final double INTAKE_EXTEND_P = 5;
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
     public static final double EXTEND_ROTATIONS = 2; 
-    public static final double DESIRED_ROTATIONS_EXTEND = 0; 
+    public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
 
     public static final double EXTEND_TORQUE_CURRENT = 0; 
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
-
-
-
   }
 
   public final class INDEXER {
     // CAN IDs for the Indexer motors
-    public static final int SPINNER_CAN_ID = 31;
-    public static final int OUTPUT_CAN_ID = 35;
+    public static final int SPINNER_CAN_ID = 16;
+    public static final int OUTPUT_CAN_ID = 30;
 
-    public static final double SPIN_P = 0;
+    public static final double SPIN_P = 0.3;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
 
@@ -198,7 +195,7 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_SPEED = 100;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
     public static final double OUTPUT_MOTOR_SPEED = 1.0;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;

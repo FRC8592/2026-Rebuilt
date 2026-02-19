@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +21,18 @@ public class Shooter extends SubsystemBase{
 
     private VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(0);
     private VelocityVoltage backwheelVelocityRequest = new VelocityVoltage(0);
+
+    private double PF_OLD;
+    private double IF_OLD;
+    private double DF_OLD;
+    private double VF_OLD;
+
+    private double PB_OLD;
+    private double IB_OLD;
+    private double DB_OLD;
+    private double VB_OLD;
+
+    private NeutralOut neutralMode = new NeutralOut();
 
     private final double WHEEL_RATIO = SHOOTER.FLYWHEEL_DIAMETER_INCHES/SHOOTER.BACKWHEEL_DIAMETER_INCHES;
 
@@ -38,15 +53,20 @@ public class Shooter extends SubsystemBase{
         flywheelConfiguration = new TalonFXConfiguration();
         backwheelConfiguration = new TalonFXConfiguration();
 
+
         flywheelConfiguration.Slot0.kP = SHOOTER.FLYWHEEL_P; 
         flywheelConfiguration.Slot0.kI = SHOOTER.FLYWHEEL_I;
         flywheelConfiguration.Slot0.kD = SHOOTER.FLYWHEEL_D;
         flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V; 
 
+        flywheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
         backwheelConfiguration.Slot0.kD = SHOOTER.BACKWHEEL_D;
         backwheelConfiguration.Slot0.kV = SHOOTER.BACKWHEEL_V;
+
+        backwheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);
@@ -75,7 +95,9 @@ public class Shooter extends SubsystemBase{
     public void runAtSpeed(double desiredRPM){
         double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
         double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
-
+        //To run at raw power
+        //flywheelMotor.setVoltage(12);
+        //backwheelMotor.setVoltage(12);
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
@@ -97,18 +119,43 @@ public class Shooter extends SubsystemBase{
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
     public void updatePID(){
-        flywheelConfiguration.Slot0.kP = SmartDashboard.getNumber("fP", SHOOTER.FLYWHEEL_P); 
-        flywheelConfiguration.Slot0.kI = SmartDashboard.getNumber("fI", SHOOTER.FLYWHEEL_I); 
-        flywheelConfiguration.Slot0.kD = SmartDashboard.getNumber("fD", SHOOTER.FLYWHEEL_D); 
-        flywheelConfiguration.Slot0.kV = SmartDashboard.getNumber("fV", SHOOTER.FLYWHEEL_V); 
 
-        backwheelConfiguration.Slot0.kP = SmartDashboard.getNumber("bP", SHOOTER.BACKWHEEL_P); 
-        backwheelConfiguration.Slot0.kI = SmartDashboard.getNumber("bI", SHOOTER.BACKWHEEL_I); 
-        backwheelConfiguration.Slot0.kD = SmartDashboard.getNumber("bD", SHOOTER.BACKWHEEL_D); 
-        backwheelConfiguration.Slot0.kV = SmartDashboard.getNumber("bV", SHOOTER.BACKWHEEL_V); 
+        double PF = SmartDashboard.getNumber("fP", SHOOTER.FLYWHEEL_P); 
+        double IF = SmartDashboard.getNumber("fI", SHOOTER.FLYWHEEL_I); 
+        double DF = SmartDashboard.getNumber("fD", SHOOTER.FLYWHEEL_D); 
+        double VF = SmartDashboard.getNumber("fV", SHOOTER.FLYWHEEL_V); 
 
-        flywheelMotor.getConfigurator().apply(flywheelConfiguration);
-        backwheelMotor.getConfigurator().apply(backwheelConfiguration);
+        double PB = SmartDashboard.getNumber("bP", SHOOTER.BACKWHEEL_P); 
+        double IB = SmartDashboard.getNumber("bI", SHOOTER.BACKWHEEL_I); 
+        double DB = SmartDashboard.getNumber("bD", SHOOTER.BACKWHEEL_D); 
+        double VB = SmartDashboard.getNumber("bV", SHOOTER.BACKWHEEL_V); 
+
+         if(PF != PF_OLD || IF != IF_OLD || DF != DF_OLD || PB != PB_OLD || IB != IB_OLD || DB != DB_OLD){
+            flywheelConfiguration.Slot0.kP = PF; 
+            flywheelConfiguration.Slot0.kI = IF;
+            flywheelConfiguration.Slot0.kD = DF;
+            flywheelConfiguration.Slot0.kV = VF; 
+
+            flywheelConfiguration.Slot0.kP = PB; 
+            flywheelConfiguration.Slot0.kI = IB;
+            flywheelConfiguration.Slot0.kD = DB;
+            flywheelConfiguration.Slot0.kV = VB; 
+
+            PF_OLD = PF;
+            IF_OLD= IF;
+            DF_OLD = DF;
+            VF_OLD = VF;
+
+            PB_OLD = PB;
+            IB_OLD= IB;
+            DB_OLD = DB;
+            VB_OLD = VB;
+
+            flywheelMotor.getConfigurator().apply(flywheelConfiguration);
+            backwheelMotor.getConfigurator().apply(backwheelConfiguration);
+        }
+
+
     }
 
 

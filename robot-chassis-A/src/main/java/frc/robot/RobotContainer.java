@@ -14,6 +14,8 @@ import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Indexer; 
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.Scoring;
+import frc.robot.subsystems.Turret;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -33,15 +35,22 @@ public class RobotContainer {
   public final Indexer indexer;
   public final Vision vision;
   public final OdometryUpdates odometryUpdates;
+  public final Scoring scoring;
+  public final Turret turret;
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
 
-  //used in sysId testing
-  private final Trigger QUASI_FORWARD = driverController.a();
-  private final Trigger QUASI_REVERSE = driverController.y();
-  private final Trigger DYNAMIC_FORWARD = driverController.b();
-  private final Trigger DYNAMIC_REVERSE = driverController.x();
+  private final Trigger RUN_INDEXER = driverController.a();
+  private final Trigger RUN_SHOOTER = driverController.b();
+  private final Trigger INTAKE_RUN = driverController.leftBumper();
+  private final Trigger TURRET_TEST = driverController.x();
+
+  // //used in sysId testing
+  // private final Trigger QUASI_FORWARD = driverController.a();
+  // private final Trigger QUASI_REVERSE = driverController.y();
+  // private final Trigger DYNAMIC_FORWARD = driverController.b();
+  // private final Trigger DYNAMIC_REVERSE = driverController.x();
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -52,6 +61,8 @@ public class RobotContainer {
     indexer = new Indexer();
     vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
     odometryUpdates = new OdometryUpdates(vision, swerve);
+    turret = new Turret(swerve);
+    scoring = new Scoring(swerve, turret);
     
     // Configure the trigger bindings
     configureBindings();
@@ -73,21 +84,21 @@ public class RobotContainer {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
-
-    QUASI_FORWARD.whileTrue(swerve.sysIdQuasistatic(Direction.kForward));
-    QUASI_REVERSE.whileTrue(swerve.sysIdQuasistatic(Direction.kReverse));
-    DYNAMIC_FORWARD.whileTrue(swerve.sysIdDynamic(Direction.kForward));
-    DYNAMIC_REVERSE.whileTrue(swerve.sysIdDynamic(Direction.kReverse));
+    
+    RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
+    INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
+    RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
+    TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
   }
 
   private void configureDefaults() {
         // Set the swerve's default command to drive with joysticks
-        setDefaultCommand(swerve, swerve.run(() -> {
-            swerve.drive(swerve.processJoystickInputs(
-                    -driverController.getLeftX(),
-                    -driverController.getLeftY(),
-                    -driverController.getRightX()));
-        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        // setDefaultCommand(swerve, swerve.run(() -> {
+        //     swerve.drive(swerve.processJoystickInputs(
+        //             -driverController.getLeftX(),
+        //             -driverController.getLeftY(),
+        //             -driverController.getRightX()));
+        // }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     }
 

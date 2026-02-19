@@ -88,7 +88,7 @@ public class Vision extends SubsystemBase {
           
         SmartDashboard.putBoolean("Has one tag", getTargets().size() > 0);
         SmartDashboard.putBoolean("Has two tags", getTargets().size() > 1);
-        SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+       // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
     }
 
     @Override
