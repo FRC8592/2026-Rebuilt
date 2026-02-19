@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
+
 public class Indexer extends SubsystemBase {    
-    //TODO: confirm CAN IDs
     private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
     private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
 
@@ -79,8 +79,11 @@ public class Indexer extends SubsystemBase {
      * The output motor must stop immeidately so we do not continue to feed the shooter
      */
     public void stop(){
-        spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(0));
-        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(0));
+        spinMotor.setVoltage(0);
+        outputMotor.setVoltage(0);
+
+        //spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(0));
+        //outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(0));
     }
 
     /**
@@ -95,8 +98,7 @@ public class Indexer extends SubsystemBase {
      * Runs the spin motor on the indexer
      */
     public void runSpinIndexer(){
-        System.out.println("Spindexer Running");
-        spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED)));
+        spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(INDEXER.SPIN_MOTOR_SPEED));
     }
 
     /**
@@ -111,9 +113,7 @@ public class Indexer extends SubsystemBase {
      * Runs the output motor on the indexer at given speed
      */
     public void runOutputIndexer(){
-        //To run at raw power
-        //outputMotor.setVoltage(12);
-        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
+        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(INDEXER.OUTPUT_MOTOR_SPEED));
     }
 
     /**

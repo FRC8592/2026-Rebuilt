@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import frc.robot.subsystems.swerve.TunerConstants;
+import java.lang.Math;
 
 public final class Constants {
   public final class SHARED {
@@ -195,18 +196,16 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 100;
+    public static final double OUTPUT_MOTOR_CIRCUMFERENCE = 2 * Math.PI; // diameter 2 inches
+
+    public static final double SPIN_MOTOR_SPEED = 100; //RPS
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_SPEED = 120 / (OUTPUT_MOTOR_CIRCUMFERENCE); //10 feet per second
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
     public static final double MOTOR_MAX_RPS = 6380 / 60;
-
-    public static final double SPIN_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
-    public static final double OUTPUT_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
       
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
-
   }
 
   public final class RANGE_TABLE {
