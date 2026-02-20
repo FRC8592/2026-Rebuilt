@@ -34,12 +34,14 @@ public final class Constants {
   public final class VISION {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
+    //camera H
     public static final Transform3d CAMERA_OFFSETS_BACK = (
-        new Transform3d(new Translation3d(0.14, 0.325, 0.22), new Rotation3d(0, Math.toRadians(-36), 0))
+        new Transform3d(new Translation3d(-0.3175, 0.165, 0.26), new Rotation3d(0, Math.toRadians(-60), Math.toRadians(180)))
     );
 
+    //camera E
     public static final Transform3d CAMERA_OFFSETS_SIDE = (
-        new Transform3d(new Translation3d(0.0,0.0,0.0), new Rotation3d(0,Math.toRadians(-36),0))
+        new Transform3d(new Translation3d(-0.16, -0.34,0.42), new Rotation3d(0,Math.toRadians(-60),Math.toRadians(270)))
     ); 
 
     public static final String CAMERA_NAME_BACK = (

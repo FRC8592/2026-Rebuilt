@@ -61,8 +61,12 @@ public class RobotContainer {
     shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
-    vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
-    odometryUpdates = new OdometryUpdates(vision, swerve);
+    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
+    visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
+    odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
+    odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    turret = new Turret(swerve);
+    scoring = new Scoring(swerve, turret);
     
     // Configure the trigger bindings
     configureBindings();
