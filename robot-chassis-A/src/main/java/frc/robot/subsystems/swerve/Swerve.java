@@ -43,8 +43,6 @@ public class Swerve extends SubsystemBase {
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
-    private ChassisSpeeds currentSpeeds = new ChassisSpeeds();
-
     private RobotConfig config = null;
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
@@ -105,7 +103,7 @@ public class Swerve extends SubsystemBase {
      * @return current ChassisSpeeds
      */
     public ChassisSpeeds getRobotRelativeSpeeds(){
-        return currentSpeeds;
+        return swerve.getState().Speeds;
     }
 
     /**
@@ -152,8 +150,6 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond) 
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
-
-        currentSpeeds = speeds;
     }
 
     /**
@@ -166,8 +162,6 @@ public class Swerve extends SubsystemBase {
             .withVelocityY(speeds.vyMetersPerSecond)
             .withRotationalRate(speeds.omegaRadiansPerSecond)
         );
-
-        currentSpeeds = speeds;
     }
 
     /**
