@@ -105,7 +105,7 @@ public class Swerve extends SubsystemBase {
      * @return current ChassisSpeeds
      */
     public ChassisSpeeds getRobotRelativeSpeeds(){
-        return currentSpeeds;
+        return swerve.getState().Speeds;
     }
 
     /**

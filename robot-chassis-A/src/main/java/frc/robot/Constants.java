@@ -76,7 +76,7 @@ public final class Constants {
     public static final double JOYSTICK_EXPONENT = 1.75;
 
     //swerve pid constants below
-    public static final double STEER_KP = 51.925;
+    public static final double STEER_KP = 51.925; 
     public static final double STEER_KI = 0.0;
     public static final double STEER_KD = 3.00786;
     public static final double STEER_KS = 0.21866;

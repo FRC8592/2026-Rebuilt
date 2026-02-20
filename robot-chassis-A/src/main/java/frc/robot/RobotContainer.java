@@ -88,17 +88,17 @@ public class RobotContainer {
     RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
     INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
     RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-    TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
+    // TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
   }
 
   private void configureDefaults() {
         // Set the swerve's default command to drive with joysticks
-        // setDefaultCommand(swerve, swerve.run(() -> {
-        //     swerve.drive(swerve.processJoystickInputs(
-        //             -driverController.getLeftX(),
-        //             -driverController.getLeftY(),
-        //             -driverController.getRightX()));
-        // }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        setDefaultCommand(swerve, swerve.run(() -> {
+            swerve.drive(swerve.processJoystickInputs(
+                    -driverController.getLeftX(),
+                    -driverController.getLeftY(),
+                    -driverController.getRightX()));
+        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     }
 

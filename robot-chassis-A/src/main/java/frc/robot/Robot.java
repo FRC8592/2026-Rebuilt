@@ -34,9 +34,9 @@ public class Robot extends LoggedRobot {
   private final RobotContainer m_robotContainer;
 
   /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-        .withTimestampReplay()
-        .withJoystickReplay();
+    // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+    //     .withTimestampReplay()
+    //     .withJoystickReplay();
 
 
   public static Field2d FIELD = new Field2d();
@@ -96,7 +96,7 @@ public class Robot extends LoggedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    m_timeAndJoystickReplay.update();
+    // m_timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
     
   }
