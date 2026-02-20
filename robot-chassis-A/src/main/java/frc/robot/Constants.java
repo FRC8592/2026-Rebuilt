@@ -34,13 +34,21 @@ public final class Constants {
   public final class VISION {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
-    public static final Transform3d CAMERA_OFFSETS = (
+    public static final Transform3d CAMERA_OFFSETS_BACK = (
         new Transform3d(new Translation3d(0.14, 0.325, 0.22), new Rotation3d(0, Math.toRadians(-36), 0))
     );
 
-    public static final String CAMERA_NAME = (
+    public static final Transform3d CAMERA_OFFSETS_SIDE = (
+        new Transform3d(new Translation3d(0.0,0.0,0.0), new Rotation3d(0,Math.toRadians(-36),0))
+    ); 
+
+    public static final String CAMERA_NAME_BACK = (
         "Arducam_OV9782_H" 
     );
+
+    public static final String CAMERA_NAME_SIDE = (
+      "Arducam_OV9782_E"
+    ); 
 
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;

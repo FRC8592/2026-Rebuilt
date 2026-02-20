@@ -33,8 +33,10 @@ public class RobotContainer {
   public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
-  public final Vision vision;
-  public final OdometryUpdates odometryUpdates;
+  public final Vision visionBack;
+  public final Vision visionSide; 
+  public final OdometryUpdates odometryUpdatesBack;
+  public final OdometryUpdates odometryUpdatesSide; 
   public final Scoring scoring;
   public final Turret turret;
 
@@ -61,8 +63,6 @@ public class RobotContainer {
     indexer = new Indexer();
     vision = new Vision(VISION.CAMERA_NAME, VISION.CAMERA_OFFSETS);
     odometryUpdates = new OdometryUpdates(vision, swerve);
-    turret = new Turret(swerve);
-    scoring = new Scoring(swerve, turret);
     
     // Configure the trigger bindings
     configureBindings();
