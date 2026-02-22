@@ -129,6 +129,7 @@ public final class SHOOTER {
 
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
+    public static final int TURRET_CURRENT_LIMIT = 80;
     public static final double TURRET_P = 1;
     public static final double TURRET_I = 0;
     public static final double TURRET_D = 0.0;
@@ -138,8 +139,8 @@ public final class SHOOTER {
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0/23)/360;
-    public static final int INITIAL_MAX_ACCELERATION = 60;
-    public static final int INITIAL_CRUISE_VELOCITY = 6;
+    public static final int MAX_ACCELERATION = 60;
+    public static final int CRUISE_VELOCITY = 6;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
 
