@@ -76,7 +76,7 @@ public final class Constants {
     public static final double DRIVE_FRICTION_VOLTAGE = 0.25;
 
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 1.0; 
+    public static final double ROTATE_POWER_FAST = 0.5; 
     public static final double TRANSLATE_POWER_SLOW = 0.3;
     public static final double ROTATE_POWER_SLOW = 0.3;
 
