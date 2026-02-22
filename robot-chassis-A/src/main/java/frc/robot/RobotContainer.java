@@ -13,7 +13,11 @@ import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.Scoring;
 
+import java.util.Set;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,11 +32,14 @@ public class RobotContainer {
   public final Vision visionBack;
   public final Vision visionSide; 
   public final OdometryUpdates odometryUpdatesBack;
-  public final OdometryUpdates odometryUpdatesSide; 
+  public final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
+  private final Trigger RESET_TURRET = driverController.a();
+  private final Trigger AIM_TURRET = driverController.x();
+  private final Trigger OFF_AIM_TURRET = driverController.b();
 
   // private final Trigger RUN_INDEXER = driverController.a();
   // private final Trigger RUN_SHOOTER = driverController.b();
@@ -75,6 +82,17 @@ public class RobotContainer {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
+    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    AIM_TURRET.onTrue(new DeferredCommand(() -> 
+      scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
+    , Set.of(scoring)));
+    OFF_AIM_TURRET.onTrue(new DeferredCommand(() -> 
+      scoring.turret.TurrettoAngleCommand(-90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
+    , Set.of(scoring)));
+
+
+    // AIM_TURRET.onTrue(new DeferredCommand(scoring.turret.runOnce(() -> scoring.turret.TurrettoAngleCommand(swerve.getCurrentOdometryPosition(),
+    //                                                                                   new Pose2d(4.02844, 4.445, swerve.getYaw()))), scoring));
     
     // RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
     // INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());

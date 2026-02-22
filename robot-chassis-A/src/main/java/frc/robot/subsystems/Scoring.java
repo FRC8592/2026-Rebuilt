@@ -7,7 +7,7 @@ import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
     Swerve swerve;
-    Turret turret;
+    public Turret turret;
     Shooter shooter;
     Indexer indexer;
     Intake intake;
@@ -24,7 +24,7 @@ public class Scoring extends SubsystemBase{
     @Override
     public void periodic(){
         //will currently only track the red hub
-        turret.TurrettoAngle(swerve.getCurrentOdometryPosition(), new Pose2d(4.02844, 4.445, swerve.getYaw()));
+        //turret.TurrettoAngle(swerve.getCurrentOdometryPosition(), new Pose2d(4.02844, 4.445, swerve.getYaw()));
     }
     
 }

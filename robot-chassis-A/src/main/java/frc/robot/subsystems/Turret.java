@@ -38,6 +38,10 @@ public class Turret extends SubsystemBase{
     // Calculate turret angle based on a target location and the robot's current position
     private AutoTurretAngle angleCalc;
 
+    private double P_OLD;
+    private double I_OLD;
+    private double D_OLD;
+
     public Turret() {
         // Instantiate the absolute encoders and get our starting position
         E1 = new DutyCycleEncoder(0, 360, 0);
@@ -50,13 +54,17 @@ public class Turret extends SubsystemBase{
         
         tMotorConfiguration = new TalonFXConfiguration();
         positionRequest = new PositionVoltage(0);
-        //motionMagicRequest = new MotionMagicVoltage(0);
+        motionMagicRequest = new MotionMagicVoltage(0);
 
         // Put motor in brake mode and apply current limits
         tMotor.setNeutralMode(NeutralModeValue.Brake);
         tMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimit = TURRET.TURRET_CURRENT_LIMIT;
-        tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake; // Hold turret in position if not commanded to move
+        tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        // Apply soft limits to help avoid driving the turret past the cable extension
+        // Enable soft limits
+
 
         // Configure PID controls and Motion Magic parameters
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
@@ -67,8 +75,20 @@ public class Turret extends SubsystemBase{
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
+        // TODO: Prevent turret from moving on start.  Is this needed?
+        stop();
+
         // Class for calculating the turret angle based on target and robot positions
         angleCalc = new AutoTurretAngle();
+
+        SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P);
+        SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I);
+        SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D);
+    }
+
+    @Override
+    public void periodic(){
+        Logger.recordOutput("Turret Pos", tMotor.getPosition().getValueAsDouble());
     }
 
 
@@ -77,7 +97,7 @@ public class Turret extends SubsystemBase{
      * @param robotPosition Current position of the robot from odometry, in field coordinates
      * @param targetLocation The centerpoint of the target we are trying to track, in field coordinates
      */
-    public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
+    public void TurrettoAngle(double angle, Pose2d robotPosition, Pose2d targetLocation) {
         // Calculate target angle based on robot and target positions
         double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
         
@@ -90,10 +110,11 @@ public class Turret extends SubsystemBase{
         }
 
         // TODO: DELETE ME.  We force targetAngle to a value here for tuning
-        targetAngle = 90;
+        targetAngle = angle;
 
         // Set motor position based on target angle, converting from degrees to motor rotations
-        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        //tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
@@ -106,14 +127,29 @@ public class Turret extends SubsystemBase{
     }
 
 
+        /**
+     * Get the encoder values the define the turret zero position.
+     */
+    public void resetPos() {
+        System.out.println("Resetting Pose");
+        tMotor.setPosition(0);
+        //tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
+        //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
+        //To make sure this works!
+        //tMotor.setPosition(0);
+    }
+
     /**
      * Command to move turret to track target position.
      * Must be called each time the robot moves or target changes
      * @param robotPosition Current position of the robot from odometry, in field coordinates
      * @param targetLocation The centerpoint of the target we are trying to track, in field coordinates
      */
-    public Command TurrettoPosCommand(Pose2d robotPosition, Pose2d targetLocation) {
-        return this.runOnce(() -> TurrettoAngle(robotPosition, targetLocation));
+
+     // TODO: angle parameter is for simple initial testing.  Remove.
+    public Command TurrettoAngleCommand(double angle, Pose2d robotPosition, Pose2d targetLocation) {
+        return this.runOnce(() -> TurrettoAngle(angle, robotPosition, targetLocation));
     }
 
     /**
@@ -129,19 +165,6 @@ public class Turret extends SubsystemBase{
      */
     public Command resetPosCommand() {
         return this.runOnce(() -> resetPos());
-    }
-
-    /**
-     * Get the encoder values the define the turret zero position.
-     */
-    public void resetPos() {
-        //System.out.println("Resetting Pose");
-        //tMotor.resetEncoderPosition(0);
-        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
-        //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
-        //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
-        //To make sure this works!
-        //tMotor.setPosition(0);
     }
 
     // public void updateMotionMagic(){
@@ -232,4 +255,24 @@ public class Turret extends SubsystemBase{
     //     //Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
     //     //updateMotionMagic();
     // }
+
+ public void updatePID(){
+
+        double P  = SmartDashboard.getNumber("P_TUR", TURRET.TURRET_P);
+        double I  = SmartDashboard.getNumber("I_TUR", TURRET.TURRET_I);
+        double D  = SmartDashboard.getNumber("D_TUR", TURRET.TURRET_D);
+
+        if(P != P_OLD || I != I_OLD || D != D_OLD){
+            tMotorConfiguration.Slot0.kP = P; 
+            tMotorConfiguration.Slot0.kI = I;
+            tMotorConfiguration.Slot0.kD = D; 
+
+            P_OLD = P;
+            I_OLD = I;
+            D_OLD = D;
+            tMotor.getConfigurator().apply(tMotorConfiguration);
+
+        }
+    }
+
 }
