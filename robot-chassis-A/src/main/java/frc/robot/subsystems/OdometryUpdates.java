@@ -129,7 +129,8 @@ public class OdometryUpdates extends SubsystemBase {
 
         // Set the initial pose for the robot before the competition starts.  It must be able to see an AprilTag
         if(DriverStation.isDisabled()) {
-            initialPose = robotPoseAverager(robotPose);
+            // initialPose = robotPoseAverager(robotPose);
+            initialPose = robotPosition;
             swerve.setKnownOdometryPose(initialPose);
         }
 

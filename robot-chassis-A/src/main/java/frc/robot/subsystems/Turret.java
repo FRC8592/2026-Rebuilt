@@ -44,7 +44,12 @@ public class Turret extends SubsystemBase{
         tMotor = new TalonFX(TURRET.TURRET_MOTOR);
         motionMagicRequest = new MotionMagicVoltage(0);
         tMotorConfiguration = new TalonFXConfiguration();
-        tMotorConfiguration.MotionMagic.MotionMagicAcceleration = 50; //80
+
+        tMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        tMotorConfiguration.CurrentLimits.StatorCurrentLimit = 30;
+        tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake; // Hold turret in position if not commanded to move
+
+        tMotorConfiguration.MotionMagic.MotionMagicAcceleration = 50; // 80
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = 6;
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
         tMotorConfiguration.Slot0.kI = TURRET.TURRET_I;
@@ -67,7 +72,7 @@ public class Turret extends SubsystemBase{
         }
         tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         Logger.recordOutput("Motor Set Position", initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
-        System.out.println("Position: " + initialPos/360);
+        //System.out.println("Position: " + initialPos/360);
         //tMotor.setPosition(position);
     }
     public void stop(){
@@ -87,11 +92,11 @@ public class Turret extends SubsystemBase{
     }
 
     public void resetPos(){
-        System.out.println("Resetting Pose");
+        //System.out.println("Resetting Pose");
         //tMotor.resetEncoderPosition(0);
         tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
-        System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
-        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
+        //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
+        //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
         //To make sure this works!
         //tMotor.setPosition(0);
     }
@@ -174,14 +179,14 @@ public class Turret extends SubsystemBase{
         // int E2Process = (int)(E2Raw * 1000);
         // double E1Filter = E1Process / 1000.0;
         // double E2Filter = E2Process / 1000.0;
-        Logger.recordOutput("E1", E1.get());
-        Logger.recordOutput("E2", E2.get());
+        //Logger.recordOutput("E1", E1.get());
+        //Logger.recordOutput("E2", E2.get());
         //Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
         //Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
         //Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-        Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
+        //Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
         //Logger.recordOutput("Motor Angle", tMotor.getRotations() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
+        //Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
         //updateMotionMagic();
     }
 }
