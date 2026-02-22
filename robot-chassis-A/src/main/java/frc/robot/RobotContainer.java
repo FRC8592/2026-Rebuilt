@@ -30,7 +30,7 @@ public class RobotContainer {
   // robot subsystems
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  public final Shooter shooter;
+  // public final Shooter shooter;
   public final Intake intake;
   public final Indexer indexer;
   public final Vision visionBack;
@@ -38,7 +38,7 @@ public class RobotContainer {
   public final OdometryUpdates odometryUpdatesBack;
   public final OdometryUpdates odometryUpdatesSide; 
   public final Scoring scoring;
-  public final Turret turret;
+  // public final Turret turret;
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
@@ -58,15 +58,15 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve = new Swerve(drivetrain);
-    shooter = new Shooter();
+    // shooter = new Shooter();
     intake = new Intake();
     indexer = new Indexer();
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
-    turret = new Turret(swerve);
-    scoring = new Scoring(swerve, turret);
+    
+    scoring = new Scoring(swerve);
     
     // Configure the trigger bindings
     configureBindings();
@@ -91,8 +91,8 @@ public class RobotContainer {
     
     RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
     INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
-    RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-    TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
+    // RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
+    // TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
   }
 
   private void configureDefaults() {

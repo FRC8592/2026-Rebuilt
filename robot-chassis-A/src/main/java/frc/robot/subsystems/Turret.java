@@ -41,7 +41,7 @@ public class Turret extends SubsystemBase{
         E1 = new DutyCycleEncoder(0, 360, 0);
         E2 = new DutyCycleEncoder(1, 360, 0);
 
-        tMotor = new TalonFX(TURRET.TURRET_MOTOR);
+        tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
         motionMagicRequest = new MotionMagicVoltage(0);
         tMotorConfiguration = new TalonFXConfiguration();
 
@@ -70,7 +70,8 @@ public class Turret extends SubsystemBase{
             else
                 initialPos-=360;
         }
-        tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        //tMotor.setPosition(initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        tMotor.setPosition(0);
         Logger.recordOutput("Motor Set Position", initialPos * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         //System.out.println("Position: " + initialPos/360);
         //tMotor.setPosition(position);
@@ -78,6 +79,10 @@ public class Turret extends SubsystemBase{
     public void stop(){
         tMotor.setVoltage(0);
     }
+
+    // public Command TurrettoPosCommand(Pose2d targetLocation){
+    //     return this.run(() -> TurrettoPos(targetLocation));
+    // }
 
     public Command TurrettoPosCommand(Pose2d targetLocation){
         return this.run(() -> TurrettoPos(targetLocation));

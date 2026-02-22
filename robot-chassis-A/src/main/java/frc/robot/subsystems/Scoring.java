@@ -12,9 +12,14 @@ import frc.robot.subsystems.swerve.Swerve;
 public class Scoring extends SubsystemBase{
     Swerve swerve;
     Turret turret;
-    public Scoring(Swerve swerve, Turret turret){
+    Shooter shooter;
+
+
+    public Scoring(Swerve swerve){
         this.swerve = swerve;
-        this.turret = turret;
+
+        turret = new Turret(swerve);
+        shooter = new Shooter();
     }
 
     public Command autoTurretCommand(){

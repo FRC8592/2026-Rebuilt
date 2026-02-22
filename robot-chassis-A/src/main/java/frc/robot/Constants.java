@@ -128,11 +128,11 @@ public final class SHOOTER {
   }
 
   public final class TURRET{
-    public static final int TURRET_MOTOR = 20;
-    public static final double TURRET_P = 4;
-    public static final double TURRET_I = 3;
-    public static final double TURRET_D = 0.2;
-    public static final double TURRET_V = 0.7;
+    public static final int TURRET_MOTOR_CAN_ID = 20;
+    public static final double TURRET_P = 1;
+    public static final double TURRET_I = 0;
+    public static final double TURRET_D = 0.0;
+    public static final double TURRET_V = 0.70;
     public static final int TURRET_TG = 80;
     public static final int TURRET_G1 = 19;
     public static final int TURRET_G2 = 23;
