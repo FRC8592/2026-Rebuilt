@@ -56,8 +56,8 @@ public class Swerve extends SubsystemBase {
 
         swerve = drivetrain;
 
-        //PathPlanner AutoBuilder configuration below. 
-        //https://pathplanner.dev/pplib-build-an-auto.html
+        // PathPlanner AutoBuilder configuration below. 
+        https://pathplanner.dev/pplib-build-an-auto.html
         try {
             config = RobotConfig.fromGUISettings(); 
         } catch (Exception e) {
