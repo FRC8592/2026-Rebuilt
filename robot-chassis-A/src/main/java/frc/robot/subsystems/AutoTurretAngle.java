@@ -24,11 +24,10 @@ public class AutoTurretAngle extends SubsystemBase{
         this.swerve = swerve;
     }
 
-    // @Override
-    // public void periodic(){
-    //     rawAngle = TurretAngleCalc(swerve.getPose(), new Pose2d(hubLocationX, hubLocationY, swerve.getYaw()));
-
-    // }
+     @Override
+     public void periodic(){
+         rawAngle = TurretAngleCalc(swerve.getPose(), new Pose2d(hubLocationX, hubLocationY, swerve.getYaw()));
+    }
 
     public double TurretAngleCalc(Pose2d robotPosition, Pose2d targetLocation){
         //System.out.println("Swerve Position Fed X, Y" + robotPosition.getX() + ", " + robotPosition.getY());

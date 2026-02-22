@@ -107,9 +107,9 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
         SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
 
-        SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+        // SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        // SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        // SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
     }
 
     /**
@@ -205,18 +205,18 @@ public class Intake extends SubsystemBase{
         double Right_D = SmartDashboard.getNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
 
     
-        double Extend_P = SmartDashboard.getNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+        // double Extend_P = SmartDashboard.getNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        // double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        // double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
 
-        if(Extend_P != P_OLD || Extend_I != I_OLD || Extend_D != D_OLD){
-            extendConfiguration.Slot0.kP = Extend_P; 
-            extendConfiguration.Slot0.kI = Extend_I;
-            extendConfiguration.Slot0.kD = Extend_D; 
+        if(Right_P != P_OLD || Right_I != I_OLD || Right_D != D_OLD){
+            extendConfiguration.Slot0.kP = Right_P; 
+            extendConfiguration.Slot0.kI = Right_I;
+            extendConfiguration.Slot0.kD = Right_D; 
 
-            P_OLD = Extend_P;
-            I_OLD = Extend_I;
-            D_OLD = Extend_D;
+            P_OLD = Right_P;
+            I_OLD = Right_I;
+            D_OLD = Right_D;
 
             ExtendMotor.getConfigurator().apply(extendConfiguration); 
         }

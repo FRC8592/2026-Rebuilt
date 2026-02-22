@@ -167,12 +167,12 @@ public final class SHOOTER {
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;
     public static final double INTAKE_LEFT_D = 0;
-    public static final double INTAKE_LEFT_VI = 3000;
+    public static final double INTAKE_LEFT_VI = 10000;
 
     public static final double INTAKE_RIGHT_P = 0.0002;
     public static final double INTAKE_RIGHT_I = 0;
     public static final double INTAKE_RIGHT_D = 0;
-    public static final double INTAKE_RIGHT_VI = 3000;
+    public static final double INTAKE_RIGHT_VI = 10000;
 
     public static final double INTAKE_EXTEND_P = 5;
     public static final double INTAKE_EXTEND_I = 0;
