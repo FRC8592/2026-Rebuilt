@@ -16,6 +16,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
@@ -37,6 +38,10 @@ public class Vision extends SubsystemBase {
      * @param camOffsets camera position relative to the robot center
      */
     public Vision(String camName, Transform3d camOffsets){
+        initializeCommon(camName, camOffsets);
+    }
+
+    private void initializeCommon(String camName, Transform3d camOffsets) {
         aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
         camera = new PhotonCamera(camName);
@@ -54,6 +59,8 @@ public class Vision extends SubsystemBase {
      * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
      */
     public Vision(String camName, Transform3d camOffsets, int calibrationWidth, int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx, int fps){
+        initializeCommon(camName, camOffsets);
+
         visionSim = new VisionSystemSim("photonvision");
         visionSim.addAprilTags(aprilTagFieldLayout);
 
@@ -99,6 +106,12 @@ public class Vision extends SubsystemBase {
      * @param robotPose swerve odometry pose
      */
     public void simulationUpdatePose(Pose2d robotPose){
+        if (visionSim == null) {
+            DriverStation.reportWarning(
+                "Vision simulation update skipped because visionSim is not configured for this camera.", false);
+            return;
+        }
+
         visionSim.update(robotPose);
     }
 
