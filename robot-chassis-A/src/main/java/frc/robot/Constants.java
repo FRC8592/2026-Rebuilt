@@ -99,6 +99,14 @@ public final class Constants {
     public static final double DRIVE_KV = 0.119;
     public static final double DRIVE_KA = 0.0028462;
 
+    public static final double PATH_FOLLOW_DRIVE_KP = 0;
+    public static final double PATH_FOLLOW_DRIVE_KI = 0;
+    public static final double PATH_FOLLOW_DRIVE_KD = 0;
+
+    public static final double PATH_FOLLOW_STEER_KP = 0;
+    public static final double PATH_FOLLOW_STEER_KI = 0;
+    public static final double PATH_FOLLOW_STEER_KD = 0;
+
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
   }
