@@ -72,6 +72,8 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.Slot0.kD = TURRET.TURRET_D; 
         tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
+        tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
+        tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5;
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
