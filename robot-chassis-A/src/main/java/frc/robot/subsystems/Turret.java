@@ -88,10 +88,6 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D);
     }
 
-    @Override
-    public void periodic(){
-        Logger.recordOutput("Turret Pos", tMotor.getPosition().getValueAsDouble());
-    }
 
 
     /**
@@ -179,31 +175,13 @@ public class Turret extends SubsystemBase{
     //     }
     // }
 
-    // public double CRTTypeOne(double E1, double E2){
-    //     int R1 = (int)(E1 * TURRET.TURRET_G1); 
-    //     int R2 = (int)(E2 * TURRET.TURRET_G2);
-    //     Logger.recordOutput("R1Filtered", R1);
-    //     Logger.recordOutput("R2Filtered", R2);
-    //     double RawRotation = (R1 * 11 * 1.0 + R2 * 10 * 10.0);
-    //     Logger.recordOutput("Raw Calculation", RawRotation);
-    //     //System.out.println("R1: " + R1 + " R2: " + R2);
-    //     int M1 = TURRET.TURRET_TOTAL / TURRET.TURRET_G1;
-    //     int M2 = TURRET.TURRET_TOTAL / TURRET.TURRET_G2;
-    //     // int M1Total = 1;
-    //     // int M2Total = 1;
-    //     // while(M1Total % M1 != 0){
-    //     //     M1Total += TURRET.TURRET_G1;
-    //     // }
-    //     // M1Inverse = M1Total/M1;
-    //     // while(M2Total % M2 != 0){
-    //     //     M2Total += TURRET.TURRET_G2
-    //     // }
-    //     // M2Inverse = M2Total/M2;
-    //     //System.out.println("Term 1: " + R1 * 11 * 1.0);
-    //     double GearRotation = (R1 * M1 * 1.0 + R2 * M2 * 10.0) % TURRET.TURRET_TOTAL;
-    //     return GearRotation; 
-    // }
 
+    /**
+     * 
+     * @param E1
+     * @param E2
+     * @return returns value relative to main turret gear of offset necessary to recenter turret
+     */
     public static double CRTTypeTwo(double E1, double E2){
         double R1 = E1/360.0;
         double R2 = E2/360.0;
@@ -239,24 +217,24 @@ public class Turret extends SubsystemBase{
 
       
 
-    // @Override
-    // public void periodic(){
-    //     double E1R = E1.get();
-    //     double E2R = E2.get();
-    //     // int E1Process = (int)(E1Raw * 1000);
-    //     // int E2Process = (int)(E2Raw * 1000);
-    //     // double E1Filter = E1Process / 1000.0;
-    //     // double E2Filter = E2Process / 1000.0;
-    //     //Logger.recordOutput("E1", E1.get());
-    //     //Logger.recordOutput("E2", E2.get());
-    //     //Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
-    //     //Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
-    //     //Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-    //     //Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
-    //     //Logger.recordOutput("Motor Angle", tMotor.getRotations() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-    //     //Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
-    //     //updateMotionMagic();
-    // }
+    @Override
+    public void periodic(){
+        // double E1R = E1.get();
+        // double E2R = E2.get();
+        // int E1Process = (int)(E1Raw * 1000);
+        // int E2Process = (int)(E2Raw * 1000);
+        // double E1Filter = E1Process / 1000.0;
+        // double E2Filter = E2Process / 1000.0;
+        // Logger.recordOutput("E1", E1.get());
+        // Logger.recordOutput("E2", E2.get());
+        // Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
+        // Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
+        // Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
+        // Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
+        Logger.recordOutput("Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
+        // updateMotionMagic();
+    }
 
  public void updatePID(){
 

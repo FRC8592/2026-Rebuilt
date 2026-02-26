@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHOOTER;
+import org.littletonrobotics.junction.Logger;
 
 
 public class Shooter extends SubsystemBase{
@@ -82,7 +83,7 @@ public class Shooter extends SubsystemBase{
         SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
         SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
 
-        SmartDashboard.putNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        SmartDashboard.putNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI);
     }
 
 
@@ -93,13 +94,14 @@ public class Shooter extends SubsystemBase{
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM){
-        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI);
         double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
         //To run at raw power
         //flywheelMotor.setVoltage(12);
         //backwheelMotor.setVoltage(12);
-        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
+        System.out.println("Flywheel velocity: " + flyWheelMotorVelocity/60.0);
+        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity / 60.0));
+        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity / 60.0));
     }
 
 
@@ -136,10 +138,10 @@ public class Shooter extends SubsystemBase{
             flywheelConfiguration.Slot0.kD = DF;
             flywheelConfiguration.Slot0.kV = VF; 
 
-            flywheelConfiguration.Slot0.kP = PB; 
-            flywheelConfiguration.Slot0.kI = IB;
-            flywheelConfiguration.Slot0.kD = DB;
-            flywheelConfiguration.Slot0.kV = VB; 
+            backwheelConfiguration.Slot0.kP = PB; 
+            backwheelConfiguration.Slot0.kI = IB;
+            backwheelConfiguration.Slot0.kD = DB;
+            backwheelConfiguration.Slot0.kV = VB; 
 
             PF_OLD = PF;
             IF_OLD= IF;
@@ -212,8 +214,8 @@ public class Shooter extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Flywheel Velocity RPM", getVelocityFlywheel() * 60);
-        SmartDashboard.putNumber("Backwheel Velocity RPM", getVelocityBackwheel() * 60);
+        Logger.recordOutput("Flywheel Velocity RPM", getVelocityFlywheel() * 60);
+        Logger.recordOutput("Backwheel Velocity RPM", getVelocityBackwheel() * 60 / (WHEEL_RATIO * 1.0));
     }
         
 }

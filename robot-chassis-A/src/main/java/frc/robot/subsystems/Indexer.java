@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,9 +23,14 @@ public class Indexer extends SubsystemBase {
     private VelocityVoltage spinMotorSlot0VelocityRequest = new VelocityVoltage(0);
     private VelocityVoltage outputMotorSlot0VelocityRequest = new VelocityVoltage(0);
 
-    private double P_OLD;
-    private double I_OLD;
-    private double D_OLD;
+    private double PS_OLD;
+    private double IS_OLD;
+    private double DS_OLD;
+    private double SS_OLD;
+
+    private double PO_OLD;
+    private double IO_OLD;
+    private double DO_OLD;
 
     /**
      * Constructor for the Indexer subsystem
@@ -45,6 +52,7 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
         SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
         SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
+        SmartDashboard.putNumber("S_SPINNER", INDEXER.SPIN_S);
         SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
         SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
@@ -55,6 +63,7 @@ public class Indexer extends SubsystemBase {
         spinMotorConfiguration.Slot0.kP  = INDEXER.SPIN_P;
         spinMotorConfiguration.Slot0.kI  = INDEXER.SPIN_I;
         spinMotorConfiguration.Slot0.kD  = INDEXER.SPIN_D;
+        spinMotorConfiguration.Slot0.kS = INDEXER.SPIN_S;
 
         outputMotorConfiguration.Slot0.kP = INDEXER.OUTPUT_P;
         outputMotorConfiguration.Slot0.kI = INDEXER.OUTPUT_I;
@@ -69,8 +78,8 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic(){
         // Get motors speeds in RPS
-        SmartDashboard.putNumber("Spinner RPS", getSpinnerVelocity());
-        SmartDashboard.putNumber("Output RPS", getOutputVelocity());
+        Logger.recordOutput("Spinner RPS", getSpinnerVelocity());
+        Logger.recordOutput("Output RPS", getOutputVelocity());
     }
 
     /**
@@ -79,8 +88,11 @@ public class Indexer extends SubsystemBase {
      * The output motor must stop immeidately so we do not continue to feed the shooter
      */
     public void stop(){
-        spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(0));
-        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(0));
+        System.out.println("Going into stop method");
+        spinMotor.setVoltage(0);
+        outputMotor.setVoltage(0);
+        // spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(0));
+        // outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(0));
     }
 
     /**
@@ -112,8 +124,8 @@ public class Indexer extends SubsystemBase {
      */
     public void runOutputIndexer(){
         //To run at raw power
-        //outputMotor.setVoltage(12);
-        outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
+        outputMotor.setVoltage(12);
+        //outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
     }
 
     /**
@@ -137,7 +149,7 @@ public class Indexer extends SubsystemBase {
      * @return a command to run the motors
      */
     public Command runIndexerCommand(){
-        return this.run(() -> runIndexer());
+        return this.runOnce(() -> runIndexer());
     }
 
     /**
@@ -161,24 +173,36 @@ public class Indexer extends SubsystemBase {
         double Spin_P  = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
         double Spin_I  = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
         double Spin_D  = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
+        double Spin_S = SmartDashboard.getNumber("S_SPINNER", INDEXER.SPIN_S);
 
-        // outputMotorConfiguration.Slot0.kP = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-        // outputMotorConfiguration.Slot0.kI = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-        // outputMotorConfiguration.Slot0.kD = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
+        double Output_P = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
+        double Output_I = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
+        double Output_D = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
 
-        if(Spin_P != P_OLD || Spin_I != I_OLD || Spin_D != D_OLD){
+        if(Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD || Output_P != PO_OLD || Output_I != IO_OLD || Output_D != DO_OLD){
             spinMotorConfiguration.Slot0.kP = Spin_P; 
             spinMotorConfiguration.Slot0.kI = Spin_I;
             spinMotorConfiguration.Slot0.kD = Spin_D; 
+            spinMotorConfiguration.Slot0.kS = Spin_S;
 
-            P_OLD = Spin_P;
-            I_OLD = Spin_I;
-            D_OLD = Spin_D;
+            outputMotorConfiguration.Slot0.kP = Output_P; 
+            outputMotorConfiguration.Slot0.kI = Output_I;
+            outputMotorConfiguration.Slot0.kD = Output_D; 
+
+            PS_OLD = Spin_P;
+            IS_OLD = Spin_I;
+            DS_OLD = Spin_D;
+            SS_OLD = Spin_S;
+
+
+            PO_OLD = Output_P;
+            IO_OLD = Output_I;
+            DO_OLD = Output_D;
+
             spinMotor.getConfigurator().apply(spinMotorConfiguration);
+            outputMotor.getConfigurator().apply(outputMotorConfiguration);
 
         }
-        
-        //outputMotor.getConfigurator().apply(outputMotorConfiguration);
         
     }
 }

@@ -26,7 +26,7 @@ public class AutoTurretAngle extends SubsystemBase{
         double targetRelativeY = targetLocation.getY() - robotPosition.getY();
 
         double triangleAngle = Math.toDegrees(Math.atan(targetRelativeY/targetRelativeX));
-        SmartDashboard.putNumber("Triangle Angle", triangleAngle);
+       // SmartDashboard.putNumber("Triangle Angle", triangleAngle);
 
         //angle robot has to turn if it is at angle 0
         double thetaR = 0;
@@ -58,7 +58,7 @@ public class AutoTurretAngle extends SubsystemBase{
 
         //angle robot has to turn it if is at angle robotAngle
         double turretTurn = thetaR - robotAngle;
-        SmartDashboard.putNumber("Turret Angle", turretTurn);
+       // SmartDashboard.putNumber("Turret Angle", turretTurn);
 
         return turretTurn;
     }

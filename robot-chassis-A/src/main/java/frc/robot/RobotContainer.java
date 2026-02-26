@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
+  private static final CommandXboxController operatorController = new CommandXboxController(1);
 
   // robot subsystems
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -37,9 +38,12 @@ public class RobotContainer {
 
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
-  private final Trigger RESET_TURRET = driverController.a();
-  private final Trigger AIM_TURRET = driverController.x();
-  private final Trigger OFF_AIM_TURRET = driverController.b();
+  private final Trigger RESET_TURRET = operatorController.a();
+  private final Trigger AIM_TURRET = operatorController.x();
+  //OFF_AIM_TURRET is for testing purposes only, moves the turret + or - 90 degrees
+  private final Trigger OFF_AIM_TURRET = operatorController.b();
+  private final Trigger TESTING_SHOOTER = operatorController.y();
+  private final Trigger RUN_INDEXER = operatorController.rightBumper();
 
   // private final Trigger RUN_INDEXER = driverController.a();
   // private final Trigger RUN_SHOOTER = driverController.b();
@@ -89,12 +93,15 @@ public class RobotContainer {
     OFF_AIM_TURRET.onTrue(new DeferredCommand(() -> 
       scoring.turret.TurrettoAngleCommand(-90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
     , Set.of(scoring)));
+    TESTING_SHOOTER.onTrue(new DeferredCommand(() ->  scoring.shooter.runAtSpeedCommand(), Set.of(scoring))).onFalse(scoring.shooter.stopShooterCommand());
+    RUN_INDEXER.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
+
 
 
     // AIM_TURRET.onTrue(new DeferredCommand(scoring.turret.runOnce(() -> scoring.turret.TurrettoAngleCommand(swerve.getCurrentOdometryPosition(),
     //                                                                                   new Pose2d(4.02844, 4.445, swerve.getYaw()))), scoring));
     
-    // RUN_INDEXER.onTrue(indexer.runIndexerCommand()).onFalse(indexer.stopCommand());
+    RUN_INDEXER.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(this.scoring))).onFalse(scoring.indexer.stopCommand());
     // INTAKE_RUN.onTrue(intake.runAtSpeedRightCommand()).onFalse(intake.stopRollerCommand());
     // RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
     // TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());

@@ -116,16 +116,16 @@ public final class SHOOTER {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.01;
+    public static final double FLYWHEEL_P = 0.7;
     public static final double FLYWHEEL_I = 0;
     public static final double FLYWHEEL_D = 0;
     public static final double FLYWHEEL_V = 0;
-    public static final double BACKWHEEL_P = 0.01;
+    public static final double BACKWHEEL_P = 1;
     public static final double BACKWHEEL_I = 0;
     public static final double BACKWHEEL_D = 0;
     public static final double BACKWHEEL_V = 0;
 
-    public static final double FLYWHEEL_VI = 0;
+    public static final double FLYWHEEL_VI = 3500;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -202,11 +202,12 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 30;
 
-    public static final double SPIN_P = 0.3;
+    public static final double SPIN_P = 0.75;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
+    public static final double SPIN_S = 0.26;
 
-    public static final double OUTPUT_P = 0;
+    public static final double OUTPUT_P = 0.75;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
 
@@ -217,7 +218,7 @@ public final class SHOOTER {
 
     public static final double SPIN_MOTOR_SPEED = 100;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_SPEED = 19.09;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
     public static final double MOTOR_MAX_RPS = 6380 / 60;
