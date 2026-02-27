@@ -1,41 +1,99 @@
 package frc.robot.subsystems;
 
-import java.util.Set;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import java.util.Set;
+import frc.robot.Constants.SHOOTER;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
-    Swerve swerve;
+    // Subsystems
+    Swerve swerve;          // Passed in to the constructor so that we can get the current robot pose for tracking
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
     public Intake intake;
+    public RangeTable rangeTable;
+    // Make tracking subsystems toggle on and off
+    private boolean trackingTarget = false;
+    // Current robot pose and target pose
+    private Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
+    private Pose2d currentTargetPose = new Pose2d(0, 0, new Rotation2d(0));
 
+
+    /**
+     * Scoring subsystem.  Controls collecting and shooting.
+     * @param swerve Newton swerve drive object
+     */
     public Scoring(Swerve swerve){
         this.swerve = swerve;
 
+        //
+        // Instantiate subsystems
+        //
         turret = new Turret();
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+        rangeTable = new RangeTable();
     }
 
+
+    /**
+     * Toggle the Tracking system on and off.
+     * The tracking system includes the turret angle and the shooter speed
+     */
+    private void toggleTracking() {
+        trackingTarget = !trackingTarget;
+    }
+
+
+    /**
+     * Command to run the intake at a set speed
+     * Just pass the command from Intake up to the next level
+     */
+    public Command runAtSpeedIntakeCommand() {
+        return intake.runAtSpeedIntakeCommand();
+    }
+
+
+    /**
+     * Command to toggle on turret tracking and shooter wheel speed
+     */
+    public Command toggleTrackingCommand() {
+        return this.runOnce(() -> toggleTracking());
+    }
+
+
+    /**
+     * If the tracking system is toggled on, update the required turret angle and shooter speed
+     */
     @Override
     public void periodic(){
-        //will currently only track the red hub
-        //turret.TurrettoAngle(swerve.getCurrentOdometryPosition(), new Pose2d(4.02844, 4.445, swerve.getYaw()));
+        double targetDistance;
+        double shooterSpeed;
+
+        if (trackingTarget) {
+            // Get the current robot position and calculate the distance to the target position
+            currentRobotPose = swerve.getCurrentOdometryPosition();
+            targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+
+            // Lookup the required shooter speed in the range table
+            shooterSpeed = rangeTable.get(targetDistance);
+
+            // Update turret angle and shooter speed
+            // turret.TurrettoAngleCommand(currentRobotPose, currentTargetPose);
+            shooter.runAtSpeedCommand(shooterSpeed);
+        }
+        else {
+            // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
+            shooter.runAtSpeedCommand(0);
+        }
     }
 
-    public Command scoring(){
-        return new DeferredCommand(() -> shooter.runAtSpeedCommand(), Set.of(this.shooter))
-        .alongWith(new WaitCommand(1).andThen(new DeferredCommand(() -> indexer.runIndexerCommand() , Set.of(this.indexer))));
-    }
-
-
-    
 }
+

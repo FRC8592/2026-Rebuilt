@@ -27,51 +27,67 @@ public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
   private static final CommandXboxController operatorController = new CommandXboxController(1);
 
-  // robot subsystems
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  // Robot subsystems
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  public final Vision visionBack;
-  public final Vision visionSide; 
-  public final OdometryUpdates odometryUpdatesBack;
-  public final OdometryUpdates odometryUpdatesSide;
+  private final Vision visionBack;
+  private final Vision visionSide; 
+  private final OdometryUpdates odometryUpdatesBack;
+  private final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
 
+  //
+  // Driver Controls
+  //
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
-  private final Trigger RESET_TURRET = operatorController.a();
-  private final Trigger AIM_TURRET = operatorController.x();
-  //OFF_AIM_TURRET is for testing purposes only, moves the turret + or - 90 degrees
-  private final Trigger OFF_AIM_TURRET = operatorController.b();
-  private final Trigger TESTING_SHOOTER = operatorController.y();
-  private final Trigger RUN_INDEXER = operatorController.rightBumper();
-
-  // private final Trigger RUN_INDEXER = driverController.a();
-  // private final Trigger RUN_SHOOTER = driverController.b();
   private final Trigger INTAKE_RUN = driverController.leftBumper();
-  // private final Trigger TURRET_TEST = driverController.x();
+  private final Trigger LOCK_WHEELS = driverController.x();
 
-  // //used in sysId testing
+  //
+  // Operator Controls
+  //
+  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
+  private final Trigger SHOOT = operatorController.rightBumper();
+  // private final Trigger RESET_TURRET = operatorController.a();
+  // private final Trigger AIM_TURRET = operatorController.x();
+  // private final Trigger OFF_AIM_TURRET = operatorController.b();
+
+  //
+  // Controls for running sysId tests
+  //
   // private final Trigger QUASI_FORWARD = driverController.a();
   // private final Trigger QUASI_REVERSE = driverController.y();
   // private final Trigger DYNAMIC_FORWARD = driverController.b();
   // private final Trigger DYNAMIC_REVERSE = driverController.x();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
+    //
+    // Instantiate top-level subsystems
+    //
     swerve = new Swerve(drivetrain);
+    scoring = new Scoring(swerve);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
     
-    scoring = new Scoring(swerve);
-    
+    //
     // Configure the trigger bindings
+    //
     configureBindings();
     configureDefaults();
 
+    //
+    // Get autonomous ready
+    //
     AutoManager.prepare();
   }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -84,28 +100,33 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
-    AIM_TURRET.onTrue(new DeferredCommand(() -> 
-      scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
-    , Set.of(scoring)));
-    OFF_AIM_TURRET.onTrue(new DeferredCommand(() -> 
-      scoring.turret.TurrettoAngleCommand(-90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
-    , Set.of(scoring)));
-    TESTING_SHOOTER.onTrue(new DeferredCommand(() ->  scoring.shooter.runAtSpeedCommand(), Set.of(scoring))).onFalse(scoring.shooter.stopShooterCommand());
-    RUN_INDEXER.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
 
+    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
+    // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
+  
 
-    // AIM_TURRET.onTrue(new DeferredCommand(scoring.turret.runOnce(() -> scoring.turret.TurrettoAngleCommand(swerve.getCurrentOdometryPosition(),
-    //                                                                                   new Pose2d(4.02844, 4.445, swerve.getYaw()))), scoring));
-    
-    RUN_INDEXER.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(this.scoring))).onFalse(scoring.indexer.stopCommand());
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedRightCommand()).onFalse(scoring.intake.stopRollerCommand());
-    // RUN_SHOOTER.onTrue(shooter.runAtSpeedCommand()).onFalse(shooter.stopShooterCommand());
-    // TURRET_TEST.onTrue(scoring.autoTurretCommand()).onFalse(turret.stopTurretCommand());
+    // This command is a toggle
+    // TODO: Switch to scoring subsystem, which shoud calcluate the correct speed
+    //ENABLE_TRACKING.onTrue(new DeferredCommand(() ->  scoring.shooter.runAtSpeedCommand(SHOOTER.FLYWHEEL_VI), Set.of(scoring))).onFalse(scoring.shooter.stopCommand());
+    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+
+    SHOOT.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
+
+    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+
+    // AIM_TURRET.onTrue(new DeferredCommand(() -> 
+    //   scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
+    // , Set.of(scoring)));
+
+    // OFF_AIM_TURRET.onTrue(new DeferredCommand(() -> 
+    //   scoring.turret.TurrettoAngleCommand(-90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
+    // , Set.of(scoring)));   
   }
+
 
   private void configureDefaults() {
         // Set the swerve's default command to drive with joysticks

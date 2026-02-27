@@ -141,9 +141,9 @@ public class Intake extends SubsystemBase{
 
 
     /**
-     * Command to run the intake at a set speed
+     * Command to run the intake at a predetermined speed
      */
-    public Command runAtSpeedRightCommand() {
+    public Command runAtSpeedIntakeCommand() {
         return this.runOnce(() -> runAtSpeedIntake());
     }
 

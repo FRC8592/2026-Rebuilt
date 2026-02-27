@@ -51,7 +51,6 @@ public class Turret extends SubsystemBase{
 
         // Create the turret motor, configuration object and controller
         tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
-        
         tMotorConfiguration = new TalonFXConfiguration();
         positionRequest = new PositionVoltage(0);
         motionMagicRequest = new MotionMagicVoltage(0);
@@ -63,8 +62,7 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // Apply soft limits to help avoid driving the turret past the cable extension
-        // Enable soft limits
-
+        // ToDO: Enable and configure soft limits
 
         // Configure PID controls and Motion Magic parameters
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
@@ -73,14 +71,17 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
         tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
-        tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5;
+        tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5; // TODO: Understand this parameter or delete!
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
-        // TODO: Prevent turret from moving on start.  Is this needed?
-        stop();
+        //
+        // TODO: Remove this? 
+        // Activate motion magic to hold turret in starting position\
+        //
+        tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(tMotor.getPosition().getValueAsDouble()));
 
-        // Class for calculating the turret angle based on target and robot positions
+        // Instantiate for calculating the turret angle based on target and robot positions
         angleCalc = new AutoTurretAngle();
 
         SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P);
@@ -89,17 +90,20 @@ public class Turret extends SubsystemBase{
     }
 
 
-
     /**
      * Move turret to track target position
      * @param robotPosition Current position of the robot from odometry, in field coordinates
      * @param targetLocation The centerpoint of the target we are trying to track, in field coordinates
      */
-    public void TurrettoAngle(double angle, Pose2d robotPosition, Pose2d targetLocation) {
+    public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
+        //
         // Calculate target angle based on robot and target positions
+        //
         double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
         
+        //
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
+        //
         if(Math.abs(targetAngle) > 180){
             if(targetAngle < 0)
                 targetAngle += 360;
@@ -107,11 +111,10 @@ public class Turret extends SubsystemBase{
                 targetAngle -= 360;
         }
 
-        // TODO: DELETE ME.  We force targetAngle to a value here for tuning
-        targetAngle = angle;
-
+        //
         // Set motor position based on target angle, converting from degrees to motor rotations
-        //tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        //
+        // tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
         tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
@@ -125,7 +128,7 @@ public class Turret extends SubsystemBase{
     }
 
 
-        /**
+    /**
      * Get the encoder values the define the turret zero position.
      */
     public void resetPos() {
@@ -146,8 +149,8 @@ public class Turret extends SubsystemBase{
      */
 
      // TODO: angle parameter is for simple initial testing.  Remove.
-    public Command TurrettoAngleCommand(double angle, Pose2d robotPosition, Pose2d targetLocation) {
-        return this.runOnce(() -> TurrettoAngle(angle, robotPosition, targetLocation));
+    public Command TurrettoAngleCommand(Pose2d robotPosition, Pose2d targetLocation) {
+        return this.runOnce(() -> TurrettoAngle(robotPosition, targetLocation));
     }
 
     /**
