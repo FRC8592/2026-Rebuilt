@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Constants.SCORING;
+import frc.robot.Constants.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -25,9 +25,6 @@ public class Scoring extends SubsystemBase{
     public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
-    // Current robot pose and target pose
-    private Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-    private Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
     
 
     private Alliance alliance;
@@ -57,8 +54,38 @@ public class Scoring extends SubsystemBase{
         this.alliance = alliance;
     }
 
-    public void selectTarget(Pose2d currentRobotPose){
-
+    /**
+     * Sets the target based on the robot's position on the field
+     * @param currentRobotPose the robot's current position
+     * @return the current target's Pose2d
+     */
+    public Pose2d getTarget(Pose2d currentRobotPose){
+        if (alliance == Alliance.Blue){
+            // if we're in our alliance zone
+            if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
+                return SCORING.BLUE_HUB_POSE;
+            }
+            // if we're in the bottom half of the field
+            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+                return SCORING.BLUE_PASSING_LOW_POSE;
+            }
+            else{
+                return SCORING.BLUE_PASSING_HIGH_POSE;
+            }
+        }
+        else{
+            // if we're in our alliance zone
+            if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
+                return SCORING.RED_HUB_POSE;
+            }
+            // if we're in the bottom half of the field
+            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+                return SCORING.RED_PASSING_LOW_POSE;
+            }
+            else{
+                return SCORING.RED_PASSING_HIGH_POSE;
+            }
+        }
     }
 
     /**
@@ -95,11 +122,18 @@ public class Scoring extends SubsystemBase{
         double targetDistance;
         double shooterSpeed;
 
+        // Current robot pose and target pose
+        Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
+        Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
+
         Logger.recordOutput(SCORING.LOG_PATH +"Tracking", trackingTarget);
 
+        // get the current robot position and select the target
+        currentRobotPose = swerve.getCurrentOdometryPosition();
+        currentTargetPose = getTarget(currentRobotPose);
+
         if (trackingTarget) {
-            // Get the current robot position and calculate the distance to the target position
-            currentRobotPose = swerve.getCurrentOdometryPosition();
+            // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table

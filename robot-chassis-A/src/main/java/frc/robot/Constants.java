@@ -164,12 +164,13 @@ public final class SHOOTER {
   public static final class SCORING{
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
     //targets
-    public static final Pose2d BLUE_HUB_POSE = new Pose2d(4.02844, 4.445, new Rotation2d(0));
-    public static final Pose2d BLUE_PASSING_LOW_POSE = new Pose2d(0, 0, new Rotation2d(0));
-    public static final Pose2d BLUE_PASSING_HIGH_POSE = new Pose2d(0, 0, new Rotation2d(0));
-    public static final Pose2d RED_HUB_POSE = new Pose2d(0, 0, new Rotation2d(0));
-    public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(0, 0, new Rotation2d(0));
-    public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d BLUE_HUB_POSE = new Pose2d(4.66, 4.04, new Rotation2d(0));
+    public static final Pose2d BLUE_PASSING_LOW_POSE = new Pose2d(2.07, 2.02, new Rotation2d(0));
+    public static final Pose2d BLUE_PASSING_HIGH_POSE = new Pose2d(2.07, 6.05, new Rotation2d(0));
+    
+    public static final Pose2d RED_HUB_POSE = new Pose2d(11.94, 4.04, new Rotation2d(0));
+    public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(14.48, 2.02, new Rotation2d(0));
+    public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
   }
 
   public static class INTAKE{
