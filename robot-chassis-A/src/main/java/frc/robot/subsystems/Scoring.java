@@ -60,32 +60,34 @@ public class Scoring extends SubsystemBase{
      * @return the current target's Pose2d
      */
     public Pose2d getTarget(Pose2d currentRobotPose){
+        Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
         if (alliance == Alliance.Blue){
             // if we're in our alliance zone
             if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
-                return SCORING.BLUE_HUB_POSE;
+                targetPose = SCORING.BLUE_HUB_POSE;
             }
             // if we're in the bottom half of the field
             else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
-                return SCORING.BLUE_PASSING_LOW_POSE;
+                targetPose = SCORING.BLUE_PASSING_LOW_POSE;
             }
             else{
-                return SCORING.BLUE_PASSING_HIGH_POSE;
+                targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
             }
         }
         else{
             // if we're in our alliance zone
             if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
-                return SCORING.RED_HUB_POSE;
+                targetPose = SCORING.RED_HUB_POSE;
             }
             // if we're in the bottom half of the field
             else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
-                return SCORING.RED_PASSING_LOW_POSE;
+                targetPose = SCORING.RED_PASSING_LOW_POSE;
             }
             else{
-                return SCORING.RED_PASSING_HIGH_POSE;
+                targetPose = SCORING.RED_PASSING_HIGH_POSE;
             }
         }
+        return targetPose;
     }
 
     /**
@@ -131,6 +133,8 @@ public class Scoring extends SubsystemBase{
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
         currentTargetPose = getTarget(currentRobotPose);
+
+        Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
 
         if (trackingTarget) {
             // calculate the distance to the target position
