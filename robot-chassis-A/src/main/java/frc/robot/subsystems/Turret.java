@@ -70,9 +70,12 @@ public class Turret extends SubsystemBase{
         // ToDO: Enable and configure soft limits
 
         // Configure PID controls and Motion Magic parameters
-        tMotorConfiguration.Slot0.kP = TURRET.TURRET_P; 
-        tMotorConfiguration.Slot0.kI = TURRET.TURRET_I;
-        tMotorConfiguration.Slot0.kD = TURRET.TURRET_D; 
+        tMotorConfiguration.Slot0.kP = TURRET.TURRET_P0; 
+        tMotorConfiguration.Slot0.kI = TURRET.TURRET_I0;
+        tMotorConfiguration.Slot0.kD = TURRET.TURRET_D0; 
+        tMotorConfiguration.Slot1.kP = TURRET.TURRET_P1; 
+        tMotorConfiguration.Slot1.kI = TURRET.TURRET_I1;
+        tMotorConfiguration.Slot1.kD = TURRET.TURRET_D1; 
         tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
         tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
@@ -84,16 +87,16 @@ public class Turret extends SubsystemBase{
         // *** TODO: Remove setPosition to 0!!!! ***
         //
         // Activate motion magic to hold turret in starting position
-        tMotor.setPosition(0.0);
-        tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(tMotor.getPosition().getValueAsDouble()));
+        // tMotor.setPosition(0.0);
+        tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
         SmartDashboard.putNumber("Angle", 0.0);
 
         // Instantiate for calculating the turret angle based on target and robot positions
         angleCalc = new AutoTurretAngle();
 
-        SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P);
-        SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I);
-        SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D);
+        SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P0);
+        SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
+        SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
     }
 
 
@@ -119,11 +122,17 @@ public class Turret extends SubsystemBase{
                 targetAngle -= 360;
         }
 
+        // when the angle of the turret is within x degrees of the target angle, switch to less aggressive PID values in slot 1
+        int currentSlot = 0;
+        if(Math.abs(tMotor.getPosition().getValueAsDouble() / TURRET.DEGREES_TO_MOTOR_ROTATIONS - targetAngle) <= TURRET.TURRET_TOLERANCE){
+            currentSlot = 1;
+        }
+
         //
         // Set motor position based on target angle, converting from degrees to motor rotations
         //
         // tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
-        tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
@@ -247,9 +256,9 @@ public class Turret extends SubsystemBase{
 
  public void updatePID(){
 
-        double P  = SmartDashboard.getNumber("P_TUR", TURRET.TURRET_P);
-        double I  = SmartDashboard.getNumber("I_TUR", TURRET.TURRET_I);
-        double D  = SmartDashboard.getNumber("D_TUR", TURRET.TURRET_D);
+        double P  = SmartDashboard.getNumber("P_TUR", TURRET.TURRET_P0);
+        double I  = SmartDashboard.getNumber("I_TUR", TURRET.TURRET_I0);
+        double D  = SmartDashboard.getNumber("D_TUR", TURRET.TURRET_D0);
 
         if(P != P_OLD || I != I_OLD || D != D_OLD){
             tMotorConfiguration.Slot0.kP = P; 
