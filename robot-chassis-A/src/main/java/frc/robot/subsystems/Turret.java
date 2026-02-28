@@ -87,8 +87,8 @@ public class Turret extends SubsystemBase{
         // *** TODO: Remove setPosition to 0!!!! ***
         //
         // Activate motion magic to hold turret in starting position
-        tMotor.setPosition(0.0);
-        tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(tMotor.getPosition().getValueAsDouble()));
+        // tMotor.setPosition(0.0);
+        tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
         SmartDashboard.putNumber("Angle", 0.0);
 
         // Instantiate for calculating the turret angle based on target and robot positions
@@ -124,7 +124,7 @@ public class Turret extends SubsystemBase{
 
         // when the angle of the turret is within x degrees of the target angle, switch to less aggressive PID values in slot 1
         int currentSlot = 0;
-        if(Math.abs(tMotor.getPosition().getValueAsDouble() - targetAngle) <= TURRET.TURRET_TOLERANCE){
+        if(Math.abs(tMotor.getPosition().getValueAsDouble() / TURRET.DEGREES_TO_MOTOR_ROTATIONS - targetAngle) <= TURRET.TURRET_TOLERANCE){
             currentSlot = 1;
         }
 
