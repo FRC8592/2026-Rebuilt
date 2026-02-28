@@ -26,7 +26,7 @@ public final class AutoManager {
      * this function will have relatively long delays due to loading paths.
      */
     public static void prepare(){
-        pathPlannerAutos = AutoBuilder.buildAutoChooser("DefaultAuto");
+        pathPlannerAutos = AutoBuilder.buildAutoChooser("MoveCollectReturn");
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
     }
 
