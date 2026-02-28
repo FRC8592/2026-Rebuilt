@@ -9,8 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHOOTER;
+
+import java.util.Set;
+
+import org.littletonrobotics.junction.Logger;
 
 
 public class Shooter extends SubsystemBase{
@@ -31,8 +36,6 @@ public class Shooter extends SubsystemBase{
     private double IB_OLD;
     private double DB_OLD;
     private double VB_OLD;
-
-    private NeutralOut neutralMode = new NeutralOut();
 
     private final double WHEEL_RATIO = SHOOTER.FLYWHEEL_DIAMETER_INCHES/SHOOTER.BACKWHEEL_DIAMETER_INCHES;
 
@@ -82,7 +85,7 @@ public class Shooter extends SubsystemBase{
         SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
         SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
 
-        SmartDashboard.putNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        SmartDashboard.putNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI);
     }
 
 
@@ -93,11 +96,14 @@ public class Shooter extends SubsystemBase{
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM){
-        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi", SHOOTER.FLYWHEEL_VI);
+        // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
         double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
-        //To run at raw power
-        //flywheelMotor.setVoltage(12);
-        //backwheelMotor.setVoltage(12);
+
+        System.out.println("********************");
+        System.out.println("Running shooter at " + desiredRPM + " RPM");
+        System.out.println("********************");
+
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
@@ -107,12 +113,50 @@ public class Shooter extends SubsystemBase{
      * Command to run the shooter motor at a set speed.
      * @return Returns a command for running the RunAtSpeed method once.
      */
-    public Command runAtSpeedCommand(){
-        return this.runOnce(() -> runAtSpeed(SHOOTER.FLYWHEEL_VI));
+    public Command runAtSpeedCommand(double desiredRPM) {
+        return this.runOnce(() -> runAtSpeed(desiredRPM));
     }
 
 
     /**
+     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
+     * 
+     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
+     */
+    public void stop(){
+        flywheelMotor.setVoltage(0.0);
+        backwheelMotor.setVoltage(0.0);
+    }
+
+
+    /**
+     * Command form of the stopShooter method.
+     * @return Returns a command to run the stopShooter method once.
+     */
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
+    }
+
+
+    /**
+     * Flywheel velocity
+     * @return Returns velocity of the flywheel motor in RPS.
+     */
+    public double getVelocityFlywheel(){
+        return flywheelMotor.getVelocity().getValueAsDouble();
+    }
+
+
+    /** 
+     * Backwheel velocity.  Should operate in proportion to flywheel velocity
+     * @return Returns velocity of the backwheel motor in RPS.
+     */
+    public double getVelocityBackwheel(){
+        return backwheelMotor.getVelocity().getValueAsDouble();
+    }
+
+
+     /**
      * Update the PID values on the fly on the shooter motor.
      * The NEO Motors do not allowed their PID Profile to be updated while running.
      * 
@@ -136,10 +180,10 @@ public class Shooter extends SubsystemBase{
             flywheelConfiguration.Slot0.kD = DF;
             flywheelConfiguration.Slot0.kV = VF; 
 
-            flywheelConfiguration.Slot0.kP = PB; 
-            flywheelConfiguration.Slot0.kI = IB;
-            flywheelConfiguration.Slot0.kD = DB;
-            flywheelConfiguration.Slot0.kV = VB; 
+            backwheelConfiguration.Slot0.kP = PB; 
+            backwheelConfiguration.Slot0.kI = IB;
+            backwheelConfiguration.Slot0.kD = DB;
+            backwheelConfiguration.Slot0.kV = VB; 
 
             PF_OLD = PF;
             IF_OLD= IF;
@@ -154,57 +198,7 @@ public class Shooter extends SubsystemBase{
             flywheelMotor.getConfigurator().apply(flywheelConfiguration);
             backwheelMotor.getConfigurator().apply(backwheelConfiguration);
         }
-
-
     }
-
-
-    /**
-     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
-     * 
-     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
-     */
-    public void stopShooter(){
-        flywheelMotor.setVoltage(0.0);
-        backwheelMotor.setVoltage(0.0);
-    }
-
-
-    /**
-     * Command form of the stopShooter method.
-     * @return Returns a command to run the stopShooter method once.
-     */
-    public Command stopShooterCommand(){
-        return this.runOnce(() -> stopShooter());
-    }
-
-
-    /**
-     * Purpose is to see if the motor is achieving the
-     * @return Returns velocity of the flywheel motor in RPS.
-     */
-    public double getVelocityFlywheel(){
-        return flywheelMotor.getVelocity().getValueAsDouble();
-    }
-
-    /**
-     * Purpose is to see if the motor is achieving the
-     * @return Returns velocity of the backwheel motor in RPS.
-     */
-    public double getVelocityBackwheel(){
-        return backwheelMotor.getVelocity().getValueAsDouble();
-    }
-
-    /**
-     * Simply for calculation to get the ball landing in the center of the goal, based on the distance to the hub.
-     * Very much a theoretical implementation, simply putting in just the math.
-     * @param theta The angle of the shooter.
-     * @param dis The distance from the shooter to the center of the hub.
-     * @return Returns velocity ball needs to achieve.
-     */
-    // public double DistanceToRPM(double theta, double dis){
-    //     return (1/Math.cos(theta))* (Math.sqrt((0.5 * 9.81 * Math.pow(dis,2))/(SHOOTER.SHOOTER_HEIGHT + Math.tan(theta) - SHOOTER.HUB_HEIGHT)));
-    // }
 
 
     /**
@@ -212,8 +206,8 @@ public class Shooter extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Flywheel Velocity RPM", getVelocityFlywheel() * 60);
-        SmartDashboard.putNumber("Backwheel Velocity RPM", getVelocityBackwheel() * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Velocity RPM", getVelocityFlywheel() * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Velocity RPM", getVelocityBackwheel() * 60 / (WHEEL_RATIO * 1.0));
     }
         
 }

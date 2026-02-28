@@ -44,7 +44,8 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation 
+     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation. 
+     * Don't use this constructor for simple or early testing. 
      * @param camName name of the camera
      * @param camOffsets camera position relative to the robot center
      * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
@@ -79,20 +80,16 @@ public class Vision extends SubsystemBase {
             var result = results.get(results.size() - 1);
             targetVisible = result.hasTargets();
 
-            if (targetVisible) { // At least one AprilTag was seen by the camera
+            if (targetVisible) { //At least one AprilTag was seen by the camera
                 targetAmbiguity = result.getBestTarget().getPoseAmbiguity();     
             } else {
-                targetAmbiguity = -10.0;
+                targetAmbiguity = -10.0; //A large value to differentiate clearly
             }
         }
-          
-        SmartDashboard.putBoolean("Has one tag", getTargets().size() > 0);
-        SmartDashboard.putBoolean("Has two tags", getTargets().size() > 1);
+        
+        SmartDashboard.putNumber("Tag Count", results.size() - 1);
        // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
     }
-
-    @Override
-    public void simulationPeriodic(){}
 
     /**
      * Updates the vision simulation with the current swerve odometry pose

@@ -54,11 +54,10 @@ public final class Constants {
 
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
-    public static final int POSE_AVERAGER_VALUE = 50;
   }
 
   public final class SWERVE {
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Swerve/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SWERVE/";
 
     //TODO: Double check that these PID constants still work
     public static final double SNAP_TO_kP = 3.7;
@@ -76,7 +75,7 @@ public final class Constants {
     public static final double DRIVE_FRICTION_VOLTAGE = 0.25;
 
     public static final double TRANSLATE_POWER_FAST = 1.0; 
-    public static final double ROTATE_POWER_FAST = 1.0; 
+    public static final double ROTATE_POWER_FAST = 0.5; 
     public static final double TRANSLATE_POWER_SLOW = 0.3;
     public static final double ROTATE_POWER_SLOW = 0.3;
 
@@ -100,6 +99,14 @@ public final class Constants {
     public static final double DRIVE_KV = 0.119;
     public static final double DRIVE_KA = 0.0028462;
 
+    public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
+    public static final double PATH_FOLLOW_DRIVE_KI = 0;
+    public static final double PATH_FOLLOW_DRIVE_KD = 0;
+
+    public static final double PATH_FOLLOW_STEER_KP = 3.0;
+    public static final double PATH_FOLLOW_STEER_KI = 0;
+    public static final double PATH_FOLLOW_STEER_KD = 0.0;
+
     public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
   }
@@ -109,39 +116,45 @@ public final class SHOOTER {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.01;
+    public static final double FLYWHEEL_P = 0.7;
     public static final double FLYWHEEL_I = 0;
     public static final double FLYWHEEL_D = 0;
     public static final double FLYWHEEL_V = 0;
-    public static final double BACKWHEEL_P = 0.01;
+    public static final double BACKWHEEL_P = 1;
     public static final double BACKWHEEL_I = 0;
     public static final double BACKWHEEL_D = 0;
     public static final double BACKWHEEL_V = 0;
 
-    public static final double FLYWHEEL_VI = 0;
+    public static final double FLYWHEEL_VI = 3500;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 3; //change later
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes\
+
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
 
   public final class TURRET{
-    public static final int TURRET_MOTOR = 20;
-    public static final double TURRET_P = 4;
-    public static final double TURRET_I = 3;
-    public static final double TURRET_D = 0.2;
-    public static final double TURRET_V = 0.7;
+    public static final int TURRET_MOTOR_CAN_ID = 20;
+    public static final int TURRET_CURRENT_LIMIT = 80;
+    public static final double TURRET_P = 2.0; //4; //12;
+    public static final double TURRET_I = 0.0;
+    public static final double TURRET_D = 0.2; //0.4;  
+
     public static final int TURRET_TG = 80;
     public static final int TURRET_G1 = 19;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0/23)/360;
-    public static final int INITIAL_MAX_ACCELERATION = 60;
-    public static final int INITIAL_CRUISE_VELOCITY = 6;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23) / 360;
+    public static final double MAX_JERK = 3000;
+    public static final int MAX_ACCELERATION = 300;
+    public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
+    public static final double FORWARD_LIMIT = 180; // Degrees
+    public static final double REVERSE_LIMIT = -180; // Degrees
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
   }
@@ -167,12 +180,12 @@ public final class SHOOTER {
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;
     public static final double INTAKE_LEFT_D = 0;
-    public static final double INTAKE_LEFT_VI = 3000;
+    public static final double INTAKE_LEFT_VI = 10000;
 
     public static final double INTAKE_RIGHT_P = 0.0002;
     public static final double INTAKE_RIGHT_I = 0;
     public static final double INTAKE_RIGHT_D = 0;
-    public static final double INTAKE_RIGHT_VI = 3000;
+    public static final double INTAKE_RIGHT_VI = 10000;
 
     public static final double INTAKE_EXTEND_P = 5;
     public static final double INTAKE_EXTEND_I = 0;
@@ -192,11 +205,12 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 30;
 
-    public static final double SPIN_P = 0.3;
+    public static final double SPIN_P = 0.75;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
+    public static final double SPIN_S = 0.26;
 
-    public static final double OUTPUT_P = 0;
+    public static final double OUTPUT_P = 0.75;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
 
@@ -207,7 +221,7 @@ public final class SHOOTER {
 
     public static final double SPIN_MOTOR_SPEED = 100;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 1.0;
+    public static final double OUTPUT_MOTOR_SPEED = 19.09;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
     public static final double MOTOR_MAX_RPS = 6380 / 60;

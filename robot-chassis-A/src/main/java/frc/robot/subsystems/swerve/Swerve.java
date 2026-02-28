@@ -53,6 +53,8 @@ public class Swerve extends SubsystemBase {
         );
 
         snapToController = new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns the robot to a set heading
+        snapToController.enableContinuousInput(-Math.PI, Math.PI); //makes -pi and pi friendly neighbors :)
+        snapToController.setTolerance(Math.toRadians(2.0)); //prevent chatter and oscillation
 
         swerve = drivetrain;
 
@@ -76,8 +78,8 @@ public class Swerve extends SubsystemBase {
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             //TODO: replace pid constants
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(SWERVE.DRIVE_KP, SWERVE.DRIVE_KI, SWERVE.DRIVE_KD), // Translation PID constants
-                    new PIDConstants(SWERVE.STEER_KP, SWERVE.STEER_KI, SWERVE.STEER_KD) // Rotation PID constants
+                    new PIDConstants(SWERVE.PATH_FOLLOW_DRIVE_KP, SWERVE.PATH_FOLLOW_DRIVE_KI, SWERVE.PATH_FOLLOW_DRIVE_KD), // Translation PID constants
+                    new PIDConstants(SWERVE.PATH_FOLLOW_STEER_KP, SWERVE.PATH_FOLLOW_STEER_KI, SWERVE.PATH_FOLLOW_STEER_KD) // Rotation PID constants
             ),
 
             config, // The robot configuration
@@ -97,7 +99,6 @@ public class Swerve extends SubsystemBase {
         );
     }
 
-    //TODO: calculate the robot relative speed instead
     /**
      * Gets robot relative speeds commanded to the robot (NOT the calculated robot relative speeds)
      * @return current ChassisSpeeds
@@ -143,7 +144,7 @@ public class Swerve extends SubsystemBase {
      * @param speeds robot-relative ChassisSpeeds speed to run the drivetrain at
      */
     public void drive(ChassisSpeeds speeds) {
-        Logger.recordOutput(SWERVE.LOG_PATH+"TargetSpeeds", speeds); 
+        Logger.recordOutput(SWERVE.LOG_PATH+"TargetSpeeds", speeds);
 
         swerve.setControl(
             fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
@@ -235,25 +236,15 @@ public class Swerve extends SubsystemBase {
     }
     
     /**
-     * Use PID to snap the robot to a rotational setpoint
+     * Use PID to snap the robot to a targeted rotational heading
      *
-     * @param setpoint the setpoint to snap to
+     * @param targetHeading the heading to snap to
      * @return the rotational velocity setpoint as a Rotation2d
      */
-    public double snapToAngle(Rotation2d setpoint) {
-        double currYaw = Math.toRadians(getYaw().getDegrees()%360);
-        double errorAngle = setpoint.getRadians() - currYaw;
+    public double snapToAngle(Rotation2d targetHeading) {
+        double currYaw = getYaw().getRadians();
 
-        if(errorAngle > Math.PI){
-            errorAngle -= 2 * Math.PI;
-        }
-        else if(errorAngle <= -Math.PI){
-            errorAngle += 2 * Math.PI;
-        }
-
-        double out = snapToController.calculate(0, errorAngle);
-
-        return out;
+        return snapToController.calculate(currYaw, targetHeading.getRadians());
     }
 
     /**
