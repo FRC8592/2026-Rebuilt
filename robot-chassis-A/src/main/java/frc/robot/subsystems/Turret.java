@@ -140,13 +140,9 @@ public class Turret extends SubsystemBase{
      * Get the encoder values the define the turret zero position.
      */
     public void resetPos() {
-        System.out.println("Resetting Pose");
-        tMotor.setPosition(0);
-        //tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
-        //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
-        //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
-        //To make sure this works!
-        //tMotor.setPosition(0);
+        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 80.0 / 23.0);
+        System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
+        System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 80.0 / 23.0);
     }
 
     /**
@@ -228,18 +224,18 @@ public class Turret extends SubsystemBase{
 
     @Override
     public void periodic(){
-        // double E1R = E1.get();
-        // double E2R = E2.get();
+        double E1R = E1.get();
+        double E2R = E2.get();
         // int E1Process = (int)(E1Raw * 1000);
         // int E2Process = (int)(E2Raw * 1000);
         // double E1Filter = E1Process / 1000.0;
         // double E2Filter = E2Process / 1000.0;
-        // Logger.recordOutput("E1", E1.get());
-        // Logger.recordOutput("E2", E2.get());
+        Logger.recordOutput("E1", E1.get());
+        Logger.recordOutput("E2", E2.get());
         // Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
         // Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
         // Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-        // Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
+        Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
         Logger.recordOutput("Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
         // updateMotionMagic();
