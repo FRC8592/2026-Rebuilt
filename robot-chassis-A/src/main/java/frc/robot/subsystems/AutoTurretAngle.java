@@ -58,8 +58,6 @@ public class AutoTurretAngle extends SubsystemBase{
 
         //angle robot has to turn it if is at angle robotAngle
         double turretTurn = thetaR - robotAngle;
-   
-        // Add a 90 degree offset to account for the new robot turret zero position0.0;
 
         return turretTurn;
     }

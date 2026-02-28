@@ -105,6 +105,10 @@ public class Turret extends SubsystemBase{
     public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
         // Calculate target angle based on robot and target positions
         double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
+
+        // Add 90 degree offset to compensate for new zero position of the turret
+        targetAngle += 90;
+
         SmartDashboard.putNumber("Angle", targetAngle);
         
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
