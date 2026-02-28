@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Constants.SCORING;
+import frc.robot.Constants.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -23,10 +25,9 @@ public class Scoring extends SubsystemBase{
     public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
-    // Current robot pose and target pose
-    private Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-    private Pose2d currentTargetPose = new Pose2d(4.02844, 4.445, new Rotation2d(0));
+    
 
+    private Alliance alliance;
 
     /**
      * Scoring subsystem.  Controls collecting and shooting.
@@ -44,6 +45,50 @@ public class Scoring extends SubsystemBase{
         indexer = new Indexer();
     }
 
+    /**
+     * Sets the alliance from the DriverStation
+     * @param alliance Alliance
+     */
+    public void setAlliance(Alliance alliance)
+    {
+        this.alliance = alliance;
+    }
+
+    /**
+     * Sets the target based on the robot's position on the field
+     * @param currentRobotPose the robot's current position
+     * @return the current target's Pose2d
+     */
+    public Pose2d getTarget(Pose2d currentRobotPose){
+        Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
+        if (alliance == Alliance.Blue){
+            // if we're in our alliance zone
+            if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
+                targetPose = SCORING.BLUE_HUB_POSE;
+            }
+            // if we're in the bottom half of the field
+            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+                targetPose = SCORING.BLUE_PASSING_LOW_POSE;
+            }
+            else{
+                targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
+            }
+        }
+        else{
+            // if we're in our alliance zone
+            if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
+                targetPose = SCORING.RED_HUB_POSE;
+            }
+            // if we're in the bottom half of the field
+            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+                targetPose = SCORING.RED_PASSING_LOW_POSE;
+            }
+            else{
+                targetPose = SCORING.RED_PASSING_HIGH_POSE;
+            }
+        }
+        return targetPose;
+    }
 
     /**
      * Toggle the Tracking system on and off.
@@ -79,11 +124,20 @@ public class Scoring extends SubsystemBase{
         double targetDistance;
         double shooterSpeed;
 
+        // Current robot pose and target pose
+        Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
+        Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
+
         Logger.recordOutput(SCORING.LOG_PATH +"Tracking", trackingTarget);
 
+        // get the current robot position and select the target
+        currentRobotPose = swerve.getCurrentOdometryPosition();
+        currentTargetPose = getTarget(currentRobotPose);
+
+        Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
+
         if (trackingTarget) {
-            // Get the current robot position and calculate the distance to the target position
-            currentRobotPose = swerve.getCurrentOdometryPosition();
+            // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
