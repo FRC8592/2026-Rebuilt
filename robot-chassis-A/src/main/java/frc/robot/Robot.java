@@ -114,7 +114,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.scoring.shooter.updatePID();
     //m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.intake.updatePID();
-    //m_robotContainer.scoring.turret.updatePID();
+    m_robotContainer.scoring.turret.updatePID();
 
   }
 

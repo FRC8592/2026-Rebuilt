@@ -15,6 +15,8 @@ import frc.robot.subsystems.Scoring;
 
 import java.util.Set;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -41,15 +43,16 @@ public class RobotContainer {
   //
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
-  private final Trigger INTAKE_RUN = driverController.leftBumper();
+  //private final Trigger INTAKE_RUN = driverController.leftBumper();
   private final Trigger LOCK_WHEELS = driverController.x();
+  private final Trigger RESET_TURRET = driverController.a();
 
   //
   // Operator Controls
   //
-  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
+  //private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
+  private final Trigger ENABLE_TRACKING = driverController.leftBumper();
   private final Trigger SHOOT = operatorController.rightBumper();
-  // private final Trigger RESET_TURRET = operatorController.a();
   // private final Trigger AIM_TURRET = operatorController.x();
   // private final Trigger OFF_AIM_TURRET = operatorController.b();
 
@@ -104,19 +107,18 @@ public class RobotContainer {
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    //INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
   
 
     // This command is a toggle
-    // TODO: Switch to scoring subsystem, which shoud calcluate the correct speed
     //ENABLE_TRACKING.onTrue(new DeferredCommand(() ->  scoring.shooter.runAtSpeedCommand(SHOOTER.FLYWHEEL_VI), Set.of(scoring))).onFalse(scoring.shooter.stopCommand());
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
 
-    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // AIM_TURRET.onTrue(new DeferredCommand(() -> 
     //   scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())

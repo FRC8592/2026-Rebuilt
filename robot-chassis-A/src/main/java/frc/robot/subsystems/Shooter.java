@@ -9,8 +9,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHOOTER;
+
+import java.util.Set;
+
 import org.littletonrobotics.junction.Logger;
 
 
@@ -92,12 +96,14 @@ public class Shooter extends SubsystemBase{
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM){
-        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
         double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
 
-        // To run at raw power
-        // flywheelMotor.setVoltage(12);
-        // backwheelMotor.setVoltage(12);
+        System.out.println("********************");
+        System.out.println("Running shooter at " + desiredRPM + " RPM");
+        System.out.println("********************");
+
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
@@ -107,12 +113,50 @@ public class Shooter extends SubsystemBase{
      * Command to run the shooter motor at a set speed.
      * @return Returns a command for running the RunAtSpeed method once.
      */
-    public Command runAtSpeedCommand(double desiredRPM){
+    public Command runAtSpeedCommand(double desiredRPM) {
         return this.runOnce(() -> runAtSpeed(desiredRPM));
     }
 
 
     /**
+     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
+     * 
+     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
+     */
+    public void stop(){
+        flywheelMotor.setVoltage(0.0);
+        backwheelMotor.setVoltage(0.0);
+    }
+
+
+    /**
+     * Command form of the stopShooter method.
+     * @return Returns a command to run the stopShooter method once.
+     */
+    public Command stopCommand(){
+        return this.runOnce(() -> stop());
+    }
+
+
+    /**
+     * Flywheel velocity
+     * @return Returns velocity of the flywheel motor in RPS.
+     */
+    public double getVelocityFlywheel(){
+        return flywheelMotor.getVelocity().getValueAsDouble();
+    }
+
+
+    /** 
+     * Backwheel velocity.  Should operate in proportion to flywheel velocity
+     * @return Returns velocity of the backwheel motor in RPS.
+     */
+    public double getVelocityBackwheel(){
+        return backwheelMotor.getVelocity().getValueAsDouble();
+    }
+
+
+     /**
      * Update the PID values on the fly on the shooter motor.
      * The NEO Motors do not allowed their PID Profile to be updated while running.
      * 
@@ -158,49 +202,12 @@ public class Shooter extends SubsystemBase{
 
 
     /**
-     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
-     * 
-     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
-     */
-    public void stop(){
-        flywheelMotor.setVoltage(0.0);
-        backwheelMotor.setVoltage(0.0);
-    }
-
-
-    /**
-     * Command form of the stopShooter method.
-     * @return Returns a command to run the stopShooter method once.
-     */
-    public Command stopCommand(){
-        return this.runOnce(() -> stop());
-    }
-
-
-    /**
-     * Purpose is to see if the motor is achieving the
-     * @return Returns velocity of the flywheel motor in RPS.
-     */
-    public double getVelocityFlywheel(){
-        return flywheelMotor.getVelocity().getValueAsDouble();
-    }
-
-    /**
-     * Purpose is to see if the motor is achieving the
-     * @return Returns velocity of the backwheel motor in RPS.
-     */
-    public double getVelocityBackwheel(){
-        return backwheelMotor.getVelocity().getValueAsDouble();
-    }
-
-
-    /**
      * Periodic method, primarily for logging.
      */
     @Override
     public void periodic(){
-        Logger.recordOutput("Flywheel Velocity RPM", getVelocityFlywheel() * 60);
-        Logger.recordOutput("Backwheel Velocity RPM", getVelocityBackwheel() * 60 / (WHEEL_RATIO * 1.0));
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Velocity RPM", getVelocityFlywheel() * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Velocity RPM", getVelocityBackwheel() * 60 / (WHEEL_RATIO * 1.0));
     }
         
 }

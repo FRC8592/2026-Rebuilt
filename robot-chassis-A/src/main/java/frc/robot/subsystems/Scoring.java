@@ -6,23 +6,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import java.util.Set;
-import frc.robot.Constants.SHOOTER;
+
+import org.littletonrobotics.junction.Logger;
+
+import frc.robot.Constants.SCORING;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
     // Subsystems
-    Swerve swerve;          // Passed in to the constructor so that we can get the current robot pose for tracking
+    Swerve swerve;          // Passed into the constructor so that we can get the current robot pose for tracking
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
     public Intake intake;
-    public RangeTable rangeTable;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     // Current robot pose and target pose
     private Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-    private Pose2d currentTargetPose = new Pose2d(0, 0, new Rotation2d(0));
+    private Pose2d currentTargetPose = new Pose2d(4.02844, 4.445, new Rotation2d(0));
 
 
     /**
@@ -39,7 +42,6 @@ public class Scoring extends SubsystemBase{
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
-        rangeTable = new RangeTable();
     }
 
 
@@ -77,21 +79,27 @@ public class Scoring extends SubsystemBase{
         double targetDistance;
         double shooterSpeed;
 
+        Logger.recordOutput(SCORING.LOG_PATH +"Tracking", trackingTarget);
+
         if (trackingTarget) {
             // Get the current robot position and calculate the distance to the target position
             currentRobotPose = swerve.getCurrentOdometryPosition();
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = rangeTable.get(targetDistance);
+            shooterSpeed = RangeTable.get(targetDistance);
+
+            // Log the current distance-to-target and shooter speed for debugging
+            Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
+            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            // turret.TurrettoAngleCommand(currentRobotPose, currentTargetPose);
-            shooter.runAtSpeedCommand(shooterSpeed);
+            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            // shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
-            shooter.runAtSpeedCommand(0);
+            shooter.stop();
         }
     }
 

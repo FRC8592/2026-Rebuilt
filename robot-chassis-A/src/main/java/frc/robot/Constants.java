@@ -57,7 +57,7 @@ public final class Constants {
   }
 
   public final class SWERVE {
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Swerve/";
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SWERVE/";
 
     //TODO: Double check that these PID constants still work
     public static final double SNAP_TO_kP = 3.7;
@@ -131,7 +131,9 @@ public final class SHOOTER {
     public static final double HUB_HEIGHT = 0;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 3; //change later
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes\
+
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
 
   public final class TURRET{
@@ -151,6 +153,8 @@ public final class SHOOTER {
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
+    public static final double FORWARD_LIMIT = 180; // Degrees
+    public static final double REVERSE_LIMIT = -180; // Degrees
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
   }

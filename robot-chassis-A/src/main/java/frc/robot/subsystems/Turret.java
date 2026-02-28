@@ -12,16 +12,14 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-//import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.RobotCentric;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import java.lang.Math;
 
-//import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 public class Turret extends SubsystemBase{
     // Motor for turret rotation
@@ -55,11 +53,18 @@ public class Turret extends SubsystemBase{
         positionRequest = new PositionVoltage(0);
         motionMagicRequest = new MotionMagicVoltage(0);
 
-        // Put motor in brake mode and apply current limits
+        // Put motor in brake mode, invert, and apply current limits
         tMotor.setNeutralMode(NeutralModeValue.Brake);
+        tMotorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimit = TURRET.TURRET_CURRENT_LIMIT;
         tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        // Set soft limits
+        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
+        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
 
         // Apply soft limits to help avoid driving the turret past the cable extension
         // ToDO: Enable and configure soft limits
@@ -71,15 +76,17 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
         tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
         tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
-        tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5; // TODO: Understand this parameter or delete!
+        //tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5; // TODO: Understand this parameter or delete!
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
         //
-        // TODO: Remove this? 
-        // Activate motion magic to hold turret in starting position\
+        // *** TODO: Remove setPosition to 0!!!! ***
         //
+        // Activate motion magic to hold turret in starting position
+        tMotor.setPosition(0.0);
         tMotor.setControl(motionMagicRequest.withSlot(0).withPosition(tMotor.getPosition().getValueAsDouble()));
+        SmartDashboard.putNumber("Angle", 0.0);
 
         // Instantiate for calculating the turret angle based on target and robot positions
         angleCalc = new AutoTurretAngle();
@@ -96,14 +103,11 @@ public class Turret extends SubsystemBase{
      * @param targetLocation The centerpoint of the target we are trying to track, in field coordinates
      */
     public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
-        //
         // Calculate target angle based on robot and target positions
-        //
         double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
+        SmartDashboard.putNumber("Angle", targetAngle);
         
-        //
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
-        //
         if(Math.abs(targetAngle) > 180){
             if(targetAngle < 0)
                 targetAngle += 360;
@@ -147,8 +151,6 @@ public class Turret extends SubsystemBase{
      * @param robotPosition Current position of the robot from odometry, in field coordinates
      * @param targetLocation The centerpoint of the target we are trying to track, in field coordinates
      */
-
-     // TODO: angle parameter is for simple initial testing.  Remove.
     public Command TurrettoAngleCommand(Pose2d robotPosition, Pose2d targetLocation) {
         return this.runOnce(() -> TurrettoAngle(robotPosition, targetLocation));
     }
