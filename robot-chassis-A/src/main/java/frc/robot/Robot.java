@@ -7,6 +7,7 @@ package frc.robot;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -17,6 +18,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.ctre.phoenix6.HootAutoReplay;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -111,6 +113,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+
+    if (alliance.isPresent()){
+      m_robotContainer.scoring.setAlliance(alliance.get());
+    }
+
     m_robotContainer.scoring.shooter.updatePID();
     //m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.intake.updatePID();

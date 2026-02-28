@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -161,6 +163,13 @@ public final class SHOOTER {
 
   public static final class SCORING{
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SCORING/";
+    //targets
+    public static final Pose2d BLUE_HUB_POSE = new Pose2d(4.02844, 4.445, new Rotation2d(0));
+    public static final Pose2d BLUE_PASSING_LOW_POSE = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d BLUE_PASSING_HIGH_POSE = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d RED_HUB_POSE = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(0, 0, new Rotation2d(0));
   }
 
   public static class INTAKE{

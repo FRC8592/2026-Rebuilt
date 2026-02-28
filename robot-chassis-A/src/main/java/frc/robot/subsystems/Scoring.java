@@ -6,7 +6,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
@@ -25,8 +27,10 @@ public class Scoring extends SubsystemBase{
     private boolean trackingTarget = false;
     // Current robot pose and target pose
     private Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-    private Pose2d currentTargetPose = new Pose2d(4.02844, 4.445, new Rotation2d(0));
+    private Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
+    
 
+    private Alliance alliance;
 
     /**
      * Scoring subsystem.  Controls collecting and shooting.
@@ -44,6 +48,18 @@ public class Scoring extends SubsystemBase{
         indexer = new Indexer();
     }
 
+    /**
+     * Sets the alliance from the DriverStation
+     * @param alliance Alliance
+     */
+    public void setAlliance(Alliance alliance)
+    {
+        this.alliance = alliance;
+    }
+
+    public void selectTarget(Pose2d currentRobotPose){
+
+    }
 
     /**
      * Toggle the Tracking system on and off.
