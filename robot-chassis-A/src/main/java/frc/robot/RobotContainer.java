@@ -108,7 +108,7 @@ public class RobotContainer {
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    //INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
   
