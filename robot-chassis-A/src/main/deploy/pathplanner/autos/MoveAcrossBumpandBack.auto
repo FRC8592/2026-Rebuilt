@@ -11,21 +11,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": null
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "MoveToPos"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
           }
         }
       ]

@@ -92,8 +92,7 @@ public class RobotContainer {
     //
     NamedCommands.registerCommand("intakeCommand", scoring.intake.runAtSpeedIntakeCommand());
     NamedCommands.registerCommand("scoreCommand", scoring.scoringCommand());
-    NamedCommands.registerCommand("indexerOutputCommand", scoring.indexer.runOutputIndexerCommand());
-    NamedCommands.registerCommand("indexerSpinnerCommand", scoring.indexer.runSpinIndexerCommand());
+    NamedCommands.registerCommand("indexerCommand", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("stopCommand", scoring.stopCommand());
     NamedCommands.registerCommand("toggleTracking", scoring.toggleTrackingCommand());
     AutoManager.prepare();
@@ -115,7 +114,7 @@ public class RobotContainer {
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
              .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    //INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
   
@@ -129,6 +128,7 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
+
 
     // AIM_TURRET.onTrue(new DeferredCommand(() -> 
     //   scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())

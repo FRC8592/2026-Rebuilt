@@ -88,7 +88,7 @@ public class Turret extends SubsystemBase{
         //
         // Activate motion magic to hold turret in starting position
         // tMotor.setPosition(0.0);
-        tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
+        //tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
         SmartDashboard.putNumber("Angle", 0.0);
 
         // Instantiate for calculating the turret angle based on target and robot positions

@@ -7,9 +7,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -43,6 +45,7 @@ public class Scoring extends SubsystemBase{
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+        SmartDashboard.putNumber("Shooter speed", 3500);
     }
 
     /**
@@ -138,7 +141,7 @@ public class Scoring extends SubsystemBase{
 
             // Lookup the required shooter speed in the range table
             //TODO: Change this
-            shooterSpeed = 3500;
+            shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 3500);
             //shooterSpeed = RangeTable.get(targetDistance);
 
             // Log the current distance-to-target and shooter speed for debugging

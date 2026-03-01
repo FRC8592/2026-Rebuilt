@@ -7,19 +7,19 @@
         {
           "type": "named",
           "data": {
+            "name": "toggleTracking"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "shootBalls"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "indexerOutputCommand"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "indexerSpinnerCommand"
+            "name": "indexerCommand"
           }
         },
         {
