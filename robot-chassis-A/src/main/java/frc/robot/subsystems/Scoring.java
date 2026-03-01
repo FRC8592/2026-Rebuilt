@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class Scoring extends SubsystemBase{
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     
+    double shooterSpeed = 0;
 
     private Alliance alliance;
 
@@ -43,6 +45,8 @@ public class Scoring extends SubsystemBase{
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+
+        SmartDashboard.putNumber("ShootVel", shooterSpeed);
     }
 
     /**
@@ -142,6 +146,7 @@ public class Scoring extends SubsystemBase{
 
             // Lookup the required shooter speed in the range table
             shooterSpeed = RangeTable.get(targetDistance);
+            shooterSpeed = SmartDashboard.getNumber("ShootVel", shooterSpeed);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
@@ -149,7 +154,7 @@ public class Scoring extends SubsystemBase{
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            // shooter.runAtSpeed(shooterSpeed);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
