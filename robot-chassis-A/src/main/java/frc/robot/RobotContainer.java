@@ -19,6 +19,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -44,15 +45,15 @@ public class RobotContainer {
   //
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
-  //private final Trigger INTAKE_RUN = driverController.leftBumper();
+  private final Trigger INTAKE_RUN = driverController.leftBumper();
   private final Trigger LOCK_WHEELS = driverController.x();
   private final Trigger RESET_TURRET = driverController.a();
+  private final Trigger SNAP_TO = driverController.povUp();
 
   //
   // Operator Controls
   //
-  //private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
-  private final Trigger ENABLE_TRACKING = driverController.leftBumper();
+  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
   private final Trigger SHOOT = operatorController.rightBumper();
   // private final Trigger AIM_TURRET = operatorController.x();
   // private final Trigger OFF_AIM_TURRET = operatorController.b();
@@ -126,6 +127,8 @@ public class RobotContainer {
     SHOOT.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+
+    SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
     // AIM_TURRET.onTrue(new DeferredCommand(() -> 
     //   scoring.turret.TurrettoAngleCommand(90.0, swerve.getCurrentOdometryPosition(), new Pose2d())
