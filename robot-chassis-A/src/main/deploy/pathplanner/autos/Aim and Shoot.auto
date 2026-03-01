@@ -5,27 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "MoveToNeutralIntakeZone"
+            "name": "shootBalls"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MoveToPos"
+            "name": "indexerOutputCommand"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "indexerSpinnerCommand"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopCommand"
           }
         }
       ]

@@ -108,6 +108,7 @@ public class Scoring extends SubsystemBase{
     }
 
 
+
     /**
      * Command to toggle on turret tracking and shooter wheel speed
      */
@@ -115,12 +116,7 @@ public class Scoring extends SubsystemBase{
         return this.runOnce(() -> toggleTracking());
     }
 
-
-    /**
-     * If the tracking system is toggled on, update the required turret angle and shooter speed
-     */
-    @Override
-    public void periodic(){
+    public void scoringMethod(){
         double targetDistance;
         double shooterSpeed;
 
@@ -141,7 +137,9 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = RangeTable.get(targetDistance);
+            //TODO: Change this
+            shooterSpeed = 3500;
+            //shooterSpeed = RangeTable.get(targetDistance);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
@@ -149,12 +147,37 @@ public class Scoring extends SubsystemBase{
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            // shooter.runAtSpeed(shooterSpeed);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
             shooter.stop();
         }
+    }
+
+    public Command scoringCommand(){
+        return this.runOnce(() -> scoringMethod());
+    }
+
+    public Command stopCommand(){
+        return this.runOnce(() -> stopScoring());
+    }
+
+    public void stopScoring(){
+        turret.stop();
+        indexer.stop();
+        intake.stopRoller();
+        intake.stopExtender();
+        shooter.stop();
+    }
+
+
+    /**
+     * If the tracking system is toggled on, update the required turret angle and shooter speed
+     */
+    @Override
+    public void periodic(){
+        scoringMethod();
     }
 
 }

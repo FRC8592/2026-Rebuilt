@@ -16,6 +16,7 @@ import frc.robot.subsystems.Scoring;
 import java.util.Set;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,6 +89,12 @@ public class RobotContainer {
     //
     // Get autonomous ready
     //
+    NamedCommands.registerCommand("intakeCommand", scoring.intake.runAtSpeedIntakeCommand());
+    NamedCommands.registerCommand("scoreCommand", scoring.scoringCommand());
+    NamedCommands.registerCommand("indexerOutputCommand", scoring.indexer.runOutputIndexerCommand());
+    NamedCommands.registerCommand("indexerSpinnerCommand", scoring.indexer.runSpinIndexerCommand());
+    NamedCommands.registerCommand("stopCommand", scoring.stopCommand());
+    NamedCommands.registerCommand("toggleTracking", scoring.toggleTrackingCommand());
     AutoManager.prepare();
   }
 
@@ -99,7 +106,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
+   * joysticks}.q
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
