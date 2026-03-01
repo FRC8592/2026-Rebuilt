@@ -217,7 +217,7 @@ public final class SHOOTER {
   public final class INDEXER {
     // CAN IDs for the Indexer motors
     public static final int SPINNER_CAN_ID = 16;
-    public static final int OUTPUT_CAN_ID = 30;
+    public static final int OUTPUT_CAN_ID = 32;
 
     public static final double SPIN_P = 0.75;
     public static final double SPIN_I = 0;

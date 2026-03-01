@@ -25,10 +25,9 @@ import frc.robot.Constants.INTAKE;
 
 
 public class Intake extends SubsystemBase{
-    private SparkFlex RollerMotorLeft; 
-    private SparkFlex RollerMotorRight; 
+    private SparkFlex ExtendMotor; 
 
-    private TalonFX ExtendMotor; 
+    private TalonFX RollerMotor; 
 
     private SparkFlexConfig rollerMotorRightConfig; 
     private SparkFlexConfig rollerMotorLeftConfig; 
@@ -62,8 +61,9 @@ public class Intake extends SubsystemBase{
          */
 
         //RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
-        RollerMotorRight = new SparkFlex (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
-        ExtendMotor = new TalonFX(INTAKE.INTAKE_EXTEND_CAN_ID); 
+        
+        ExtendMotor = new SparkFlex (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorType.kBrushless); 
+        RollerMotor = new TalonFX(INTAKE.INTAKE_EXTEND_CAN_ID); 
 
         //rollerMotorLeftConfig = new SparkFlexConfig(); 
         rollerMotorRightConfig = new SparkFlexConfig(); 
@@ -91,12 +91,12 @@ public class Intake extends SubsystemBase{
         // .withPeakReverseTorqueCurrent(-INTAKE.EXTEND_TORQUE_CURRENT); 
 
         //RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
-        RollerMotorRight.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
-        ExtendMotor.getConfigurator().apply(extendConfiguration); 
+        ExtendMotor.configure(rollerMotorRightConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
+        RollerMotor.getConfigurator().apply(extendConfiguration); 
 
-        rollerMotorRightClosedLoopController = RollerMotorRight.getClosedLoopController(); 
+        rollerMotorRightClosedLoopController = ExtendMotor.getClosedLoopController(); 
         
-        rollerMotorRighRelativeEncoder = RollerMotorRight.getEncoder(); 
+        rollerMotorRighRelativeEncoder = ExtendMotor.getEncoder(); 
   
         // // TODO: Determine an appropriate current limit for the intake motor
 
@@ -127,12 +127,12 @@ public class Intake extends SubsystemBase{
     public void runToPositionExt(){
         System.out.println("Running Extender Command");
         //ExtendMotor.setVoltage(4);
-         ExtendMotor.setControl(extendMotorController.withPosition(INTAKE.DESIRED_ROTATIONS_EXTEND));
+         RollerMotor.setControl(extendMotorController.withPosition(INTAKE.DESIRED_ROTATIONS_EXTEND));
     }
 
     public void resetExtenderPos(){
         System.out.println("Resetting Intake Command");
-        ExtendMotor.setPosition(0);
+        RollerMotor.setPosition(0);
     }
 
     public Command resetExtenderCommand(){
@@ -153,7 +153,7 @@ public class Intake extends SubsystemBase{
     }
 
     public double getExtendPosition(){
-        return ExtendMotor.getPosition().getValueAsDouble();
+        return RollerMotor.getPosition().getValueAsDouble();
     }
 
     /**
@@ -163,11 +163,11 @@ public class Intake extends SubsystemBase{
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
-        RollerMotorRight.setVoltage(0.0);
+        ExtendMotor.setVoltage(0.0);
     }
 
     public void stopExtender(){
-        ExtendMotor.setVoltage(0);
+        RollerMotor.setVoltage(0);
     }
 
 
@@ -218,12 +218,12 @@ public class Intake extends SubsystemBase{
             I_OLD = Right_I;
             D_OLD = Right_D;
 
-            ExtendMotor.getConfigurator().apply(extendConfiguration); 
+            RollerMotor.getConfigurator().apply(extendConfiguration); 
         }
 
         rollerMotorRightConfig.closedLoop.pid(Right_P, Right_I, Right_D);
 
-        RollerMotorRight.configure(rollerMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        ExtendMotor.configure(rollerMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
 

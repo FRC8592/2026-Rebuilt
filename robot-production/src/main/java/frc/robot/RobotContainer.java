@@ -28,33 +28,33 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController = new CommandXboxController(1);
+  // private static final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  private final Vision visionBack;
-  private final Vision visionSide; 
-  private final OdometryUpdates odometryUpdatesBack;
-  private final OdometryUpdates odometryUpdatesSide;
-  public final Scoring scoring;
+  // private final Vision visionBack;
+  // private final Vision visionSide; 
+  // private final OdometryUpdates odometryUpdatesBack;
+  // private final OdometryUpdates odometryUpdatesSide;
+  // public final Scoring scoring;
 
   //
   // Driver Controls
   //
-  private final Trigger RESET_HEADING = driverController.back();
-  private final Trigger SLOW_MODE = driverController.leftTrigger();
-  private final Trigger INTAKE_RUN = driverController.leftBumper();
-  private final Trigger LOCK_WHEELS = driverController.x();
+  // private final Trigger RESET_HEADING = driverController.back();
+  // private final Trigger SLOW_MODE = driverController.leftTrigger();
+  // private final Trigger INTAKE_RUN = driverController.leftBumper();
+  // private final Trigger LOCK_WHEELS = driverController.x();
 
-  private final Trigger SNAP_TO = driverController.povUp();
+  // private final Trigger SNAP_TO = driverController.povUp();
 
   //
   // Operator Controls
   //
-  private final Trigger RESET_TURRET = driverController.a();
-  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
-  private final Trigger SHOOT = operatorController.rightBumper();
+  // private final Trigger RESET_TURRET = driverController.a();
+  // private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
+  // private final Trigger SHOOT = operatorController.rightBumper();
 
 
   //
@@ -74,11 +74,11 @@ public class RobotContainer {
     // Instantiate top-level subsystems
     //
     swerve = new Swerve(drivetrain);
-    scoring = new Scoring(swerve);
-    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
-    odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
-    odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    // scoring = new Scoring(swerve);
+    // visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
+    // visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
+    // odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
+    // odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
     
     //
     // Configure the trigger bindings
@@ -103,24 +103,24 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
-    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
-             .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
+    // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
+    //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    // INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
-    // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
-    LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
+    // // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
+    // LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
 
-    // This command is a toggle
-    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+    // // This command is a toggle
+    // ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
+    // SHOOT.onTrue(new DeferredCommand(() -> scoring.indexer.runIndexerCommand(), Set.of(scoring))).onFalse(scoring.indexer.stopCommand());
 
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
-    SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
+    // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
 
   private void configureDefaults() {

@@ -88,7 +88,8 @@ public class Turret extends SubsystemBase{
         //
         // Activate motion magic to hold turret in starting position
         // tMotor.setPosition(0.0);
-        tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
+        //TODO: Figure out if this is causing issues, or what is causing turret default behavior
+        //tMotor.setControl(motionMagicRequest.withSlot(1).withPosition(tMotor.getPosition().getValueAsDouble()));
         SmartDashboard.putNumber("Angle", 0.0);
 
         // Instantiate for calculating the turret angle based on target and robot positions
@@ -110,7 +111,9 @@ public class Turret extends SubsystemBase{
         double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
 
         // Add 90 degree offset to compensate for new zero position of the turret
-        targetAngle += 90;
+        //Not necessary anymore as the turret auto calculates
+        //TODO: Do we need a 
+        //targetAngle += 90;
 
         SmartDashboard.putNumber("Angle", targetAngle);
         
@@ -123,16 +126,17 @@ public class Turret extends SubsystemBase{
         }
 
         // when the angle of the turret is within x degrees of the target angle, switch to less aggressive PID values in slot 1
-        int currentSlot = 0;
-        if(Math.abs(tMotor.getPosition().getValueAsDouble() / TURRET.DEGREES_TO_MOTOR_ROTATIONS - targetAngle) <= TURRET.TURRET_TOLERANCE){
-            currentSlot = 1;
-        }
+        //TODO: Implement two types of PID if necessary
+        // int currentSlot = 0;
+        // if(Math.abs(tMotor.getPosition().getValueAsDouble() / TURRET.DEGREES_TO_MOTOR_ROTATIONS - targetAngle) <= TURRET.TURRET_TOLERANCE){
+        //     currentSlot = 1;
+        // }
 
         //
         // Set motor position based on target angle, converting from degrees to motor rotations
         //
-        // tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
-        tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+        //tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
@@ -142,6 +146,14 @@ public class Turret extends SubsystemBase{
      */
     public void stop(){
         tMotor.setVoltage(0);
+    }
+
+    /**
+     * Testing basic turret movement and to run turret without odometry
+     * @param pos the position we want the turret to go towards
+     */
+    public void basicTurretTesting(double pos){
+        //tMotor.set
     }
 
 
