@@ -117,7 +117,7 @@ public class RobotContainer {
     // LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
 
     // This command is a toggle
-    // ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 

@@ -158,8 +158,8 @@ public final class SHOOTER {
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 180; // Degrees
-    public static final double REVERSE_LIMIT = -180; // Degrees
+    public static final double FORWARD_LIMIT = 90; // Degrees
+    public static final double REVERSE_LIMIT = -90; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
