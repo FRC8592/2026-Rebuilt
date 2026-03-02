@@ -103,9 +103,9 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    public Command runAtSpeedIntakeCommand() {
-        return intake.runAtSpeedIntakeCommand();
-    }
+    // public Command runAtSpeedIntakeCommand() {
+    //     return intake.runAtSpeedIntakeCommand();
+    // }
 
 
     /**
@@ -148,7 +148,7 @@ public class Scoring extends SubsystemBase{
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
         }
         else {
