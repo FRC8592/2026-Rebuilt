@@ -103,9 +103,9 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    public Command runAtSpeedIntakeCommand() {
-        return intake.runAtSpeedIntakeCommand();
-    }
+    // public Command runAtSpeedIntakeCommand() {
+    //     return intake.runAtSpeedIntakeCommand();
+    // }
 
 
     /**
@@ -141,14 +141,14 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = RangeTable.get(targetDistance);
+            shooterSpeed = 3000;
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
         }
         else {

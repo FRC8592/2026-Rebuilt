@@ -158,8 +158,8 @@ public final class SHOOTER {
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 180; // Degrees
-    public static final double REVERSE_LIMIT = -180; // Degrees
+    public static final double FORWARD_LIMIT = 90; // Degrees
+    public static final double REVERSE_LIMIT = -90; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
@@ -196,12 +196,12 @@ public final class SHOOTER {
     public static final double INTAKE_LEFT_D = 0;
     public static final double INTAKE_LEFT_VI = 10000;
 
-    public static final double INTAKE_RIGHT_P = 0.0002;
+    public static final double INTAKE_RIGHT_P = 1;
     public static final double INTAKE_RIGHT_I = 0;
     public static final double INTAKE_RIGHT_D = 0;
-    public static final double INTAKE_RIGHT_VI = 10000;
+    public static final double INTAKE_RIGHT_VI = 6000;
 
-    public static final double INTAKE_EXTEND_P = 5;
+    public static final double INTAKE_EXTEND_P = 0.5;
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
@@ -217,14 +217,14 @@ public final class SHOOTER {
   public final class INDEXER {
     // CAN IDs for the Indexer motors
     public static final int SPINNER_CAN_ID = 16;
-    public static final int OUTPUT_CAN_ID = 30;
+    public static final int OUTPUT_CAN_ID = 38;
 
-    public static final double SPIN_P = 0.75;
+    public static final double SPIN_P = 0;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
-    public static final double SPIN_S = 0.26;
+    public static final double SPIN_S = 0;
 
-    public static final double OUTPUT_P = 0.75;
+    public static final double OUTPUT_P = 0.0001;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
 
@@ -235,7 +235,7 @@ public final class SHOOTER {
 
     public static final double SPIN_MOTOR_SPEED = 100;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 19.09;
+    public static final double OUTPUT_MOTOR_SPEED = 1000;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
     public static final double MOTOR_MAX_RPS = 6380 / 60;
