@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  // private static final CommandXboxController operatorController = new CommandXboxController(1);
+  private static final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -53,9 +53,9 @@ public class RobotContainer {
   //
   // Operator Controls
   //
-  // private final Trigger RESET_TURRET = driverController.a();
-  // private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
-  // private final Trigger SHOOT = operatorController.rightBumper();
+  private final Trigger RESET_TURRET = driverController.a();
+  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
+  private final Trigger SHOOT = operatorController.rightBumper();
 
 
   //
