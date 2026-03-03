@@ -45,8 +45,9 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.leftBumper();
+  //TODO: Change Intake Extend Binding
   private final Trigger INTAKE_EXTEND = driverController.x();
-  private final Trigger LOCK_WHEELS = driverController.x();
+  // private final Trigger LOCK_WHEELS = driverController.x();
 
   // private final Trigger SNAP_TO = driverController.povUp();
 
@@ -56,6 +57,9 @@ public class RobotContainer {
   private final Trigger RESET_TURRET = driverController.a();
   private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
   private final Trigger SHOOT = operatorController.rightBumper();
+
+  private final Trigger TURRET_TEST = operatorController.x();
+  private final Trigger TURRET_TEST_BACK = operatorController.a();
 
 
   //
@@ -104,12 +108,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
     INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+
+    TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
+
+    TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
 
     //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
 
@@ -117,9 +125,9 @@ public class RobotContainer {
     // LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
 
     // // This command is a toggle
-    // ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+    //ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    //SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 

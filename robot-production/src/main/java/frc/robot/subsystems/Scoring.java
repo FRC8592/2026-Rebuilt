@@ -141,7 +141,8 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = 3000;
+            //TODO: Change this
+            shooterSpeed = 3500;
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);

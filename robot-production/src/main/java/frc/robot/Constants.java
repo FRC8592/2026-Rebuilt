@@ -141,12 +141,13 @@ public final class SHOOTER {
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
     public static final int TURRET_CURRENT_LIMIT = 80;
-    public static final double TURRET_P0 = 18.0; //8 //2; //4; //12;
+    public static final double TURRET_P0 = 1; //8 //2; //4; //12;
     public static final double TURRET_I0 = 0.0;
-    public static final double TURRET_D0 = 0.8; //0.4;
-    public static final double TURRET_P1 = 14.0;
+    public static final double TURRET_D0 = 0.0; //0.4;
+    public static final double TURRET_S = 0;
+    public static final double TURRET_P1 = 1;
     public static final double TURRET_I1 = 0.0;
-    public static final double TURRET_D1 = 0.2;
+    public static final double TURRET_D1 = 0.0;
 
     public static final int TURRET_TG = 80;
     public static final int TURRET_G1 = 19;

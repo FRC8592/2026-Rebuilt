@@ -39,6 +39,7 @@ public class Turret extends SubsystemBase{
     private double P_OLD;
     private double I_OLD;
     private double D_OLD;
+    private double S_OLD;
 
     public Turret() {
         // Instantiate the absolute encoders and get our starting position
@@ -73,6 +74,7 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P0; 
         tMotorConfiguration.Slot0.kI = TURRET.TURRET_I0;
         tMotorConfiguration.Slot0.kD = TURRET.TURRET_D0; 
+        tMotorConfiguration.Slot0.kS = TURRET.TURRET_S;
         tMotorConfiguration.Slot1.kP = TURRET.TURRET_P1; 
         tMotorConfiguration.Slot1.kI = TURRET.TURRET_I1;
         tMotorConfiguration.Slot1.kD = TURRET.TURRET_D1; 
@@ -98,6 +100,7 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P0);
         SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
         SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
+        SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
     }
 
 
@@ -153,7 +156,11 @@ public class Turret extends SubsystemBase{
      * @param pos the position we want the turret to go towards
      */
     public void basicTurretTesting(double pos){
-        //tMotor.set
+        tMotor.setControl(positionRequest.withSlot(0).withPosition(pos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+    }
+
+    public Command basicTurretTestingCommand(double pos){
+        return this.run(() -> basicTurretTesting(pos));
     }
 
 
@@ -271,15 +278,18 @@ public class Turret extends SubsystemBase{
         double P  = SmartDashboard.getNumber("P_TUR", TURRET.TURRET_P0);
         double I  = SmartDashboard.getNumber("I_TUR", TURRET.TURRET_I0);
         double D  = SmartDashboard.getNumber("D_TUR", TURRET.TURRET_D0);
+        double S = SmartDashboard.getNumber("S_TUR", TURRET.TURRET_S);
 
-        if(P != P_OLD || I != I_OLD || D != D_OLD){
+        if(P != P_OLD || I != I_OLD || D != D_OLD || S != S_OLD){
             tMotorConfiguration.Slot0.kP = P; 
             tMotorConfiguration.Slot0.kI = I;
             tMotorConfiguration.Slot0.kD = D; 
+            tMotorConfiguration.Slot0.kS = S;
 
             P_OLD = P;
             I_OLD = I;
             D_OLD = D;
+            S_OLD = S;
             tMotor.getConfigurator().apply(tMotorConfiguration);
 
         }

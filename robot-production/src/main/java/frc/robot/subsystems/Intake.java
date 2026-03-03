@@ -130,7 +130,8 @@ public class Intake extends SubsystemBase{
     public void runAtSpeedIntake(){
         double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
+        rollerMotor.setVoltage(12);
+        //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
     public void resetExtenderPos(){

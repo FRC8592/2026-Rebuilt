@@ -151,7 +151,7 @@ public class TunerConstants {
             .withDriveFrictionVoltage(kDriveFrictionVoltage);
 
     //INTAKE IS FRONT
-    // Front Left: 
+    // Front Left: White
     private static final int kFrontLeftDriveMotorId = 7;
     private static final int kFrontLeftSteerMotorId = 6;
     private static final int kFrontLeftEncoderId = 18;
