@@ -2,26 +2,39 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.FeedForwardConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
 public class Indexer extends SubsystemBase {    
     //TODO: confirm CAN IDs
-    private TalonFX spinMotor = new TalonFX(INDEXER.SPINNER_CAN_ID);
-    private TalonFX outputMotor = new TalonFX(INDEXER.OUTPUT_CAN_ID);
+    //private SparkFlex spinMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
+    private SparkFlex outputMotor = new SparkFlex(INDEXER.OUTPUT_CAN_ID, MotorType.kBrushless);
 
-    private TalonFXConfiguration spinMotorConfiguration = new TalonFXConfiguration();
-    private TalonFXConfiguration outputMotorConfiguration = new TalonFXConfiguration();
+    //private FeedForwardConfig spinFeedForward = new FeedForwardConfig();
+    private FeedForwardConfig outputFeedForward = new FeedForwardConfig();
 
-    private VelocityVoltage spinMotorSlot0VelocityRequest = new VelocityVoltage(0);
-    private VelocityVoltage outputMotorSlot0VelocityRequest = new VelocityVoltage(0);
+   //private SparkFlexConfig spinMotorConfig = new SparkFlexConfig();
+    private SparkFlexConfig outputMotorConfig = new SparkFlexConfig();
+
+    //private SparkClosedLoopController spinMotorClosedLoopCtrl =  spinMotor.getClosedLoopController();
+    private SparkClosedLoopController outputMotorClosedLoopCtrl = outputMotor.getClosedLoopController();
+
+    //private RelativeEncoder spinMotorEncoder = spinMotor.getEncoder();
+    private RelativeEncoder outputMotorEncoder = outputMotor.getEncoder();
 
     private double PS_OLD;
     private double IS_OLD;
@@ -39,14 +52,13 @@ public class Indexer extends SubsystemBase {
      */
     public Indexer() {
         //TODO: change the current limits constants
-        spinMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-        spinMotorConfiguration.CurrentLimits.StatorCurrentLimit = INDEXER.SPIN_CURRENT_LIMIT_FREE;
-        spinMotorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        spinMotor.setNeutralMode(NeutralModeValue.Coast); //the spin can cruise to a stop
+        //spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT_FREE);
+        // //Sets the motor to to make clockwise rotation positive, MIGHT NOT BE NECESSARY
+        //spinMotorConfig.inverted(true);
+        //spinMotorConfig.idleMode(IdleMode.kCoast); //the spin can cruise to a stop
 
-        outputMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-        outputMotorConfiguration.CurrentLimits.StatorCurrentLimit = INDEXER.OUTPUT_CURRENT_LIMIT_STALL;
-        outputMotor.setNeutralMode(NeutralModeValue.Brake); //the motor must stop pushing out fuel immediately
+        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT_STALL);
+        outputMotorConfig.idleMode(IdleMode.kBrake);
 
         // TODO: Tune pid
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
@@ -60,26 +72,22 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
         SmartDashboard.putNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED);
 
-        spinMotorConfiguration.Slot0.kP  = INDEXER.SPIN_P;
-        spinMotorConfiguration.Slot0.kI  = INDEXER.SPIN_I;
-        spinMotorConfiguration.Slot0.kD  = INDEXER.SPIN_D;
-        spinMotorConfiguration.Slot0.kS = INDEXER.SPIN_S;
-
-        outputMotorConfiguration.Slot0.kP = INDEXER.OUTPUT_P;
-        outputMotorConfiguration.Slot0.kI = INDEXER.OUTPUT_I;
-        outputMotorConfiguration.Slot0.kD = INDEXER.OUTPUT_D;
+        //spinMotorConfig.closedLoop.pid(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D, ClosedLoopSlot.kSlot0);
+        // //TODO: Might not work, need to check
+        //spinFeedForward.kS(INDEXER.SPIN_S, ClosedLoopSlot.kSlot0);
+        //spinMotorConfig.closedLoop.apply(spinFeedForward);
+        outputMotorConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
 
         //assigns configuration to motor
-        spinMotor.getConfigurator().apply(spinMotorConfiguration);
-        outputMotor.getConfigurator().apply(outputMotorConfiguration);
-
+        //spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        outputMotor.configure(outputMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void periodic(){
         // Get motors speeds in RPS
-        Logger.recordOutput("Spinner RPS", getSpinnerVelocity());
-        Logger.recordOutput("Output RPS", getOutputVelocity());
+       // Logger.recordOutput("Spinner RPM", getSpinnerVelocity());
+        Logger.recordOutput("Output RPM", getOutputVelocity());
     }
 
     /**
@@ -89,7 +97,7 @@ public class Indexer extends SubsystemBase {
      */
     public void stop(){
         System.out.println("Going into stop method");
-        spinMotor.setVoltage(0);
+        //spinMotor.setVoltage(0);
         outputMotor.setVoltage(0);
         // spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(0));
         // outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(0));
@@ -106,26 +114,26 @@ public class Indexer extends SubsystemBase {
     /**
      * Runs the spin motor on the indexer
      */
-    public void runSpinIndexer(){
-        System.out.println("Spindexer Running");
-        spinMotor.setControl(spinMotorSlot0VelocityRequest.withSlot(0).withVelocity(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED)));
-    }
+    // public void runSpinIndexer(){
+    //     System.out.println("Spindexer Running");
+    //     spinMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    // }
 
     /**
      * Command to run the spin motor on the indexer 
      * @return a command to run the spin motor on the indexer
      */
-    public Command runSpinIndexerCommand(){
-        return this.run(() -> runSpinIndexer());
-    }
+    // public Command runSpinIndexerCommand(){
+    //     return this.runOnce(() -> runSpinIndexer());
+    // }
 
     /**
      * Runs the output motor on the indexer at given speed
      */
     public void runOutputIndexer(){
         //To run at raw power
-        outputMotor.setVoltage(12);
-        //outputMotor.setControl(outputMotorSlot0VelocityRequest.withVelocity(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED)));
+        //outputMotor.setVoltage(12);
+        outputMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
     /**
@@ -133,14 +141,15 @@ public class Indexer extends SubsystemBase {
      * @return a Command to run the output motor on the indexer 
      */
     public Command runOutputIndexerCommand(){
-        return this.run(() -> runOutputIndexer());
+        return this.runOnce(() -> runOutputIndexer());
     }
 
     /**
      * Runs both motors on the indexer 
      */
     public void runIndexer(){
-        runSpinIndexer();
+        //runSpinIndexer();
+        System.out.println("Running indexer within indexer method");
         runOutputIndexer();
     }
 
@@ -156,16 +165,16 @@ public class Indexer extends SubsystemBase {
      * Get the velocity of the spinner motor in RPS
      * @return spinner motor velocity in RPS
      */
-    public double getSpinnerVelocity(){
-        return spinMotor.getVelocity().getValueAsDouble();
-    }
+    // public double getSpinnerVelocity(){
+    //     return spinMotorEncoder.getVelocity();
+    // }
 
     /**
      * Get the velocity of the output motor in RPS
      * @return output motor velocity in RPS
      */
     public double getOutputVelocity(){
-        return outputMotor.getVelocity().getValueAsDouble();
+        return outputMotorEncoder.getVelocity();
     }
     
     public void updatePID(){
@@ -180,14 +189,13 @@ public class Indexer extends SubsystemBase {
         double Output_D = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
 
         if(Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD || Output_P != PO_OLD || Output_I != IO_OLD || Output_D != DO_OLD){
-            spinMotorConfiguration.Slot0.kP = Spin_P; 
-            spinMotorConfiguration.Slot0.kI = Spin_I;
-            spinMotorConfiguration.Slot0.kD = Spin_D; 
-            spinMotorConfiguration.Slot0.kS = Spin_S;
 
-            outputMotorConfiguration.Slot0.kP = Output_P; 
-            outputMotorConfiguration.Slot0.kI = Output_I;
-            outputMotorConfiguration.Slot0.kD = Output_D; 
+            // spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
+            // spinFeedForward.kS(Spin_S, ClosedLoopSlot.kSlot0);
+            // spinMotorConfig.closedLoop.apply(spinFeedForward);
+
+
+            outputMotorConfig.closedLoop.pid(Output_P, Output_I, Output_D, ClosedLoopSlot.kSlot0);
 
             PS_OLD = Spin_P;
             IS_OLD = Spin_I;
@@ -199,8 +207,8 @@ public class Indexer extends SubsystemBase {
             IO_OLD = Output_I;
             DO_OLD = Output_D;
 
-            spinMotor.getConfigurator().apply(spinMotorConfiguration);
-            outputMotor.getConfigurator().apply(outputMotorConfiguration);
+            //spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            outputMotor.configure(outputMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         }
         
