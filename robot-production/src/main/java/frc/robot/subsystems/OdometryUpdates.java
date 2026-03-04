@@ -96,6 +96,8 @@ public class OdometryUpdates extends SubsystemBase {
         }
     
         Logger.recordOutput(VISION.LOG_PATH + "AmbiguityRatio", ambiguity);
+        Logger.recordOutput(VISION.LOG_PATH + "robotPosition", robotPosition);
+        Logger.recordOutput(VISION.LOG_PATH + "initialPose", initialPose);
         
     }
     

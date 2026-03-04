@@ -38,23 +38,23 @@ public final class Constants {
 
     //camera G
     public static final Transform3d CAMERA_OFFSETS_BACK = (
-        new Transform3d(new Translation3d(-0.2537142, 0.1483664, 0.135), new Rotation3d(0, Math.toRadians(-45), Math.toRadians(180)))
+        new Transform3d(new Translation3d(-0.2537142, 0.14, 0.135), new Rotation3d(0, Math.toRadians(-45), Math.toRadians(180)))
     );
 
-    //camera H
+    //camera F
     public static final Transform3d CAMERA_OFFSETS_SIDE = (
         new Transform3d(new Translation3d(-0.165354, -0.31965,0.29), new Rotation3d(0,Math.toRadians(-30),Math.toRadians(270)))
     ); 
 
     public static final String CAMERA_NAME_BACK = (
-        "Arducam_OV9782_G" 
+        "Arducam_OV9782_USB_G" 
     );
 
     public static final String CAMERA_NAME_SIDE = (
-        "Arducam_OV9782_H"
+        "Arducam_OV9782_USB_F"
     ); 
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
-    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 2.0;
   }
 
   public final class SWERVE {

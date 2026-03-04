@@ -33,10 +33,10 @@ public class RobotContainer {
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  // private final Vision visionBack;
-  // private final Vision visionSide; 
-  // private final OdometryUpdates odometryUpdatesBack;
-  // private final OdometryUpdates odometryUpdatesSide;
+  private final Vision visionBack;
+  private final Vision visionSide; 
+  private final OdometryUpdates odometryUpdatesBack;
+  private final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
 
   //
@@ -80,10 +80,10 @@ public class RobotContainer {
     //
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
-    // visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    // visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
-    // odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
-    // odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
+    visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
+    odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
+    odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
     
     //
     // Configure the trigger bindings
