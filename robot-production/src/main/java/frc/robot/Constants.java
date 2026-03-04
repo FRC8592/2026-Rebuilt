@@ -132,6 +132,8 @@ public final class SHOOTER {
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
 
+    public static final double SHOOTER_TOLERANCE = 50;
+
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
     public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes\
 
@@ -144,7 +146,7 @@ public final class SHOOTER {
     public static final double TURRET_P0 = 1; //8 //2; //4; //12;
     public static final double TURRET_I0 = 0.0;
     public static final double TURRET_D0 = 0.0; //0.4;
-    public static final double TURRET_S = 0;
+    public static final double TURRET_S = 1.25;
     public static final double TURRET_P1 = 1;
     public static final double TURRET_I1 = 0.0;
     public static final double TURRET_D1 = 0.0;

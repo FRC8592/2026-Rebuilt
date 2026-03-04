@@ -14,7 +14,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
@@ -103,6 +102,10 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
     }
 
+    public double calcAngle(Pose2d robotPosition, Pose2d targetLocation){
+        return angleCalc.TurretAngleCalc(robotPosition, targetLocation);
+    }
+
 
     /**
      * Move turret to track target position
@@ -111,15 +114,13 @@ public class Turret extends SubsystemBase{
      */
     public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
         // Calculate target angle based on robot and target positions
-        double targetAngle = angleCalc.TurretAngleCalc(robotPosition, targetLocation);
+        double targetAngle = calcAngle(robotPosition, targetLocation);
 
         // Add 90 degree offset to compensate for new zero position of the turret
         //Not necessary anymore as the turret auto calculates
-        //TODO: Do we need a 
-        //targetAngle += 90;
+        targetAngle += 180;
 
-        SmartDashboard.putNumber("Angle", targetAngle);
-        
+        Logger.recordOutput("Angle", targetAngle);
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
         if(Math.abs(targetAngle) > 180){
             if(targetAngle < 0)
@@ -127,6 +128,9 @@ public class Turret extends SubsystemBase{
             else
                 targetAngle -= 360;
         }
+
+        //This is to ensure that if a false measurement is given, that it will not ask the turret to rotate like crazy
+        targetAngle %= 180;
 
         // when the angle of the turret is within x degrees of the target angle, switch to less aggressive PID values in slot 1
         //TODO: Implement two types of PID if necessary
@@ -138,7 +142,8 @@ public class Turret extends SubsystemBase{
         //
         // Set motor position based on target angle, converting from degrees to motor rotations
         //
-        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+        //tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+        //TODO: Implement Motion magic for turret
         //tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
@@ -156,11 +161,16 @@ public class Turret extends SubsystemBase{
      * @param pos the position we want the turret to go towards
      */
     public void basicTurretTesting(double pos){
+        Logger.recordOutput("basicTurretDegrees", pos);
         tMotor.setControl(positionRequest.withSlot(0).withPosition(pos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public Command basicTurretTestingCommand(double pos){
         return this.run(() -> basicTurretTesting(pos));
+    }
+
+    public double getAngle(){
+        return tMotor.getPosition().getValueAsDouble() * 1.0/(TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
 
@@ -170,7 +180,7 @@ public class Turret extends SubsystemBase{
     public void resetPos() {
         System.out.println("Resetting Pose");
         tMotor.setPosition(0);
-        //tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
         //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
         //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
         //To make sure this works!
@@ -256,18 +266,18 @@ public class Turret extends SubsystemBase{
 
     @Override
     public void periodic(){
-        // double E1R = E1.get();
-        // double E2R = E2.get();
+        double E1R = E1.get();
+        double E2R = E2.get();
         // int E1Process = (int)(E1Raw * 1000);
         // int E2Process = (int)(E2Raw * 1000);
         // double E1Filter = E1Process / 1000.0;
         // double E2Filter = E2Process / 1000.0;
-        // Logger.recordOutput("E1", E1.get());
-        // Logger.recordOutput("E2", E2.get());
+        Logger.recordOutput("E1", E1.get());
+        Logger.recordOutput("E2", E2.get());
         // Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
         // Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
         // Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-        // Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
+        Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
         Logger.recordOutput("Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
         // updateMotionMagic();

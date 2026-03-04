@@ -115,6 +115,16 @@ public class Scoring extends SubsystemBase{
         return this.runOnce(() -> toggleTracking());
     }
 
+    /**
+     * 
+     * @return
+     */
+    public boolean canShoot(){
+        //TODO: Change so it can use blue or red hub tracking
+        return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(), getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
+        && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()))) <= SHOOTER.SHOOTER_TOLERANCE;
+    }
+
 
     /**
      * If the tracking system is toggled on, update the required turret angle and shooter speed
@@ -149,7 +159,7 @@ public class Scoring extends SubsystemBase{
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
         }
         else {
