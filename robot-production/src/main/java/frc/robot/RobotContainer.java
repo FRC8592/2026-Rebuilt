@@ -125,11 +125,11 @@ public class RobotContainer {
     // LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
 
     // // This command is a toggle
-    //ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     //SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
-    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }

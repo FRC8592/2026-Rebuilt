@@ -160,7 +160,7 @@ public class Scoring extends SubsystemBase{
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            shooter.runAtSpeed(shooterSpeed);
+            //shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.

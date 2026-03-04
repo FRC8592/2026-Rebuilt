@@ -55,7 +55,7 @@ public class Turret extends SubsystemBase{
 
         // Put motor in brake mode, invert, and apply current limits
         tMotor.setNeutralMode(NeutralModeValue.Brake);
-        tMotorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        tMotorConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimit = TURRET.TURRET_CURRENT_LIMIT;
         tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -162,6 +162,15 @@ public class Turret extends SubsystemBase{
      */
     public void basicTurretTesting(double pos){
         Logger.recordOutput("basicTurretDegrees", pos);
+        double arbFF = 0;
+        // if(pos < 0){
+        //     arbFF = -1.0;
+        // }
+
+        // if(pos > 0){
+        //     arbFF = 1.0;
+        // }
+        positionRequest.withFeedForward(arbFF);
         tMotor.setControl(positionRequest.withSlot(0).withPosition(pos * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
@@ -174,13 +183,14 @@ public class Turret extends SubsystemBase{
     }
 
 
+
     /**
      * Get the encoder values the define the turret zero position.
      */
     public void resetPos() {
         System.out.println("Resetting Pose");
         tMotor.setPosition(0);
-        tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
+        //tMotor.setPosition(CRTTypeTwo(E1.get() - TURRET.E1_OFFSET, E2.get() - TURRET.E2_OFFSET) * 96.0 / 10.0);
         //System.out.println("CRT Raw Value: " + CRTTypeTwo(E1.get(), E2.get()));
         //System.out.println("CRT Rotations " + CRTTypeTwo(E1.get(), E2.get()) * 96.0 / 10.0);
         //To make sure this works!
@@ -280,6 +290,7 @@ public class Turret extends SubsystemBase{
         Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
         Logger.recordOutput("Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
+        Logger.recordOutput("Motor Voltage", tMotor.getMotorVoltage().getValueAsDouble());
         // updateMotionMagic();
     }
 
