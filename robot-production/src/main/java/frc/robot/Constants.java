@@ -36,24 +36,23 @@ public final class Constants {
   public final class VISION {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
-    //camera H
+    //camera G
     public static final Transform3d CAMERA_OFFSETS_BACK = (
-        new Transform3d(new Translation3d(-0.3175, 0.165, 0.26), new Rotation3d(0, Math.toRadians(-60), Math.toRadians(180)))
+        new Transform3d(new Translation3d(-0.2537142, 0.1483664, 0.135), new Rotation3d(0, Math.toRadians(-45), Math.toRadians(180)))
     );
 
-    //camera E
+    //camera H
     public static final Transform3d CAMERA_OFFSETS_SIDE = (
-        new Transform3d(new Translation3d(-0.16, -0.34,0.42), new Rotation3d(0,Math.toRadians(-60),Math.toRadians(270)))
+        new Transform3d(new Translation3d(-0.165354, -0.31965,0.29), new Rotation3d(0,Math.toRadians(-30),Math.toRadians(270)))
     ); 
 
     public static final String CAMERA_NAME_BACK = (
-        "Arducam_OV9782_H" 
+        "Arducam_OV9782_G" 
     );
 
     public static final String CAMERA_NAME_SIDE = (
-      "Arducam_OV9782_E"
+        "Arducam_OV9782_H"
     ); 
-
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
     public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
   }
