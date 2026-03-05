@@ -103,10 +103,20 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    // public Command runAtSpeedIntakeCommand() {
-    //     return intake.runAtSpeedIntakeCommand();
-    // }
+    public Command runAtSpeedIntakeCommand() {
+        return intake.runAtSpeedIntakeCommand();
+    }
 
+    /**
+     * Command to run the indexer at a set speed
+     * Just pass the command from Indexer up to the next level
+     */
+    public Command runAtSpeedIndexerCommand() {
+        // if (shooter.getVelocityFlywheel() > SCORING.SHOOTER_THRESHOLD) {
+        //     return indexer.runIndexerCommand();
+        // }
+        return indexer.runIndexerCommand();
+    }
 
     /**
      * Command to toggle on turret tracking and shooter wheel speed
@@ -152,7 +162,7 @@ public class Scoring extends SubsystemBase{
 
             // Lookup the required shooter speed in the range table
             //TODO: Change this
-            shooterSpeed = 3500;
+            shooterSpeed = RangeTable.get(targetDistance);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
@@ -160,7 +170,7 @@ public class Scoring extends SubsystemBase{
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            //shooter.runAtSpeed(shooterSpeed);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.

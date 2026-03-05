@@ -127,7 +127,7 @@ public class RobotContainer {
     // // This command is a toggle
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    //SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 

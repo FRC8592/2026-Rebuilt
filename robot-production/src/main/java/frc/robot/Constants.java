@@ -177,6 +177,8 @@ public final class SHOOTER {
     public static final Pose2d RED_HUB_POSE = new Pose2d(11.94, 4.04, new Rotation2d(0));
     public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(14.48, 2.02, new Rotation2d(0));
     public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
+
+    public static final double SHOOTER_THRESHOLD = 500; //RPM
   }
 
   public static class INTAKE{
@@ -221,7 +223,7 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 38;
 
-    public static final double SPIN_P = 0;
+    public static final double SPIN_P = 0.0007;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
@@ -235,9 +237,9 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 100;
+    public static final double SPIN_MOTOR_SPEED = 2000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 1000;
+    public static final double OUTPUT_MOTOR_SPEED = 4000;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
     
     public static final double MOTOR_MAX_RPS = 6380 / 60;
