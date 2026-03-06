@@ -117,7 +117,7 @@ public final class SHOOTER {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.7;
+    public static final double FLYWHEEL_P = 0.5;
     public static final double FLYWHEEL_I = 0;
     public static final double FLYWHEEL_D = 0;
     public static final double FLYWHEEL_V = 0;
@@ -134,7 +134,7 @@ public final class SHOOTER {
     public static final double SHOOTER_TOLERANCE = 50;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes\
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
@@ -163,6 +163,7 @@ public final class SHOOTER {
     public static final double FORWARD_LIMIT = 90; // Degrees
     public static final double REVERSE_LIMIT = -90; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
+    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
   }
@@ -223,7 +224,7 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 38;
 
-    public static final double SPIN_P = 0.0007;
+    public static final double SPIN_P = 0.0001;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
@@ -237,16 +238,11 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 2000;
+    public static final double SPIN_MOTOR_SPEED = 5000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 4000;
+    public static final double OUTPUT_MOTOR_SPEED = 5000;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
-    
-    public static final double MOTOR_MAX_RPS = 6380 / 60;
 
-    public static final double SPIN_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
-    public static final double OUTPUT_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
-      
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
 
   }

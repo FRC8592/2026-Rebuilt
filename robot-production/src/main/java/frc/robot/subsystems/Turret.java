@@ -25,7 +25,6 @@ public class Turret extends SubsystemBase{
     private TalonFX tMotor;
     private TalonFXConfiguration tMotorConfiguration;
     private PositionVoltage positionRequest;
-    private VelocityVoltage spinMotorSlot0VelocityRequest = new VelocityVoltage(0);
     private MotionMagicVoltage motionMagicRequest;
     // Absolute encoders used to find the starting position of the turret
     private DutyCycleEncoder E1;
@@ -112,10 +111,6 @@ public class Turret extends SubsystemBase{
     public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
         // Calculate target angle based on robot and target positions
         double targetAngle = calcAngle(robotPosition, targetLocation);
-
-        // Add 180 degree offset to compensate for new zero position of the turret
-        //Not necessary anymore as the turret auto calculates
-        targetAngle += 180;
 
         Logger.recordOutput(TURRET.LOG_PATH + "Angle", targetAngle);
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
