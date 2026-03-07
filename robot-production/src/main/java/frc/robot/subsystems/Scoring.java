@@ -97,6 +97,13 @@ public class Scoring extends SubsystemBase{
         trackingTarget = !trackingTarget;
     }
 
+    /**
+     * Turn the tracking system off.
+     */
+    private void disableTracking() {
+        trackingTarget = false;
+    }
+
 
     /**
      * Command to run the intake at a set speed
@@ -118,10 +125,17 @@ public class Scoring extends SubsystemBase{
     }
 
     /**
-     * Command to toggle on turret tracking and shooter wheel speed
+     * Command to toggle turret tracking and shooter wheel speed
      */
     public Command toggleTrackingCommand() {
         return this.runOnce(() -> toggleTracking());
+    }
+
+    /**
+     * Command to turn off turret tracking and shooter wheel speed
+     */
+    public Command disableTrackingCommand() {
+        return this.runOnce(() -> disableTracking());
     }
 
     /**
