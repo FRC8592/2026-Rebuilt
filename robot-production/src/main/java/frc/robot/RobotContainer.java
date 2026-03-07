@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController = new CommandXboxController(1);
+  private static final CommandXboxController operatorController = new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();

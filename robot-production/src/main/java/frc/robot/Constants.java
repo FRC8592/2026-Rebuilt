@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.util.Color;
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -192,7 +194,7 @@ public final class SHOOTER {
     // Current limit for the Intake motor
     public static final int EXTEND_CURRENT_LIMIT = 40;
     public static final int ROLLER_CURRENT_LIMIT = 40; 
-    
+
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;
@@ -231,7 +233,7 @@ public final class SHOOTER {
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
 
-    // Current limts for the Indexer motors
+    // Current limits for the Indexer motors
     //TODO: tune these limits
     public static final int SPIN_CURRENT_LIMIT = 40;
     public static final int OUTPUT_CURRENT_LIMIT = 40;
@@ -248,6 +250,20 @@ public final class SHOOTER {
   public final class RANGE_TABLE {
     public static final double RANGE_TABLE_STEP = 0.2; //meters
     public static final double MAX_TABLE_DISTANCE = 10.0; //meters 
+  }
+
+  public final class LEDS{
+    public static final Color TEAL = new Color(0, 64, 192);
+    public static final Color ORANGE = new Color(192, 64, 0);
+    public static final Color WHITE = new Color(255, 255, 255);
+    public static final Color GREEN = new Color(0,255,0);
+    public static final Color RED = new Color(255, 0, 0);
+    public static final Color OFF = new Color(0, 0, 0);
+    public static final Color YELLOW = new Color(255,255,0);
+    public static final Color PURPLE = new Color(255,0,255);
+    public static final int LED_STRIP_LENGTH = 52;
+    public static final int LED_CANDLE_COUNT= 8;
+    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH+LED_CANDLE_COUNT;
   }
 
 }
