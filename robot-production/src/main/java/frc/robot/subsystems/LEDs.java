@@ -48,7 +48,7 @@ public class LEDs {
         configAll.CANdleFeatures = new CANdleFeaturesConfigs()
             .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
             .withVBatOutputMode(VBatOutputModeValue.Modulated);
-        candle = new CANdle(0); // TODO: Change this value when the device name is giving.
+        candle = new CANdle(33); // TODO: Change this value when the device name is giving.
         candle.getConfigurator().apply(configAll);
         timer.start();
     }
