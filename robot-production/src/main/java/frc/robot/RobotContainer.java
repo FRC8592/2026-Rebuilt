@@ -12,19 +12,14 @@ import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.Scoring;
-
-import java.util.Set;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.Set;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
@@ -33,10 +28,10 @@ public class RobotContainer {
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
-  // private final Vision visionBack;
-  // private final Vision visionSide; 
-  // private final OdometryUpdates odometryUpdatesBack;
-  // private final OdometryUpdates odometryUpdatesSide;
+  private final Vision visionBack;
+  private final Vision visionSide; 
+  private final OdometryUpdates odometryUpdatesBack;
+  private final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
 
   //
@@ -44,18 +39,22 @@ public class RobotContainer {
   //
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
-  private final Trigger INTAKE_RUN = driverController.leftBumper();
-  private final Trigger INTAKE_EXTEND = driverController.x();
+  private final Trigger INTAKE_RUN = driverController.rightTrigger();
+  // TODO: Change Intake Extend Binding
+  // private final Trigger INTAKE_EXTEND = driverController.x();
   private final Trigger LOCK_WHEELS = driverController.x();
 
-  private final Trigger SNAP_TO = driverController.povUp();
+  // private final Trigger SNAP_TO = driverController.povUp();
 
   //
   // Operator Controls
   //
   private final Trigger RESET_TURRET = driverController.a();
-  private final Trigger ENABLE_TRACKING = operatorController.leftBumper();
-  private final Trigger SHOOT = operatorController.rightBumper();
+  private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
+  private final Trigger SHOOT = operatorController.rightTrigger();
+
+  private final Trigger TURRET_TEST = operatorController.x();
+  private final Trigger TURRET_TEST_BACK = operatorController.a();
 
 
   //
@@ -76,10 +75,10 @@ public class RobotContainer {
     //
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
-    // visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    // visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
-    // odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
-    // odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
+    visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
+    odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
+    odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
     
     //
     // Configure the trigger bindings
@@ -104,28 +103,35 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
 
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
     INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
+    TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
+
+    TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
+
     //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
 
-    // TODO: Add binding to put swerve wheels into an "X" pattern to resist being pushed around.
-    // LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
+    // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
+    LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
 
-    // This command is a toggle
+    // ENABLE_TRACKING start turret tracking and shooter wheels.  It operates as a toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
-    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
 
+  /**
+   * Place any default subsystem commands here
+   */
   private void configureDefaults() {
         // Set the swerve's default command to drive with joysticks
         setDefaultCommand(swerve, swerve.run(() -> {
@@ -136,6 +142,7 @@ public class RobotContainer {
         }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     }
 
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -145,6 +152,12 @@ public class RobotContainer {
         return AutoManager.getAutonomousCommand();
   }
 
+
+  /**
+   * Sets the default command for a subsystem. 
+   * @param subsystem
+   * @param command
+   */
   private void setDefaultCommand(SubsystemBase subsystem, Command command) {
         if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
             subsystem.setDefaultCommand(command);

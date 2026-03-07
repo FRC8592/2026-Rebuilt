@@ -7,16 +7,16 @@ import frc.robot.Constants.*;
 
 public class RangeTable {
     public final static RangeEntry[] RANGE_TO_RPM = {
-            new RangeEntry(2000.0),    // 3500.0m
-            new RangeEntry(2100.0),    // 0.2m
-            new RangeEntry(2200.0),    // 0.4m
-            new RangeEntry(2300.0),    // 0.6m
-            new RangeEntry(2400.0),    // 0.8m
-            new RangeEntry(2500.0),    // 1.0m
-            new RangeEntry(2600.0),    // 1.2m
-            new RangeEntry(2700.0),    // 1.4m
-            new RangeEntry(2800.0),    // 1.6m 
-            new RangeEntry(2900.0),    // 1.8m 
+            new RangeEntry(1000.0),    // 0.0m
+            new RangeEntry(1100.0),    // 0.2m
+            new RangeEntry(1200.0),    // 0.4m
+            new RangeEntry(1300.0),    // 0.6m
+            new RangeEntry(1400.0),    // 0.8m
+            new RangeEntry(1500.0),    // 1.0m
+            new RangeEntry(1600.0),    // 1.2m
+            new RangeEntry(1700.0),    // 1.4m
+            new RangeEntry(1800.0),    // 1.6m 
+            new RangeEntry(1900.0),    // 1.8m 
             new RangeEntry(2000.0),    // 2.0m 
             new RangeEntry(2100.0),    // 2.2m 
             new RangeEntry(2200.0),    // 2.4m 

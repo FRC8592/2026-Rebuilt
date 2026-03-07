@@ -36,26 +36,25 @@ public final class Constants {
   public final class VISION {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
-    //camera H
+    //camera G
     public static final Transform3d CAMERA_OFFSETS_BACK = (
-        new Transform3d(new Translation3d(-0.3175, 0.165, 0.26), new Rotation3d(0, Math.toRadians(-60), Math.toRadians(180)))
+        new Transform3d(new Translation3d(-0.2537142, 0.14, 0.135), new Rotation3d(0, Math.toRadians(-45), Math.toRadians(180)))
     );
 
-    //camera E
+    //camera F
     public static final Transform3d CAMERA_OFFSETS_SIDE = (
-        new Transform3d(new Translation3d(-0.16, -0.34,0.42), new Rotation3d(0,Math.toRadians(-60),Math.toRadians(270)))
+        new Transform3d(new Translation3d(-0.165354, -0.31965,0.29), new Rotation3d(0,Math.toRadians(-30),Math.toRadians(270)))
     ); 
 
     public static final String CAMERA_NAME_BACK = (
-        "Arducam_OV9782_H" 
+        "Arducam_OV9782_USB_G" 
     );
 
     public static final String CAMERA_NAME_SIDE = (
-      "Arducam_OV9782_E"
+        "Arducam_OV9782_USB_F"
     ); 
-
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
-    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 1.4d;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 2.0;
   }
 
   public final class SWERVE {
@@ -118,7 +117,7 @@ public final class SHOOTER {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.7;
+    public static final double FLYWHEEL_P = 0.5;
     public static final double FLYWHEEL_I = 0;
     public static final double FLYWHEEL_D = 0;
     public static final double FLYWHEEL_V = 0;
@@ -132,8 +131,10 @@ public final class SHOOTER {
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
 
+    public static final double SHOOTER_TOLERANCE = 50;
+
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes\
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
@@ -141,12 +142,13 @@ public final class SHOOTER {
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
     public static final int TURRET_CURRENT_LIMIT = 80;
-    public static final double TURRET_P0 = 18.0; //8 //2; //4; //12;
+    public static final double TURRET_P0 = 12; //8 //2; //4; //12;
     public static final double TURRET_I0 = 0.0;
     public static final double TURRET_D0 = 0.8; //0.4;
-    public static final double TURRET_P1 = 14.0;
+    public static final double TURRET_S = 0.5;
+    public static final double TURRET_P1 = 1;
     public static final double TURRET_I1 = 0.0;
-    public static final double TURRET_D1 = 0.2;
+    public static final double TURRET_D1 = 0.0;
 
     public static final int TURRET_TG = 80;
     public static final int TURRET_G1 = 19;
@@ -161,6 +163,7 @@ public final class SHOOTER {
     public static final double FORWARD_LIMIT = 90; // Degrees
     public static final double REVERSE_LIMIT = -90; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
+    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
   }
@@ -175,6 +178,8 @@ public final class SHOOTER {
     public static final Pose2d RED_HUB_POSE = new Pose2d(11.94, 4.04, new Rotation2d(0));
     public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(14.48, 2.02, new Rotation2d(0));
     public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
+
+    public static final double SHOOTER_THRESHOLD = 500; //RPM
   }
 
   public static class INTAKE{
@@ -219,7 +224,7 @@ public final class SHOOTER {
     public static final int SPINNER_CAN_ID = 16;
     public static final int OUTPUT_CAN_ID = 38;
 
-    public static final double SPIN_P = 0;
+    public static final double SPIN_P = 0.0001;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
@@ -233,16 +238,11 @@ public final class SHOOTER {
     public static final int SPIN_CURRENT_LIMIT_FREE = 80;
     public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
 
-    public static final double SPIN_MOTOR_SPEED = 100;
+    public static final double SPIN_MOTOR_SPEED = 5000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
-    public static final double OUTPUT_MOTOR_SPEED = 1000;
+    public static final double OUTPUT_MOTOR_SPEED = 5000;
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
-    
-    public static final double MOTOR_MAX_RPS = 6380 / 60;
 
-    public static final double SPIN_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
-    public static final double OUTPUT_MOTOR_RPS = SPIN_MOTOR_SPEED * MOTOR_MAX_RPS;
-      
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
 
   }

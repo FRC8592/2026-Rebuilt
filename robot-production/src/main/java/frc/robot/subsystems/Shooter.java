@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase{
         flywheelConfiguration.Slot0.kD = SHOOTER.FLYWHEEL_D;
         flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V; 
 
-        flywheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
@@ -98,11 +98,8 @@ public class Shooter extends SubsystemBase{
     public void runAtSpeed(double desiredRPM){
         // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
         double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
-        double backwheelMotorVelocity = flyWheelMotorVelocity * WHEEL_RATIO;
-
-        System.out.println("********************");
-        System.out.println("Running shooter at " + desiredRPM + " RPM");
-        System.out.println("********************");
+        //TODO: Remove this -1!
+        double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * WHEEL_RATIO;
 
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));

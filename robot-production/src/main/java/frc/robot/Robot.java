@@ -36,9 +36,9 @@ public class Robot extends LoggedRobot {
   private final RobotContainer m_robotContainer;
 
   /* log and replay timestamp and joystick data */
-    // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-    //     .withTimestampReplay()
-    //     .withJoystickReplay();
+  // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+  //     .withTimestampReplay()
+  //     .withJoystickReplay();
 
 
   public static Field2d FIELD = new Field2d();
@@ -51,12 +51,13 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
 
-    CanBridge.runTCP();
-    Logger.recordMetadata("Game", "BunnyBots");
+    CanBridge.runTCP(); // Required for Grapplehook laser reflection sensor.
+
+    // Logger configuration
+    Logger.recordMetadata("Game", "REBUILT");
     Logger.recordMetadata("Year", "2026");
     Logger.recordMetadata("Team", "8592");
 
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     if (isReal()) { // If running on a real robot
       String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
 
@@ -73,16 +74,16 @@ public class Robot extends LoggedRobot {
             System.err.println("UNABLE TO LOG TO A USB STICK!");
         }
       }
-      LoggedPowerDistribution.getInstance(1, ModuleType.kRev);// Enables power distribution logging
 
-    } else { // If simulated
-        SmartDashboard.putData(FIELD);
+      LoggedPowerDistribution.getInstance(1, ModuleType.kRev);  // Enables power distribution logging
     }
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      Logger.start();
+
+    //SmartDashboard.putData(FIELD); // TODO:Do we need this?
+
+    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    Logger.start();
           
-      SmartDashboard.putData(FIELD);
-      m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer();
   }
 
   /**
@@ -113,16 +114,19 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+
+    // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
 
     if (alliance.isPresent()){
       m_robotContainer.scoring.setAlliance(alliance.get());
     }
 
+    // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
     //m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.intake.updatePID();
-    //m_robotContainer.scoring.turret.updatePID();
+    m_robotContainer.scoring.turret.updatePID();
 
   }
 
@@ -154,6 +158,8 @@ public class Robot extends LoggedRobot {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
      //   m_autonomousCommand.cancel();
     }
+
+    // Send the al
   }
 
   /** This function is called periodically during operator control. */
