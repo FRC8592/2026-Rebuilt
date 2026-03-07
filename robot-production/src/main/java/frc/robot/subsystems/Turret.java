@@ -25,7 +25,6 @@ public class Turret extends SubsystemBase{
     private TalonFX tMotor;
     private TalonFXConfiguration tMotorConfiguration;
     private PositionVoltage positionRequest;
-    private VelocityVoltage spinMotorSlot0VelocityRequest = new VelocityVoltage(0);
     private MotionMagicVoltage motionMagicRequest;
     // Absolute encoders used to find the starting position of the turret
     private DutyCycleEncoder E1;
@@ -84,9 +83,6 @@ public class Turret extends SubsystemBase{
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
-        //
-        // *** TODO: Remove setPosition to 0!!!! ***
-        //
         // Activate motion magic to hold turret in starting position
         // tMotor.setPosition(0.0);
         //TODO: Figure out if this is causing issues, or what is causing turret default behavior
@@ -116,11 +112,7 @@ public class Turret extends SubsystemBase{
         // Calculate target angle based on robot and target positions
         double targetAngle = calcAngle(robotPosition, targetLocation);
 
-        // Add 90 degree offset to compensate for new zero position of the turret
-        //Not necessary anymore as the turret auto calculates
-        targetAngle += 180;
-
-        Logger.recordOutput("Angle", targetAngle);
+        Logger.recordOutput(TURRET.LOG_PATH + "Angle", targetAngle);
         // Turret only moves +/- 180 degrees, so adjust target angle if it is outside of that range
         if(Math.abs(targetAngle) > 180){
             if(targetAngle < 0)
@@ -131,6 +123,7 @@ public class Turret extends SubsystemBase{
 
         //This is to ensure that if a false measurement is given, that it will not ask the turret to rotate like crazy
         targetAngle %= 180;
+        Logger.recordOutput(TURRET.LOG_PATH + "Angle after %", targetAngle);
 
         // when the angle of the turret is within x degrees of the target angle, switch to less aggressive PID values in slot 1
         //TODO: Implement two types of PID if necessary
@@ -145,7 +138,6 @@ public class Turret extends SubsystemBase{
         //tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
         //TODO: Implement Motion magic for turret
         //tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput("Motor Set Position", targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
 

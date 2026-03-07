@@ -101,10 +101,6 @@ public class Shooter extends SubsystemBase{
         //TODO: Remove this -1!
         double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * WHEEL_RATIO;
 
-        System.out.println("********************");
-        System.out.println("Running shooter at " + desiredRPM + " RPM");
-        System.out.println("********************");
-
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }

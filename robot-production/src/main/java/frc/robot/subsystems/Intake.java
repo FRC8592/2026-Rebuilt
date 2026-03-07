@@ -27,14 +27,13 @@ import frc.robot.Constants.INTAKE;
 
 public class Intake extends SubsystemBase{
     private TalonFX rollerMotor;
-    
     private SparkFlex extendMotor;
 
+    private TalonFXConfiguration rollerConfig;
     private SparkFlexConfig extendConfig;
-    private TalonFXConfiguration rollerConfig; 
 
-    private SparkClosedLoopController extendClosedLoopCtrl;
     private VelocityVoltage rollerMotorCtrl = new VelocityVoltage(0);
+    private SparkClosedLoopController extendClosedLoopCtrl;
 
     private RelativeEncoder extendMotorEncoder;
 
@@ -57,54 +56,46 @@ public class Intake extends SubsystemBase{
         /*
          * Create the Intake motor and instatiate the following features
          *   Reset to safe factory configuration
-         *   Store persistant configuration (Flash)
          *   Place in COAST mode (Can coast to a stop)
          *   Set current limits
          *   Set VELOCITY PID parameters
          */
-
-        //RollerMotorLeft = new SparkFlex (INTAKE.INTAKE_ROLLER_LEFT_CAN_ID, MotorType.kBrushless); 
-        rollerMotor = new TalonFX (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID); 
-        extendMotor = new SparkFlex(INTAKE.INTAKE_EXTEND_CAN_ID, MotorType.kBrushless); 
-
-
-        extendConfig = new SparkFlexConfig();
+        rollerMotor = new TalonFX (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID);
         rollerConfig = new TalonFXConfiguration();
 
-        //rollerMotorLeftConfig.closedLoop.pid(INTAKE.INTAKE_LEFT_P, INTAKE.INTAKE_LEFT_I, INTAKE.INTAKE_LEFT_D); 
-        extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P,INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
-
         rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-        //rollerMotorLeftConfig.follow(RollerMotorRight);
+        rollerConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
+        rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        rollerConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
         rollerConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
         rollerConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
-        rollerConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D; 
+        rollerConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D;
 
-        //rollerMotorLeftConfig.idleMode(IdleMode.kCoast); 
-        extendConfig.idleMode(IdleMode.kBrake);
-
-        rollerConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-
-        //rollerMotorLeftConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
-        extendConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
-
-        // extendConfiguration.TorqueCurrent.withPeakForwardTorqueCurrent(INTAKE.EXTEND_TORQUE_CURRENT)
-        // .withPeakReverseTorqueCurrent(-INTAKE.EXTEND_TORQUE_CURRENT); 
-
-        //RollerMotorLeft.configure(rollerMotorLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
-        extendMotor.configure(extendConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         rollerMotor.getConfigurator().apply(rollerConfig); 
 
+        /*
+         * Create the Extension motor and instatiate the following features
+         *   Reset to safe factory configuration
+         *   Store persistant configuration (Flash)
+         *   Place in Brake mode (Hold position)
+         *   Set current limits
+         *   Set VELOCITY PID parameters
+         */
+        extendMotor = new SparkFlex(INTAKE.INTAKE_EXTEND_CAN_ID, MotorType.kBrushless);         
+        extendConfig = new SparkFlexConfig();
+
+        extendConfig.idleMode(IdleMode.kBrake);
+        extendConfig.smartCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT); 
+
+        extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P,INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
+
+        extendMotor.configure(extendConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         extendClosedLoopCtrl = extendMotor.getClosedLoopController(); 
         
         extendMotorEncoder = extendMotor.getEncoder(); 
-  
-        // // TODO: Determine an appropriate current limit for the intake motor
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-
         SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
         SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
         SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
@@ -141,7 +132,6 @@ public class Intake extends SubsystemBase{
     public Command resetExtenderCommand(){
         return this.runOnce(() -> resetExtenderPos());
     }
-
 
     /**
      * Command to run the intake at a predetermined speed

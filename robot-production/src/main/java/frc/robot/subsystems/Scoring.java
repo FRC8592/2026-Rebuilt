@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -7,11 +8,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 import java.util.Optional;
 import java.util.Set;
-
-import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants.*;
 import frc.robot.subsystems.swerve.Swerve;
@@ -25,9 +23,8 @@ public class Scoring extends SubsystemBase{
     public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
-    
-
     private Alliance alliance;
+
 
     /**
      * Scoring subsystem.  Controls collecting and shooting.
@@ -45,6 +42,7 @@ public class Scoring extends SubsystemBase{
         indexer = new Indexer();
     }
 
+
     /**
      * Sets the alliance from the DriverStation
      * @param alliance Alliance
@@ -53,6 +51,7 @@ public class Scoring extends SubsystemBase{
     {
         this.alliance = alliance;
     }
+
 
     /**
      * Sets the target based on the robot's position on the field
@@ -103,10 +102,20 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    // public Command runAtSpeedIntakeCommand() {
-    //     return intake.runAtSpeedIntakeCommand();
-    // }
+    public Command runAtSpeedIntakeCommand() {
+        return intake.runAtSpeedIntakeCommand();
+    }
 
+    /**
+     * Command to run the indexer at a set speed
+     * Just pass the command from Indexer up to the next level
+     */
+    public Command runAtSpeedIndexerCommand() {
+        // if (shooter.getVelocityFlywheel() > SCORING.SHOOTER_THRESHOLD) {
+        //     return indexer.runIndexerCommand();
+        // }
+        return indexer.runIndexerCommand();
+    }
 
     /**
      * Command to toggle on turret tracking and shooter wheel speed
@@ -151,8 +160,7 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            //TODO: Change this
-            shooterSpeed = 3500;
+            shooterSpeed = RangeTable.get(targetDistance);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
@@ -160,7 +168,7 @@ public class Scoring extends SubsystemBase{
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            //shooter.runAtSpeed(shooterSpeed);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
