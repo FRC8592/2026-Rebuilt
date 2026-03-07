@@ -32,7 +32,6 @@ public class Intake extends SubsystemBase{
     private TalonFXConfiguration rollerConfig;
     private SparkFlexConfig extendConfig;
 
-    
     private VelocityVoltage rollerMotorCtrl = new VelocityVoltage(0);
     private SparkClosedLoopController extendClosedLoopCtrl;
 
@@ -66,6 +65,8 @@ public class Intake extends SubsystemBase{
 
         rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         rollerConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
+        rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        rollerConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
         rollerConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
         rollerConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
@@ -85,7 +86,7 @@ public class Intake extends SubsystemBase{
         extendConfig = new SparkFlexConfig();
 
         extendConfig.idleMode(IdleMode.kBrake);
-        extendConfig.smartCurrentLimit(INTAKE.INTAKE_CURRENT_LIMIT_STALL,INTAKE.INTAKE_CURRENT_LIMIT_FREE); 
+        extendConfig.smartCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT); 
 
         extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P,INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
 
@@ -93,11 +94,8 @@ public class Intake extends SubsystemBase{
         extendClosedLoopCtrl = extendMotor.getClosedLoopController(); 
         
         extendMotorEncoder = extendMotor.getEncoder(); 
-  
-        // // TODO: Determine an appropriate current limit for the intake motor
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-
         SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
         SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
         SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
@@ -134,7 +132,6 @@ public class Intake extends SubsystemBase{
     public Command resetExtenderCommand(){
         return this.runOnce(() -> resetExtenderPos());
     }
-
 
     /**
      * Command to run the intake at a predetermined speed

@@ -190,11 +190,9 @@ public final class SHOOTER {
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
-    public static final int INTAKE_CURRENT_LIMIT_STALL = 80;
-    public static final int INTAKE_CURRENT_LIMIT_FREE = 0; 
+    public static final int EXTEND_CURRENT_LIMIT = 40;
+    public static final int ROLLER_CURRENT_LIMIT = 40; 
     
-    public static final int EXTEND_CURRENT_LIMIT_STALL = 0; 
-    public static final int EXTEND_CURRENT_LIMIT_FREE = 0; 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;
@@ -234,9 +232,9 @@ public final class SHOOTER {
     public static final double OUTPUT_D = 0;
 
     // Current limts for the Indexer motors
-    public static final int SPIN_CURRENT_LIMIT_STALL = 80;
-    public static final int SPIN_CURRENT_LIMIT_FREE = 80;
-    public static final int OUTPUT_CURRENT_LIMIT_STALL = 80;
+    //TODO: tune these limits
+    public static final int SPIN_CURRENT_LIMIT = 40;
+    public static final int OUTPUT_CURRENT_LIMIT = 40;
 
     public static final double SPIN_MOTOR_SPEED = 5000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
