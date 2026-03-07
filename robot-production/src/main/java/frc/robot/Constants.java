@@ -252,18 +252,4 @@ public final class SHOOTER {
     public static final double MAX_TABLE_DISTANCE = 10.0; //meters 
   }
 
-  public final class LEDS{
-    public static final Color TEAL = new Color(0, 64, 192);
-    public static final Color ORANGE = new Color(192, 64, 0);
-    public static final Color WHITE = new Color(255, 255, 255);
-    public static final Color GREEN = new Color(0,255,0);
-    public static final Color RED = new Color(255, 0, 0);
-    public static final Color OFF = new Color(0, 0, 0);
-    public static final Color YELLOW = new Color(255,255,0);
-    public static final Color PURPLE = new Color(255,0,255);
-    public static final int LED_STRIP_LENGTH = 52;
-    public static final int LED_CANDLE_COUNT= 8;
-    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH+LED_CANDLE_COUNT;
-  }
-
 }
