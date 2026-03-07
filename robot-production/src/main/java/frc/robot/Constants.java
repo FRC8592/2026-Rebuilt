@@ -235,8 +235,8 @@ public final class SHOOTER {
 
     // Current limits for the Indexer motors
     //TODO: tune these limits
-    public static final int SPIN_CURRENT_LIMIT = 40;
-    public static final int OUTPUT_CURRENT_LIMIT = 40;
+    public static final int SPIN_CURRENT_LIMIT = 60;
+    public static final int OUTPUT_CURRENT_LIMIT = 60;
 
     public static final double SPIN_MOTOR_SPEED = 5000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
