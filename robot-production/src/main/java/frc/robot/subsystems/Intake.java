@@ -85,10 +85,13 @@ public class Intake extends SubsystemBase{
         extendMotor = new SparkFlex(INTAKE.INTAKE_EXTEND_CAN_ID, MotorType.kBrushless);         
         extendConfig = new SparkFlexConfig();
 
-        extendConfig.idleMode(IdleMode.kBrake);
+        extendConfig.idleMode(IdleMode.kCoast);
         extendConfig.smartCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT); 
 
         extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P,INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
+        extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
+        extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
+        extendConfig.closedLoop.maxMotion.allowedProfileError(10);
 
         extendMotor.configure(extendConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         extendClosedLoopCtrl = extendMotor.getClosedLoopController(); 
@@ -114,7 +117,7 @@ public class Intake extends SubsystemBase{
         //To run at raw power
         //rollerMotorRightClosedLoopController.setSetpoint(12, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
         //TODO: Research why Neo Motors undershoot velocity sent to the motor 
-        extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
     }
 
     public void runAtSpeedIntake(){
@@ -144,6 +147,24 @@ public class Intake extends SubsystemBase{
         System.out.println("Extend Command is Running");
         return this.runOnce(()->runToPositionExt()); 
     }
+
+    public void retractIntake(){
+        extendClosedLoopCtrl.setSetpoint(0, ControlType.kMAXMotionPositionControl);
+    }
+
+    public Command retractIntakeCommand(){
+        return this.runOnce(() -> retractIntake());
+    }
+
+    // public void setCoastMode(){
+    //     extendConfig.idleMode(IdleMode.kCoast);
+    //     extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // }
+
+    // public void setBrakeMode(){
+    //     extendConfig.idleMode(IdleMode.kBrake);
+    //     extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // }
 
     public double getExtendPosition(){
         return extendMotorEncoder.getPosition();

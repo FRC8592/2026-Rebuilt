@@ -41,7 +41,7 @@ public class RobotContainer {
   private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   // TODO: Change Intake Extend Binding
-  // private final Trigger INTAKE_EXTEND = driverController.x();
+  private final Trigger INTAKE_EXTEND = operatorController.y();
   private final Trigger LOCK_WHEELS = driverController.x();
 
   // private final Trigger SNAP_TO = driverController.povUp();
@@ -55,6 +55,8 @@ public class RobotContainer {
 
   private final Trigger TURRET_TEST = operatorController.x();
   private final Trigger TURRET_TEST_BACK = operatorController.a();
+
+  private final Trigger RESET_EXTEND = operatorController.b();
 
 
   //
@@ -114,7 +116,10 @@ public class RobotContainer {
 
     TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
 
-    //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
+    RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
+
+
+    INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
     LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
