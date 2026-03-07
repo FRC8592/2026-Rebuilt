@@ -4,22 +4,23 @@
 
 package frc.robot;
 
-import frc.robot.Constants.*;
+import com.pathplannerllib.eventsEventTriggerERS;
+
 import frc.robot.commands.autonomous.AutoManager;
+import frc.robot.subsystems.Scoring;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.Constants.*;
+import frcrrobot.Constants.CONTROLLERSs
+import frc.robot.Constants.VISION;
+import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.OdometryUpdates;
+import frc.robot.subsystems.Scoring;
+import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.Scoring;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import java.util.Set;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
@@ -79,6 +80,12 @@ public class RobotContainer {
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    new EventTrigger("Shoot").whileTrue(scoring.indexer.runIndexerCommand());
+    new EventTrigger("RunIntake").whileTrue(scoring.intake.runAtSpeedIntakeCommand());
+    new EventTrigger("DeployIntake").whileTrue(scoring.intake.runExtendCommand());
+    new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().alongWith(scoring.intake.stopExtendCommand()));
+    new EventTrigger("RetractIntake").whileTrue(scoring.intake.runRetractCommand());
+    new EventTrigger("ToggleHubTracking").whileTrue(scoring.toggleTrackingCommand());
     
     //
     // Configure the trigger bindings

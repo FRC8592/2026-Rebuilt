@@ -144,6 +144,15 @@ public class Intake extends SubsystemBase{
         System.out.println("Extend Command is Running");
         return this.runOnce(()->runToPositionExt()); 
     }
+    public void runToPositionRetract() {
+        extendClosedLoopCtrl.setSetpoint(0, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    }
+    
+    public Command runRetractCommand() {
+        return this.runOnce(() -> runToPositionRetract());
+    }
+
+
 
     public double getExtendPosition(){
         return extendMotorEncoder.getPosition();

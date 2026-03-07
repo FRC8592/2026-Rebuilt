@@ -78,7 +78,7 @@ public class Robot extends LoggedRobot {
       LoggedPowerDistribution.getInstance(1, ModuleType.kRev);  // Enables power distribution logging
     }
 
-    //SmartDashboard.putData(FIELD); // TODO:Do we need this?
+    SmartDashboard.putData("Field", FIELD);
 
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
