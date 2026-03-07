@@ -20,7 +20,7 @@
         "y": 5.899669578176797
       },
       "prevControl": {
-        "x": 2.6597248033110077,
+        "x": 2.6597248033110072,
         "y": 5.984028775189914
       },
       "nextControl": {
@@ -36,28 +36,44 @@
         "y": 5.899669578176797
       },
       "prevControl": {
-        "x": 5.526184527563257,
-        "y": 5.795408742546222
+        "x": 5.582019154007019,
+        "y": 5.607950670946221
       },
       "nextControl": {
-        "x": 6.894670554527091,
-        "y": 6.001401105210397
+        "x": 6.833654224537038,
+        "y": 6.181317346643518
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.9413458427753625,
-        "y": 6.7747750300044345
+        "x": 6.838509403935185,
+        "y": 6.85421896701389
       },
       "prevControl": {
-        "x": 8.017165684422753,
-        "y": 7.458598193367473
+        "x": 6.696241433744687,
+        "y": 6.567669324347352
       },
       "nextControl": {
-        "x": 7.770310185178731,
-        "y": 5.232195384830122
+        "x": 6.980777374125683,
+        "y": 7.1407686096804275
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.799769314229657,
+        "y": 6.85421896701389
+      },
+      "prevControl": {
+        "x": 7.768570326164865,
+        "y": 7.6478432256551745
+      },
+      "nextControl": {
+        "x": 7.819714916087964,
+        "y": 6.346852719907407
       },
       "isLocked": false,
       "linkedName": null
@@ -74,6 +90,22 @@
       "nextControl": {
         "x": 7.767292100687989,
         "y": 1.0393543113347528
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.601064887152778,
+        "y": 1.2327085503472222
+      },
+      "prevControl": {
+        "x": 6.954428842834934,
+        "y": 0.8485663822756961
+      },
+      "nextControl": {
+        "x": 6.2477009314706216,
+        "y": 1.616850718418748
       },
       "isLocked": false,
       "linkedName": null
@@ -111,11 +143,23 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": -138.89294554599695
+      "rotationDegrees": -138.893
     },
     {
-      "waypointRelativePos": 2.823930921052631,
+      "waypointRelativePos": 1.927055921052633,
+      "rotationDegrees": -138.893
+    },
+    {
+      "waypointRelativePos": 3.65,
       "rotationDegrees": -57.95734045179844
+    },
+    {
+      "waypointRelativePos": 6.773355263157896,
+      "rotationDegrees": -44.13600000000001
+    },
+    {
+      "waypointRelativePos": 7.602467105263156,
+      "rotationDegrees": -44.13600000000001
     }
   ],
   "constraintZones": [],
@@ -129,37 +173,49 @@
     },
     {
       "name": "RunIntake",
-      "waypointRelativePos": 2.317431478405317,
+      "waypointRelativePos": 2.65,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "StopIntake",
-      "waypointRelativePos": 4.499688538205996,
+      "waypointRelativePos": 6.0,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "ToggleHubTracking",
-      "waypointRelativePos": 4.772373338870444,
+      "waypointRelativePos": 6.55,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "RetractIntake",
-      "waypointRelativePos": 5.510459925249173,
+      "waypointRelativePos": 7.510459925249173,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "Shoot",
-      "waypointRelativePos": 5.513652408637877,
+      "waypointRelativePos": 7.513652408637877,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "StopShoot",
+      "waypointRelativePos": 7.859297134551494,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "TurnOffTracking",
+      "waypointRelativePos": 8.0,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 1.0,
     "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -176,5 +232,5 @@
     "velocity": 0,
     "rotation": 179.48322522905093
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
