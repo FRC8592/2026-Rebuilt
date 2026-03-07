@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.LEDs;
 
 public class Vision extends SubsystemBase {
     PhotonCamera camera;
@@ -86,6 +87,10 @@ public class Vision extends SubsystemBase {
             //Get the latest result from the camera and check if it contains an apriltag
             var result = results.get(results.size() - 1);
             targetVisible = result.hasTargets();
+
+            if(targetVisible)
+            { LEDs.setHasTags(true);
+            }
 
             if (targetVisible) { //At least one AprilTag was seen by the camera
                 targetAmbiguity = result.getBestTarget().getPoseAmbiguity();     

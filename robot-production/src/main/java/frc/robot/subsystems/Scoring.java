@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import frc.robot.Constants.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -154,6 +155,14 @@ public class Scoring extends SubsystemBase{
         currentTargetPose = getTarget(currentRobotPose);
 
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
+
+        if (canShoot()){
+            LEDs.setCanShoot(true); 
+        }
+
+        else{
+            LEDs.setCanShoot (false); 
+        }
 
         if (trackingTarget) {
             // calculate the distance to the target position

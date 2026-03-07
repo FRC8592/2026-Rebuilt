@@ -8,6 +8,7 @@ import frc.robot.Constants.*;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -73,6 +74,9 @@ public class RobotContainer {
     //
     // Instantiate top-level subsystems
     //
+
+    LEDs.init();
+    
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);

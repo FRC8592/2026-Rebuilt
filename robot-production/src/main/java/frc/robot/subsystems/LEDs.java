@@ -23,7 +23,7 @@ import frc.robot.Constants.*;
 
 
 
-public class ledsSubsytem {
+public class LEDs extends SubsystemBase {
     //TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE HOPPER, PERIOD OF THE GAME LED, CLIMB SUCESSFULLY
     //For the time periods during the game: AUTO (20 seconds), TRANSITION SHIFT (10 seconds), SHIFT 1 (25 seconds), SHIFT 2 (25 seconds), SHIFT 3 (25 seconds), SHIFT 4 (25 seconds), END GAME (30 seconds)
         private static CANdle candle;
@@ -32,7 +32,6 @@ public class ledsSubsytem {
         // private static boolean neturalMode;
         // private static boolean isNeturalMode;
         // private static double progressBarHopper = -1;
-        private static enum tagState {BAD, OKAY, GOOD};
         // private static boolean climbsucession;
         // private static boolean isClimbing;
         // private static boolean useRainbow;
@@ -40,7 +39,8 @@ public class ledsSubsytem {
         // private static boolean restrictedWheels;
         // private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
 
-        static tagState currentState = tagState.BAD; 
+        private static boolean canShoot = false;
+        private static boolean hasTags = false; 
             //COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
         
             public static void init(){
@@ -113,10 +113,10 @@ public class ledsSubsytem {
             //         );
             //     }
             // }
-        
+
         // Displaying the amount of the tags spotted, this might change cuase on the controls of the operator if they decided to reject auto - shoot
             public static void displayHasTagsLEDs(){
-                if( currentState == tagState.GOOD) {
+                if(hasTags && canShoot) {
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.GREEN.red*255),
@@ -125,7 +125,7 @@ public class ledsSubsytem {
                 ))
             );
         }
-        else if(currentState == tagState.OKAY){
+        else if(hasTags || canShoot){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.YELLOW.red*255),
@@ -134,7 +134,7 @@ public class ledsSubsytem {
                 ))
             );
         }
-        else if(currentState == tagState.BAD){
+        else{
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.RED.red*255),
@@ -143,19 +143,20 @@ public class ledsSubsytem {
                 ))
             );
         }
-
-
-            else{
-                candle.setControl(
-                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.OFF.red*255),
-                (int)(LEDS.OFF.green*255),
-                (int)(LEDS.OFF.blue*255)
-                ))
-            );
-            }
         }
 
+
+        public static void setHasTags (boolean newHasTags){
+            hasTags = newHasTags; 
+        }
+
+        public static void setCanShoot (boolean newCanShoot) {
+            canShoot = newCanShoot; 
+        }
+    public void periodic(){
+    displayHasTagsLEDs();
+    setHasTags(false);
+}
 
    
     }
