@@ -27,96 +27,96 @@ public class ledsSubsytem {
     //TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE HOPPER, PERIOD OF THE GAME LED, CLIMB SUCESSFULLY
     //For the time periods during the game: AUTO (20 seconds), TRANSITION SHIFT (10 seconds), SHIFT 1 (25 seconds), SHIFT 2 (25 seconds), SHIFT 3 (25 seconds), SHIFT 4 (25 seconds), END GAME (30 seconds)
         private static CANdle candle;
-        private static boolean intakeSucession;
-        private static boolean hasFuel;
-        private static boolean neturalMode;
-        private static boolean isNeturalMode;
-        private static double progressBarHopper = -1;
-        private static int tagCount;
-        private static boolean climbsucession;
-        private static boolean isClimbing;
-        private static boolean useRainbow;
+        // private static boolean intakeSucession;
+        // private static boolean hasFuel;
+        // private static boolean neturalMode;
+        // private static boolean isNeturalMode;
+        // private static double progressBarHopper = -1;
+        private static enum tagState {BAD, OKAY, GOOD};
+        // private static boolean climbsucession;
+        // private static boolean isClimbing;
+        // private static boolean useRainbow;
         private static Timer timer = new Timer();
-        private static Timer periodOfGame=new Timer();
-        private static boolean restrictedWheels;
-        private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
+        // private static boolean restrictedWheels;
+        // private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
 
-    //COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
-
-    public static void init(){
-        CANdleConfiguration configAll = new CANdleConfiguration();
-        configAll.LED = new LEDConfigs()
-            .withBrightnessScalar(1)
-            .withStripType(StripTypeValue.GRB)
-            .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning);
-        configAll.CANdleFeatures = new CANdleFeaturesConfigs()
-            .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
-            .withVBatOutputMode(VBatOutputModeValue.Modulated);
-        candle = new CANdle(33); // TODO: Change this value when the device name is giving.
-        candle.getConfigurator().apply(configAll);
-        timer.start();
-    }
-
-    //Creating the display for the LEDS
-       public static void displayModeLEDs(){
-        if(neturalMode){
-            candle.setControl(
-                new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                    (int)(LEDS.WHITE.red*255),
-                    (int)(LEDS.WHITE.green*255),
-                    (int)(LEDS.WHITE.blue*255)
-                ))
-            );
-        }
-        else{
-            candle. setControl(
-                new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                    (int)(LEDS.TEAL.red*255),
-                    (int)(LEDS.TEAL.green*255),
-                    (int)(LEDS.TEAL.blue*255)
-                ))
-            );
-        }
-
-
-    }
-
-
-    public static void displayHasFuel(){ // need to change this statement
-        if(!periodOfGame.hasElapsed(1) && periodOfGame.get()!=0){
-            if((int)(timer.get()*10) % 2 == 0){ // need to change this if - else statement
-                candle.setControl(
-                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.WHITE.red*255),
-                (int)(LEDS.WHITE.green*255),
-                (int)(LEDS.WHITE.blue*255)
-                ))
-            );
-        }
-            else{
-                candle.setControl(
-                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.OFF.red*255),
-                (int)(LEDS.OFF.green*255),
-                (int)(LEDS.OFF.blue*255)
-                ))
-            );
+        static tagState currentState = tagState.BAD; 
+            //COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
+        
+            public static void init(){
+                CANdleConfiguration configAll = new CANdleConfiguration();
+                configAll.LED = new LEDConfigs()
+                    .withBrightnessScalar(1)
+                    .withStripType(StripTypeValue.GRB)
+                    .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning);
+                configAll.CANdleFeatures = new CANdleFeaturesConfigs()
+                    .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
+                    .withVBatOutputMode(VBatOutputModeValue.Modulated);
+                candle = new CANdle(33); // TODO: Change this value when the device name is giving.
+                candle.getConfigurator().apply(configAll);
+                timer.start();
             }
-        }
-        else{
-                candle.setControl(
-                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.WHITE.red*255),
-                (int)(LEDS.WHITE.green*255),
-                (int)(LEDS.WHITE.blue*255)
-                ))
-            );
-        }
-    }
-
-// Displaying the amount of the tags spotted, this might change cuase on the controls of the operator if they decided to reject auto - shoot
-    public static void displayHasTagsLEDs(){
-        if(tagCount>=2){
+        
+            // //Creating the display for the LEDS
+            //    public static void displayModeLEDs(){
+            //     if(neturalMode){
+            //         candle.setControl(
+            //             new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+            //                 (int)(LEDS.WHITE.red*255),
+            //                 (int)(LEDS.WHITE.green*255),
+            //                 (int)(LEDS.WHITE.blue*255)
+            //             ))
+            //         );
+            //     }
+            //     else{
+            //         candle. setControl(
+            //             new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+            //                 (int)(LEDS.TEAL.red*255),
+            //                 (int)(LEDS.TEAL.green*255),
+            //                 (int)(LEDS.TEAL.blue*255)
+            //             ))
+            //         );
+            //     }
+        
+        
+            // }
+        
+        
+            // public static void displayHasFuel(){ // need to change this statement
+            //     if(!periodOfGame.hasElapsed(1) && periodOfGame.get()!=0){
+            //         if((int)(timer.get()*10) % 2 == 0){ // need to change this if - else statement
+            //             candle.setControl(
+            //             new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+            //             (int)(LEDS.WHITE.red*255),
+            //             (int)(LEDS.WHITE.green*255),
+            //             (int)(LEDS.WHITE.blue*255)
+            //             ))
+            //         );
+            //     }
+            //         else{
+            //             candle.setControl(
+            //             new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+            //             (int)(LEDS.OFF.red*255),
+            //             (int)(LEDS.OFF.green*255),
+            //             (int)(LEDS.OFF.blue*255)
+            //             ))
+            //         );
+            //         }
+            //     }
+            //     else{
+            //             candle.setControl(
+            //             new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+            //             (int)(LEDS.WHITE.red*255),
+            //             (int)(LEDS.WHITE.green*255),
+            //             (int)(LEDS.WHITE.blue*255)
+            //             ))
+            //         );
+            //     }
+            // }
+        
+        // Displaying the amount of the tags spotted, this might change cuase on the controls of the operator if they decided to reject auto - shoot
+            public static void displayHasTagsLEDs(){
+                if( currentState == tagState.GOOD){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.GREEN.red*255),
@@ -125,7 +125,7 @@ public class ledsSubsytem {
                 ))
             );
         }
-        else if(tagCount==1){
+        else if(currentState == tagState.OKAY){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.YELLOW.red*255),
@@ -134,7 +134,7 @@ public class ledsSubsytem {
                 ))
             );
         }
-        else if(tagCount==0){
+        else if(currentState == tagState.BAD){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.RED.red*255),
@@ -143,18 +143,6 @@ public class ledsSubsytem {
                 ))
             );
         }
-
-
-        else if(tagCount ==-1){
-            if((int)(timer.get()*3) % 2 == 0){
-                candle.setControl(
-                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.RED.red*255),
-                (int)(LEDS.RED.green*255),
-                (int)(LEDS.RED.blue*255)
-                ))
-            );
-            }
 
 
             else{
@@ -217,9 +205,9 @@ public class ledsSubsytem {
     // }
 
     // # of tags being seen by the camera 
-    public static void setHasTags(int cameraTagCount){
-        tagCount = cameraTagCount;
-    }
+    // public static void setHasTags(int cameraTagCount){
+    //     tagState = cameraTagCount;
+    // }
 
     // //climbing status
     // public static void setclimbing(boolean climbsucession){
@@ -232,4 +220,4 @@ public class ledsSubsytem {
     // }
    
    
-}
+
