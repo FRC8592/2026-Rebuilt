@@ -16,8 +16,6 @@ public class AutoTurretAngle extends SubsystemBase{
     // TODO: Delete empty constructor
     public AutoTurretAngle(){
     }
-
-
     /**
      * Compute the angle for the turret based on the position of target and the position and rotation of the robot.
      * @param robotPosition
@@ -30,18 +28,22 @@ public class AutoTurretAngle extends SubsystemBase{
 
         double triangleAngle = Math.toDegrees(Math.atan(targetRelativeY/targetRelativeX));
 
-        //angle robot has to turn if it is at angle 0
+        //angle turret has to turn if the robot is at angle 0
         double thetaR = 0;
 
+        //triangleAngle is positive
         if (targetRelativeX > 0 && targetRelativeY >= 0){
             thetaR = triangleAngle;
         }
+        //triangleAngle is negative
         else if (targetRelativeX < 0 && targetRelativeY >= 0){
             thetaR = 180 + triangleAngle;
         }
+        //triangleAngle is negative
         else if (targetRelativeX > 0 && targetRelativeY <= 0){
             thetaR = triangleAngle;
         }
+        //triangleAngle is positive
         else if (targetRelativeX < 0 && targetRelativeY <= 0){
             thetaR = -180 + triangleAngle;
         }
@@ -52,17 +54,14 @@ public class AutoTurretAngle extends SubsystemBase{
             thetaR = 90;
         }
         else{
-            System.out.println("you are on top of the hub");
+            System.out.println("you are on top of the target");
         }
         
         // robotAngle is in degrees
         double robotAngle = robotPosition.getRotation().getDegrees();
 
-        // Computer the angle offset from robot zero
-        double turretTurn = thetaR - robotAngle;
-
-        // Compute the angle offset accounting for turret zero
-        turretTurn = turretTurn - TURRET.TURRET_ANGLE_OFFSET;
+        // Compute the angle offset from robot zero and accounting for turret zero
+        double turretTurn = thetaR - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
     
         return turretTurn;
     }
