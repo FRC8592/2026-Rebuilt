@@ -111,9 +111,9 @@ public class Shooter extends SubsystemBase{
      */
     //TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM){
-        // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
-        flywheelSetRPM = desiredRPM;
-        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("V Flywheel", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        //flywheelSetRPM = desiredRPM;
+        //double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
         //TODO: Remove this -1!
         double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * WHEEL_RATIO;
 

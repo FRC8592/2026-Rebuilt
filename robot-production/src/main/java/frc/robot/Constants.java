@@ -192,8 +192,8 @@ public final class SHOOTER {
 
   public static class INTAKE{
     // CAN ID for the Intake motor
-    public static final int INTAKE_MOTOR_CAN_ID = 44;
-    public static final int INTAKE_ROLLER_LEFT_CAN_ID = 0; 
+    //TODO: Change these names to match the actual location of the motors
+    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 44;
     public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
@@ -220,7 +220,7 @@ public final class SHOOTER {
     public static final double EXTEND_ROTATIONS = 2; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
 
-    public static double RETRACT_ROTATION_INCREMENT = 0.01; 
+    public static double RETRACT_ROTATION_INCREMENT = 0.005; 
 
     //TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 50;

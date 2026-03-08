@@ -41,7 +41,7 @@ public class Scoring extends SubsystemBase{
         //
         turret = new Turret();
         shooter = new Shooter();
-        intake = new Intake();
+        //intake = new Intake();
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
@@ -186,7 +186,7 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
+            //shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
             shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
