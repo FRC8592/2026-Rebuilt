@@ -116,6 +116,9 @@ public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
+
+    public static final double FLYWHEEL_CURRENT_LIMIT = 80.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double FLYWHEEL_P = 0.5;
     public static final double FLYWHEEL_I = 0;

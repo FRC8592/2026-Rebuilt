@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHOOTER;
+import frc.robot.Constants.TURRET;
 
 import java.util.Set;
 
@@ -56,13 +57,15 @@ public class Shooter extends SubsystemBase{
         flywheelConfiguration = new TalonFXConfiguration();
         backwheelConfiguration = new TalonFXConfiguration();
 
-
         flywheelConfiguration.Slot0.kP = SHOOTER.FLYWHEEL_P; 
         flywheelConfiguration.Slot0.kI = SHOOTER.FLYWHEEL_I;
         flywheelConfiguration.Slot0.kD = SHOOTER.FLYWHEEL_D;
-        flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V; 
+        flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V;
 
         flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        flywheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
 
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
@@ -70,6 +73,9 @@ public class Shooter extends SubsystemBase{
         backwheelConfiguration.Slot0.kV = SHOOTER.BACKWHEEL_V;
 
         backwheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        backwheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        backwheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
 
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);
