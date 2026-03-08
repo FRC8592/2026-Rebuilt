@@ -149,11 +149,11 @@ public class Intake extends SubsystemBase{
     }
 
     public void retractIntake(){
-        extendClosedLoopCtrl.setSetpoint(0, ControlType.kMAXMotionPositionControl);
+        extendClosedLoopCtrl.setSetpoint(getExtendPosition() - INTAKE.RETRACT_ROTATION_INCREMENT, ControlType.kMAXMotionPositionControl);
     }
 
     public Command retractIntakeCommand(){
-        return this.runOnce(() -> retractIntake());
+        return this.run(() -> retractIntake());
     }
 
     // public void setCoastMode(){

@@ -214,11 +214,12 @@ public final class SHOOTER {
     public static final double EXTEND_ROTATIONS = 2; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
 
+    public static double RETRACT_ROTATION_INCREMENT = 0.01; 
+
     //TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 50;
     public static final double MAX_ACCELERATION = 80;
 
-    public static final double EXTEND_TORQUE_CURRENT = 0; 
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
   }
