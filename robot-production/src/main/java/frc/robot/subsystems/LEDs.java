@@ -1,5 +1,7 @@
 
 package frc.robot.subsystems;
+import org.littletonrobotics.junction.Logger;
+
 //import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
@@ -171,14 +173,15 @@ public class LEDs extends SubsystemBase {
 
         public void setHasTags (int newHasTags){
             hasTags = newHasTags; 
+            Logger.recordOutput(LEDS.LOG_PATH + "hasTags", hasTags);
         }
 
         public static void setCanShoot (boolean newCanShoot) {
             canShoot = newCanShoot; 
         }
-    public void periodic(){
-    displayCanShootLEDs();
-}
+//     public void periodic(){
+//     displayCanShootLEDs();
+// }
 
     }
 

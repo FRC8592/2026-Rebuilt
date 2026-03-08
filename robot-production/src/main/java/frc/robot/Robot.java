@@ -125,18 +125,23 @@ public class Robot extends LoggedRobot {
 
     int backvisionCounter = backvision.getTargets().size();
     int sideVisionCounter = sidevision.getTargets().size(); 
+    int tagTarget =0;
 
     if (backvisionCounter == 2 || sideVisionCounter == 2){
-      m_robotContainer.leds.setHasTags (2);
+      tagTarget = 2;
     }
 
     else if (backvisionCounter == 1 || sideVisionCounter ==1){
-      m_robotContainer.leds.setHasTags (1);
+      tagTarget = 1;
     }
 
     else if (backvisionCounter == 0 || sideVisionCounter ==0){
-      m_robotContainer.leds.setHasTags (0);
+      tagTarget = 0;
     }
+    m_robotContainer.leds.setHasTags (tagTarget);
+    Logger.recordOutput(LEDS.LOG_PATH + "tagTarget", tagTarget);
+    Logger.recordOutput(LEDS.LOG_PATH + "backvision", backvisionCounter);
+    Logger.recordOutput(LEDS.LOG_PATH + "sidevision", sideVisionCounter);
 
     m_robotContainer.leds.displayHasTagsLEDs();
 
