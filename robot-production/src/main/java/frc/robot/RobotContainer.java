@@ -129,7 +129,7 @@ public class RobotContainer {
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    //RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }

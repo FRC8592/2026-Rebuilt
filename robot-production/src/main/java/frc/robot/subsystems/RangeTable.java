@@ -71,7 +71,7 @@ public class RangeTable {
             new RangeEntry(1700.0),    // 1.4m
             new RangeEntry(1800.0),    // 1.6m 
             new RangeEntry(1900.0),    // 1.8m 
-            new RangeEntry(2000.0),    // 2.0m 
+            new RangeEntry(2000.0   ),    // 2.0m 
             new RangeEntry(2100.0),    // 2.2m 
             new RangeEntry(2200.0),    // 2.4m 
             new RangeEntry(2300.0),    // 2.6m 

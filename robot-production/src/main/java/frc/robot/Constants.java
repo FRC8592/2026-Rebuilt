@@ -122,19 +122,21 @@ public final class SHOOTER {
     public static final double FLYWHEEL_CURRENT_LIMIT = 80.0;
     public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.5;
+    public static final double FLYWHEEL_P = 0.3;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
-    public static final double FLYWHEEL_S = 0.0;
-    public static final double FLYWHEEL_V = 0.0;
+    public static final double FLYWHEEL_S = 0.3;
+    public static final double FLYWHEEL_V = 0.1054;
     
     public static final double BACKWHEEL_P = 1.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
-    public static final double BACKWHEEL_S = 0.0;
-    public static final double BACKWHEEL_V = 0.0;
+    public static final double BACKWHEEL_S = 0.4;
+    public static final double BACKWHEEL_V = 0.125;
 
-    public static final double FLYWHEEL_VI = 3500;
+    public static final double FLYWHEEL_VI = 2500;
+
+    public static final double BACKWHEEL_VELOCITY = 1092;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -142,18 +144,18 @@ public final class SHOOTER {
     public static final double SHOOTER_TOLERANCE = 50;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2.1; // TODO: Update if wheel diameter changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
 
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 80;
-    public static final double TURRET_P0 = 30; //12;
+    public static final int TURRET_CURRENT_LIMIT = 200;
+    public static final double TURRET_P0 = 40; //12;
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; //0.4;
-    public static final double TURRET_S = 0.5;
+    public static final double TURRET_S = 0.6;
     public static final double TURRET_P1 = 1;
     public static final double TURRET_I1 = 0.0;
     public static final double TURRET_D1 = 0.0;
@@ -168,8 +170,8 @@ public final class SHOOTER {
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 180; // Degrees
-    public static final double REVERSE_LIMIT = -180; // Degrees
+    public static final double FORWARD_LIMIT = 160; // Degrees
+    public static final double REVERSE_LIMIT = -160; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 

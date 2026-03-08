@@ -39,7 +39,7 @@ public class Scoring extends SubsystemBase{
         //
         // Instantiate subsystems
         //
-        turret = new Turret();
+        //turret = new Turret();
         shooter = new Shooter();
         //intake = new Intake();
         indexer = new Indexer();
@@ -194,8 +194,8 @@ public class Scoring extends SubsystemBase{
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            //shooter.runAtSpeed(shooterSpeed);
+            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
