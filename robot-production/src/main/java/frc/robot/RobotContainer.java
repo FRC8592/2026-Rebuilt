@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 public class RobotContainer {
@@ -34,6 +37,7 @@ public class RobotContainer {
   private final OdometryUpdates odometryUpdatesBack;
   private final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
+  public final LEDs leds; 
 
   //
   // Driver Controls
@@ -71,11 +75,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //
-    // Instantiate top-level subsystems
-    //
+    
+  leds = new LEDs(); 
 
-    LEDs.init();
+    
     
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
@@ -112,7 +115,7 @@ public class RobotContainer {
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    //INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
 
@@ -156,7 +159,14 @@ public class RobotContainer {
         return AutoManager.getAutonomousCommand();
   }
 
+  public Vision getSideVision(){
+    return visionSide; 
+  }
 
+  public Vision getBackVision(){
+    return visionBack; 
+  }
+  
   /**
    * Sets the default command for a subsystem. 
    * @param subsystem

@@ -21,7 +21,7 @@ public class Scoring extends SubsystemBase{
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
-    public Intake intake;
+    //public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private Alliance alliance;
@@ -39,7 +39,7 @@ public class Scoring extends SubsystemBase{
         //
         turret = new Turret();
         shooter = new Shooter();
-        intake = new Intake();
+        //intake = new Intake();
         indexer = new Indexer();
     }
 
@@ -103,9 +103,9 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    public Command runAtSpeedIntakeCommand() {
-        return intake.runAtSpeedIntakeCommand();
-    }
+    // public Command runAtSpeedIntakeCommand() {
+    //     return intake.runAtSpeedIntakeCommand();
+    // }
 
     /**
      * Command to run the indexer at a set speed

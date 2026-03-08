@@ -26,7 +26,7 @@ import frc.robot.Constants.*;
 public class LEDs extends SubsystemBase {
     //TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE HOPPER, PERIOD OF THE GAME LED, CLIMB SUCESSFULLY
     //For the time periods during the game: AUTO (20 seconds), TRANSITION SHIFT (10 seconds), SHIFT 1 (25 seconds), SHIFT 2 (25 seconds), SHIFT 3 (25 seconds), SHIFT 4 (25 seconds), END GAME (30 seconds)
-        private static CANdle candle;
+        private CANdle candle;
         // private static boolean intakeSucession;
         // private static boolean hasFuel;
         // private static boolean neturalMode;
@@ -35,15 +35,15 @@ public class LEDs extends SubsystemBase {
         // private static boolean climbsucession;
         // private static boolean isClimbing;
         // private static boolean useRainbow;
-        private static Timer timer = new Timer();
+        private Timer timer = new Timer();
         // private static boolean restrictedWheels;
         // private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
 
         private static boolean canShoot = false;
-        private static boolean hasTags = false; 
+        private int hasTags; 
             //COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
         
-            public static void init(){
+            public LEDs(){
                 CANdleConfiguration configAll = new CANdleConfiguration();
                 configAll.LED = new LEDConfigs()
                     .withBrightnessScalar(1)
@@ -115,8 +115,8 @@ public class LEDs extends SubsystemBase {
             // }
 
         // Displaying the amount of the tags spotted, this might change cuase on the controls of the operator if they decided to reject auto - shoot
-            public static void displayHasTagsLEDs(){
-                if(hasTags && canShoot) {
+            public void displayCanShootLEDs(){
+                if(canShoot) {
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.GREEN.red*255),
@@ -125,7 +125,29 @@ public class LEDs extends SubsystemBase {
                 ))
             );
         }
-        else if(hasTags || canShoot){
+
+        else{
+                candle.setControl(
+                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+                (int)(LEDS.RED.red*255),
+                (int)(LEDS.RED.green*255),
+                (int)(LEDS.RED.blue*255)
+                ))
+            );
+        }
+        }
+
+        public void displayHasTagsLEDs(){
+                if(hasTags >=2 ) {
+                candle.setControl(
+                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+                (int)(LEDS.GREEN.red*255),
+                (int)(LEDS.GREEN.green*255),
+                (int)(LEDS.GREEN.blue*255)
+                ))
+            );
+        }
+        else if(hasTags == 1){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
                 (int)(LEDS.YELLOW.red*255),
@@ -146,7 +168,8 @@ public class LEDs extends SubsystemBase {
         }
 
 
-        public static void setHasTags (boolean newHasTags){
+
+        public void setHasTags (int newHasTags){
             hasTags = newHasTags; 
         }
 
@@ -154,11 +177,9 @@ public class LEDs extends SubsystemBase {
             canShoot = newCanShoot; 
         }
     public void periodic(){
-    displayHasTagsLEDs();
-    setHasTags(false);
+    displayCanShootLEDs();
 }
 
-   
     }
 
     // // While climbing lights will display and then RAINBOW

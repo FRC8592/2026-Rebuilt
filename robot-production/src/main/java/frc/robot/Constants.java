@@ -252,6 +252,7 @@ public final class SHOOTER {
   }
 
   public final class LEDS{
+    public static final Color PRISMARINE = new Color(126,171,172); 
     public static final Color TEAL = new Color(0, 64, 192);
     public static final Color ORANGE = new Color(192, 64, 0);
     public static final Color WHITE = new Color(255, 255, 255);
@@ -263,6 +264,7 @@ public final class SHOOTER {
     public static final int LED_STRIP_LENGTH = 52;
     public static final int LED_CANDLE_COUNT= 8;
     public static final int FULL_LED_COUNT = LED_STRIP_LENGTH+LED_CANDLE_COUNT;
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
     }
 
 

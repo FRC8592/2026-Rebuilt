@@ -85,21 +85,17 @@ public class Vision extends SubsystemBase {
 
         if (!results.isEmpty()) {
             //Get the latest result from the camera and check if it contains an apriltag
-            var result = results.get(results.size() - 1);
+            var result = results.get(results.size()-1);
             targetVisible = result.hasTargets();
 
-            if(targetVisible)
-            { LEDs.setHasTags(true);
-            }
-
             if (targetVisible) { //At least one AprilTag was seen by the camera
-                targetAmbiguity = result.getBestTarget().getPoseAmbiguity();     
+                targetAmbiguity = result.getBestTarget().getPoseAmbiguity();    
             } else {
                 targetAmbiguity = -10.0; //A large value to differentiate clearly
             }
         }
         
-        SmartDashboard.putNumber("Tag Count", results.size() - 1);
+        SmartDashboard.putNumber("Tag Count", results.size());
        // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
     }
 
