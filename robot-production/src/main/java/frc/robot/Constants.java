@@ -118,15 +118,21 @@ public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
+
+    public static final double FLYWHEEL_CURRENT_LIMIT = 80.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double FLYWHEEL_P = 0.5;
-    public static final double FLYWHEEL_I = 0;
-    public static final double FLYWHEEL_D = 0;
-    public static final double FLYWHEEL_V = 0;
-    public static final double BACKWHEEL_P = 1;
-    public static final double BACKWHEEL_I = 0;
-    public static final double BACKWHEEL_D = 0;
-    public static final double BACKWHEEL_V = 0;
+    public static final double FLYWHEEL_I = 0.0;
+    public static final double FLYWHEEL_D = 0.0;
+    public static final double FLYWHEEL_S = 0.0;
+    public static final double FLYWHEEL_V = 0.0;
+    
+    public static final double BACKWHEEL_P = 1.0;
+    public static final double BACKWHEEL_I = 0.0;
+    public static final double BACKWHEEL_D = 0.0;
+    public static final double BACKWHEEL_S = 0.0;
+    public static final double BACKWHEEL_V = 0.0;
 
     public static final double FLYWHEEL_VI = 3500;
 
@@ -144,8 +150,8 @@ public final class SHOOTER {
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
     public static final int TURRET_CURRENT_LIMIT = 80;
-    public static final double TURRET_P0 = 12; //8 //2; //4; //12;
-    public static final double TURRET_I0 = 0.0;
+    public static final double TURRET_P0 = 30; //12;
+    public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; //0.4;
     public static final double TURRET_S = 0.5;
     public static final double TURRET_P1 = 1;
@@ -156,14 +162,14 @@ public final class SHOOTER {
     public static final int TURRET_G1 = 19;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23) / 360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 90; // Degrees
-    public static final double REVERSE_LIMIT = -90; // Degrees
+    public static final double FORWARD_LIMIT = 180; // Degrees
+    public static final double REVERSE_LIMIT = -180; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 

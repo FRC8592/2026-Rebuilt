@@ -124,16 +124,18 @@ public class Robot extends LoggedRobot {
     }
 
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
-    //m_robotContainer.scoring.shooter.updatePID();
-    m_robotContainer.scoring.indexer.updatePID();
+    m_robotContainer.scoring.shooter.updatePID();
+    // m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.intake.updatePID();
-    m_robotContainer.scoring.turret.updatePID();
+    // m_robotContainer.scoring.turret.updatePID();
 
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.scoring.disableTrackingCommand(); 
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -151,6 +153,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    m_robotContainer.scoring.disableTrackingCommand(); 
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -160,8 +164,6 @@ public class Robot extends LoggedRobot {
     //m_robotContainer.scoring.intake.setCoastMode();
      //   m_autonomousCommand.cancel();
     }
-
-    // Send the al
   }
 
   /** This function is called periodically during operator control. */

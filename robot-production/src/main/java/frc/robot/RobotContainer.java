@@ -53,8 +53,8 @@ public class RobotContainer {
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
-  private final Trigger TURRET_TEST = operatorController.x();
-  private final Trigger TURRET_TEST_BACK = operatorController.a();
+  //private final Trigger TURRET_TEST = operatorController.x();
+  //private final Trigger TURRET_TEST_BACK = operatorController.a();
 
   private final Trigger RESET_EXTEND = operatorController.b();
 
@@ -112,9 +112,9 @@ public class RobotContainer {
 
     INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
-    TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
+    //TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
 
-    TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
+    //TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
 
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
