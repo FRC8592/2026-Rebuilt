@@ -113,6 +113,7 @@ public class Scoring extends SubsystemBase{
      */
     private void disableTracking() {
         trackingTarget = false;
+        turret.stop();
     }
 
 

@@ -92,10 +92,10 @@ public class Turret extends SubsystemBase{
         // Instantiate for calculating the turret angle based on target and robot positions
         angleCalc = new AutoTurretAngle();
 
-        SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P0);
-        SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
-        SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
-        SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
+        // SmartDashboard.putNumber("P_TUR", TURRET.TURRET_P0);
+        // SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
+        // SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
+        // SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
     }
 
     public double calcAngle(Pose2d robotPosition, Pose2d targetLocation){

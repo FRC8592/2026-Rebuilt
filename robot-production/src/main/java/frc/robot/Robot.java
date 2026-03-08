@@ -123,10 +123,10 @@ public class Robot extends LoggedRobot {
     }
 
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
-    //m_robotContainer.scoring.shooter.updatePID();
-    m_robotContainer.scoring.indexer.updatePID();
+    m_robotContainer.scoring.shooter.updatePID();
+    // m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.intake.updatePID();
-    m_robotContainer.scoring.turret.updatePID();
+    // m_robotContainer.scoring.turret.updatePID();
 
   }
 
@@ -162,8 +162,6 @@ public class Robot extends LoggedRobot {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
      //   m_autonomousCommand.cancel();
     }
-
-    // Send the al
   }
 
   /** This function is called periodically during operator control. */
