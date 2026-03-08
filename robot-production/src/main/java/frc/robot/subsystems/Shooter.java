@@ -86,6 +86,8 @@ public class Shooter extends SubsystemBase{
         SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
 
         SmartDashboard.putNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI);
+
+        SmartDashboard.putNumber("Wheel Ratio", WHEEL_RATIO);
     }
 
 
@@ -95,11 +97,11 @@ public class Shooter extends SubsystemBase{
      * Utilizing both motors proved to be too powerful for the shooter.
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
+    //TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM){
-        // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
-        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
-        //TODO: Remove this -1!
-        double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * WHEEL_RATIO;
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        //double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
+        double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * SmartDashboard.getNumber("Wheel Ratio", WHEEL_RATIO);
 
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
@@ -171,7 +173,7 @@ public class Shooter extends SubsystemBase{
         double DB = SmartDashboard.getNumber("bD", SHOOTER.BACKWHEEL_D); 
         double VB = SmartDashboard.getNumber("bV", SHOOTER.BACKWHEEL_V); 
 
-         if(PF != PF_OLD || IF != IF_OLD || DF != DF_OLD || PB != PB_OLD || IB != IB_OLD || DB != DB_OLD){
+         if(PF != PF_OLD || IF != IF_OLD || DF != DF_OLD || VF != VF_OLD || PB != PB_OLD || IB != IB_OLD || DB != DB_OLD || VB != VB_OLD){
             flywheelConfiguration.Slot0.kP = PF; 
             flywheelConfiguration.Slot0.kI = IF;
             flywheelConfiguration.Slot0.kD = DF;
