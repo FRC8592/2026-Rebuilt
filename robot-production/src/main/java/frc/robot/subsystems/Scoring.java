@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import frc.robot.Constants.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -22,7 +23,7 @@ public class Scoring extends SubsystemBase{
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
-    public Intake intake;
+    //public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean targetIsHub;
@@ -41,7 +42,7 @@ public class Scoring extends SubsystemBase{
         //
         turret = new Turret();
         shooter = new Shooter();
-        intake = new Intake();
+        //intake = new Intake();
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
@@ -121,9 +122,9 @@ public class Scoring extends SubsystemBase{
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    public Command runAtSpeedIntakeCommand() {
-        return intake.runAtSpeedIntakeCommand();
-    }
+    // public Command runAtSpeedIntakeCommand() {
+    //     return intake.runAtSpeedIntakeCommand();
+    // }
 
     /**
      * Command to run the indexer at a set speed
@@ -180,6 +181,14 @@ public class Scoring extends SubsystemBase{
         currentTargetPose = getTarget(currentRobotPose);
 
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
+
+        if (canShoot()){
+            LEDs.setCanShoot(true); 
+        }
+
+        else{
+            LEDs.setCanShoot (false); 
+        }
 
         if (trackingTarget) {
             // calculate the distance to the target position

@@ -15,15 +15,16 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.ctre.phoenix6.HootAutoReplay;
-
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.LEDS;
+import frc.robot.Constants.SHOOTER;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.vision.Vision;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -42,6 +43,8 @@ public class Robot extends LoggedRobot {
 
 
   public static Field2d FIELD = new Field2d();
+  private static int periodicCounter = 0; 
+  private static int tagCounter = 0; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -114,6 +117,34 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    
+    Vision backvision = m_robotContainer.getBackVision();
+    Vision sidevision = m_robotContainer.getSideVision(); 
+    backvision.periodic();
+    sidevision.periodic();
+
+    int backvisionCounter = backvision.getTargets().size();
+    int sideVisionCounter = sidevision.getTargets().size(); 
+    int tagTarget =0;
+
+    if (backvisionCounter == 2 || sideVisionCounter == 2){
+      tagTarget = 2;
+    }
+
+    else if (backvisionCounter == 1 || sideVisionCounter ==1){
+      tagTarget = 1;
+    }
+
+    else if (backvisionCounter == 0 || sideVisionCounter ==0){
+      tagTarget = 0;
+    }
+    m_robotContainer.leds.setHasTags (tagTarget);
+    Logger.recordOutput(LEDS.LOG_PATH + "tagTarget", tagTarget);
+    Logger.recordOutput(LEDS.LOG_PATH + "backvision", backvisionCounter);
+    Logger.recordOutput(LEDS.LOG_PATH + "sidevision", sideVisionCounter);
+
+    m_robotContainer.leds.displayHasTagsLEDs();
+
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -166,7 +197,8 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
     public void teleopExit() {}
