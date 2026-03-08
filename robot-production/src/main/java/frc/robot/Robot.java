@@ -110,6 +110,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+      //m_robotContainer.scoring.intake.setBrakeMode();
   }
 
   @Override
@@ -191,6 +192,7 @@ public class Robot extends LoggedRobot {
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
+    //m_robotContainer.scoring.intake.setCoastMode();
      //   m_autonomousCommand.cancel();
     }
   }

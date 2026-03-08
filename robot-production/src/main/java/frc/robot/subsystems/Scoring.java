@@ -40,7 +40,7 @@ public class Scoring extends SubsystemBase{
         //
         // Instantiate subsystems
         //
-        turret = new Turret();
+        //turret = new Turret();
         shooter = new Shooter();
         //intake = new Intake();
         indexer = new Indexer();
@@ -195,7 +195,7 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
+            //shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
             shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
@@ -203,8 +203,8 @@ public class Scoring extends SubsystemBase{
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-            //shooter.runAtSpeed(shooterSpeed);
+            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            shooter.runAtSpeed(shooterSpeed);
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.

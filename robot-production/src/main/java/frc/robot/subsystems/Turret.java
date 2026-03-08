@@ -25,7 +25,7 @@ public class Turret extends SubsystemBase{
     private TalonFX tMotor;
     private TalonFXConfiguration tMotorConfiguration;
     private PositionVoltage positionRequest;
-    private MotionMagicVoltage motionMagicRequest;
+    //private MotionMagicVoltage motionMagicRequest;
     // Absolute encoders used to find the starting position of the turret
     private DutyCycleEncoder E1;
     private DutyCycleEncoder E2;
@@ -50,7 +50,7 @@ public class Turret extends SubsystemBase{
         tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
         tMotorConfiguration = new TalonFXConfiguration();
         positionRequest = new PositionVoltage(0);
-        motionMagicRequest = new MotionMagicVoltage(0);
+        //motionMagicRequest = new MotionMagicVoltage(0);
 
         // Put motor in brake mode, invert, and apply current limits
         //tMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -76,9 +76,9 @@ public class Turret extends SubsystemBase{
         tMotorConfiguration.Slot1.kP = TURRET.TURRET_P1; 
         tMotorConfiguration.Slot1.kI = TURRET.TURRET_I1;
         tMotorConfiguration.Slot1.kD = TURRET.TURRET_D1; 
-        tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
-        tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
-        tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
+        // tMotorConfiguration.MotionMagic.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
+        // tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
+        // tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
         //tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5; // TODO: Understand this parameter or delete!
   
         tMotor.getConfigurator().apply(tMotorConfiguration);
@@ -252,9 +252,9 @@ public class Turret extends SubsystemBase{
         // Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
         // Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
         //Logger.recordOutput("Gear Ticks " , CRTTypeTwo(E1R - TURRET.E1_OFFSET, E2R - TURRET.E2_OFFSET));
-        Logger.recordOutput("Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput("Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
-        Logger.recordOutput("Motor Voltage", tMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle", tMotor.getPosition().getValueAsDouble() * (1/TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput(TURRET.LOG_PATH +"Motor Rotations", tMotor.getPosition().getValueAsDouble()); //rotations per second
+        Logger.recordOutput(TURRET.LOG_PATH +"Motor Voltage", tMotor.getMotorVoltage().getValueAsDouble());
         // updateMotionMagic();
     }
 

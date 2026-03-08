@@ -100,6 +100,8 @@ public class Shooter extends SubsystemBase{
         SmartDashboard.putNumber("bV", SHOOTER.BACKWHEEL_V);
 
         SmartDashboard.putNumber("V Flywheel", SHOOTER.FLYWHEEL_VI);
+
+        SmartDashboard.putNumber("B Flywheel", SHOOTER.BACKWHEEL_VELOCITY);
     }
 
 
@@ -109,13 +111,15 @@ public class Shooter extends SubsystemBase{
      * Utilizing both motors proved to be too powerful for the shooter.
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
+    //TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM){
-        // double flyWheelMotorVelocity = SmartDashboard.getNumber("Vi_Shooter", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
-        flywheelSetRPM = desiredRPM;
-        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
-        //TODO: Remove this -1!
-        double backwheelMotorVelocity = flyWheelMotorVelocity * -1 * WHEEL_RATIO;
+        double flyWheelMotorVelocity = SmartDashboard.getNumber("V Flywheel", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
+        //flywheelSetRPM = desiredRPM;
+        //double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
+        double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
 
+        //flywheelMotor.setVoltage(11);
+        //backwheelMotor.setVoltage(-11);
         flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
         backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
@@ -225,9 +229,11 @@ public class Shooter extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set Vel", flywheelSetRPM);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set Vel", SmartDashboard.getNumber("V Flywheel", SHOOTER.FLYWHEEL_VI));
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Set Vel", SmartDashboard.getNumber("B Flywheel", SHOOTER.BACKWHEEL_VELOCITY));
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage", flywheelMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Real Vel", getVelocityFlywheel() * 60);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel", getVelocityBackwheel() * 60 / (WHEEL_RATIO * 1.0));
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel", getVelocityBackwheel() * -1 * 60);
     }
         
 }

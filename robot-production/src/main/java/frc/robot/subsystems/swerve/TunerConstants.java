@@ -51,11 +51,8 @@ public class TunerConstants {
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(SWERVE.DRIVE_KP)
-        .withKI(SWERVE.DRIVE_KI).withKD(SWERVE.DRIVE_KD)
-        .withKS(SWERVE.DRIVE_KS)
-        .withKV(SWERVE.DRIVE_KV)
-        .withKA(SWERVE.DRIVE_KA);
+        .withKP(SWERVE.DRIVE_KP).withKI(SWERVE.DRIVE_KI).withKD(SWERVE.DRIVE_KD)
+        .withKS(SWERVE.DRIVE_KS).withKV(SWERVE.DRIVE_KV).withKA(SWERVE.DRIVE_KA);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -79,14 +76,20 @@ public class TunerConstants {
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
-    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
+    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
+        .withCurrentLimits(
+            new CurrentLimitsConfigs()
+            .withStatorCurrentLimitEnable(true)
+            .withStatorCurrentLimit(100)
+        );
+
     private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
                 // Swerve azimuth does not require much torque output, so we can set a relatively low
                 // stator current limit to help avoid brownouts without impacting performance.
-                .withStatorCurrentLimit(Amps.of(60))
                 .withStatorCurrentLimitEnable(true)
+                .withStatorCurrentLimit(60)
         );
 
     private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
@@ -107,8 +110,7 @@ public class TunerConstants {
 
     private static final double kDriveGearRatio = 6.746031746031747;
     private static final double kSteerGearRatio = 21.428571428571427;
-    //TODO: change back the wheel radius when changing to non-worn wheels
-    private static final Distance kWheelRadius = Inches.of(1.85);
+    private static final Distance kWheelRadius = Inches.of(2);
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;

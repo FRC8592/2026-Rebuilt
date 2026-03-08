@@ -27,7 +27,7 @@ import java.util.Set;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController = new CommandXboxController(1);
+  private static final CommandXboxController operatorController = new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -46,7 +46,7 @@ public class RobotContainer {
   private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   // TODO: Change Intake Extend Binding
-  // private final Trigger INTAKE_EXTEND = driverController.x();
+  private final Trigger INTAKE_EXTEND = operatorController.y();
   private final Trigger LOCK_WHEELS = driverController.x();
 
   // private final Trigger SNAP_TO = driverController.povUp();
@@ -60,6 +60,8 @@ public class RobotContainer {
 
   //private final Trigger TURRET_TEST = operatorController.x();
   //private final Trigger TURRET_TEST_BACK = operatorController.a();
+
+  private final Trigger RESET_EXTEND = operatorController.b();
 
 
   //
@@ -121,6 +123,9 @@ public class RobotContainer {
 
     //TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
 
+    //RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
+
+
     //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
@@ -131,7 +136,7 @@ public class RobotContainer {
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    //RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
