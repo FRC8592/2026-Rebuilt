@@ -233,7 +233,7 @@ public class Shooter extends SubsystemBase{
         Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Set Vel", SmartDashboard.getNumber("B Flywheel", SHOOTER.BACKWHEEL_VELOCITY));
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage", flywheelMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Real Vel", getVelocityFlywheel() * 60);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel", getVelocityBackwheel() * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel", getVelocityBackwheel() * -1 * 60);
     }
         
 }

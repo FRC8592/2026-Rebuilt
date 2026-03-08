@@ -122,21 +122,21 @@ public final class SHOOTER {
     public static final double FLYWHEEL_CURRENT_LIMIT = 80.0;
     public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.3;
+    public static final double FLYWHEEL_P = 0.45;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
     
-    public static final double BACKWHEEL_P = 1.0;
+    public static final double BACKWHEEL_P = 1;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
     public static final double BACKWHEEL_V = 0.125;
 
-    public static final double FLYWHEEL_VI = 2500;
+    public static final double FLYWHEEL_VI = 3200;
 
-    public static final double BACKWHEEL_VELOCITY = 1092;
+    public static final double BACKWHEEL_VELOCITY = 1146;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -144,7 +144,7 @@ public final class SHOOTER {
     public static final double SHOOTER_TOLERANCE = 50;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2.1; // TODO: Update if wheel diameter changes
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
