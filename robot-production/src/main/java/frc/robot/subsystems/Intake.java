@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
@@ -90,6 +91,14 @@ public class Intake extends SubsystemBase{
 
         extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P,INTAKE.INTAKE_EXTEND_I,INTAKE.INTAKE_EXTEND_D);
 
+        MAXMotionConfig extendMotionConfig = new MAXMotionConfig();
+        extendMotionConfig
+            .cruiseVelocity(INTAKE.EXTEND_CRUISE_RPM, ClosedLoopSlot.kSlot0)
+            .maxAcceleration(INTAKE.EXTEND_MAX_ACCEL_RPM_PER_SEC, ClosedLoopSlot.kSlot0)
+            .allowedProfileError(INTAKE.EXTEND_ALLOWED_ERROR_ROT, ClosedLoopSlot.kSlot0);
+        
+        extendConfig.closedLoop.maxMotion.apply(extendMotionConfig);
+
         extendMotor.configure(extendConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters); 
         extendClosedLoopCtrl = extendMotor.getClosedLoopController(); 
         
@@ -126,7 +135,7 @@ public class Intake extends SubsystemBase{
 
     public void resetExtenderPos(){
         System.out.println("Resetting Extender Command");
-        extendMotorEncoder.setPosition(0);
+        extendMotorEncoder.setPosition(2);
     }
 
     public Command resetExtenderCommand(){
@@ -145,9 +154,9 @@ public class Intake extends SubsystemBase{
         return this.runOnce(()->runToPositionExt()); 
     }
     public void runToPositionRetract() {
-        extendClosedLoopCtrl.setSetpoint(0, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        extendClosedLoopCtrl.setSetpoint(0, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
     }
-    
+
     public Command runRetractCommand() {
         return this.runOnce(() -> runToPositionRetract());
     }

@@ -211,6 +211,9 @@ public final class SHOOTER {
 
     public static final double EXTEND_ROTATIONS = 2; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
+    public static final double EXTEND_CRUISE_RPM = 250.0;
+    public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
+    public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
     public static final double EXTEND_TORQUE_CURRENT = 0; 
     

@@ -55,6 +55,9 @@ public class RobotContainer {
 
   private final Trigger TURRET_TEST = operatorController.x();
   private final Trigger TURRET_TEST_BACK = operatorController.a();
+  private final Trigger RETRACT_INTAKE = operatorController.b();
+    private final Trigger EXTEND_INTAKE = operatorController.y();
+
 
 
   //
@@ -133,6 +136,8 @@ public class RobotContainer {
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    EXTEND_INTAKE.onTrue(scoring.intake.runExtendCommand());
+    RETRACT_INTAKE.onTrue(scoring.intake.runRetractCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
