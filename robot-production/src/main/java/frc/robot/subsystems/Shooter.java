@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -27,6 +28,9 @@ public class Shooter extends SubsystemBase{
 
     private VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(0);
     private VelocityVoltage backwheelVelocityRequest = new VelocityVoltage(0);
+
+    private VelocityTorqueCurrentFOC flyWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+    private VelocityTorqueCurrentFOC backWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
     private double flywheelSetRPM = 0.0; // For logging
 
@@ -121,8 +125,8 @@ public class Shooter extends SubsystemBase{
 
         //flywheelMotor.setVoltage(11);
         //backwheelMotor.setVoltage(-11);
-        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity).withEnableFOC(true));
-        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity).withEnableFOC(true));
+        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        backwheelMotor.setControl(backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
 
