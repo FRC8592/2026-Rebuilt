@@ -131,7 +131,7 @@ public class Turret extends SubsystemBase{
         //
         // Set motor position based on target angle, converting from degrees to motor rotations
         //
-        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+        //tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
         //TODO: Implement Motion magic for turret
         //tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }

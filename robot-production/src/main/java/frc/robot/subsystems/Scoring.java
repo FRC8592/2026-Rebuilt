@@ -23,7 +23,7 @@ public class Scoring extends SubsystemBase{
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
-    //public Intake intake;
+    public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean targetIsHub;
@@ -42,7 +42,7 @@ public class Scoring extends SubsystemBase{
         //
         turret = new Turret();
         shooter = new Shooter();
-        //intake = new Intake();
+        intake = new Intake();
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);

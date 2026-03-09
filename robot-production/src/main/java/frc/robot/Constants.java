@@ -119,10 +119,10 @@ public final class SHOOTER {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
-    public static final double FLYWHEEL_CURRENT_LIMIT = 80.0;
+    public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
     public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.45;
+    public static final double FLYWHEEL_P = 0.6;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;

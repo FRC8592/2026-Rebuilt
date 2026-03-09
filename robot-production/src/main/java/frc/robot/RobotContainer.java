@@ -117,7 +117,7 @@ public class RobotContainer {
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    //INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     //TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
 
