@@ -128,8 +128,9 @@ public class Robot extends LoggedRobot {
     int sideVisionCounter = sidevision.getTargets().size(); 
 
     if (periodicCounter %10 ==0){
-      int average = tagCounter/10; 
-      m_robotContainer.leds.setHasTags(average);
+      double average = tagCounter/10; 
+      Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+      m_robotContainer.leds.setHasTags((int)Math.round(average));
 
       tagCounter = 0;
       if (backvisionCounter == 2 || sideVisionCounter == 2){
