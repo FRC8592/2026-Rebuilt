@@ -69,8 +69,9 @@ public class Shooter extends SubsystemBase{
 
         flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         flywheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-        flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
+        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = false;
+        // flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
+        flywheelConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false;
 
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
@@ -120,8 +121,8 @@ public class Shooter extends SubsystemBase{
 
         //flywheelMotor.setVoltage(11);
         //backwheelMotor.setVoltage(-11);
-        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
+        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity).withEnableFOC(true));
+        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity).withEnableFOC(true));
     }
 
 
