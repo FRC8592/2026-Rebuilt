@@ -44,7 +44,7 @@ public class Robot extends LoggedRobot {
 
   public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0; 
-  private static int tagCounter = 0; 
+  private static int tagTarget =0; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -126,7 +126,6 @@ public class Robot extends LoggedRobot {
 
     int backvisionCounter = backvision.getTargets().size();
     int sideVisionCounter = sidevision.getTargets().size(); 
-    int tagTarget =0;
 
     if (backvisionCounter == 2 || sideVisionCounter == 2){
       tagTarget = 2;
@@ -184,6 +183,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    tagTarget = 0; 
+    m_robotContainer.leds.displayCanShootLEDs();
     m_robotContainer.scoring.disableTrackingCommand(); 
     
     // This makes sure that the autonomous stops running when

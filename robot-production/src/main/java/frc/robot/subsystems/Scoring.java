@@ -40,7 +40,7 @@ public class Scoring extends SubsystemBase{
         //
         // Instantiate subsystems
         //
-        //turret = new Turret();
+        turret = new Turret();
         shooter = new Shooter();
         //intake = new Intake();
         indexer = new Indexer();
