@@ -44,6 +44,7 @@ public class Robot extends LoggedRobot {
 
   public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0; 
+  private static int tagCounter = 0; 
   private static int tagTarget =0; 
 
   /**
@@ -118,7 +119,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    
     Vision backvision = m_robotContainer.getBackVision();
     Vision sidevision = m_robotContainer.getSideVision(); 
     backvision.periodic();
@@ -127,24 +127,33 @@ public class Robot extends LoggedRobot {
     int backvisionCounter = backvision.getTargets().size();
     int sideVisionCounter = sidevision.getTargets().size(); 
 
-    if (backvisionCounter == 2 || sideVisionCounter == 2){
-      tagTarget = 2;
+    if (periodicCounter %10 ==0){
+      int average = tagCounter/10; 
+      m_robotContainer.leds.setHasTags(average);
+
+      tagCounter = 0;
+      if (backvisionCounter == 2 || sideVisionCounter == 2){
+      tagCounter += 2;
     }
 
     else if (backvisionCounter == 1 || sideVisionCounter ==1){
-      tagTarget = 1;
+      tagCounter += 1;
     }
 
     else if (backvisionCounter == 0 || sideVisionCounter ==0){
-      tagTarget = 0;
+      tagCounter += 0;
     }
-    m_robotContainer.leds.setHasTags (tagTarget);
-    Logger.recordOutput(LEDS.LOG_PATH + "tagTarget", tagTarget);
-    Logger.recordOutput(LEDS.LOG_PATH + "backvision", backvisionCounter);
-    Logger.recordOutput(LEDS.LOG_PATH + "sidevision", sideVisionCounter);
+      
+    }
+
+    else {
+      tagCounter = 0;
+    }
+
+    periodicCounter++; 
 
     m_robotContainer.leds.displayHasTagsLEDs();
-
+  
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
