@@ -168,6 +168,7 @@ public final class SHOOTER {
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50;
+    //TODO: Get encoder offsets
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
     public static final double FORWARD_LIMIT = 160; // Degrees

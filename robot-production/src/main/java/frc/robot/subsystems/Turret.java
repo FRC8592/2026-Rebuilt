@@ -98,6 +98,8 @@ public class Turret extends SubsystemBase{
         // SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
         // SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
         // SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
+
+        CRT(E1_value, E2_value);
     }
 
     public double calcAngle(Pose2d robotPosition, Pose2d targetLocation){
@@ -206,33 +208,22 @@ public class Turret extends SubsystemBase{
      * @param E2
      * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
-    public static double CRTTypeTwo(double E1, double E2){
+    //Does this method being static cause issues?
+    public static double CRT(double E1, double E2){
         double R1 = E1/360.0;
         double R2 = E2/360.0;
-        double G1 = 10.0/96;
-        double G2 = 11.0/96;
-        // double[] Encoder1Val = new double[97];
-        // double[] Encoder2Val = new double[97];
-        for(int i = 0; i <= 96; i++){
+        double G1 = TURRET.TURRET_G1/TURRET.TURRET_TG;
+        double G2 = TURRET.TURRET_G2/TURRET.TURRET_TG;
+        for(int i = 0; i <= TURRET.TURRET_TG; i++){
             double V1 = (i + R1) * G1;
             double V2 = (i + R2) * G2;
             double V1New = (i + 1 + R1) * G1;
             double V2Old = (i - 1 + R2) * G2;
-            // int V1Process = (int)(V1 * 1000);
-            // int V2Process = (int)(V2 * 1000);
-            // double V1Filter = V1Process / 1000.0;
-            // double V2Filter = V2Process / 1000.0;
-            // Encoder1Val[i] = V1;
-            // Encoder2Val[i] = V2;
-            //Logger.recordOutput("V1Filtered", V1Filter);
-            //Logger.recordOutput("V2Filtered", V2Filter);
-            //System.out.println("Value 1: " + V1Filter);
-            //System.out.println("Value 2: " + V2Filter);
-            if((Math.abs(V1 - V2) <= 0.006) || (Math.abs(V1 - V2Old) <= 0.006)){
-                //System.out.println("Going in and I Value: " + i);
+
+            if((Math.abs(V1 - V2) <= TURRET.TURRET_TOLERANCE) || (Math.abs(V1 - V2Old) <= TURRET.TURRET_TOLERANCE)){
                 return V1;
             }
-            if(Math.abs(V1New - V2) <= 0.006){
+            if(Math.abs(V1New - V2) <= TURRET.TURRET_TOLERANCE){
                 return V2;
             }
         }
