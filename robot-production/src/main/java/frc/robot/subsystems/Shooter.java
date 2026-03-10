@@ -76,6 +76,7 @@ public class Shooter extends SubsystemBase{
         flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = false;
         // flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
         flywheelConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false;
+        flywheelVelocityRequest.withUpdateFreqHz(1000);
 
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
@@ -87,6 +88,7 @@ public class Shooter extends SubsystemBase{
         backwheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
+        backwheelVelocityRequest.withUpdateFreqHz(1000);
 
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);

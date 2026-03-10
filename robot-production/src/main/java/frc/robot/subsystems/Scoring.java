@@ -203,7 +203,7 @@ public class Scoring extends SubsystemBase{
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
         }
         else {

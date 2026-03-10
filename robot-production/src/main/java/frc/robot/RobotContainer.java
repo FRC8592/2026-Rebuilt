@@ -57,6 +57,7 @@ public class RobotContainer {
   private final Trigger RESET_TURRET = driverController.a();
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
+  private final Trigger INTAKE_RETRACT = operatorController.x();
 
   //private final Trigger TURRET_TEST = operatorController.x();
   //private final Trigger TURRET_TEST_BACK = operatorController.a();
@@ -126,7 +127,9 @@ public class RobotContainer {
     //RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
 
-    //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
+
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
     LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
@@ -136,7 +139,7 @@ public class RobotContainer {
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
-    //RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }

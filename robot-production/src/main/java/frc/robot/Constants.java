@@ -122,7 +122,7 @@ public final class SHOOTER {
     public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
     public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
     //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.6;
+    public static final double FLYWHEEL_P = 8;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;
@@ -219,14 +219,14 @@ public final class SHOOTER {
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 2; 
+    public static final double EXTEND_ROTATIONS = 6; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
 
     public static double RETRACT_ROTATION_INCREMENT = 0.005; 
 
     //TODO: Tune and change these!
-    public static final double CRUISE_VELOCITY = 50;
-    public static final double MAX_ACCELERATION = 80;
+    public static final double CRUISE_VELOCITY = 1000;
+    public static final double MAX_ACCELERATION = 1000;
 
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";

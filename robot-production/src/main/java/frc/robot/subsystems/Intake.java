@@ -40,13 +40,15 @@ public class Intake extends SubsystemBase{
 
     private RelativeEncoder extendMotorEncoder;
 
-    private double PR_OLD;
-    private double IR_OLD;
-    private double DR_OLD;
+    private double PR_OLD = INTAKE.INTAKE_RIGHT_P;
+    private double IR_OLD = INTAKE.INTAKE_RIGHT_I;
+    private double DR_OLD = INTAKE.INTAKE_RIGHT_D;
 
-    private double PE_OLD;
-    private double IE_OLD;
-    private double DE_OLD;
+    private double PE_OLD = INTAKE.INTAKE_EXTEND_P;
+    private double IE_OLD = INTAKE.INTAKE_EXTEND_I;
+    private double DE_OLD = INTAKE.INTAKE_EXTEND_D;
+
+    private double retractionPosition;
  
     private final NeutralOut extend_brake = new NeutralOut(); 
     /**
@@ -107,14 +109,14 @@ public class Intake extends SubsystemBase{
         extendMotorEncoder = extendMotor.getEncoder(); 
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-        // SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
-        // SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
-        // SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
-        // SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
+        SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
+        SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
+        SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
+        SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
 
-        // SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        // SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        // SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+        SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
     }
 
     /**
@@ -157,7 +159,10 @@ public class Intake extends SubsystemBase{
     }
 
     public void retractIntake(){
-        extendClosedLoopCtrl.setSetpoint(getExtendPosition() - INTAKE.RETRACT_ROTATION_INCREMENT, ControlType.kMAXMotionPositionControl);
+        Logger.recordOutput("Retraction Position", retractionPosition);
+        retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
+        if(getExtendPosition() >= 0.25)
+            extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
     }
 
     public Command retractIntakeCommand(){
@@ -231,7 +236,7 @@ public class Intake extends SubsystemBase{
         double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
         double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
 
-        if(Right_P != PR_OLD || Right_I != IR_OLD || Right_D != DR_OLD || Extend_P != PE_OLD || Extend_I != IE_OLD || Extend_P != DE_OLD){
+        if(Right_P != PR_OLD || Right_I != IR_OLD || Right_D != DR_OLD || Extend_P != PE_OLD || Extend_I != IE_OLD || Extend_D != DE_OLD){
             rollerRightConfig.Slot0.kP = Right_P; 
             rollerRightConfig.Slot0.kI = Right_I;
             rollerRightConfig.Slot0.kD = Right_D; 
@@ -259,8 +264,8 @@ public class Intake extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        Logger.recordOutput("Intake Right RPM", getIntakeVelocity());
-        Logger.recordOutput("Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
     }
         
 }

@@ -108,7 +108,7 @@ public class Indexer extends SubsystemBase {
     public void runSpinner(){
         //spinMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
         // TODO: Revert to closed loop control after testing
-        spinMotor.setVoltage(11.0);
+        spinMotor.setVoltage(6.0);
     }
 
 

@@ -17,13 +17,13 @@ public class RangeTable {
             new RangeEntry(1700.0),    // 1.4m
             new RangeEntry(1800.0),    // 1.6m 
             new RangeEntry(1900.0),    // 1.8m 
-            new RangeEntry(2000.0),    // 2.0m 
+            new RangeEntry(2000),    // 2.0m 
             new RangeEntry(2100.0),    // 2.2m 
             new RangeEntry(2200.0),    // 2.4m 
-            new RangeEntry(2300.0),    // 2.6m 
+            new RangeEntry(4250.0),    // 2.6m  *
             new RangeEntry(2400.0),    // 2.8m 
             new RangeEntry(2500.0),    // 3.0m 
-            new RangeEntry(2600.0),    // 3.2m 
+            new RangeEntry(5000.0),    // 3.2m  *
             new RangeEntry(2700.0),    // 3.4m 
             new RangeEntry(2800.0),    // 3.6m 
             new RangeEntry(2900.0),    // 3.8m 
@@ -74,10 +74,10 @@ public class RangeTable {
             new RangeEntry(2000.0),    // 2.0m 
             new RangeEntry(4250),    // 2.2m 
             new RangeEntry(2200.0),    // 2.4m 
-            new RangeEntry(2300.0),    // 2.6m 
+            new RangeEntry(4450),    // 2.6m 
             new RangeEntry(2400.0),    // 2.8m 
             new RangeEntry(2500.0),    // 3.0m 
-            new RangeEntry(2600.0),    // 3.2m 
+            new RangeEntry(5000),    // 3.2m 
             new RangeEntry(2700.0),    // 3.4m 
             new RangeEntry(2800.0),    // 3.6m 
             new RangeEntry(2900.0),    // 3.8m 
