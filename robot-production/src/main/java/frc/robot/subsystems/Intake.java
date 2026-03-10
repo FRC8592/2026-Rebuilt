@@ -119,55 +119,79 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
     }
 
+
     /**
-     * Run the intake at a set speed
+     * Extend the intake at controlled speed
      */
-    
-    public void runToPositionExt() {
+    public void extendIntake() {
         //To run at raw power
         //rollerMotorRightClosedLoopController.setSetpoint(12, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
         //TODO: Research why Neo Motors undershoot velocity sent to the motor 
         extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        retractionPosition = getExtendPosition();
     }
 
-    public void runAtSpeedIntake(){
+
+    /**
+     * Retract the intake at controlled speed
+     */
+    public void retractIntake(){
+        retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
+        if(getExtendPosition() >= 0.25) {
+            //extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
+            extendClosedLoopCtrl.setSetpoint(retractionPosition, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        }
+    }
+
+
+    /**
+     * Run the intake rollers.  Currently under simple voltage control
+     */    
+    public void runIntakeRollers(){
         double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerRightMotor.setVoltage(12);
+        rollerRightMotor.setVoltage(8.0);
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
+
+    /**
+     * Reset the position of the intake extension motor to 0
+     */
     public void resetExtenderPos(){
         System.out.println("Resetting Extender Command");
         extendMotorEncoder.setPosition(0);
     }
 
+    /**
+     * Command to extend the intake at controlled speed
+     */
+    public Command extendIntakeCommand() {
+        return this.run(() -> extendIntake());
+    }
+
+    /**
+     * Command to retract the intake at controlled speed
+     */
+    public Command retractIntakeCommand(){
+        return this.run(() -> retractIntake());
+    }
+
+
+    /**
+     * Command to run the intake rollers.  Currently under simple voltage control
+     */
+    public Command runIntakeRollersCommand() {
+        return this.runOnce(() -> runIntakeRollers());
+    }
+
+    /**
+     * Command to reset the position of the intake extension motor to 0
+     */
     public Command resetExtenderCommand(){
         return this.runOnce(() -> resetExtenderPos());
     }
 
-    /**
-     * Command to run the intake at a predetermined speed
-     */
-    public Command runAtSpeedIntakeCommand() {
-        return this.runOnce(() -> runAtSpeedIntake());
-    }
-
-    public Command runExtendCommand (){
-        System.out.println("Extend Command is Running");
-        return this.runOnce(()->runToPositionExt()); 
-    }
-
-    public void retractIntake(){
-        Logger.recordOutput("Retraction Position", retractionPosition);
-        retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
-        if(getExtendPosition() >= 0.25)
-            extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
-    }
-
-    public Command retractIntakeCommand(){
-        return this.run(() -> retractIntake());
-    }
 
     // public void setCoastMode(){
     //     extendConfig.idleMode(IdleMode.kCoast);
@@ -181,6 +205,15 @@ public class Intake extends SubsystemBase{
 
     public double getExtendPosition(){
         return extendMotorEncoder.getPosition();
+    }
+
+
+    /**
+    * Get the velocity of the intake motor in RPM
+    * @return velocity in RPM
+    */
+    public double getIntakeVelocity(){
+        return rollerRightMotor.getVelocity().getValueAsDouble();
     }
 
     /**
@@ -208,15 +241,6 @@ public class Intake extends SubsystemBase{
 
     public Command stopExtendCommand(){
         return this.runOnce(() -> stopExtender());
-    }
-
-
-   /**
-    * Get the velocity of the intake motor in RPM
-    * @return velocity in RPM
-    */
-    public double getIntakeVelocity(){
-        return rollerRightMotor.getVelocity().getValueAsDouble();
     }
 
 
@@ -266,6 +290,7 @@ public class Intake extends SubsystemBase{
     public void periodic(){
         Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
     }
         
 }

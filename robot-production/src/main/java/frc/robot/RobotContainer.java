@@ -45,24 +45,26 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
-  // TODO: Change Intake Extend Binding
-  private final Trigger INTAKE_EXTEND = operatorController.y();
+  private final Trigger INTAKE_EXTEND = driverController.y();
+  private final Trigger INTAKE_RETRACT = driverController.a();
+  private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
+    
 
   // private final Trigger SNAP_TO = driverController.povUp();
 
   //
   // Operator Controls
   //
-  private final Trigger RESET_TURRET = driverController.a();
+ 
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
-  private final Trigger INTAKE_RETRACT = operatorController.x();
 
+  private final Trigger RESET_TURRET = operatorController.a();
   //private final Trigger TURRET_TEST = operatorController.x();
   //private final Trigger TURRET_TEST_BACK = operatorController.a();
 
-  private final Trigger RESET_EXTEND = operatorController.b();
+
 
 
   //
@@ -79,10 +81,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     
-  leds = new LEDs(); 
-
-    
-    
+    leds = new LEDs(); 
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
@@ -114,22 +113,13 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
-
-    //TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
-
-    //TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
-
-    //RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
-
-
-    INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
-
+    INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
+    RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
     LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));

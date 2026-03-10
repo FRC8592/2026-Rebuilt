@@ -119,6 +119,10 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Stop turret tracking and shooter speed control
+    m_robotContainer.scoring.disableTracking();
+
+    // Run vision routines
     Vision backvision = m_robotContainer.getBackVision();
     Vision sidevision = m_robotContainer.getSideVision(); 
     backvision.periodic();
@@ -127,6 +131,7 @@ public class Robot extends LoggedRobot {
     int backvisionCounter = backvision.getTargets().size();
     int sideVisionCounter = sidevision.getTargets().size(); 
 
+    // LED control
     if (periodicCounter %10 ==0){
       double average = tagCounter/10; 
       Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
