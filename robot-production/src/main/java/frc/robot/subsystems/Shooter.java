@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -27,6 +28,9 @@ public class Shooter extends SubsystemBase{
 
     private VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(0);
     private VelocityVoltage backwheelVelocityRequest = new VelocityVoltage(0);
+
+    private VelocityTorqueCurrentFOC flyWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+    private VelocityTorqueCurrentFOC backWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
     private double flywheelSetRPM = 0.0; // For logging
 
@@ -69,8 +73,10 @@ public class Shooter extends SubsystemBase{
 
         flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         flywheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-        flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
+        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = false;
+        // flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
+        flywheelConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false;
+        flywheelVelocityRequest.withUpdateFreqHz(1000);
 
         backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
         backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
@@ -82,6 +88,7 @@ public class Shooter extends SubsystemBase{
         backwheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
+        backwheelVelocityRequest.withUpdateFreqHz(1000);
 
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);
@@ -113,15 +120,13 @@ public class Shooter extends SubsystemBase{
      */
     //TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM){
-        double flyWheelMotorVelocity = SmartDashboard.getNumber("V Flywheel", SHOOTER.FLYWHEEL_VI) / 60; // Convert from RPM to RPS for the motor controller
-        //flywheelSetRPM = desiredRPM;
-        //double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
+        double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
         double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
 
         //flywheelMotor.setVoltage(11);
         //backwheelMotor.setVoltage(-11);
-        flywheelMotor.setControl(flywheelVelocityRequest.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(backwheelVelocityRequest.withSlot(0).withVelocity(backwheelMotorVelocity));
+        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        backwheelMotor.setControl(backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
 

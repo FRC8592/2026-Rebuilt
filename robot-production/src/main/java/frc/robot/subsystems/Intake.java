@@ -33,7 +33,6 @@ public class Intake extends SubsystemBase{
     private SparkFlex extendMotor;
 
     private TalonFXConfiguration rollerRightConfig;
-    private TalonFXConfiguration rollerLeftConfig;
     private SparkFlexConfig extendConfig;
 
     private VelocityVoltage rollerMotorCtrl = new VelocityVoltage(0);
@@ -41,13 +40,17 @@ public class Intake extends SubsystemBase{
 
     private RelativeEncoder extendMotorEncoder;
 
-    private double PR_OLD;
-    private double IR_OLD;
-    private double DR_OLD;
+    private double PR_OLD = INTAKE.INTAKE_RIGHT_P;
+    private double IR_OLD = INTAKE.INTAKE_RIGHT_I;
+    private double DR_OLD = INTAKE.INTAKE_RIGHT_D;
 
-    private double PE_OLD;
-    private double IE_OLD;
-    private double DE_OLD;
+    private double PE_OLD = INTAKE.INTAKE_EXTEND_P;
+    private double IE_OLD = INTAKE.INTAKE_EXTEND_I;
+    private double DE_OLD = INTAKE.INTAKE_EXTEND_D;
+
+    private double extendMotorVoltage;
+
+    private double retractionPosition;
  
     private final NeutralOut extend_brake = new NeutralOut(); 
     /**
@@ -67,31 +70,21 @@ public class Intake extends SubsystemBase{
         rollerRightMotor = new TalonFX (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID);
         rollerLeftMotor = new TalonFX(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID);
         rollerRightConfig = new TalonFXConfiguration();
-        rollerLeftConfig = new TalonFXConfiguration();
 
         //TODO: Remove this, should not be necessary
         rollerRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        rollerLeftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         rollerRightConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
-        rollerLeftConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
         rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        rollerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
-        rollerLeftConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
         rollerRightConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
         rollerRightConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
         rollerRightConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D;
 
-        //TODO: Change these if necessary
-        rollerLeftConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
-        rollerLeftConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
-        rollerLeftConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D;
 
         rollerRightMotor.getConfigurator().apply(rollerRightConfig); 
-        rollerLeftMotor.getConfigurator().apply(rollerLeftConfig); 
 
-        rollerLeftMotor.setControl(new Follower(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorAlignmentValue.Aligned));
+        rollerLeftMotor.setControl(new Follower(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorAlignmentValue.Opposed));
 
         /*
          * Create the Extension motor and instatiate the following features
@@ -118,62 +111,92 @@ public class Intake extends SubsystemBase{
         extendMotorEncoder = extendMotor.getEncoder(); 
 
         // TODO: For tuning, put the PID and velocity values on the dashboard.  Remove before competition
-        // SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
-        // SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
-        // SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
-        // SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
+        SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
+        SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
+        SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
+        SmartDashboard.putNumber("Vi_INTAKE_RIGHT",INTAKE.INTAKE_RIGHT_VI);
 
-        // SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        // SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        // SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+        SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
+        SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
+        SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+
+        SmartDashboard.putNumber("Retraction Voltage", 0);
     }
 
+
     /**
-     * Run the intake at a set speed
+     * Extend the intake at controlled speed
      */
-    
-    public void runToPositionExt() {
+    public void extendIntake() {
         //To run at raw power
         //rollerMotorRightClosedLoopController.setSetpoint(12, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
         //TODO: Research why Neo Motors undershoot velocity sent to the motor 
         extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        retractionPosition = getExtendPosition();
     }
 
-    public void runAtSpeedIntake(){
+
+    /**
+     * Retract the intake at controlled speed
+     */
+    public void retractIntake(double voltage){
+        retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
+        if(getExtendPosition() >= 0.25) {
+            extendClosedLoopCtrl.setSetpoint(voltage, ControlType.kVoltage);
+            //extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
+            //extendClosedLoopCtrl.setSetpoint(retractionPosition, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        }
+    }
+
+
+    /**
+     * Run the intake rollers.  Currently under simple voltage control
+     */    
+    public void runIntakeRollers(){
         double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerRightMotor.setVoltage(12);
+        rollerRightMotor.setVoltage(8.0);
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
+
+    /**
+     * Reset the position of the intake extension motor to 0
+     */
     public void resetExtenderPos(){
         System.out.println("Resetting Extender Command");
         extendMotorEncoder.setPosition(0);
     }
 
+    /**
+     * Command to extend the intake at controlled speed
+     */
+    public Command extendIntakeCommand() {
+        return this.run(() -> extendIntake());
+    }
+
+    /**
+     * Command to retract the intake at controlled speed
+     */
+    public Command retractIntakeCommand(double voltage){
+        return this.runOnce(() -> retractIntake(voltage));
+    }
+
+
+    /**
+     * Command to run the intake rollers.  Currently under simple voltage control
+     */
+    public Command runIntakeRollersCommand() {
+        return this.runOnce(() -> runIntakeRollers());
+    }
+
+    /**
+     * Command to reset the position of the intake extension motor to 0
+     */
     public Command resetExtenderCommand(){
         return this.runOnce(() -> resetExtenderPos());
     }
 
-    /**
-     * Command to run the intake at a predetermined speed
-     */
-    public Command runAtSpeedIntakeCommand() {
-        return this.runOnce(() -> runAtSpeedIntake());
-    }
-
-    public Command runExtendCommand (){
-        System.out.println("Extend Command is Running");
-        return this.runOnce(()->runToPositionExt()); 
-    }
-
-    public void retractIntake(){
-        extendClosedLoopCtrl.setSetpoint(getExtendPosition() - INTAKE.RETRACT_ROTATION_INCREMENT, ControlType.kMAXMotionPositionControl);
-    }
-
-    public Command retractIntakeCommand(){
-        return this.run(() -> retractIntake());
-    }
 
     // public void setCoastMode(){
     //     extendConfig.idleMode(IdleMode.kCoast);
@@ -187,6 +210,15 @@ public class Intake extends SubsystemBase{
 
     public double getExtendPosition(){
         return extendMotorEncoder.getPosition();
+    }
+
+
+    /**
+    * Get the velocity of the intake motor in RPM
+    * @return velocity in RPM
+    */
+    public double getIntakeVelocity(){
+        return rollerRightMotor.getVelocity().getValueAsDouble();
     }
 
     /**
@@ -217,15 +249,6 @@ public class Intake extends SubsystemBase{
     }
 
 
-   /**
-    * Get the velocity of the intake motor in RPM
-    * @return velocity in RPM
-    */
-    public double getIntakeVelocity(){
-        return rollerRightMotor.getVelocity().getValueAsDouble();
-    }
-
-
     /**
      * Update the PID constants for the intake motor from SmartDashboard values
      * 
@@ -242,7 +265,7 @@ public class Intake extends SubsystemBase{
         double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
         double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
 
-        if(Right_P != PR_OLD || Right_I != IR_OLD || Right_D != DR_OLD || Extend_P != PE_OLD || Extend_I != IE_OLD || Extend_P != DE_OLD){
+        if(Right_P != PR_OLD || Right_I != IR_OLD || Right_D != DR_OLD || Extend_P != PE_OLD || Extend_I != IE_OLD || Extend_D != DE_OLD){
             rollerRightConfig.Slot0.kP = Right_P; 
             rollerRightConfig.Slot0.kI = Right_I;
             rollerRightConfig.Slot0.kD = Right_D; 
@@ -270,8 +293,9 @@ public class Intake extends SubsystemBase{
      */
     @Override
     public void periodic(){
-        Logger.recordOutput("Intake Right RPM", getIntakeVelocity());
-        Logger.recordOutput("Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
     }
         
 }

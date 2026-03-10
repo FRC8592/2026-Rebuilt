@@ -23,7 +23,7 @@ public class Scoring extends SubsystemBase{
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
-    //public Intake intake;
+    public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean targetIsHub;
@@ -40,9 +40,9 @@ public class Scoring extends SubsystemBase{
         //
         // Instantiate subsystems
         //
-        //turret = new Turret();
+        turret = new Turret();
         shooter = new Shooter();
-        //intake = new Intake();
+        intake = new Intake();
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
@@ -112,9 +112,10 @@ public class Scoring extends SubsystemBase{
     /**
      * Turn the tracking system off.
      */
-    private void disableTracking() {
+    public void disableTracking() {
         trackingTarget = false;
         turret.stop();
+        shooter.stop();
     }
 
 
@@ -195,15 +196,15 @@ public class Scoring extends SubsystemBase{
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            //shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
-            shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
+            shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
+            //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
 
             // Update turret angle and shooter speed
-            //turret.TurrettoAngle(currentRobotPose, currentTargetPose);
+            turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
         }
         else {

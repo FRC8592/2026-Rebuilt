@@ -45,6 +45,7 @@ public class Robot extends LoggedRobot {
   public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0; 
   private static int tagCounter = 0; 
+  private static int tagTarget =0; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -118,7 +119,10 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    
+    // Stop turret tracking and shooter speed control
+    m_robotContainer.scoring.disableTracking();
+
+    // Run vision routines
     Vision backvision = m_robotContainer.getBackVision();
     Vision sidevision = m_robotContainer.getSideVision(); 
     backvision.periodic();
@@ -126,26 +130,36 @@ public class Robot extends LoggedRobot {
 
     int backvisionCounter = backvision.getTargets().size();
     int sideVisionCounter = sidevision.getTargets().size(); 
-    int tagTarget =0;
 
-    if (backvisionCounter == 2 || sideVisionCounter == 2){
-      tagTarget = 2;
+    // LED control
+    if (periodicCounter %10 ==0){
+      double average = tagCounter/10; 
+      Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+      m_robotContainer.leds.setHasTags((int)Math.round(average));
+
+      tagCounter = 0;
+      if (backvisionCounter == 2 || sideVisionCounter == 2){
+      tagCounter += 2;
     }
 
     else if (backvisionCounter == 1 || sideVisionCounter ==1){
-      tagTarget = 1;
+      tagCounter += 1;
     }
 
     else if (backvisionCounter == 0 || sideVisionCounter ==0){
-      tagTarget = 0;
+      tagCounter += 0;
     }
-    m_robotContainer.leds.setHasTags (tagTarget);
-    Logger.recordOutput(LEDS.LOG_PATH + "tagTarget", tagTarget);
-    Logger.recordOutput(LEDS.LOG_PATH + "backvision", backvisionCounter);
-    Logger.recordOutput(LEDS.LOG_PATH + "sidevision", sideVisionCounter);
+      
+    }
+
+    else {
+      tagCounter = 0;
+    }
+
+    periodicCounter++; 
 
     m_robotContainer.leds.displayHasTagsLEDs();
-
+  
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -156,8 +170,8 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
     m_robotContainer.scoring.shooter.updatePID();
-    // m_robotContainer.scoring.indexer.updatePID();
-    // m_robotContainer.intake.updatePID();
+    m_robotContainer.scoring.indexer.updatePID();
+    m_robotContainer.scoring.intake.updatePID();
     // m_robotContainer.scoring.turret.updatePID();
 
   }
@@ -184,6 +198,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    tagTarget = 0; 
+    m_robotContainer.leds.displayCanShootLEDs();
     m_robotContainer.scoring.disableTrackingCommand(); 
     
     // This makes sure that the autonomous stops running when
