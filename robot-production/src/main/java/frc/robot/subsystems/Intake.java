@@ -48,6 +48,8 @@ public class Intake extends SubsystemBase{
     private double IE_OLD = INTAKE.INTAKE_EXTEND_I;
     private double DE_OLD = INTAKE.INTAKE_EXTEND_D;
 
+    private double extendMotorVoltage;
+
     private double retractionPosition;
  
     private final NeutralOut extend_brake = new NeutralOut(); 
@@ -117,6 +119,8 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
         SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
         SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
+
+        SmartDashboard.putNumber("Retraction Voltage", 0);
     }
 
 
@@ -138,8 +142,9 @@ public class Intake extends SubsystemBase{
     public void retractIntake(){
         retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
         if(getExtendPosition() >= 0.25) {
+            extendClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("Retracting Voltage", 0), ControlType.kVoltage);
             //extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
-            extendClosedLoopCtrl.setSetpoint(retractionPosition, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            //extendClosedLoopCtrl.setSetpoint(retractionPosition, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
         }
     }
 
