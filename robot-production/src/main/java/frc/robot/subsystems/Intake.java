@@ -139,10 +139,10 @@ public class Intake extends SubsystemBase{
     /**
      * Retract the intake at controlled speed
      */
-    public void retractIntake(){
+    public void retractIntake(double voltage){
         retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
         if(getExtendPosition() >= 0.25) {
-            extendClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("Retracting Voltage", 0), ControlType.kVoltage);
+            extendClosedLoopCtrl.setSetpoint(voltage, ControlType.kVoltage);
             //extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition, ControlType.kMAXMotionPositionControl);
             //extendClosedLoopCtrl.setSetpoint(retractionPosition, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
         }
@@ -178,8 +178,8 @@ public class Intake extends SubsystemBase{
     /**
      * Command to retract the intake at controlled speed
      */
-    public Command retractIntakeCommand(){
-        return this.run(() -> retractIntake());
+    public Command retractIntakeCommand(double voltage){
+        return this.runOnce(() -> retractIntake(voltage));
     }
 
 
