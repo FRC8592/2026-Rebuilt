@@ -138,12 +138,11 @@ public class Robot extends LoggedRobot {
       // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
       // m_robotContainer.leds.setHasTags((int)Math.round(average));
 
-      tagCounter = 0;
       if (backvisionCounter >= 1 || sideVisionCounter >= 1){
-      tagCounter += 2;
+      tagCounter = 2;
     }
     else if (backvisionCounter == 1 || sideVisionCounter ==1){
-      tagCounter += 1;
+      tagCounter = 1;
     }
     // else if (backvisionCounter == 0 || sideVisionCounter ==0){
     //   tagCounter += 0;
