@@ -71,47 +71,47 @@ public class RangeTable {
             new RangeEntry(4500.0),    // 1.4m
             new RangeEntry(4500.0),    // 1.6m 
             new RangeEntry(4500.0),    // 1.8m 
-            new RangeEntry(4500.0),    // 2.0m *
-            new RangeEntry(4500.0),    // 2.2m *
-            new RangeEntry(4400.0),    // 2.4m 
-            new RangeEntry(4800.0),    // 2.6m  *
-            new RangeEntry(5100.0),    // 2.8m 
-            new RangeEntry(5300.0),    // 3.0m 
-            new RangeEntry(5500.0),    // 3.2m  *
-            new RangeEntry(6000.0),    // 3.4m 
-            new RangeEntry(6000.0),    // 3.6m 
-            new RangeEntry(6000.0),    // 3.8m 
-            new RangeEntry(6000.0),    // 4.0m
-            new RangeEntry(6000.0),    // 4.2m
-            new RangeEntry(6000.0),    // 4.4m
-            new RangeEntry(6000.0),    // 4.6m
-            new RangeEntry(6000.0),    // 4.8m
-            new RangeEntry(6000.0),    // 5.0m
-            new RangeEntry(6000.0),    // 5.2m
-            new RangeEntry(6000.0),    // 5.4m
-            new RangeEntry(6000.0),    // 5.6m
-            new RangeEntry(6000.0),    // 5.8m
-            new RangeEntry(6000.0),    // 6.0m
-            new RangeEntry(6000.0),    // 6.2m
-            new RangeEntry(6000.0),    // 6.4m
-            new RangeEntry(6000.0),    // 6.6m
-            new RangeEntry(6000.0),    // 6.8m
-            new RangeEntry(6000.0),    // 7.0m 
-            new RangeEntry(6000.0),    // 7.2m 
-            new RangeEntry(6000.0),    // 7.4m 
-            new RangeEntry(6000.0),    // 7.6m 
-            new RangeEntry(6000.0),    // 7.8m 
-            new RangeEntry(6000.0),    // 8.0m 
-            new RangeEntry(6000.0),    // 8.2m 
-            new RangeEntry(6000.0),    // 8.4m 
-            new RangeEntry(6000.0),    // 8.6m 
-            new RangeEntry(6000.0),    // 8.8m 
-            new RangeEntry(6000.0),    // 9.0m 
-            new RangeEntry(6000.0),    // 9.2m 
-            new RangeEntry(6000.0),    // 9.4m
-            new RangeEntry(6000.0),    // 9.6m
-            new RangeEntry(6000.0),    // 9.8m
-            new RangeEntry(6000.0),    // 10.0m
+            new RangeEntry(4500.0),    // 2.0m
+            new RangeEntry(4500.0),    // 2.2m
+            new RangeEntry(4500.0),    // 2.4m 
+            new RangeEntry(4500.0),    // 2.6m
+            new RangeEntry(4500.0),    // 2.8m 
+            new RangeEntry(4500.0),    // 3.0m 
+            new RangeEntry(4500.0),    // 3.2m
+            new RangeEntry(4500.0),    // 3.4m 
+            new RangeEntry(4500.0),    // 3.6m 
+            new RangeEntry(4500.0),    // 3.8m 
+            new RangeEntry(4500.0),    // 4.0m
+            new RangeEntry(4500.0),    // 4.2m
+            new RangeEntry(4500.0),    // 4.4m
+            new RangeEntry(4500.0),    // 4.6m
+            new RangeEntry(4500.0),    // 4.8m
+            new RangeEntry(4500.0),    // 5.0m
+            new RangeEntry(4500.0),    // 5.2m
+            new RangeEntry(4500.0),    // 5.4m
+            new RangeEntry(4500.0),    // 5.6m
+            new RangeEntry(4500.0),    // 5.8m
+            new RangeEntry(4500.0),    // 6.0m
+            new RangeEntry(4500.0),    // 6.2m
+            new RangeEntry(4500.0),    // 6.4m
+            new RangeEntry(4500.0),    // 6.6m
+            new RangeEntry(4500.0),    // 6.8m
+            new RangeEntry(4500.0),    // 7.0m 
+            new RangeEntry(4500.0),    // 7.2m 
+            new RangeEntry(4500.0),    // 7.4m 
+            new RangeEntry(4500.0),    // 7.6m 
+            new RangeEntry(4500.0),    // 7.8m 
+            new RangeEntry(4500.0),    // 8.0m 
+            new RangeEntry(4500.0),    // 8.2m 
+            new RangeEntry(4500.0),    // 8.4m 
+            new RangeEntry(4500.0),    // 8.6m 
+            new RangeEntry(4500.0),    // 8.8m 
+            new RangeEntry(4500.0),    // 9.0m 
+            new RangeEntry(4500.0),    // 9.2m 
+            new RangeEntry(4500.0),    // 9.4m
+            new RangeEntry(4500.0),    // 9.6m
+            new RangeEntry(4500.0),    // 9.8m
+            new RangeEntry(4500.0),    // 10.0m
     };
 
     public RangeTable() {
