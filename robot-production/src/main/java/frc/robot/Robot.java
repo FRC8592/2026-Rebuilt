@@ -134,13 +134,14 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
     // LED control
-    if (periodicCounter %10 ==0){
-      double average = tagCounter/10; 
-      Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
-      m_robotContainer.leds.setHasTags((int)Math.round(average));
+  
+
+      // double average = tagCounter/10; 
+      // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+      // m_robotContainer.leds.setHasTags((int)Math.round(average));
 
       tagCounter = 0;
-      if (backvisionCounter == 2 || sideVisionCounter == 2){
+      if (backvisionCounter >= 2 || sideVisionCounter >= 2){
       tagCounter += 2;
     }
 
@@ -148,19 +149,20 @@ public class Robot extends LoggedRobot {
       tagCounter += 1;
     }
 
+    else if (backvisionCounter >= 2 || sideVisionCounter == 1){
+      tagCounter +=2;
+    }
+
+     else if (backvisionCounter == 1 || sideVisionCounter >= 2){
+      tagCounter +=2;
+    }
+
     else if (backvisionCounter == 0 || sideVisionCounter ==0){
       tagCounter += 0;
     }
-      
-    }
 
-    else {
-      tagCounter = 0;
-    }
 
     Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
-
-    periodicCounter++; 
 
     m_robotContainer.leds.displayHasTagsLEDs();
   
