@@ -19,9 +19,12 @@ import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.LEDS;
+import frc.robot.Constants.SHOOTER;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.vision.Vision;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -40,6 +43,9 @@ public class Robot extends LoggedRobot {
 
 
   public static Field2d FIELD = new Field2d();
+  private static int periodicCounter = 0; 
+  private static int tagCounter = 0; 
+  private static int tagTarget =0; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -105,6 +111,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+      //m_robotContainer.scoring.intake.setBrakeMode();
   }
 
   @Override
@@ -112,6 +119,47 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Stop turret tracking and shooter speed control
+    m_robotContainer.scoring.disableTracking();
+
+    // Run vision routines
+    Vision backvision = m_robotContainer.getBackVision();
+    Vision sidevision = m_robotContainer.getSideVision(); 
+    backvision.periodic();
+    sidevision.periodic();
+
+    int backvisionCounter = backvision.getTargets().size();
+    int sideVisionCounter = sidevision.getTargets().size(); 
+
+    // LED control
+    if (periodicCounter %10 ==0){
+      double average = tagCounter/10; 
+      Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+      m_robotContainer.leds.setHasTags((int)Math.round(average));
+
+      tagCounter = 0;
+      if (backvisionCounter == 2 || sideVisionCounter == 2){
+      tagCounter += 2;
+    }
+
+    else if (backvisionCounter == 1 || sideVisionCounter ==1){
+      tagCounter += 1;
+    }
+
+    else if (backvisionCounter == 0 || sideVisionCounter ==0){
+      tagCounter += 0;
+    }
+      
+    }
+
+    else {
+      tagCounter = 0;
+    }
+
+    periodicCounter++; 
+
+    m_robotContainer.leds.displayHasTagsLEDs();
+  
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -121,16 +169,18 @@ public class Robot extends LoggedRobot {
     }
 
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
-    //m_robotContainer.scoring.shooter.updatePID();
+    m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
-    // m_robotContainer.intake.updatePID();
-    m_robotContainer.scoring.turret.updatePID();
+    m_robotContainer.scoring.intake.updatePID();
+    // m_robotContainer.scoring.turret.updatePID();
 
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.scoring.disableTrackingCommand(); 
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -148,21 +198,25 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    tagTarget = 0; 
+    m_robotContainer.leds.displayCanShootLEDs();
+    m_robotContainer.scoring.disableTrackingCommand(); 
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
+    //m_robotContainer.scoring.intake.setCoastMode();
      //   m_autonomousCommand.cancel();
     }
-
-    // Send the al
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
     public void teleopExit() {}

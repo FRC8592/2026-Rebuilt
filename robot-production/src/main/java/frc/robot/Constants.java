@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.util.Color;
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -116,17 +118,25 @@ public final class SHOOTER {
   //Left and right classifications are for looking from the robots viewpoint
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
-    //PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 0.5;
-    public static final double FLYWHEEL_I = 0;
-    public static final double FLYWHEEL_D = 0;
-    public static final double FLYWHEEL_V = 0;
-    public static final double BACKWHEEL_P = 1;
-    public static final double BACKWHEEL_I = 0;
-    public static final double BACKWHEEL_D = 0;
-    public static final double BACKWHEEL_V = 0;
 
-    public static final double FLYWHEEL_VI = 3500;
+    public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
+    //PID tuning constants for the NEO Motors, these are initial and WILL change
+    public static final double FLYWHEEL_P = 7.0;
+    public static final double FLYWHEEL_I = 0.0;
+    public static final double FLYWHEEL_D = 0.0;
+    public static final double FLYWHEEL_S = 0.3;
+    public static final double FLYWHEEL_V = 0.1054;
+    
+    public static final double BACKWHEEL_P = 0.6;
+    public static final double BACKWHEEL_I = 0.0;
+    public static final double BACKWHEEL_D = 0.0;
+    public static final double BACKWHEEL_S = 0.4;
+    public static final double BACKWHEEL_V = 0.125;
+
+    public static final double FLYWHEEL_VI = 3200;
+
+    public static final double BACKWHEEL_VELOCITY = 1146;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -141,11 +151,11 @@ public final class SHOOTER {
 
   public final class TURRET{
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 80;
-    public static final double TURRET_P0 = 12; //8 //2; //4; //12;
-    public static final double TURRET_I0 = 0.0;
+    public static final int TURRET_CURRENT_LIMIT = 200;
+    public static final double TURRET_P0 = 40; //12;
+    public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; //0.4;
-    public static final double TURRET_S = 0.5;
+    public static final double TURRET_S = 0.6;
     public static final double TURRET_P1 = 1;
     public static final double TURRET_I1 = 0.0;
     public static final double TURRET_D1 = 0.0;
@@ -154,14 +164,14 @@ public final class SHOOTER {
     public static final int TURRET_G1 = 19;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23) / 360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 90; // Degrees
-    public static final double REVERSE_LIMIT = -90; // Degrees
+    public static final double FORWARD_LIMIT = 160; // Degrees
+    public static final double REVERSE_LIMIT = -160; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 
@@ -184,15 +194,15 @@ public final class SHOOTER {
 
   public static class INTAKE{
     // CAN ID for the Intake motor
-    public static final int INTAKE_MOTOR_CAN_ID = 44;
-    public static final int INTAKE_ROLLER_LEFT_CAN_ID = 0; 
+    //TODO: Change these names to match the actual location of the motors
+    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 44;
     public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 40;
-    public static final int ROLLER_CURRENT_LIMIT = 40; 
-    
+    public static final int EXTEND_CURRENT_LIMIT = 60;
+    public static final int ROLLER_CURRENT_LIMIT = 60; 
+
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
     public static final double INTAKE_LEFT_I = 0;
@@ -209,13 +219,18 @@ public final class SHOOTER {
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 2; 
+    public static final double EXTEND_ROTATIONS = 6; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
     public static final double EXTEND_CRUISE_RPM = 250.0;
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
     public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
-    public static final double EXTEND_TORQUE_CURRENT = 0; 
+    public static double RETRACT_ROTATION_INCREMENT = 0.005; 
+
+    //TODO: Tune and change these!
+    public static final double CRUISE_VELOCITY = 1000;
+    public static final double MAX_ACCELERATION = 1000;
+
     
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
   }
@@ -234,10 +249,10 @@ public final class SHOOTER {
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
 
-    // Current limts for the Indexer motors
+    // Current limits for the Indexer motors
     //TODO: tune these limits
-    public static final int SPIN_CURRENT_LIMIT = 40;
-    public static final int OUTPUT_CURRENT_LIMIT = 40;
+    public static final int SPIN_CURRENT_LIMIT = 60;
+    public static final int OUTPUT_CURRENT_LIMIT = 60;
 
     public static final double SPIN_MOTOR_SPEED = 5000;
     public static final double SPIN_MOTOR_STOP_SPEED = 0.0;
@@ -245,12 +260,28 @@ public final class SHOOTER {
     public static final double OUTPUT_MOTOR_STOP_SPEED = 0.0;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Indexer/";
-
   }
 
   public final class RANGE_TABLE {
     public static final double RANGE_TABLE_STEP = 0.2; //meters
     public static final double MAX_TABLE_DISTANCE = 10.0; //meters 
   }
+
+  public final class LEDS{
+    public static final Color PRISMARINE = new Color(126,171,172); 
+    public static final Color TEAL = new Color(0, 64, 192);
+    public static final Color ORANGE = new Color(192, 64, 0);
+    public static final Color WHITE = new Color(255, 255, 255);
+    public static final Color GREEN = new Color(0,255,0);
+    public static final Color RED = new Color(255, 0, 0);
+    public static final Color OFF = new Color(0, 0, 0);
+    public static final Color YELLOW = new Color(255,255,0);
+    public static final Color PURPLE = new Color(255,0,255);
+    public static final int LED_STRIP_LENGTH = 52;
+    public static final int LED_CANDLE_COUNT= 8;
+    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH+LED_CANDLE_COUNT;
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
+    }
+
 
 }

@@ -8,10 +8,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Optional;
 import java.util.Set;
 
 import frc.robot.Constants.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -23,6 +26,7 @@ public class Scoring extends SubsystemBase{
     public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
+    private boolean targetIsHub;
     private Alliance alliance;
 
 
@@ -40,6 +44,8 @@ public class Scoring extends SubsystemBase{
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+
+        SmartDashboard.putNumber("shooterV", 0.0);
     }
 
 
@@ -64,26 +70,32 @@ public class Scoring extends SubsystemBase{
             // if we're in our alliance zone
             if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
                 targetPose = SCORING.BLUE_HUB_POSE;
+                targetIsHub = true;
             }
             // if we're in the bottom half of the field
             else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
                 targetPose = SCORING.BLUE_PASSING_LOW_POSE;
+                targetIsHub = false;
             }
             else{
                 targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
+                targetIsHub = false;
             }
         }
         else{
             // if we're in our alliance zone
             if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
                 targetPose = SCORING.RED_HUB_POSE;
+                targetIsHub = true;
             }
             // if we're in the bottom half of the field
             else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
                 targetPose = SCORING.RED_PASSING_LOW_POSE;
+                targetIsHub = false;
             }
             else{
                 targetPose = SCORING.RED_PASSING_HIGH_POSE;
+                targetIsHub = false;
             }
         }
         return targetPose;
@@ -97,14 +109,23 @@ public class Scoring extends SubsystemBase{
         trackingTarget = !trackingTarget;
     }
 
+    /**
+     * Turn the tracking system off.
+     */
+    public void disableTracking() {
+        trackingTarget = false;
+        turret.stop();
+        shooter.stop();
+    }
+
 
     /**
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
-    public Command runAtSpeedIntakeCommand() {
-        return intake.runAtSpeedIntakeCommand();
-    }
+    // public Command runAtSpeedIntakeCommand() {
+    //     return intake.runAtSpeedIntakeCommand();
+    // }
 
     /**
      * Command to run the indexer at a set speed
@@ -118,10 +139,17 @@ public class Scoring extends SubsystemBase{
     }
 
     /**
-     * Command to toggle on turret tracking and shooter wheel speed
+     * Command to toggle turret tracking and shooter wheel speed
      */
     public Command toggleTrackingCommand() {
         return this.runOnce(() -> toggleTracking());
+    }
+
+    /**
+     * Command to turn off turret tracking and shooter wheel speed
+     */
+    public Command disableTrackingCommand() {
+        return this.runOnce(() -> disableTracking());
     }
 
     /**
@@ -131,7 +159,7 @@ public class Scoring extends SubsystemBase{
     public boolean canShoot(){
         //TODO: Change so it can use blue or red hub tracking
         return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(), getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
-        && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()))) <= SHOOTER.SHOOTER_TOLERANCE;
+        && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()), targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE;
     }
 
 
@@ -155,12 +183,21 @@ public class Scoring extends SubsystemBase{
 
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
 
+        if (canShoot()){
+            LEDs.setCanShoot(true); 
+        }
+
+        else{
+            LEDs.setCanShoot (false); 
+        }
+
         if (trackingTarget) {
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
-            shooterSpeed = RangeTable.get(targetDistance);
+            shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
+            // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);

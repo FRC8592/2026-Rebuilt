@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import java.util.Arrays;
+import java.util.Collection;
 import frc.robot.Constants.CONTROLLERS;
 import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
@@ -23,7 +26,7 @@ import frc.robot.subsystems.vision.Vision;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController = new CommandXboxController(1);
+  private static final CommandXboxController operatorController = new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -33,30 +36,33 @@ public class RobotContainer {
   private final OdometryUpdates odometryUpdatesBack;
   private final OdometryUpdates odometryUpdatesSide;
   public final Scoring scoring;
+  public final LEDs leds; 
 
   //
   // Driver Controls
   //
   private final Trigger RESET_HEADING = driverController.back();
-  private final Trigger SLOW_MODE = driverController.leftTrigger();
+  //private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
-  // TODO: Change Intake Extend Binding
-  // private final Trigger INTAKE_EXTEND = driverController.x();
+  private final Trigger INTAKE_EXTEND = driverController.rightBumper();
+  private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
+  private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
+    
 
   // private final Trigger SNAP_TO = driverController.povUp();
 
   //
   // Operator Controls
   //
-  private final Trigger RESET_TURRET = driverController.a();
+ 
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
-  private final Trigger TURRET_TEST = operatorController.x();
-  private final Trigger TURRET_TEST_BACK = operatorController.a();
-  private final Trigger RETRACT_INTAKE = operatorController.b();
-    private final Trigger EXTEND_INTAKE = operatorController.y();
+  private final Trigger RESET_TURRET = operatorController.a();
+  //private final Trigger TURRET_TEST = operatorController.x();
+  //private final Trigger TURRET_TEST_BACK = operatorController.a();
+
 
 
 
@@ -73,9 +79,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //
-    // Instantiate top-level subsystems
-    //
+    
+    leds = new LEDs(); 
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
@@ -116,17 +121,13 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runAtSpeedIntakeCommand()).onFalse(scoring.intake.stopRollerCommand());
-
-    TURRET_TEST.onTrue(scoring.turret.basicTurretTestingCommand(45)).onFalse(scoring.turret.stopTurretCommand());
-
-    TURRET_TEST_BACK.onTrue(scoring.turret.basicTurretTestingCommand(-45)).onFalse(scoring.turret.stopTurretCommand());
-
-    //INTAKE_EXTEND.onTrue(scoring.intake.runExtendCommand()).onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(new DeferredCommand(() -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0), Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
+    RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
     LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
@@ -166,7 +167,14 @@ public class RobotContainer {
         return AutoManager.getAutonomousCommand();
   }
 
+  public Vision getSideVision(){
+    return visionSide; 
+  }
 
+  public Vision getBackVision(){
+    return visionBack; 
+  }
+  
   /**
    * Sets the default command for a subsystem. 
    * @param subsystem
