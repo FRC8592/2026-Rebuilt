@@ -18,12 +18,12 @@ public class RangeTable {
             new RangeEntry(4500.0),    // 1.6m 
             new RangeEntry(4500.0),    // 1.8m 
             new RangeEntry(4500.0),    // 2.0m *
-            new RangeEntry(4500.0),    // 2.2m *
-            new RangeEntry(4400.0),    // 2.4m 
-            new RangeEntry(4800.0),    // 2.6m  *
-            new RangeEntry(5100.0),    // 2.8m 
-            new RangeEntry(5300.0),    // 3.0m 
-            new RangeEntry(5500.0),    // 3.2m  *
+            new RangeEntry(4800.0),    // 2.2m *
+            new RangeEntry(5300.0),    // 2.4m *
+            new RangeEntry(5300.0),    // 2.6m *
+            new RangeEntry(5700.0),    // 2.8m *
+            new RangeEntry(5900.0),    // 3.0m *
+            new RangeEntry(6000.0),    // 3.2m 
             new RangeEntry(6000.0),    // 3.4m 
             new RangeEntry(6000.0),    // 3.6m 
             new RangeEntry(6000.0),    // 3.8m 
