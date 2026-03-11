@@ -119,6 +119,10 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Stop turret tracking and shooter speed control
+    m_robotContainer.scoring.disableTracking();
+
+    // Run vision routines
     Vision backvision = m_robotContainer.getBackVision();
     Vision sidevision = m_robotContainer.getSideVision(); 
     backvision.periodic();
@@ -129,6 +133,7 @@ public class Robot extends LoggedRobot {
 
     Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
+    // LED control
     if (periodicCounter %10 ==0){
       double average = tagCounter/10; 
       Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
@@ -169,8 +174,8 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
     m_robotContainer.scoring.shooter.updatePID();
-    // m_robotContainer.scoring.indexer.updatePID();
-    // m_robotContainer.intake.updatePID();
+    m_robotContainer.scoring.indexer.updatePID();
+    m_robotContainer.scoring.intake.updatePID();
     // m_robotContainer.scoring.turret.updatePID();
 
   }
