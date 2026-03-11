@@ -82,7 +82,8 @@ public class RobotContainer {
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
-         new EventTrigger("Shoot").whileTrue(scoring.indexer.runIndexerCommand());
+
+    new EventTrigger("Shoot").whileTrue(scoring.indexer.runIndexerCommand());
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runAtSpeedIntakeCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.runExtendCommand());
     new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
