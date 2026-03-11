@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LEDS;
-import frc.robot.Constants.SHOOTER;
-import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.vision.Vision;
 
 /**
@@ -165,7 +163,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
 
     m_robotContainer.leds.displayHasTagsLEDs();
-  
+    m_robotContainer.leds.setHasTags(tagCounter);
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();

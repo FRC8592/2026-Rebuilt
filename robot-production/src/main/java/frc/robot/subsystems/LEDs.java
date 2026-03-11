@@ -2,11 +2,9 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
-//import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
-import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
@@ -15,13 +13,9 @@ import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import com.ctre.phoenix6.signals.StripTypeValue;
 import com.ctre.phoenix6.signals.VBatOutputModeValue;
 
-
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.*;
+import frc.robot.Constants.LEDS;
 
 
 
@@ -175,7 +169,6 @@ public class LEDs extends SubsystemBase {
             hasTags = newHasTags; 
             Logger.recordOutput(LEDS.LOG_PATH + "hasTags", hasTags);
         }
-
         public static void setCanShoot (boolean newCanShoot) {
             canShoot = newCanShoot; 
         }
@@ -229,10 +222,7 @@ public class LEDs extends SubsystemBase {
     //     progressBarHopper = progress;
     // }
 
-    // # of tags being seen by the camera 
-    // public static void setHasTags(int cameraTagCount){
-    //     tagState = cameraTagCount;
-    // }
+
 
     // //climbing status
     // public static void setclimbing(boolean climbsucession){
