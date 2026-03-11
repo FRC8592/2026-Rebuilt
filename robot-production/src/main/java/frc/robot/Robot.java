@@ -139,31 +139,22 @@ public class Robot extends LoggedRobot {
       // m_robotContainer.leds.setHasTags((int)Math.round(average));
 
       tagCounter = 0;
-      if (backvisionCounter >= 2 || sideVisionCounter >= 2){
+      if (backvisionCounter >= 1 || sideVisionCounter >= 1){
       tagCounter += 2;
     }
-
     else if (backvisionCounter == 1 || sideVisionCounter ==1){
       tagCounter += 1;
     }
-
-    else if (backvisionCounter >= 2 || sideVisionCounter == 1){
-      tagCounter +=2;
-    }
-
-     else if (backvisionCounter == 1 || sideVisionCounter >= 2){
-      tagCounter +=2;
-    }
-
-    else if (backvisionCounter == 0 || sideVisionCounter ==0){
-      tagCounter += 0;
-    }
+    // else if (backvisionCounter == 0 || sideVisionCounter ==0){
+    //   tagCounter += 0;
+    // }
 
 
     Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
 
-    m_robotContainer.leds.displayHasTagsLEDs();
+    // set the number of tags being seen by the cameras on the LEDs subsystem, and update the LEDs to reflect that information.
     m_robotContainer.leds.setHasTags(tagCounter);
+    m_robotContainer.leds.displayHasTagsLEDs();
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
