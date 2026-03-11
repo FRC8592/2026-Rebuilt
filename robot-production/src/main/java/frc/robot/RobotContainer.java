@@ -8,15 +8,19 @@ import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
+
 import frc.robot.Constants.CONTROLLERS;
 import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Scoring;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -89,10 +93,10 @@ public class RobotContainer {
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
 
     new EventTrigger("Shoot").whileTrue(scoring.indexer.runIndexerCommand());
-    new EventTrigger("RunIntake").whileTrue(scoring.intake.runAtSpeedIntakeCommand());
-    new EventTrigger("DeployIntake").whileTrue(scoring.intake.runExtendCommand());
+    new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
+    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
     new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-    new EventTrigger("RetractIntake").whileTrue(scoring.intake.runRetractCommand());
+    new EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
 
@@ -138,8 +142,6 @@ public class RobotContainer {
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
-    EXTEND_INTAKE.onTrue(scoring.intake.runExtendCommand());
-    RETRACT_INTAKE.onTrue(scoring.intake.runRetractCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
