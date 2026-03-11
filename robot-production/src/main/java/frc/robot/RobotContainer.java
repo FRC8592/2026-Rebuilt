@@ -43,10 +43,10 @@ public class RobotContainer {
   // Driver Controls
   //
   private final Trigger RESET_HEADING = driverController.back();
-  private final Trigger SLOW_MODE = driverController.leftTrigger();
+  //private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
-  private final Trigger INTAKE_EXTEND = driverController.y();
-  private final Trigger INTAKE_RETRACT = operatorController.rightTrigger();
+  private final Trigger INTAKE_EXTEND = driverController.rightBumper();
+  private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
     
@@ -58,7 +58,7 @@ public class RobotContainer {
   //
  
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
-  private final Trigger SHOOT = operatorController.b();
+  private final Trigger SHOOT = operatorController.rightTrigger();
 
   private final Trigger RESET_TURRET = operatorController.a();
   //private final Trigger TURRET_TEST = operatorController.x();
@@ -118,7 +118,7 @@ public class RobotContainer {
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(new DeferredCommand(() -> scoring.intake.retractIntakeCommand(operatorController.getRightTriggerAxis() * -6.0), Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(new DeferredCommand(() -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0), Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being pushed around.
