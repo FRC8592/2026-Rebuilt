@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LEDS;
-import frc.robot.Constants.SHOOTER;
-import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.vision.Vision;
 
 /**
@@ -45,7 +43,6 @@ public class Robot extends LoggedRobot {
   public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0; 
   private static int tagCounter = 0; 
-  private static int tagTarget =0; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -129,37 +126,47 @@ public class Robot extends LoggedRobot {
     sidevision.periodic();
 
     int backvisionCounter = backvision.getTargets().size();
-    int sideVisionCounter = sidevision.getTargets().size(); 
+    int sideVisionCounter = sidevision.getTargets().size();
+    int VisionCounter = backvisionCounter + sideVisionCounter; 
+
+    Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
     // LED control
-    if (periodicCounter %10 ==0){
-      double average = tagCounter/10; 
-      Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
-      m_robotContainer.leds.setHasTags((int)Math.round(average));
+  
 
-      tagCounter = 0;
-      if (backvisionCounter == 2 || sideVisionCounter == 2){
-      tagCounter += 2;
-    }
+      // double average = tagCounter/10; 
+      // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+      // m_robotContainer.leds.setHasTags((int)Math.round(average));
+    if (VisionCounter > 1 ){
+        tagCounter = 2; 
+      }
 
-    else if (backvisionCounter == 1 || sideVisionCounter ==1){
-      tagCounter += 1;
-    }
+      else if (VisionCounter ==1 ){
+        tagCounter =1; 
+      }
 
-    else if (backvisionCounter == 0 || sideVisionCounter ==0){
-      tagCounter += 0;
+    if(periodicCounter % 15 ==0){
+      m_robotContainer.leds.setHasTags(tagCounter);
+      m_robotContainer.leds.displayHasTagsLEDs();
+      tagCounter =0; 
     }
-      
-    }
-
-    else {
-      tagCounter = 0;
-    }
-
     periodicCounter++; 
 
-    m_robotContainer.leds.displayHasTagsLEDs();
+    // if (backvisionCounter > 1 || sideVisionCounter > 1){
+    //   tagCounter = 2;
+    // }
+    // else if (backvisionCounter == 1 || sideVisionCounter ==1){
+    //   tagCounter = 1;
+    // }
+    // else if (backvisionCounter == 0 || sideVisionCounter ==0){
+    //   tagCounter = 0;
+   // }
   
+
+    Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
+
+    // set the number of tags being seen by the cameras on the LEDs subsystem, and update the LEDs to reflect that information.
+    
 
     // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -198,7 +205,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    tagTarget = 0; 
     m_robotContainer.leds.displayCanShootLEDs();
     m_robotContainer.scoring.disableTrackingCommand(); 
     
