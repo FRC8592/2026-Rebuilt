@@ -50,7 +50,7 @@ public class Indexer extends SubsystemBase {
      */
     public Indexer() {
         //TODO: Change the current limits constants
-        spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
+       // spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
         spinMotorConfig.inverted(true);     // Sets the motor to to make clockwise rotation positive
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
