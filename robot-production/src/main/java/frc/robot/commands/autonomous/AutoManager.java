@@ -7,7 +7,9 @@ package frc.robot.commands.autonomous;
 // import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,8 +28,17 @@ public final class AutoManager {
      * this function will have relatively long delays due to loading paths.
      */
     public static void prepare(){
-        pathPlannerAutos = AutoBuilder.buildAutoChooser("MoveCollectReturn");
+        pathPlannerAutos = AutoBuilder.buildAutoChooser();
+        try {
+            PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
+            PathPlannerPath halfLeftMirroredPath = halfLeftPath.mirrorPath();
+            pathPlannerAutos.addOption("Half Right", AutoBuilder.followPath(halfLeftMirroredPath));
+        } 
+        catch (Exception e) {
+            DriverStation.reportError("Failed to load mirrored path Half Left: " + e.getMessage(), e.getStackTrace());
+        }
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
+        
     }
 
     /**
