@@ -10,6 +10,7 @@ import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -98,6 +99,8 @@ public class RobotContainer {
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
+    new EventTrigger("Wait").onTrue(Commands.waitSeconds(1.0));
+
 
 
     
