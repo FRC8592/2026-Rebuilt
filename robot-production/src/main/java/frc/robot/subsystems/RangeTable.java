@@ -7,57 +7,57 @@ import frc.robot.Constants.*;
 
 public class RangeTable {
     public final static RangeEntry[] RANGE_TO_RPM_HUB = {
-            new RangeEntry(4500.0),    // 0.0m
-            new RangeEntry(4500.0),    // 0.2m
-            new RangeEntry(4500.0),    // 0.4m
-            new RangeEntry(4500.0),    // 0.6m
-            new RangeEntry(4500.0),    // 0.8m
-            new RangeEntry(4500.0),    // 1.0m
-            new RangeEntry(4500.0),    // 1.2m
-            new RangeEntry(4500.0),    // 1.4m
-            new RangeEntry(4500.0),    // 1.6m 
-            new RangeEntry(4500.0),    // 1.8m 
-            new RangeEntry(4500.0),    // 2.0m *
-            new RangeEntry(4800.0),    // 2.2m *
-            new RangeEntry(5300.0),    // 2.4m *
-            new RangeEntry(5300.0),    // 2.6m *
-            new RangeEntry(5700.0),    // 2.8m *
-            new RangeEntry(5900.0),    // 3.0m *
-            new RangeEntry(6000.0),    // 3.2m 
-            new RangeEntry(6000.0),    // 3.4m 
-            new RangeEntry(6000.0),    // 3.6m 
-            new RangeEntry(6000.0),    // 3.8m 
-            new RangeEntry(6000.0),    // 4.0m
-            new RangeEntry(6000.0),    // 4.2m
-            new RangeEntry(6000.0),    // 4.4m
-            new RangeEntry(6000.0),    // 4.6m
-            new RangeEntry(6000.0),    // 4.8m
-            new RangeEntry(6000.0),    // 5.0m
-            new RangeEntry(6000.0),    // 5.2m
-            new RangeEntry(6000.0),    // 5.4m
-            new RangeEntry(6000.0),    // 5.6m
-            new RangeEntry(6000.0),    // 5.8m
-            new RangeEntry(6000.0),    // 6.0m
-            new RangeEntry(6000.0),    // 6.2m
-            new RangeEntry(6000.0),    // 6.4m
-            new RangeEntry(6000.0),    // 6.6m
-            new RangeEntry(6000.0),    // 6.8m
-            new RangeEntry(6000.0),    // 7.0m 
-            new RangeEntry(6000.0),    // 7.2m 
-            new RangeEntry(6000.0),    // 7.4m 
-            new RangeEntry(6000.0),    // 7.6m 
-            new RangeEntry(6000.0),    // 7.8m 
-            new RangeEntry(6000.0),    // 8.0m 
-            new RangeEntry(6000.0),    // 8.2m 
-            new RangeEntry(6000.0),    // 8.4m 
-            new RangeEntry(6000.0),    // 8.6m 
-            new RangeEntry(6000.0),    // 8.8m 
-            new RangeEntry(6000.0),    // 9.0m 
-            new RangeEntry(6000.0),    // 9.2m 
-            new RangeEntry(6000.0),    // 9.4m
-            new RangeEntry(6000.0),    // 9.6m
-            new RangeEntry(6000.0),    // 9.8m
-            new RangeEntry(6000.0),    // 10.0m
+            new RangeEntry(4600.0),    // 0.0m
+            new RangeEntry(4600.0),    // 0.2m
+            new RangeEntry(4600.0),    // 0.4m
+            new RangeEntry(4600.0),    // 0.6m
+            new RangeEntry(4600.0),    // 0.8m
+            new RangeEntry(4600.0),    // 1.0m
+            new RangeEntry(4600.0),    // 1.2m
+            new RangeEntry(4600.0),    // 1.4m
+            new RangeEntry(4600.0),    // 1.6m 
+            new RangeEntry(4600.0),    // 1.8m 
+            new RangeEntry(4600.0),    // 2.0m *
+            new RangeEntry(4900.0),    // 2.2m *
+            new RangeEntry(5400.0),    // 2.4m *
+            new RangeEntry(5400.0),    // 2.6m *
+            new RangeEntry(5800.0),    // 2.8m *
+            new RangeEntry(6000.0),    // 3.0m *
+            new RangeEntry(6100.0),    // 3.2m 
+            new RangeEntry(6100.0),    // 3.4m 
+            new RangeEntry(6100.0),    // 3.6m 
+            new RangeEntry(6100.0),    // 3.8m 
+            new RangeEntry(6100.0),    // 4.0m
+            new RangeEntry(6100.0),    // 4.2m
+            new RangeEntry(6100.0),    // 4.4m
+            new RangeEntry(6100.0),    // 4.6m
+            new RangeEntry(6100.0),    // 4.8m
+            new RangeEntry(6100.0),    // 5.0m
+            new RangeEntry(6100.0),    // 5.2m
+            new RangeEntry(6100.0),    // 5.4m
+            new RangeEntry(6100.0),    // 5.6m
+            new RangeEntry(6100.0),    // 5.8m
+            new RangeEntry(6100.0),    // 6.0m
+            new RangeEntry(6100.0),    // 6.2m
+            new RangeEntry(6100.0),    // 6.4m
+            new RangeEntry(6100.0),    // 6.6m
+            new RangeEntry(6100.0),    // 6.8m
+            new RangeEntry(6100.0),    // 7.0m 
+            new RangeEntry(6100.0),    // 7.2m 
+            new RangeEntry(6100.0),    // 7.4m 
+            new RangeEntry(6100.0),    // 7.6m 
+            new RangeEntry(6100.0),    // 7.8m 
+            new RangeEntry(6100.0),    // 8.0m 
+            new RangeEntry(6100.0),    // 8.2m 
+            new RangeEntry(6100.0),    // 8.4m 
+            new RangeEntry(6100.0),    // 8.6m 
+            new RangeEntry(6100.0),    // 8.8m 
+            new RangeEntry(6100.0),    // 9.0m 
+            new RangeEntry(6100.0),    // 9.2m 
+            new RangeEntry(6100.0),    // 9.4m
+            new RangeEntry(6100.0),    // 9.6m
+            new RangeEntry(6100.0),    // 9.8m
+            new RangeEntry(6100.0),    // 10.0m
     };
     //TODO: Change this later for passing and not be a copy of the hub
     public final static RangeEntry[] RANGE_TO_RPM_FLOOR = {
