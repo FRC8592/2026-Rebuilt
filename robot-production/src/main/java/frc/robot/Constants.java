@@ -6,11 +6,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.util.Color;
-
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.swerve.TunerConstants;
 
 public final class Constants {
@@ -219,8 +218,11 @@ public final class SHOOTER {
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 6; 
+    public static final double EXTEND_ROTATIONS = 8; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
+    public static final double EXTEND_CRUISE_RPM = 250.0;
+    public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
+    public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
     public static double RETRACT_ROTATION_INCREMENT = 0.005; 
 

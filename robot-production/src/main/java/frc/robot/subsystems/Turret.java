@@ -98,6 +98,7 @@ public class Turret extends SubsystemBase{
         // SmartDashboard.putNumber("I_TUR", TURRET.TURRET_I0);
         // SmartDashboard.putNumber("D_TUR", TURRET.TURRET_D0);
         // SmartDashboard.putNumber("S_TUR", TURRET.TURRET_S);
+        this.resetPos();
     }
 
     public double calcAngle(Pose2d robotPosition, Pose2d targetLocation){

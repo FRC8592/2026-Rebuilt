@@ -1,20 +1,17 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.Optional;
-import java.util.Set;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.*;
+import frc.robot.Constants.MEASUREMENTS;
+import frc.robot.Constants.SCORING;
+import frc.robot.Constants.TURRET;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase{
@@ -159,7 +156,8 @@ public class Scoring extends SubsystemBase{
     public boolean canShoot(){
         //TODO: Change so it can use blue or red hub tracking
         return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(), getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
-        && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()), targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE;
+        // && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()), targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
+        ;
     }
 
 

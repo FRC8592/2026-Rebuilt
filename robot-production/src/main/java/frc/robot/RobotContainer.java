@@ -4,26 +4,28 @@
 
 package frc.robot;
 
-import frc.robot.Constants.*;
-import frc.robot.commands.autonomous.AutoManager;
-import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.OdometryUpdates;
-import frc.robot.subsystems.swerve.TunerConstants;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.Scoring;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import java.util.Set;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+import frc.robot.Constants.CONTROLLERS;
+import frc.robot.Constants.VISION;
+import frc.robot.commands.autonomous.AutoManager;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.OdometryUpdates;
+import frc.robot.subsystems.Scoring;
+import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.TunerConstants;
+import frc.robot.subsystems.vision.Vision;
 
 public class RobotContainer {
   private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
@@ -88,6 +90,22 @@ public class RobotContainer {
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+
+    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+    new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
+    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
+    new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
+    // new EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
+    new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
+    new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
+    new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
+    new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
+new EventTrigger("WaitAndShoot").onTrue(
+    Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
+);
+
+
+
     
     //
     // Configure the trigger bindings

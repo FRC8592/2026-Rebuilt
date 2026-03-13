@@ -6,15 +6,13 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.FeedForwardConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-//import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,12 +50,12 @@ public class Indexer extends SubsystemBase {
      */
     public Indexer() {
         //TODO: Change the current limits constants
-        spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
+       // spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
         spinMotorConfig.inverted(true);     // Sets the motor to to make clockwise rotation positive
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
         // TODO: Change the current limits constants
-        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        // outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
         outputMotorConfig.idleMode(IdleMode.kCoast); 
         
         // TODO: Tune pid
@@ -100,6 +98,12 @@ public class Indexer extends SubsystemBase {
         spinMotor.setVoltage(0);
         outputMotor.setVoltage(0);
     }
+    public void stopSpin(){
+        spinMotor.setVoltage(0);
+    }
+    public void stopOutput(){
+        outputMotor.setVoltage(0);
+    }
 
 
     /**
@@ -108,7 +112,7 @@ public class Indexer extends SubsystemBase {
     public void runSpinner(){
         //spinMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
         // TODO: Revert to closed loop control after testing
-        spinMotor.setVoltage(6.0);
+        spinMotor.setVoltage(11.0);
     }
 
 
@@ -127,7 +131,15 @@ public class Indexer extends SubsystemBase {
     public void runIndexer(){
         runSpinner();
         runOutput();
+
+        
     }
+    public void stopIndexer(){
+        runSpinner();
+        runOutput();
+
+    }
+    
     
 
     /**
@@ -143,10 +155,6 @@ public class Indexer extends SubsystemBase {
      * Command to run the spin motor on the indexer 
      * @return a command to run the spin motor on the indexer
      */
-    public Command runSpinnerCommand(){
-        return this.runOnce(() -> runSpinner());
-    }
-
 
     /**
      * Command to run the output motor on the indexer 
@@ -165,6 +173,9 @@ public class Indexer extends SubsystemBase {
         return this.runOnce(() -> runIndexer());
     }
 
+public Command runStopIndexerCommand(){
+        return this.runOnce(() -> runIndexer());
+    }
 
     /**
      * Get the velocity of the spinner motor in RPM

@@ -3,10 +3,10 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase{
         //TODO: Remove this, should not be necessary
         rollerRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         rollerRightConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
-        rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
         rollerRightConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
@@ -155,7 +155,7 @@ public class Intake extends SubsystemBase{
     public void runIntakeRollers(){
         double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerRightMotor.setVoltage(8.0);
+        rollerRightMotor.setVoltage(11.0);
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
@@ -165,7 +165,11 @@ public class Intake extends SubsystemBase{
      */
     public void resetExtenderPos(){
         System.out.println("Resetting Extender Command");
-        extendMotorEncoder.setPosition(0);
+        extendMotorEncoder.setPosition(2);
+    }
+
+    public double getIntakeVoltage(){
+        return rollerRightMotor.getMotorVoltage().getValueAsDouble();
     }
 
     /**
@@ -296,6 +300,7 @@ public class Intake extends SubsystemBase{
         Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Roller Motor Voltage", getIntakeVoltage());
     }
         
 }
