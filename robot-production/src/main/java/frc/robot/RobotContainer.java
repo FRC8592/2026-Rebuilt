@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.Set;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,8 +91,7 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
 
-    new EventTrigger("Shoot").and(new Trigger(() -> scoring.canShoot()))
-                                  .onTrue(scoring.indexer.runIndexerCommand());
+    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
     new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
