@@ -55,7 +55,7 @@ public class Indexer extends SubsystemBase {
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
         // TODO: Change the current limits constants
-        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        // outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
         outputMotorConfig.idleMode(IdleMode.kCoast); 
         
         // TODO: Tune pid

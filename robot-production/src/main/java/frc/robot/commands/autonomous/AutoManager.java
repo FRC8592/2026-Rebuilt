@@ -31,8 +31,8 @@ public final class AutoManager {
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
             PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
-            PathPlannerPath halfLeftMirroredPath = halfLeftPath.mirrorPath();
-            pathPlannerAutos.addOption("Half Right", AutoBuilder.followPath(halfLeftMirroredPath));
+            PathPlannerPath HalfRight = halfLeftPath.mirrorPath();
+            pathPlannerAutos.addOption("Half Right", AutoBuilder.followPath(HalfRight));
         } 
         catch (Exception e) {
             DriverStation.reportError("Failed to load mirrored path Half Left: " + e.getMessage(), e.getStackTrace());

@@ -206,6 +206,12 @@
       "command": null
     },
     {
+      "name": "Wait",
+      "waypointRelativePos": 7.756186548223352,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "Shoot",
       "waypointRelativePos": 8.0,
       "endWaypointRelativePos": null,
@@ -214,7 +220,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 9.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 1440.0,
     "nominalVoltage": 12.0,

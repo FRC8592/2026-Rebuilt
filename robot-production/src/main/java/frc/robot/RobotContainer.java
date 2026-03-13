@@ -99,7 +99,10 @@ public class RobotContainer {
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
-    new EventTrigger("Wait").onTrue(Commands.waitSeconds(1.0));
+    new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
+new EventTrigger("WaitAndShoot").onTrue(
+    Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
+);
 
 
 
