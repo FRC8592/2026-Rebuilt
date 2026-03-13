@@ -161,19 +161,20 @@ public final class SHOOTER {
     public static final double TURRET_D1 = 0.0;
 
     public static final int TURRET_TG = 80;
-    public static final int TURRET_G1 = 19;
+    public static final int TURRET_G1 = 21;
     public static final int TURRET_G2 = 23;
+    public static final int TURRET_GM = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (TURRET_TG * 1.0 / TURRET_GM) / 360.0;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50;
     //TODO: Get encoder offsets
-    public static final double E1_OFFSET = 286;
-    public static final double E2_OFFSET = 323.4;
+    public static final double E1_OFFSET = 48.824;
+    public static final double E2_OFFSET = 353.07;
     public static final double FORWARD_LIMIT = 160; // Degrees
     public static final double REVERSE_LIMIT = -160; // Degrees
-    public static final double TURRET_TOLERANCE = 8; // Degrees
+    public static final double TURRET_TOLERANCE = 0.04; // Degrees
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the front of the robot 
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";
