@@ -55,7 +55,7 @@ public final class Constants {
         "Arducam_OV9782_USB_F"
     ); 
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
-    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 2.0;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 3.5;
   }
 
   public final class SWERVE {
