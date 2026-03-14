@@ -61,6 +61,7 @@ public class RobotContainer {
   private final Trigger SHOOT = operatorController.rightTrigger();
 
   private final Trigger RESET_TURRET = operatorController.a();
+  private final Trigger MANUAL_OVERRIDE = operatorController.back();
   //private final Trigger TURRET_TEST = operatorController.x();
   //private final Trigger TURRET_TEST_BACK = operatorController.a();
 
@@ -130,6 +131,8 @@ public class RobotContainer {
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+
+    MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
