@@ -194,7 +194,7 @@ public final class SHOOTER {
   public static class INTAKE{
     // CAN ID for the Intake motor
     //TODO: Change these names to match the actual location of the motors
-    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 44;
+    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 34;
     public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 

@@ -206,7 +206,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.scoring.disableTrackingCommand(); 
+    m_robotContainer.scoring.disableTrackingCommand();
+    m_robotContainer.scoring.indexer.stop(); 
     
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

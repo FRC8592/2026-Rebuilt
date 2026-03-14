@@ -168,8 +168,12 @@ public class Intake extends SubsystemBase{
         extendMotorEncoder.setPosition(2);
     }
 
-    public double getIntakeVoltage(){
+    public double getRightIntakeVoltage(){
         return rollerRightMotor.getMotorVoltage().getValueAsDouble();
+    }
+
+    public double getLeftIntakeVoltage(){
+        return rollerLeftMotor.getMotorVoltage().getValueAsDouble();
     }
 
     /**
@@ -300,7 +304,8 @@ public class Intake extends SubsystemBase{
         Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Roller Motor Voltage", getIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage", getRightIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
     }
         
 }
