@@ -152,6 +152,11 @@ public class Turret extends SubsystemBase{
         return tMotor.getPosition().getValueAsDouble() * 1.0/(TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
+    public void holdPosition(){
+        double holdPos = tMotor.getPosition().getValueAsDouble();
+        tMotor.setControl(positionRequest.withSlot(0).withPosition(holdPos));
+    }
+
     /**
      * Get the encoder values the define the turret zero position.
      */

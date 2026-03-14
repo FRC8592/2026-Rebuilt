@@ -23,6 +23,7 @@ public class Scoring extends SubsystemBase{
     public Intake intake;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
+    private boolean overrideTracking = false;
     private boolean targetIsHub;
     private Alliance alliance;
 
@@ -104,8 +105,19 @@ public class Scoring extends SubsystemBase{
      */
     private void toggleTracking() {
         trackingTarget = !trackingTarget;
+        overrideTracking = false;
     }
 
+    public void overrideTracking(){
+        trackingTarget = false;
+        overrideTracking = true;
+        turret.holdPosition();
+        shooter.runAtSpeed(5900);
+    }
+
+    public Command overrideTrackingCommand(){
+        return this.runOnce(() -> overrideTracking());
+    }
     /**
      * Turn the tracking system off.
      */
@@ -207,7 +219,9 @@ public class Scoring extends SubsystemBase{
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
-            shooter.stop();
+            if(!overrideTracking){
+                shooter.stop();
+            }
         }
     }
 

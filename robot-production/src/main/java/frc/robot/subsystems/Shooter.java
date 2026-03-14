@@ -65,6 +65,7 @@ public class Shooter extends SubsystemBase{
         flywheelConfiguration = new TalonFXConfiguration();
         backwheelConfiguration = new TalonFXConfiguration();
 
+
         flywheelConfiguration.Slot0.kP = SHOOTER.FLYWHEEL_P; 
         flywheelConfiguration.Slot0.kI = SHOOTER.FLYWHEEL_I;
         flywheelConfiguration.Slot0.kD = SHOOTER.FLYWHEEL_D;
