@@ -47,7 +47,7 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
   //private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
-  private final Trigger INTAKE_EXTEND = driverController.rightBumper();
+  private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();

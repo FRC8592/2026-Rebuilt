@@ -191,7 +191,7 @@ public class Swerve extends SubsystemBase {
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public SwerveRequest brake(){
-        return new SwerveRequest.SwerveDriveBrake(){};
+        return new SwerveRequest.SwerveDriveBrake();
     }
 
     /**
