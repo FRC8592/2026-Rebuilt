@@ -30,7 +30,7 @@ public final class AutoManager {
     public static void prepare(){
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left Constrained");
+            PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
             PathPlannerPath HalfRight = halfLeftPath.mirrorPath();
             pathPlannerAutos.addOption("Half Right", AutoBuilder.followPath(HalfRight));
         } 
