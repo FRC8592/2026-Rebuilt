@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -95,7 +96,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
-    new EventTrigger("StopIntake").whileTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
+    new EventTrigger("StopIntake").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // new EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
@@ -104,6 +105,7 @@ public class RobotContainer {
 new EventTrigger("WaitAndShoot").onTrue(
     Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
 );
+    new EventMarker("RunIntake", 9.2);
 
 
 

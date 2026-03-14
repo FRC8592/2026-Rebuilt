@@ -133,6 +133,7 @@ public class LEDs extends SubsystemBase {
         }
         }
 
+
         public void displayHasTagsLEDs(){
                 if(hasTags >=2 ) {
                 candle.setControl(

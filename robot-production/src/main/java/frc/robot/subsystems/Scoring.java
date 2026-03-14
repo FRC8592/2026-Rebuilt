@@ -195,7 +195,7 @@ public class Scoring extends SubsystemBase{
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
 
         if (canShoot()){
-            LEDs.setCanShoot(true); 
+            LEDs.setCanShoot(true);
         }
 
         else{
