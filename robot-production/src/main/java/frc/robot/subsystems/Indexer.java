@@ -42,7 +42,7 @@ public class Indexer extends SubsystemBase {
     private double PO_OLD;
     private double IO_OLD;
     private double DO_OLD;
-
+    public boolean indexerRunning = false; 
     /**
      * Constructor for the Indexer subsystem
      * 
@@ -97,6 +97,7 @@ public class Indexer extends SubsystemBase {
     public void stop(){
         spinMotor.setVoltage(0);
         outputMotor.setVoltage(0);
+        indexerRunning = false; 
     }
     public void stopSpin(){
         spinMotor.setVoltage(0);
@@ -131,13 +132,12 @@ public class Indexer extends SubsystemBase {
     public void runIndexer(){
         runSpinner();
         runOutput();
-
+        indexerRunning = true; 
         
     }
     public void stopIndexer(){
         runSpinner();
         runOutput();
-
     }
     
     

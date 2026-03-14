@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CONTROLLERS;
+import frc.robot.Constants.LEDS;
 import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.LEDs;
@@ -87,7 +88,7 @@ public class RobotContainer {
     
     leds = new LEDs(); 
     swerve = new Swerve(drivetrain);
-    scoring = new Scoring(swerve);
+    scoring = new Scoring(swerve,leds);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
