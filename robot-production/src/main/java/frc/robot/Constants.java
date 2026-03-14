@@ -199,8 +199,8 @@ public final class SHOOTER {
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 60;
-    public static final int ROLLER_CURRENT_LIMIT = 60; 
+    public static final int EXTEND_CURRENT_LIMIT = 40;
+    public static final int ROLLER_CURRENT_LIMIT = 40; 
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;

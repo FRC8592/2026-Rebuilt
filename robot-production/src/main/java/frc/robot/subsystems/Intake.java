@@ -33,6 +33,7 @@ public class Intake extends SubsystemBase{
     private SparkFlex extendMotor;
 
     private TalonFXConfiguration rollerRightConfig;
+    private TalonFXConfiguration rollerLeftConfig;
     private SparkFlexConfig extendConfig;
 
     private VelocityVoltage rollerMotorCtrl = new VelocityVoltage(0);
@@ -52,7 +53,8 @@ public class Intake extends SubsystemBase{
 
     private double retractionPosition;
  
-    private final NeutralOut extend_brake = new NeutralOut(); 
+    //private final NeutralOut extend_brake = new NeutralOut();
+    
     /**
      * Constructor for the Intake subsystem
      * 
@@ -70,19 +72,25 @@ public class Intake extends SubsystemBase{
         rollerRightMotor = new TalonFX (INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID);
         rollerLeftMotor = new TalonFX(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID);
         rollerRightConfig = new TalonFXConfiguration();
+        rollerLeftConfig = new TalonFXConfiguration();
 
         //TODO: Remove this, should not be necessary
         rollerRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         rollerRightConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
-        rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
         rollerRightConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P; 
         rollerRightConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
         rollerRightConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D;
 
+        rollerRightMotor.getConfigurator().apply(rollerRightConfig);
 
-        rollerRightMotor.getConfigurator().apply(rollerRightConfig); 
+        rollerLeftConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast); 
+        rollerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        rollerLeftConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
+
+        rollerLeftMotor.getConfigurator().apply(rollerLeftConfig);
 
         rollerLeftMotor.setControl(new Follower(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorAlignmentValue.Opposed));
 
