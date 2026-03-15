@@ -150,6 +150,7 @@ public class Intake extends SubsystemBase{
      * Retract the intake at controlled speed
      */
     public void retractIntake(double voltage){
+        Logger.recordOutput("Voltage to Extend Motor", voltage);
         retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
         if(getExtendPosition() >= 0.25) {
             extendClosedLoopCtrl.setSetpoint(voltage, ControlType.kVoltage);
