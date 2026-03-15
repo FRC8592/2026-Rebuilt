@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Half Left Opt"
+            "pathName": "Half Left"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.5
+            "waitTime": 3.0
           }
         },
         {
@@ -32,12 +32,6 @@
           "type": "path",
           "data": {
             "pathName": "Half Left Second Swipe Opt"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         }
       ]

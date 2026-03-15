@@ -127,7 +127,7 @@ public final class SHOOTER {
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
     
-    public static final double BACKWHEEL_P = 3.0;
+    public static final double BACKWHEEL_P = 1.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
@@ -199,8 +199,8 @@ public final class SHOOTER {
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 42;
-    public static final int ROLLER_CURRENT_LIMIT = 42; 
+    public static final int EXTEND_CURRENT_LIMIT = 50;
+    public static final int ROLLER_CURRENT_LIMIT = 50; 
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
