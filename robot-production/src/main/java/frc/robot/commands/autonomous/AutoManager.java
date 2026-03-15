@@ -23,18 +23,22 @@ import frc.robot.subsystems.Scoring;
  */
 public final class AutoManager {
     private static SendableChooser<Command> pathPlannerAutos;
+    private static Scoring scoring;
 
     /**
      * Load all autos and broadcast the chooser.
      * @apiNote This should be called on {@link Robot#robotInit()} only;
      * this function will have relatively long delays due to loading paths.
      */
-    public static void prepare(Scoring scoring){
+    public static void prepare(Scoring scr){
+        scoring = scr;
+
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
-            PathPlannerPath HalfRight = halfLeftPath.mirrorPath();
-            pathPlannerAutos.addOption("Half Right", AutoBuilder.followPath(HalfRight));
+            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Half Left").mirrorPath();
+            Command halfMirroredAuto = AutoBuilder.followPath(halfRight).andThen(scoring.indexer.runIndexerCommand()); 
+            
+            pathPlannerAutos.addOption("Half Right", halfMirroredAuto);
         } 
         catch (Exception e) {
             DriverStation.reportError("Failed to load mirrored path Half Left: " + e.getMessage(), e.getStackTrace());

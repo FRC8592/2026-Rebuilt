@@ -49,13 +49,11 @@ public class Indexer extends SubsystemBase {
      * Instatiate the motors with initial PID values from the CONSTANTS class
      */
     public Indexer() {
-        //TODO: Change the current limits constants
-       // spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
+        spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
         spinMotorConfig.inverted(true);     // Sets the motor to to make clockwise rotation positive
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
-        // TODO: Change the current limits constants
-        // outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
         outputMotorConfig.idleMode(IdleMode.kCoast); 
         
         // TODO: Tune pid

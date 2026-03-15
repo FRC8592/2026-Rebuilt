@@ -69,7 +69,7 @@ public class Scoring extends SubsystemBase{
         Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
         if (alliance == Alliance.Blue){
             // if we're in our alliance zone
-            if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
+            if (currentRobotPose.getX() < (MEASUREMENTS.FIELD_X_METERS / 4) + 0.5){
                 targetPose = SCORING.BLUE_HUB_POSE;
                 targetIsHub = true;
             }
@@ -85,7 +85,7 @@ public class Scoring extends SubsystemBase{
         }
         else{
             // if we're in our alliance zone
-            if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
+            if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5){
                 targetPose = SCORING.RED_HUB_POSE;
                 targetIsHub = true;
             }

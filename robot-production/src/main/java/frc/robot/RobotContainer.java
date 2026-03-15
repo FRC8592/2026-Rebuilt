@@ -41,24 +41,19 @@ public class RobotContainer {
   public final Scoring scoring;
   public final LEDs leds; 
 
-  //
   // Driver Controls
-  //
   private final Trigger RESET_HEADING = driverController.back();
   //private final Trigger SLOW_MODE = driverController.leftTrigger();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
+  private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
-    
 
   // private final Trigger SNAP_TO = driverController.povUp();
 
-  //
   // Operator Controls
-  //
- 
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
@@ -66,24 +61,17 @@ public class RobotContainer {
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
   //private final Trigger TURRET_TEST = operatorController.x();
   //private final Trigger TURRET_TEST_BACK = operatorController.a();
-
-
-
-
-  //
+  
   // Controls for running sysId tests
-  //
   // private final Trigger QUASI_FORWARD = driverController.a();
   // private final Trigger QUASI_REVERSE = driverController.y();
   // private final Trigger DYNAMIC_FORWARD = driverController.b();
   // private final Trigger DYNAMIC_REVERSE = driverController.x();
 
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    
     leds = new LEDs(); 
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve,leds);
@@ -102,22 +90,16 @@ public class RobotContainer {
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
-new EventTrigger("WaitAndShoot").onTrue(
-    Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
-);
-
-
-
+    new EventTrigger("WaitAndShoot").onTrue(
+        Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
+    );
+    new EventMarker("RunIntake", 9.2);
     
-    //
     // Configure the trigger bindings
-    //
     configureBindings();
     configureDefaults();
 
-    //
     // Get autonomous ready
-    //
     AutoManager.prepare(scoring);
   }
 
@@ -137,6 +119,8 @@ new EventTrigger("WaitAndShoot").onTrue(
     //          .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
+
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(new DeferredCommand(() -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0), Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
