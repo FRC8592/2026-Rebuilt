@@ -171,6 +171,10 @@ public class Intake extends SubsystemBase{
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
+    public void runReversedIntakeRollers(){
+        rollerRightMotor.setVoltage(-11);
+    }
+
 
     /**
      * Reset the position of the intake extension motor to 0
@@ -208,6 +212,10 @@ public class Intake extends SubsystemBase{
      */
     public Command runIntakeRollersCommand() {
         return this.runOnce(() -> runIntakeRollers());
+    }
+
+    public Command runReversedIntakeRollersCommand(){
+        return this.runOnce(() -> runReversedIntakeRollers());
     }
 
     /**
