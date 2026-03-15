@@ -19,6 +19,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -190,8 +192,9 @@ public class Swerve extends SubsystemBase {
     /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    public SwerveRequest brake(){
-        return new SwerveRequest.SwerveDriveBrake();
+    public void brake(){
+        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake();
+        swerve.setControl(brake);
     }
 
     /**
