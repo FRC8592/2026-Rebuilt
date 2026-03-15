@@ -127,7 +127,7 @@ public final class SHOOTER {
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
     
-    public static final double BACKWHEEL_P = 0.6;
+    public static final double BACKWHEEL_P = 3.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
