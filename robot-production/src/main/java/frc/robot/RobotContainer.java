@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CONTROLLERS;
-import frc.robot.Constants.LEDS;
 import frc.robot.Constants.VISION;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.LEDs;
@@ -107,7 +105,6 @@ public class RobotContainer {
 new EventTrigger("WaitAndShoot").onTrue(
     Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand())
 );
-    new EventMarker("RunIntake", 9.2);
 
 
 
@@ -121,7 +118,7 @@ new EventTrigger("WaitAndShoot").onTrue(
     //
     // Get autonomous ready
     //
-    AutoManager.prepare();
+    AutoManager.prepare(scoring);
   }
 
 
