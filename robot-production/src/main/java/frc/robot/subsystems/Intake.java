@@ -129,6 +129,8 @@ public class Intake extends SubsystemBase{
         SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
 
         SmartDashboard.putNumber("Retraction Voltage", 0);
+
+        SmartDashboard.putNumber("Intake Roller Voltage", 2);
     }
 
 
@@ -161,9 +163,11 @@ public class Intake extends SubsystemBase{
      * Run the intake rollers.  Currently under simple voltage control
      */    
     public void runIntakeRollers(){
-        double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
+        //TODO: Delete this! This is only for testing purposes!
+        //double IntakeVoltage = SmartDashboard.getNumber("Intake Motor Voltage", 2);
+        //double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerRightMotor.setVoltage(11.0);
+        rollerRightMotor.setVoltage(11);
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
