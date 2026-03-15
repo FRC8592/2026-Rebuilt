@@ -41,6 +41,8 @@ public class Swerve extends SubsystemBase {
         .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
         .withDriveRequestType(DriveRequestType.Velocity);
 
+    private SwerveRequest.SwerveDriveBrake X_Mode = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
+
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
     private RobotConfig config = null;
@@ -127,8 +129,12 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        //This only works 
+        //Periodic method just to see for debugging purposes if swerve lock is causing the wheels to move appropriately
         Logger.recordOutput(SWERVE.LOG_PATH+"Current Pose", getCurrentOdometryPosition());
-
+        // for(int i = 0; i < 4; i++){
+        // Logger.recordOutput(SWERVE.LOG_PATH + "SetTurnAngle " + i, swerve.getModule(i).getSteerMotor().getPosition().getValueAsDouble());
+        // }
         //TODO: do we really need to run this? 
         swerve.periodic();
     }
@@ -190,8 +196,8 @@ public class Swerve extends SubsystemBase {
     /**
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
-    public SwerveRequest brake(){
-        return new SwerveRequest.SwerveDriveBrake();
+    public void brake(){
+        swerve.setControl(X_Mode);
     }
 
     /**
