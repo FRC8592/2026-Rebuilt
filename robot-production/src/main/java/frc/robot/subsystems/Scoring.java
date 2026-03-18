@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ public class Scoring extends SubsystemBase{
     public Shooter shooter;
     public Indexer indexer;
     public Intake intake;
+    public LEDs leds; 
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
@@ -32,8 +34,9 @@ public class Scoring extends SubsystemBase{
      * Scoring subsystem.  Controls collecting and shooting.
      * @param swerve Newton swerve drive object
      */
-    public Scoring(Swerve swerve){
+    public Scoring(Swerve swerve, LEDs leds){
         this.swerve = swerve;
+        this.leds = leds;
 
         //
         // Instantiate subsystems
@@ -66,7 +69,7 @@ public class Scoring extends SubsystemBase{
         Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
         if (alliance == Alliance.Blue){
             // if we're in our alliance zone
-            if (currentRobotPose.getX() < MEASUREMENTS.FIELD_X_METERS / 4){
+            if (currentRobotPose.getX() < (MEASUREMENTS.FIELD_X_METERS / 4) + 0.5){
                 targetPose = SCORING.BLUE_HUB_POSE;
                 targetIsHub = true;
             }
@@ -82,7 +85,7 @@ public class Scoring extends SubsystemBase{
         }
         else{
             // if we're in our alliance zone
-            if (currentRobotPose.getX() > MEASUREMENTS.FIELD_X_METERS * (3 / 4)){
+            if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5){
                 targetPose = SCORING.RED_HUB_POSE;
                 targetIsHub = true;
             }
@@ -123,6 +126,7 @@ public class Scoring extends SubsystemBase{
      */
     public void disableTracking() {
         trackingTarget = false;
+        overrideTracking = false;
         turret.stop();
         shooter.stop();
     }
@@ -193,15 +197,22 @@ public class Scoring extends SubsystemBase{
 
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
 
-        if (canShoot()){
-            LEDs.setCanShoot(true); 
+        if (indexer.indexerRunning) {
+            leds.displayindexerRunning();
         }
 
-        else{
-            LEDs.setCanShoot (false); 
-        }
 
         if (trackingTarget) {
+            if (indexer.indexerRunning) {
+                leds.displayindexerRunning();
+            } else
+                if (canShoot()){
+                    leds.setCanShoot();
+                }
+                else {
+                    leds.setCannotShoot(); 
+                }
+        
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
@@ -219,7 +230,8 @@ public class Scoring extends SubsystemBase{
         }
         else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
-            if(!overrideTracking){
+            if(!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning){
+                leds.setOff();
                 shooter.stop();
             }
         }

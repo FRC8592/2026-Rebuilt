@@ -36,6 +36,7 @@ public class LEDs extends SubsystemBase {
         // private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
 
         private static boolean canShoot = false;
+        private static boolean trackingTarget = false; 
         private int hasTags; 
             //COLORS going to be used: gray , red, blue, yellow, green, white, purple, rainbow
         
@@ -111,26 +112,44 @@ public class LEDs extends SubsystemBase {
             // }
 
         // Displaying the amount of the tags spotted, this might change cuase on the controls of the operator if they decided to reject auto - shoot
-            public void displayCanShootLEDs(){
-                if(canShoot) {
+            public void setCanShoot(){
                 candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.GREEN.red*255),
-                (int)(LEDS.GREEN.green*255),
-                (int)(LEDS.GREEN.blue*255)
-                ))
-            );
-        }
+                (int)(LEDS.TEAL.red*255),
+                (int)(LEDS.TEAL.green*255),
+                (int)(LEDS.TEAL.blue*255)
+                )));
+            }
 
-        else{
-                candle.setControl(
+        public void setCannotShoot(){
+            candle.setControl(
                 new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-                (int)(LEDS.RED.red*255),
-                (int)(LEDS.RED.green*255),
-                (int)(LEDS.RED.blue*255)
+                (int)(LEDS.ORANGE.red*255),
+                (int)(LEDS.ORANGE.green*255),
+                (int)(LEDS.ORANGE.blue*255)
                 ))
             );
         }
+       
+
+        public void setOff(){
+                candle.setControl(
+                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+                (int)(LEDS.OFF.red*255),
+                (int)(LEDS.OFF.green*255),
+                (int)(LEDS.OFF.blue*255)
+                ))
+            );
+        }
+        
+        public void displayindexerRunning(){
+            candle.setControl(
+                new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
+                (int)(LEDS.WHITE.red*255),
+                (int)(LEDS.WHITE.green*255),
+                (int)(LEDS.WHITE.blue*255)
+                ))
+            );
         }
 
         public void displayHasTagsLEDs(){

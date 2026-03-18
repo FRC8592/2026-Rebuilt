@@ -42,20 +42,18 @@ public class Indexer extends SubsystemBase {
     private double PO_OLD;
     private double IO_OLD;
     private double DO_OLD;
-
+    public boolean indexerRunning = false; 
     /**
      * Constructor for the Indexer subsystem
      * 
      * Instatiate the motors with initial PID values from the CONSTANTS class
      */
     public Indexer() {
-        //TODO: Change the current limits constants
-       // spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
+        spinMotorConfig.smartCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
         spinMotorConfig.inverted(true);     // Sets the motor to to make clockwise rotation positive
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
-        // TODO: Change the current limits constants
-        // outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
+        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
         outputMotorConfig.idleMode(IdleMode.kCoast); 
         
         // TODO: Tune pid
@@ -97,6 +95,7 @@ public class Indexer extends SubsystemBase {
     public void stop(){
         spinMotor.setVoltage(0);
         outputMotor.setVoltage(0);
+        indexerRunning = false; 
     }
     public void stopSpin(){
         spinMotor.setVoltage(0);
@@ -131,13 +130,12 @@ public class Indexer extends SubsystemBase {
     public void runIndexer(){
         runSpinner();
         runOutput();
-
+        indexerRunning = true; 
         
     }
     public void stopIndexer(){
         runSpinner();
         runOutput();
-
     }
     
     

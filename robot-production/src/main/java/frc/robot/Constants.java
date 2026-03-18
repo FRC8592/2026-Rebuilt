@@ -55,7 +55,7 @@ public final class Constants {
         "Arducam_OV9782_USB_F"
     ); 
     public static final double MAX_ACCEPTABLE_AMBIGUITY = 0.1;
-    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 2.0;
+    public static final double REJECT_SINGLE_TAG_POSE_ESTIMATE_RANGE = 3.5;
   }
 
   public final class SWERVE {
@@ -127,7 +127,7 @@ public final class SHOOTER {
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
     
-    public static final double BACKWHEEL_P = 0.6;
+    public static final double BACKWHEEL_P = 1.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
@@ -194,13 +194,13 @@ public final class SHOOTER {
   public static class INTAKE{
     // CAN ID for the Intake motor
     //TODO: Change these names to match the actual location of the motors
-    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 44;
+    public static final int INTAKE_MOTOR_LEFT_CAN_ID = 34;
     public static final int INTAKE_ROLLER_RIGHT_CAN_ID = 29;
     public static final int INTAKE_EXTEND_CAN_ID = 31; 
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 60;
-    public static final int ROLLER_CURRENT_LIMIT = 60; 
+    public static final int EXTEND_CURRENT_LIMIT = 50;
+    public static final int ROLLER_CURRENT_LIMIT = 50; 
 
     //PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;

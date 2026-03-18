@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LEDS;
+import frc.robot.Constants.SHARED;
 import frc.robot.subsystems.vision.Vision;
 
 /**
@@ -179,7 +180,7 @@ public class Robot extends LoggedRobot {
     // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
     m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
-    m_robotContainer.scoring.intake.updatePID();
+    //m_robotContainer.scoring.intake.updatePID();
     // m_robotContainer.scoring.turret.updatePID();
 
   }
@@ -206,15 +207,19 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.leds.displayCanShootLEDs();
-    m_robotContainer.scoring.disableTrackingCommand(); 
+    m_robotContainer.scoring.disableTrackingCommand();
+    m_robotContainer.scoring.indexer.stop(); 
+
+    boolean cancelledAuto = false;
     
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
+      cancelledAuto = true;
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
+      Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
     //m_robotContainer.scoring.intake.setCoastMode();
      //   m_autonomousCommand.cancel();
     }
