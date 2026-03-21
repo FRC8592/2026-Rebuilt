@@ -45,7 +45,8 @@ public class Shooter extends SubsystemBase {
     private double SB_OLD;
     private double VB_OLD;
 
-    private final double WHEEL_RATIO = SHOOTER.FLYWHEEL_DIAMETER_INCHES / SHOOTER.BACKWHEEL_DIAMETER_INCHES;
+    private final double WHEEL_RATIO =
+            SHOOTER.FLYWHEEL_DIAMETER_INCHES / SHOOTER.BACKWHEEL_DIAMETER_INCHES;
 
     /**
      * Constructor for the Shooter subsystem
@@ -113,21 +114,23 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * Run the shooter motor at a set speed in RPM.
-     * The left shooter motor is the only motor in use on the Shooter.
-     * Utilizing both motors proved to be too powerful for the shooter.
+     * Run the shooter motor at a set speed in RPM. The left shooter motor is the only motor in use
+     * on the Shooter. Utilizing both motors proved to be too powerful for the shooter.
      * 
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     // TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM) {
-        double flyWheelMotorVelocity = desiredRPM / 60; // Convert from RPM to RPS for the motor controller
+        double flyWheelMotorVelocity = desiredRPM / 60; // Convert from RPM to RPS for the motor
+                                                        // controller
         double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
 
         // flywheelMotor.setVoltage(11);
         // backwheelMotor.setVoltage(-11);
-        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
+        flywheelMotor.setControl(
+                flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        backwheelMotor.setControl(
+                backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
     /**
@@ -142,8 +145,7 @@ public class Shooter extends SubsystemBase {
     /**
      * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
      * 
-     * Utilized setVoltage instead of Velocity Control to prevent power being used
-     * to stop flywheel.
+     * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
      */
     public void stop() {
         flywheelMotor.setVoltage(0.0);
@@ -178,8 +180,8 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * Update the PID values on the fly on the shooter motor.
-     * The NEO Motors do not allowed their PID Profile to be updated while running.
+     * Update the PID values on the fly on the shooter motor. The NEO Motors do not allowed their
+     * PID Profile to be updated while running.
      * 
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
@@ -197,8 +199,8 @@ public class Shooter extends SubsystemBase {
         double SB = SmartDashboard.getNumber("bS", SHOOTER.BACKWHEEL_S);
         double VB = SmartDashboard.getNumber("bV", SHOOTER.BACKWHEEL_V);
 
-        if (PF != PF_OLD || IF != IF_OLD || DF != DF_OLD || SF != SF_OLD || VF != VF_OLD ||
-                PB != PB_OLD || IB != IB_OLD || DB != DB_OLD || SB != SB_OLD || VB != VB_OLD) {
+        if (PF != PF_OLD || IF != IF_OLD || DF != DF_OLD || SF != SF_OLD || VF != VF_OLD
+                || PB != PB_OLD || IB != IB_OLD || DB != DB_OLD || SB != SB_OLD || VB != VB_OLD) {
             flywheelConfiguration.Slot0.kP = PF;
             flywheelConfiguration.Slot0.kI = IF;
             flywheelConfiguration.Slot0.kD = DF;
@@ -240,7 +242,8 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage",
                 flywheelMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Real Vel", getVelocityFlywheel() * 60);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel", getVelocityBackwheel() * -1 * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel",
+                getVelocityBackwheel() * -1 * 60);
     }
 
 }

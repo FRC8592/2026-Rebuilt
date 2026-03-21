@@ -36,29 +36,35 @@ public class Swerve extends SubsystemBase {
     private SmoothingFilter smoothingFilter;
 
     private CommandSwerveDrivetrain swerve;
-    private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1%
-                                                                                                          // deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+    private final SwerveRequest.FieldCentric fieldCentric =
+            new SwerveRequest.FieldCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
+                    .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1%
+                                                                            // deadband
+                    .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for
+                                                                      // drive motors
 
-    private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
-            .withDeadband(SWERVE.MAX_SPEED * 0.01).withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
-            .withDriveRequestType(DriveRequestType.Velocity);
+    private final SwerveRequest.RobotCentric robotCentric =
+            new SwerveRequest.RobotCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
+                    .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
+                    .withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
     private RobotConfig config = null;
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
-        smoothingFilter = new SmoothingFilter(
-                SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
-                SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
-                SWERVE.ROTATION_SMOOTHING_AMOUNT);
+        smoothingFilter = new SmoothingFilter(SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
+                SWERVE.TRANSLATION_SMOOTHING_AMOUNT, SWERVE.ROTATION_SMOOTHING_AMOUNT);
 
-        snapToController = new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns the
-                                                                                                       // robot to a set
-                                                                                                       // heading
-        snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly neighbors :)
+        snapToController =
+                new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns
+                                                                                            // the
+                                                                                            // robot
+                                                                                            // to a
+                                                                                            // set
+                                                                                            // heading
+        snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
+                                                                   // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
 
         swerve = drivetrain;
@@ -75,17 +81,21 @@ public class Swerve extends SubsystemBase {
         }
 
         // Configure AutoBuilder
-        AutoBuilder.configure(
-                this::getCurrentOdometryPosition, // Robot pose supplier
-                this::setKnownOdometryPose, // Method to reset odometry (will be called if your auto has a starting
+        AutoBuilder.configure(this::getCurrentOdometryPosition, // Robot pose supplier
+                this::setKnownOdometryPose, // Method to reset odometry (will be called if your auto
+                                            // has a starting
                                             // pose)
                 this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
 
-                (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT
-                                                                      // RELATIVE ChassisSpeeds. Also optionally outputs
-                                                                      // individual module feedforwards
+                (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the
+                                                                      // robot given ROBOT
+                                                                      // RELATIVE ChassisSpeeds.
+                                                                      // Also optionally outputs
+                                                                      // individual module
+                                                                      // feedforwards
                 // TODO: replace pid constants
-                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for
+                new PPHolonomicDriveController( // PPHolonomicController is the built in path
+                                                // following controller for
                                                 // holonomic drive trains
                         new PIDConstants(SWERVE.PATH_FOLLOW_DRIVE_KP, SWERVE.PATH_FOLLOW_DRIVE_KI,
                                 SWERVE.PATH_FOLLOW_DRIVE_KD), // Translation PID constants
@@ -112,8 +122,7 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Gets robot relative speeds commanded to the robot (NOT the calculated robot
-     * relative speeds)
+     * Gets robot relative speeds commanded to the robot (NOT the calculated robot relative speeds)
      * 
      * @return current ChassisSpeeds
      */
@@ -122,8 +131,8 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Runs the SysId Quasistatic test in the given direction for the routine
-     * specified in the parameters
+     * Runs the SysId Quasistatic test in the given direction for the routine specified in the
+     * parameters
      * 
      * @param direction Direction of the Quasistatic routine
      * @return Command to run
@@ -133,8 +142,8 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Runs the SysId Dynamic test in the given direction for the routine specified
-     * in the parameters
+     * Runs the SysId Dynamic test in the given direction for the routine specified in the
+     * parameters
      * 
      * @param direction Direction of the Dynamic routine
      * @return Command to run
@@ -164,10 +173,9 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
-        swerve.setControl(
-                fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
-                        .withVelocityY(speeds.vyMetersPerSecond)
-                        .withRotationalRate(speeds.omegaRadiansPerSecond));
+        swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+                .withVelocityY(speeds.vyMetersPerSecond)
+                .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
     /**
@@ -176,10 +184,9 @@ public class Swerve extends SubsystemBase {
      * @param speeds robot-relative ChassisSpeeds to run the drivetrain at
      */
     public void driveRobotRelative(ChassisSpeeds speeds) {
-        swerve.setControl(
-                robotCentric.withVelocityX(speeds.vxMetersPerSecond)
-                        .withVelocityY(speeds.vyMetersPerSecond)
-                        .withRotationalRate(speeds.omegaRadiansPerSecond));
+        swerve.setControl(robotCentric.withVelocityX(speeds.vxMetersPerSecond)
+                .withVelocityY(speeds.vyMetersPerSecond)
+                .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
     /**
@@ -206,8 +213,7 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
-     * Turn all wheels into an "X" position so that the chassis effectively can't
-     * move
+     * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public void brake() {
         SwerveRequest brake = new SwerveRequest.SwerveDriveBrake();
@@ -235,14 +241,9 @@ public class Swerve extends SubsystemBase {
     public void setKnownOdometryPose(Pose2d currentPose) {
         swerve.resetPose(currentPose);
 
-        Logger.recordOutput(
-                SWERVE.LOG_PATH + "Console", ("X: " +
-                        currentPose.getX() +
-                        "; Y: " +
-                        currentPose.getY() +
-                        "; Rotation: " +
-                        currentPose.getRotation().getDegrees() +
-                        "°."));
+        Logger.recordOutput(SWERVE.LOG_PATH + "Console",
+                ("X: " + currentPose.getX() + "; Y: " + currentPose.getY() + "; Rotation: "
+                        + currentPose.getRotation().getDegrees() + "°."));
     }
 
     /**
@@ -269,35 +270,36 @@ public class Swerve extends SubsystemBase {
     /**
      * Process joystick inputs for swerve control
      *
-     * @param rawX   the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL
-     *               motion)
-     * @param rawY   the raw Y input from a joystick. Should be -1 to 1 (FORWARD
-     *               motion)
+     * @param rawX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
+     * @param rawY the raw Y input from a joystick. Should be -1 to 1 (FORWARD motion)
      * @param rawRot the raw rotation input from a joystick. Should be -1 to 1
      *
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
-        double driveTranslateX = (rawX >= 0
-                ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
+        double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveTranslateY = (rawY >= 0
-                ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
+        double driveTranslateY = (rawY >= 0 ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveRotate = (rawRot >= 0
-                ? (Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
+        double driveRotate = (rawRot >= 0 ? (Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT)));
 
         if (isSlowMode) {
-            driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveTranslateY *= SWERVE.TRANSLATE_POWER_SLOW * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveRotate *= SWERVE.ROTATE_POWER_SLOW * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
+            driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW
+                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveTranslateY *= SWERVE.TRANSLATE_POWER_SLOW
+                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveRotate *=
+                    SWERVE.ROTATE_POWER_SLOW * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
         } else {
-            driveTranslateX *= SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveTranslateY *= SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveRotate *= SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
+            driveTranslateX *= SWERVE.TRANSLATE_POWER_FAST
+                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveTranslateY *= SWERVE.TRANSLATE_POWER_FAST
+                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+            driveRotate *=
+                    SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
         }
 
         Logger.recordOutput(SWERVE.LOG_PATH + "TranslateY", driveTranslateY);
@@ -307,14 +309,15 @@ public class Swerve extends SubsystemBase {
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
-        return smoothingFilter.smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
+        return smoothingFilter
+                .smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
 
     /**
      * Corrects the robot odometry using vision
      * 
      * @param visionRobotPoseMeters The robot pose using vision measuremnets
-     * @param timestampSeconds      Timestamp of the vision measurement in seconds
+     * @param timestampSeconds Timestamp of the vision measurement in seconds
      */
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         swerve.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);

@@ -29,8 +29,10 @@ import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 
 public class RobotContainer {
-  private static final CommandXboxController driverController = new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController = new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
+  private static final CommandXboxController driverController =
+      new CommandXboxController(CONTROLLERS.DRIVER_PORT);
+  private static final CommandXboxController operatorController =
+      new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
   // Robot subsystems
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -99,8 +101,8 @@ public class RobotContainer {
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
-    new EventTrigger("WaitAndShoot").onTrue(
-        Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand()));
+    new EventTrigger("WaitAndShoot")
+        .onTrue(Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand()));
 
     // Configure the trigger bindings
     configureBindings();
@@ -111,32 +113,29 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
+   * Use this method to define your trigger->command mappings. Triggers can be created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * predicate, or via the named factories in
+   * {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+   * {@link CommandXboxController
+   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} controllers or
+   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
-    INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
-    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
+        .onFalse(scoring.intake.stopRollerCommand());
+    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
+        .onFalse(scoring.intake.stopRollerCommand());
 
-    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(
-        new DeferredCommand(() -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0),
-            Set.of(this.scoring.intake)))
+    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(new DeferredCommand(
+        () -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0),
+        Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
@@ -162,10 +161,8 @@ public class RobotContainer {
   private void configureDefaults() {
     // Set the swerve's default command to drive with joysticks
     setDefaultCommand(swerve, swerve.run(() -> {
-      swerve.drive(swerve.processJoystickInputs(
-          -driverController.getLeftX(),
-          -driverController.getLeftY(),
-          -driverController.getRightX()));
+      swerve.drive(swerve.processJoystickInputs(-driverController.getLeftX(),
+          -driverController.getLeftY(), -driverController.getRightX()));
     }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
   }
 

@@ -13,12 +13,11 @@ public class AutoTurretAngle extends SubsystemBase {
     public double rawAngle = 0;
 
     // TODO: Delete empty constructor
-    public AutoTurretAngle() {
-    }
+    public AutoTurretAngle() {}
 
     /**
-     * Compute the angle for the turret based on the position of target and the
-     * position and rotation of the robot.
+     * Compute the angle for the turret based on the position of target and the position and
+     * rotation of the robot.
      * 
      * @param robotPosition
      * @param targetLocation

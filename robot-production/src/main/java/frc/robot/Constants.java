@@ -38,18 +38,19 @@ public final class Constants {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Vision/";
 
     // camera G
-    public static final Transform3d CAMERA_OFFSETS_RIGHT = (new Transform3d(
-        new Translation3d(-0.334588, -0.072009, 0.5212334),
-        new Rotation3d(0, Math.toRadians(-30), Math.toRadians(270))));
+    public static final Transform3d CAMERA_OFFSETS_RIGHT =
+        (new Transform3d(new Translation3d(-0.334588, -0.072009, 0.5212334),
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(270))));
 
     // camera F
-    public static final Transform3d CAMERA_OFFSETS_BACK = (new Transform3d(
-        new Translation3d(0.2797302, -0.0772414, -0.5218176),
-        new Rotation3d(0, Math.toRadians(-30), Math.toRadians(180))));
+    public static final Transform3d CAMERA_OFFSETS_BACK =
+        (new Transform3d(new Translation3d(0.2797302, -0.0772414, -0.5218176),
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(180))));
 
     // camera H
-    public static final Transform3d CAMERA_OFFSETS_LEFT = (new Transform3d(
-        new Translation3d(0.334588, -0.072009, 0.5212334), new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90))));
+    public static final Transform3d CAMERA_OFFSETS_LEFT =
+        (new Transform3d(new Translation3d(0.334588, -0.072009, 0.5212334),
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90))));
 
     public static final String CAMERA_NAME_RIGHT = ("Right_Arducam_OV9782_G");
 
@@ -69,7 +70,8 @@ public final class Constants {
     public static final double SNAP_TO_kD = 0.1;
 
     public static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND = 4.73;
-    public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG = new TrajectoryConfig(4.5, 3);
+    public static final TrajectoryConfig PATH_FOLLOW_TRAJECTORY_CONFIG =
+        new TrajectoryConfig(4.5, 3);
     public static final double MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND = Math.toRadians(720);
 
     public static final double SIMULATED_STEER_INERTIA = 0.00001;
@@ -145,7 +147,8 @@ public final class Constants {
     public static final double SHOOTER_TOLERANCE = 50;
 
     public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter changes
+    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter
+                                                              // changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
@@ -174,7 +177,8 @@ public final class Constants {
     public static final double FORWARD_LIMIT = 160; // Degrees
     public static final double REVERSE_LIMIT = -160; // Degrees
     public static final double TURRET_TOLERANCE = 8; // Degrees
-    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180 degrees relative to the
+    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180
+                                                          // degrees relative to the
                                                           // front of the robot
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/TURRET/";

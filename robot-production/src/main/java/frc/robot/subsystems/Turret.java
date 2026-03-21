@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 import org.littletonrobotics.junction.Logger;
-//import frc.robot.subsystems.AutoTurretAngle;
+// import frc.robot.subsystems.AutoTurretAngle;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -64,10 +64,10 @@ public class Turret extends SubsystemBase {
         // Set soft limits
         tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRET.FORWARD_LIMIT
-                * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
-        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRET.REVERSE_LIMIT
-                * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
+        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+                TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
+        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+                TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
 
         // Apply soft limits to help avoid driving the turret past the cable extension
         // ToDO: Enable and configure soft limits
@@ -115,10 +115,9 @@ public class Turret extends SubsystemBase {
     /**
      * Move turret to track target position
      * 
-     * @param robotPosition  Current position of the robot from odometry, in field
-     *                       coordinates
-     * @param targetLocation The centerpoint of the target we are trying to track,
-     *                       in field coordinates
+     * @param robotPosition Current position of the robot from odometry, in field coordinates
+     * @param targetLocation The centerpoint of the target we are trying to track, in field
+     *        coordinates
      */
     public void TurrettoAngle(Pose2d robotPosition, Pose2d targetLocation) {
         // Calculate target angle based on robot and target positions
@@ -147,11 +146,12 @@ public class Turret extends SubsystemBase {
         // Set motor position based on target angle, converting from degrees to motor
         // rotations
         //
-        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID
-                                                                                                                      // Position
-                                                                                                                      // control
-                                                                                                                      // for
-                                                                                                                      // testing
+        tMotor.setControl(positionRequest.withSlot(0)
+                .withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID
+                                                                                 // Position
+                                                                                 // control
+                                                                                 // for
+                                                                                 // testing
         // tMotor.setControl(positionTorqueCurrent.withSlot(0).withPosition(targetAngle
         // * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         // TODO: Implement Motion magic for turret
@@ -160,8 +160,7 @@ public class Turret extends SubsystemBase {
     }
 
     /**
-     * Stop the turret motor. Not normally used; we want the turret to hold position
-     * with the motor
+     * Stop the turret motor. Not normally used; we want the turret to hold position with the motor
      */
     public void stop() {
         tMotor.setVoltage(0);
@@ -192,29 +191,28 @@ public class Turret extends SubsystemBase {
     }
 
     /**
-     * Command to move turret to track target position.
-     * Must be called each time the robot moves or target changes
+     * Command to move turret to track target position. Must be called each time the robot moves or
+     * target changes
      * 
-     * @param robotPosition  Current position of the robot from odometry, in field
-     *                       coordinates
-     * @param targetLocation The centerpoint of the target we are trying to track,
-     *                       in field coordinates
+     * @param robotPosition Current position of the robot from odometry, in field coordinates
+     * @param targetLocation The centerpoint of the target we are trying to track, in field
+     *        coordinates
      */
     public Command TurrettoAngleCommand(Pose2d robotPosition, Pose2d targetLocation) {
         return this.runOnce(() -> TurrettoAngle(robotPosition, targetLocation));
     }
 
     /**
-     * Command to stop the turret motor. Not normally used; we want the turret to
-     * hold position with the motor
+     * Command to stop the turret motor. Not normally used; we want the turret to hold position with
+     * the motor
      */
     public Command stopTurretCommand() {
         return this.runOnce(() -> stop());
     }
 
     /**
-     * Command to reset the zero position of the turret. This is used to recalibrate
-     * the turret, not for live control
+     * Command to reset the zero position of the turret. This is used to recalibrate the turret, not
+     * for live control
      * 
      * @return
      */
@@ -236,8 +234,7 @@ public class Turret extends SubsystemBase {
      * 
      * @param E1
      * @param E2
-     * @return returns value relative to main turret gear of offset necessary to
-     *         recenter turret
+     * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
     public static double CRTTypeTwo(double E1, double E2) {
         double R1 = E1 / 360.0;
@@ -289,9 +286,11 @@ public class Turret extends SubsystemBase {
         // TURRET.E2_OFFSET));
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
                 tMotor.getPosition().getValueAsDouble() * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations", tMotor.getPosition().getValueAsDouble()); // rotations
-                                                                                                           // per second
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage", tMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
+                tMotor.getPosition().getValueAsDouble()); // rotations
+                                                          // per second
+        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
+                tMotor.getMotorVoltage().getValueAsDouble());
         // updateMotionMagic();
     }
 

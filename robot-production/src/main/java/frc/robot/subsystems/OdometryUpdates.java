@@ -28,8 +28,7 @@ public class OdometryUpdates extends SubsystemBase {
     private double tagCount = 0;
 
     /**
-     * Instantiates a class that updates swerve odometry with qualifying vision
-     * poses
+     * Instantiates a class that updates swerve odometry with qualifying vision poses
      * 
      * @param vision a vision subsystem that can update odometry
      * @param swerve the swerve subsystem
@@ -53,8 +52,7 @@ public class OdometryUpdates extends SubsystemBase {
     }
 
     /**
-     * Filters vision poses and adjusts swerve odometry when the camera sees a
-     * qualifying pose
+     * Filters vision poses and adjusts swerve odometry when the camera sees a qualifying pose
      * 
      * @param vision the vision subsystem to check for viable tags
      */

@@ -5,8 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import frc.robot.Constants.RANGE_TABLE;
 
 public class RangeTable {
-    public final static RangeEntry[] RANGE_TO_RPM_HUB = {
-            new RangeEntry(5150.0), // 0.0m
+    public final static RangeEntry[] RANGE_TO_RPM_HUB = {new RangeEntry(5150.0), // 0.0m
             new RangeEntry(5150.0), // 0.2m
             new RangeEntry(5150.0), // 0.4m
             new RangeEntry(5150.0), // 0.6m
@@ -59,8 +58,7 @@ public class RangeTable {
             new RangeEntry(6300.0), // 10.0m
     };
     // TODO: Change this later for passing and not be a copy of the hub
-    public final static RangeEntry[] RANGE_TO_RPM_FLOOR = {
-            new RangeEntry(4550.0), // 0.0m
+    public final static RangeEntry[] RANGE_TO_RPM_FLOOR = {new RangeEntry(4550.0), // 0.0m
             new RangeEntry(4550.0), // 0.2m
             new RangeEntry(4550.0), // 0.4m
             new RangeEntry(4550.0), // 0.6m
@@ -113,8 +111,7 @@ public class RangeTable {
             new RangeEntry(4550.0), // 10.0m
     };
 
-    public RangeTable() {
-    }
+    public RangeTable() {}
 
     /**
      * @param distance in meters
