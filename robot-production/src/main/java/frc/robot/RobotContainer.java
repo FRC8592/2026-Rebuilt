@@ -36,9 +36,11 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Swerve swerve;
   private final Vision visionBack;
-  private final Vision visionSide; 
+  private final Vision visionRight;
+  private final Vision visionLeft;  
   private final OdometryUpdates odometryUpdatesBack;
-  private final OdometryUpdates odometryUpdatesSide;
+  private final OdometryUpdates odometryUpdatesRight;
+  private final OdometryUpdates odometryUpdatesLeft; 
   public final Scoring scoring;
   public final LEDs leds; 
 
@@ -77,9 +79,13 @@ public class RobotContainer {
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve,leds);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
+    visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
+    visionLeft = new Vision (VISION. CAMERA_NAME_LEFT, VISION.CAMERA_OFFSETS_LEFT);
+
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
-    odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve); 
+    odometryUpdatesRight = new OdometryUpdates(visionRight, swerve); 
+
     //TODO: Figure out the issues with these, they are very temporary
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
@@ -163,10 +169,13 @@ public class RobotContainer {
         return AutoManager.getAutonomousCommand();
   }
 
-  public Vision getSideVision(){
-    return visionSide; 
+  public Vision getRightVision(){
+    return visionRight; 
   }
 
+  public Vision getLeftVision(){
+    return visionLeft; 
+  }
   public Vision getBackVision(){
     return visionBack; 
   }
