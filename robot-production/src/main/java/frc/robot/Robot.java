@@ -123,13 +123,16 @@ public class Robot extends LoggedRobot {
 
     // Run vision routines
     Vision backvision = m_robotContainer.getBackVision();
-    Vision sidevision = m_robotContainer.getSideVision(); 
+    Vision rightvision = m_robotContainer.getRightVision(); 
+    Vision leftvision = m_robotContainer.getLeftVision(); 
     backvision.periodic();
-    sidevision.periodic();
+    rightvision.periodic();
+    leftvision.periodic();
 
     int backvisionCounter = backvision.getTargets().size();
-    int sideVisionCounter = sidevision.getTargets().size();
-    int VisionCounter = backvisionCounter + sideVisionCounter; 
+    int rightVisionCounter = rightvision.getTargets().size();
+    int leftVisionCounter = leftvision.getTargets().size();
+    int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter; 
 
     Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
@@ -153,17 +156,6 @@ public class Robot extends LoggedRobot {
       tagCounter =0; 
     }
     periodicCounter++; 
-
-    // if (backvisionCounter > 1 || sideVisionCounter > 1){
-    //   tagCounter = 2;
-    // }
-    // else if (backvisionCounter == 1 || sideVisionCounter ==1){
-    //   tagCounter = 1;
-    // }
-    // else if (backvisionCounter == 0 || sideVisionCounter ==0){
-    //   tagCounter = 0;
-   // }
-  
 
     Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
 
