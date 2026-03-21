@@ -80,6 +80,7 @@ public class RobotContainer {
     visionSide = new Vision(VISION.CAMERA_NAME_SIDE, VISION.CAMERA_OFFSETS_SIDE);
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesSide = new OdometryUpdates(visionSide, swerve); 
+    
     //TODO: Figure out the issues with these, they are very temporary
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
