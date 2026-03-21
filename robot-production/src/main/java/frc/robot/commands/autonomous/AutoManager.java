@@ -18,7 +18,8 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Scoring;
 
 /**
- * General class for autonomous management (loading autos, sending the chooser, getting the
+ * General class for autonomous management (loading autos, sending the chooser,
+ * getting the
  * user-selected auto command, etc).
  */
 public final class AutoManager {
@@ -27,44 +28,46 @@ public final class AutoManager {
 
     /**
      * Load all autos and broadcast the chooser.
+     * 
      * @apiNote This should be called on {@link Robot#robotInit()} only;
-     * this function will have relatively long delays due to loading paths.
+     *          this function will have relatively long delays due to loading paths.
      */
-    public static void prepare(Scoring scr){
+    public static void prepare(Scoring scr) {
         scoring = scr;
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
             PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Half Left").mirrorPath();
-            Command halfMirroredAuto = AutoBuilder.followPath(halfRight).andThen(scoring.indexer.runIndexerCommand()); 
-            
+            Command halfMirroredAuto = AutoBuilder.followPath(halfRight).andThen(scoring.indexer.runIndexerCommand());
+
             pathPlannerAutos.addOption("Half Right", halfMirroredAuto);
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             DriverStation.reportError("Failed to load mirrored path Half Left: " + e.getMessage(), e.getStackTrace());
         }
         try {
             PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
-             PathPlannerPath DepotPt1Path = PathPlannerPath.fromPathFile("Depot Pt1");
-                          PathPlannerPath DepotPt2Path = PathPlannerPath.fromPathFile("Depot Pt2");
-
+            PathPlannerPath DepotPt1Path = PathPlannerPath.fromPathFile("Depot Pt1");
+            PathPlannerPath DepotPt2Path = PathPlannerPath.fromPathFile("Depot Pt2");
 
             PathPlannerPath depot = halfLeftPath.mirrorPath();
-            pathPlannerAutos.addOption("Depot", AutoBuilder.followPath(depot).andThen(AutoBuilder.followPath(DepotPt1Path)).andThen(Commands.waitSeconds(2.0)).andThen(AutoBuilder.followPath(DepotPt2Path)).andThen(scoring.indexer.runIndexerCommand()));
-        } 
-        catch (Exception e) {
+            pathPlannerAutos.addOption("Depot",
+                    AutoBuilder.followPath(depot).andThen(AutoBuilder.followPath(DepotPt1Path))
+                            .andThen(Commands.waitSeconds(2.0)).andThen(AutoBuilder.followPath(DepotPt2Path))
+                            .andThen(scoring.indexer.runIndexerCommand()));
+        } catch (Exception e) {
             DriverStation.reportError("Failed to load Depot: " + e.getMessage(), e.getStackTrace());
         }
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
-        
+
     }
 
     /**
-     * Get the user-selected autonomous command as determined by {@link AutoManager#autoChooser}
+     * Get the user-selected autonomous command as determined by
+     * {@link AutoManager#autoChooser}
      *
      * @return the command
      */
-    public static Command getAutonomousCommand(){
+    public static Command getAutonomousCommand() {
         return pathPlannerAutos.getSelected();
     }
 
