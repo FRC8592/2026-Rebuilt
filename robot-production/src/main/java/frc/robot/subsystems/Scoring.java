@@ -15,26 +15,27 @@ import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
 import frc.robot.subsystems.swerve.Swerve;
 
-public class Scoring extends SubsystemBase{
+public class Scoring extends SubsystemBase {
     // Subsystems
-    Swerve swerve;          // Passed into the constructor so that we can get the current robot pose for tracking
+    Swerve swerve; // Passed into the constructor so that we can get the current robot pose for
+                   // tracking
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
     public Intake intake;
-    public LEDs leds; 
+    public LEDs leds;
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
     private boolean targetIsHub;
     private Alliance alliance;
 
-
     /**
-     * Scoring subsystem.  Controls collecting and shooting.
+     * Scoring subsystem. Controls collecting and shooting.
+     * 
      * @param swerve Newton swerve drive object
      */
-    public Scoring(Swerve swerve, LEDs leds){
+    public Scoring(Swerve swerve, LEDs leds) {
         this.swerve = swerve;
         this.leds = leds;
 
@@ -49,52 +50,48 @@ public class Scoring extends SubsystemBase{
         SmartDashboard.putNumber("shooterV", 0.0);
     }
 
-
     /**
      * Sets the alliance from the DriverStation
+     * 
      * @param alliance Alliance
      */
-    public void setAlliance(Alliance alliance)
-    {
+    public void setAlliance(Alliance alliance) {
         this.alliance = alliance;
     }
 
-
     /**
      * Sets the target based on the robot's position on the field
+     * 
      * @param currentRobotPose the robot's current position
      * @return the current target's Pose2d
      */
-    public Pose2d getTarget(Pose2d currentRobotPose){
+    public Pose2d getTarget(Pose2d currentRobotPose) {
         Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
-        if (alliance == Alliance.Blue){
+        if (alliance == Alliance.Blue) {
             // if we're in our alliance zone
-            if (currentRobotPose.getX() < (MEASUREMENTS.FIELD_X_METERS / 4) + 0.5){
+            if (currentRobotPose.getX() < (MEASUREMENTS.FIELD_X_METERS / 4) + 0.5) {
                 targetPose = SCORING.BLUE_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2) {
                 targetPose = SCORING.BLUE_PASSING_LOW_POSE;
                 targetIsHub = false;
-            }
-            else{
+            } else {
                 targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
                 targetIsHub = false;
             }
-        }
-        else{
+        } else {
             // if we're in our alliance zone
-            if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5){
+            if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5) {
                 targetPose = SCORING.RED_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if(currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2){
+            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2) {
                 targetPose = SCORING.RED_PASSING_LOW_POSE;
                 targetIsHub = false;
-            }
-            else{
+            } else {
                 targetPose = SCORING.RED_PASSING_HIGH_POSE;
                 targetIsHub = false;
             }
@@ -111,16 +108,17 @@ public class Scoring extends SubsystemBase{
         overrideTracking = false;
     }
 
-    public void overrideTracking(){
+    public void overrideTracking() {
         trackingTarget = false;
         overrideTracking = true;
         turret.holdPosition();
         shooter.runAtSpeed(5900);
     }
 
-    public Command overrideTrackingCommand(){
+    public Command overrideTrackingCommand() {
         return this.runOnce(() -> overrideTracking());
     }
+
     /**
      * Turn the tracking system off.
      */
@@ -131,13 +129,12 @@ public class Scoring extends SubsystemBase{
         shooter.stop();
     }
 
-
     /**
      * Command to run the intake at a set speed
      * Just pass the command from Intake up to the next level
      */
     // public Command runAtSpeedIntakeCommand() {
-    //     return intake.runAtSpeedIntakeCommand();
+    // return intake.runAtSpeedIntakeCommand();
     // }
 
     /**
@@ -146,7 +143,7 @@ public class Scoring extends SubsystemBase{
      */
     public Command runAtSpeedIndexerCommand() {
         // if (shooter.getVelocityFlywheel() > SCORING.SHOOTER_THRESHOLD) {
-        //     return indexer.runIndexerCommand();
+        // return indexer.runIndexerCommand();
         // }
         return indexer.runIndexerCommand();
     }
@@ -169,19 +166,22 @@ public class Scoring extends SubsystemBase{
      * 
      * @return
      */
-    public boolean canShoot(){
-        //TODO: Change so it can use blue or red hub tracking
-        return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(), getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
-        // && Math.abs(shooter.getVelocityFlywheel() - RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()), targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
+    public boolean canShoot() {
+        // TODO: Change so it can use blue or red hub tracking
+        return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(),
+                getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
+        // && Math.abs(shooter.getVelocityFlywheel() -
+        // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
+        // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
         ;
     }
 
-
     /**
-     * If the tracking system is toggled on, update the required turret angle and shooter speed
+     * If the tracking system is toggled on, update the required turret angle and
+     * shooter speed
      */
     @Override
-    public void periodic(){
+    public void periodic() {
         double targetDistance;
         double shooterSpeed;
 
@@ -189,30 +189,27 @@ public class Scoring extends SubsystemBase{
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
         Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
 
-        Logger.recordOutput(SCORING.LOG_PATH +"Tracking", trackingTarget);
+        Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
 
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
         currentTargetPose = getTarget(currentRobotPose);
 
-        Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
+        Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
 
         if (indexer.indexerRunning) {
             leds.displayindexerRunning();
         }
 
-
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunning();
-            } else
-                if (canShoot()){
-                    leds.setCanShoot();
-                }
-                else {
-                    leds.setCannotShoot(); 
-                }
-        
+            } else if (canShoot()) {
+                leds.setCanShoot();
+            } else {
+                leds.setCannotShoot();
+            }
+
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
@@ -221,16 +218,16 @@ public class Scoring extends SubsystemBase{
             // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
-            Logger.recordOutput(SCORING.LOG_PATH +"Target Distance", targetDistance);
-            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
+            Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
+            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
             shooter.runAtSpeed(shooterSpeed);
-        }
-        else {
-            // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
-            if(!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning){
+        } else {
+            // Shut down the shooter motors. The turret will hold the last position, so we
+            // don't need to send any command to it.
+            if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
                 leds.setOff();
                 shooter.stop();
             }
@@ -238,4 +235,3 @@ public class Scoring extends SubsystemBase{
     }
 
 }
-

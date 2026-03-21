@@ -17,11 +17,11 @@ public class OverrideEverythingCommand extends Command {
      * @param command the command to run
      *
      * @apiNote This command does NOT require the subsystems of
-     * the passed-in command.
+     *          the passed-in command.
      *
      * @apiNote This command schedules the passed-in command.
-     * The passed-in command can't be stopped without manually
-     * cancelling it.
+     *          The passed-in command can't be stopped without manually
+     *          cancelling it.
      */
     public OverrideEverythingCommand(Command command) {
         this.command = command;
