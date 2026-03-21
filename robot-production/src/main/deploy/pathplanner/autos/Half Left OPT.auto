@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Pt1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot Pt2"
+            "pathName": "Half Left Opt"
           }
         },
         {
