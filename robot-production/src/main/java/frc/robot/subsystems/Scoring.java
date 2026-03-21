@@ -27,6 +27,8 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
+    private double kFactor = 2.8; //extra velocity needed for flywheel
+    private double kAdjustment = 0.1;
     private boolean targetIsHub;
     private Alliance alliance;
 
@@ -176,6 +178,27 @@ public class Scoring extends SubsystemBase {
         ;
     }
 
+    // double initialAngle = 62; //degrees
+    // double hubHeight = 6.5; //feet
+    // double initialBallHeight = 2.18; //feet
+    // double g = 32.174; //feet per s^2
+    // double flywheelRadius = 2.0; //inches
+    // double flywheelGearing = 1.0;
+    // double feetPerMeter = 3.28084;
+    // public double shooterSpeedHub(double targetDistance) {
+    //     double kFactor = SmartDashboard.getNumber("kFactor", 2.8); //extra velocity needed for flywheel
+    //     double kAdjustment = SmartDashboard.getNumber("kAdjustment",  0.1);
+    //     double AdjustedK = kFactor + kAdjustment * targetDistance;
+    //     double distanceFeet = targetDistance * feetPerMeter;
+    //     double angleRadians = initialAngle * Math.PI/180.0;
+    //     double denominator = initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight;
+    //     if (denominator<=0) return 0;
+    //     double initialBallVelocity = Math.sqrt(distanceFeet*distanceFeet*g/(2.0*(initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight))) / Math.cos(angleRadians);
+    //     double flyRadiusFeet = flywheelRadius / 12.0;
+    //     double outputRPM = AdjustedK*(initialBallVelocity/flyRadiusFeet)*(60.0/(2*Math.PI));
+    //     return outputRPM*flywheelGearing;
+    // }
+
     /**
      * If the tracking system is toggled on, update the required turret angle and shooter speed
      */
@@ -187,7 +210,8 @@ public class Scoring extends SubsystemBase {
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
         Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
-
+        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
+        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
 
         // get the current robot position and select the target
@@ -215,7 +239,8 @@ public class Scoring extends SubsystemBase {
 
             // Lookup the required shooter speed in the range table
             shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
-            // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
+           // shooterSpeed = shooterSpeedHub(targetDistance);
+            shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);

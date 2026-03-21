@@ -15,21 +15,21 @@ public class RangeTable {
             new RangeEntry(5150.0), // 1.4m
             new RangeEntry(5150.0), // 1.6m
             new RangeEntry(5150.0), // 1.8m
-            new RangeEntry(5150.0), // 2.0m *
-            new RangeEntry(5350.0), // 2.2m *
+            new RangeEntry(2950.0), // 2.0m *
+            new RangeEntry(3100.0), // 2.2m *
             new RangeEntry(5950.0), // 2.4m *
             new RangeEntry(5950.0), // 2.6m *
             new RangeEntry(6250.0), // 2.8m *
             new RangeEntry(6500.0), // 3.0m *
             new RangeEntry(6300.0), // 3.2m
             new RangeEntry(6300.0), // 3.4m
-            new RangeEntry(6300.0), // 3.6m
+            new RangeEntry(4900.0), // 3.6m
             new RangeEntry(6300.0), // 3.8m
             new RangeEntry(6150.0), // 4.0m
             new RangeEntry(6300.0), // 4.2m
             new RangeEntry(6300.0), // 4.4m
-            new RangeEntry(6300.0), // 4.6m
-            new RangeEntry(6300.0), // 4.8m
+            new RangeEntry(5500.0), // 4.6m
+            new RangeEntry(5700.0), // 4.8m TEST DURING PRACTICE MATCH
             new RangeEntry(6300.0), // 5.0m
             new RangeEntry(6300.0), // 5.2m
             new RangeEntry(6300.0), // 5.4m

@@ -123,15 +123,15 @@ public final class Constants {
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
     public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
     // PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 7.0;
+    public static final double FLYWHEEL_P = 6.0;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
 
-    public static final double BACKWHEEL_P = 3.0;
+    public static final double BACKWHEEL_P = 5.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
@@ -220,12 +220,11 @@ public final class Constants {
     public static final double INTAKE_RIGHT_D = 0;
     public static final double INTAKE_RIGHT_VI = 6000;
 
-    public static final double INTAKE_EXTEND_P = 0.5;
+    public static final double INTAKE_EXTEND_P = 0.5; //0.5
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
-    public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 8;
+    public static final double EXTEND_ROTATIONS = -19;
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; // 3.645
     public static final double EXTEND_CRUISE_RPM = 250.0;
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
@@ -253,6 +252,8 @@ public final class Constants {
     public static final double OUTPUT_P = 0.0001;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
+    public static final double OUTPUT_S = 0.1;
+    public static final double OUTPUT_KV = 0.001821; 
 
     // Current limits for the Indexer motors
     // TODO: tune these limits
