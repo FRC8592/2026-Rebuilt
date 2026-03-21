@@ -11,7 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-//this code will work for SparkMax (not SparkFlex/NEO VORTEX)
+// this code will work for SparkMax (not SparkFlex/NEO VORTEX)
 public class SparkMaxMotorExample {
     // instantiate SparkMax motors here
     SparkMax motor;
@@ -81,7 +81,8 @@ public class SparkMaxMotorExample {
         // SETTINGS
         // Use ResetMode.kResetSafeParameters and persistMode.kPersistParameters to
         // ensure configuration consistency
-        motor.configure(motorConfiguration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(motorConfiguration, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
 
     }
 

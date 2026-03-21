@@ -100,8 +100,8 @@ public class Scoring extends SubsystemBase {
     }
 
     /**
-     * Toggle the Tracking system on and off.
-     * The tracking system includes the turret angle and the shooter speed
+     * Toggle the Tracking system on and off. The tracking system includes the turret angle and the
+     * shooter speed
      */
     private void toggleTracking() {
         trackingTarget = !trackingTarget;
@@ -130,16 +130,16 @@ public class Scoring extends SubsystemBase {
     }
 
     /**
-     * Command to run the intake at a set speed
-     * Just pass the command from Intake up to the next level
+     * Command to run the intake at a set speed Just pass the command from Intake up to the next
+     * level
      */
     // public Command runAtSpeedIntakeCommand() {
     // return intake.runAtSpeedIntakeCommand();
     // }
 
     /**
-     * Command to run the indexer at a set speed
-     * Just pass the command from Indexer up to the next level
+     * Command to run the indexer at a set speed Just pass the command from Indexer up to the next
+     * level
      */
     public Command runAtSpeedIndexerCommand() {
         // if (shooter.getVelocityFlywheel() > SCORING.SHOOTER_THRESHOLD) {
@@ -177,8 +177,7 @@ public class Scoring extends SubsystemBase {
     }
 
     /**
-     * If the tracking system is toggled on, update the required turret angle and
-     * shooter speed
+     * If the tracking system is toggled on, update the required turret angle and shooter speed
      */
     @Override
     public void periodic() {
@@ -211,7 +210,8 @@ public class Scoring extends SubsystemBase {
             }
 
             // calculate the distance to the target position
-            targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+            targetDistance = currentRobotPose.getTranslation()
+                    .getDistance(currentTargetPose.getTranslation());
 
             // Lookup the required shooter speed in the range table
             shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
@@ -219,7 +219,8 @@ public class Scoring extends SubsystemBase {
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
-            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
+            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per
+                                                                                   // second
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, currentTargetPose);

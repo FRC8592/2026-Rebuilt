@@ -10,7 +10,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-//This code will work for Falcon 500s, Krakenx44, and Krakenx60 motors.
+// This code will work for Falcon 500s, Krakenx44, and Krakenx60 motors.
 public class TalonFXMotorExample {
     private TalonFX motor = new TalonFX(9);
     // didn't create configuration for followerMotor, but you should create
@@ -48,7 +48,9 @@ public class TalonFXMotorExample {
         // <------------ INVERT MOTORS ------------>
         // if the motor is inverted, set to Clockwise_Positive
         // the default value is InvertedValue.CounterClockwise_Positive
-        motorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <- i.e. this inverts the motor
+        motorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <- i.e. this
+                                                                                    // inverts the
+                                                                                    // motor
 
         // <-------------- SET FOLLOWER MOTORS -------------->
         // use MotorAlignmentValue.Aligned when the motors spin in the same direction
@@ -62,11 +64,14 @@ public class TalonFXMotorExample {
 
         // <-------------- SET SOFT LIMITS -------------->
         motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0; // threshold in rotations (the
-                                                                                 // "furthest" position)
+        motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0; // threshold in
+                                                                                 // rotations (the
+                                                                                 // "furthest"
+                                                                                 // position)
 
         motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0; // threshold in rotations
+        motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0; // threshold in
+                                                                                // rotations
 
         // <-------------- SET PID VALUES -------------->
         // You typically will only need to use one slot for PID
@@ -86,7 +91,8 @@ public class TalonFXMotorExample {
         // (if jerk is non-zero)
         double targetCruiseVelocity = 80; // Rotations per Second
         double targetAcceleration = 160; // Rotations per Second / Second (160rps/s is 0.5 seconds)
-        double targetJerk = 1600; // Rotations per Second / Second / Second (1600 rps/s/s is 0.1 seconds)
+        double targetJerk = 1600; // Rotations per Second / Second / Second (1600 rps/s/s is 0.1
+                                  // seconds)
         motorConfiguration.MotionMagic.MotionMagicCruiseVelocity = targetCruiseVelocity;
         motorConfiguration.MotionMagic.MotionMagicAcceleration = targetAcceleration;
         motorConfiguration.MotionMagic.MotionMagicJerk = targetJerk;
@@ -116,22 +122,17 @@ public class TalonFXMotorExample {
         // withSlot() defines the pid slot
         // withVelocity() is the new velocity in RPS(Rotations per Second)
         // withEnableFOC() should generally be false
-        motor.setControl(velocityRequest.withSlot(0)
-                .withVelocity(rps)
-                .withEnableFOC(false));
+        motor.setControl(velocityRequest.withSlot(0).withVelocity(rps).withEnableFOC(false));
     }
 
     public void runMotionMagicVelocityControl(double rps) {
         // withEnableFOC() should be set as true becaue the controller uses it to be
         // more effective
-        motor.setControl(motionMagicRequest.withSlot(0)
-                .withVelocity(rps)
-                .withEnableFOC(true));
+        motor.setControl(motionMagicRequest.withSlot(0).withVelocity(rps).withEnableFOC(true));
     }
 
     public void runPositionControl(double position) {
-        motor.setControl(positionRequest.withPosition(position)
-                .withSlot(0));
+        motor.setControl(positionRequest.withPosition(position).withSlot(0));
     }
 
     // basic method to stop the motor when not position/velocity control

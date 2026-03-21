@@ -38,8 +38,7 @@ public class Utils {
     public static Pose2d mirrorPose(Pose2d pose, boolean flip) {
         Pose2d newPose = pose;
         if (flip) {
-            newPose = new Pose2d(
-                    new Translation2d(RED_WALL_X - pose.getX(), pose.getY()),
+            newPose = new Pose2d(new Translation2d(RED_WALL_X - pose.getX(), pose.getY()),
                     Rotation2d.fromDegrees(180).minus(pose.getRotation()));
         }
 
