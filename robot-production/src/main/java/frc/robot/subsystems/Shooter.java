@@ -124,10 +124,10 @@ public class Shooter extends SubsystemBase{
         double flyWheelMotorVelocity = desiredRPM / 60;  // Convert from RPM to RPS for the motor controller
         double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
 
-        //flywheelMotor.setVoltage(11);
-        //backwheelMotor.setVoltage(-11);
-        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
+        flywheelMotor.setVoltage(6);
+        backwheelMotor.setVoltage(-6);
+        // flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
+        // backwheelMotor.setControl(backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
     }
 
 

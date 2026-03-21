@@ -168,12 +168,12 @@ public class Intake extends SubsystemBase{
         //double IntakeVoltage = SmartDashboard.getNumber("Intake Motor Voltage", 2);
         //double RPMRight = SmartDashboard.getNumber("INTAKE_VI", INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
-        rollerRightMotor.setVoltage(11);
+        rollerRightMotor.setVoltage(6);
         //rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
     public void runReversedIntakeRollers(){
-        rollerRightMotor.setVoltage(-11);
+        rollerRightMotor.setVoltage(-6);
     }
 
 
