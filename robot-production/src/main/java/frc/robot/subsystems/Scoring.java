@@ -4,11 +4,13 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
@@ -100,6 +102,17 @@ public class Scoring extends SubsystemBase{
             }
         }
         return targetPose;
+    }
+
+    public Pose2d getModifiedTarget(ChassisSpeeds velocityVector, Pose2d currentTarget){
+        double timeToShoot;
+
+        double modifiedX = currentTarget.getX() - velocityVector.vxMetersPerSecond;
+        double modifiedY = currentTarget.getY() - velocityVector.vyMetersPerSecond;
+
+        Pose2d modifiedTarget = new Pose2d(modifiedX, modifiedY, new Rotation2d(0));
+
+        return modifiedTarget;
     }
 
     /**
@@ -194,6 +207,7 @@ public class Scoring extends SubsystemBase{
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
         currentTargetPose = getTarget(currentRobotPose);
+        currentTargetPose = getModifiedTarget(swerve.getRobotRelativeSpeeds(), currentTargetPose);
 
         Logger.recordOutput(SCORING.LOG_PATH+"target", currentTargetPose);
 
