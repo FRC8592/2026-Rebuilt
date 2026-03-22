@@ -151,8 +151,9 @@ public class Intake extends SubsystemBase {
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
         if (getExtendPosition() <= -0.25) {
-            extendClosedLoopCtrl.setSetpoint(retractionPosition,
-                ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            extendMotor.setVoltage(6);
+            // extendClosedLoopCtrl.setSetpoint(retractionPosition,
+            //     ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
 
             // extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition,
             // ControlType.kMAXMotionPositionControl);
