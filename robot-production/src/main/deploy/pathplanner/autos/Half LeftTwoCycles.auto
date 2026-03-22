@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Half Left"
+            "pathName": "HALF LEFT RA"
           }
         },
         {
@@ -31,7 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Half Left Second Swipe Opt"
+            "pathName": "Half Left Second Swipe"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
