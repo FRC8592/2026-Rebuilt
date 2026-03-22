@@ -102,13 +102,12 @@ public class RobotContainer {
     new EventTrigger("WaitAndShoot")
         .onTrue(Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand()));
 
-    new EventTrigger("ShootWhileSqueezing")
-        .whileTrue(scoring.indexer.runIndexerCommand().withTimeout(3) // shoot for 3s
-            // start retracting intake + squeeze for 3s
-            .andThen(scoring.intake.runIntakeRollersCommand())
-            .andThen(scoring.intake.retractIntakeCommand()).withTimeout(3)
-            .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
-            .andThen(scoring.indexer.stopCommand()));
+    new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
+        .andThen(Commands.waitSeconds(3))
+        .andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(3))
+        .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+        .andThen(scoring.indexer.stopCommand()));
 
     // Configure the trigger bindings
     configureBindings();
