@@ -3,10 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.swerve;
 
-import frc.robot.Constants.*;
-import frc.robot.Robot;
-import frc.robot.helpers.SmoothingFilter;
-
+import org.littletonrobotics.junction.Logger;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,17 +18,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
-import com.ctre.phoenix6.swerve.SwerveModule;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import frc.robot.Constants.SWERVE;
+import frc.robot.Robot;
+import frc.robot.helpers.SmoothingFilter;
 
 public class Swerve extends SubsystemBase {
 
@@ -173,9 +168,13 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
+        double targetHeadingRadians = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
+        double omega = snapToAngle(targetHeading);
+
         swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                 .withVelocityY(speeds.vyMetersPerSecond)
-                .withRotationalRate(speeds.omegaRadiansPerSecond));
+                .withRotationalRate(omega));
     }
 
     /**
