@@ -230,7 +230,7 @@ public final class Constants {
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
     public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
-    public static double RETRACT_ROTATION_INCREMENT = 0.005;
+    public static double RETRACT_ROTATION_INCREMENT = 0.01;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 1000;
