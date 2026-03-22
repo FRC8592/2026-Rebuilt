@@ -4,16 +4,12 @@
 
 package frc.robot;
 
-import java.util.Set;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -70,6 +66,8 @@ public class RobotContainer {
   // private final Trigger QUASI_REVERSE = driverController.y();
   // private final Trigger DYNAMIC_FORWARD = driverController.b();
   // private final Trigger DYNAMIC_REVERSE = driverController.x();
+
+  private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -158,6 +156,13 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+
+    SHOOT_SQUEEZE.whileTrue(scoring.indexer.runIndexerCommand().withTimeout(3) // shoot for 3s
+        // start retracting intake + squeeze for 3s
+        .andThen(scoring.intake.runIntakeRollersCommand().alongWith(scoring.intake.retractIntakeCommand()))
+        .withTimeout(3)
+        .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+        .andThen(scoring.indexer.stopCommand()));
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
   }
