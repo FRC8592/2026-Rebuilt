@@ -103,7 +103,8 @@ public class RobotContainer {
     new EventTrigger("ShootWhileSqueezing")
         .whileTrue(scoring.indexer.runIndexerCommand().withTimeout(3) // shoot for 3s
             // start retracting intake + squeeze for 3s
-            .andThen(scoring.intake.runIntakeRollersCommand().alongWith(scoring.intake.retractIntakeCommand()))
+            .andThen(scoring.intake.runIntakeRollersCommand())
+            .andThen(scoring.intake.retractIntakeCommand())
             .withTimeout(3)
             .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
             .andThen(scoring.indexer.stopCommand()));
