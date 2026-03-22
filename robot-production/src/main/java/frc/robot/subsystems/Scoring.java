@@ -101,11 +101,18 @@ public class Scoring extends SubsystemBase {
         return targetPose;
     }
 
-    public Pose2d getModifiedTarget(ChassisSpeeds velocityVector, Pose2d currentTarget){
-        double timeToShoot;
+    public double quadraticEquation(double a, double b, double c){
+        return (-b + Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
+    }
 
-        double modifiedX = currentTarget.getX() - velocityVector.vxMetersPerSecond;
-        double modifiedY = currentTarget.getY() - velocityVector.vyMetersPerSecond;
+    public Pose2d getModifiedTarget(ChassisSpeeds velocityVector, Pose2d currentTarget, double targetDistance){
+        double timeToShoot = 1; //placeholder value
+        ChassisSpeeds fieldRelative = velocityVector.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
+        // double ballVelocity = 0;
+        // timeToShoot = quadraticEquation(SCORING.GRAVITY / 2, ballVelocity, -1 * targetDistance);
+
+        double modifiedX = currentTarget.getX() - timeToShoot * fieldRelative.vxMetersPerSecond;
+        double modifiedY = currentTarget.getY() - timeToShoot * fieldRelative.vyMetersPerSecond;
 
         Pose2d modifiedTarget = new Pose2d(modifiedX, modifiedY, new Rotation2d(0));
 
@@ -207,7 +214,8 @@ public class Scoring extends SubsystemBase {
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
         currentTargetPose = getTarget(currentRobotPose);
-        currentTargetPose = getModifiedTarget(swerve.getRobotRelativeSpeeds(), currentTargetPose);
+        targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+        currentTargetPose = getModifiedTarget(swerve.getRobotRelativeSpeeds(), currentTargetPose, targetDistance);
 
         Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
 

@@ -192,6 +192,8 @@ public final class Constants {
     public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
 
     public static final double SHOOTER_THRESHOLD = 500; // RPM
+
+    public static final double GRAVITY = 9.8; //meters
   }
 
   public static class INTAKE {
