@@ -3,31 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4712000836649786,
-        "y": 5.772
+        "x": 3.425642079274892,
+        "y": 5.468
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.167690135185566,
-        "y": 5.857577259550484
+        "x": 4.122132130795477,
+        "y": 5.553577259550484
       },
       "isLocked": false,
       "linkedName": "LeftBumperStarting"
     },
     {
       "anchor": {
-        "x": 5.767259180535456,
-        "y": 5.772
+        "x": 3.0789117176226553,
+        "y": 5.468
       },
       "prevControl": {
-        "x": 6.013348140427693,
-        "y": 5.816047971793907
+        "x": 2.674026130695605,
+        "y": 5.486483898898168
       },
       "nextControl": {
-        "x": 5.300903616223554,
-        "y": 5.688526053213694
+        "x": 3.4837973045497055,
+        "y": 5.449516101101832
       },
-      "isLocked": true,
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.731230271464646,
+        "y": 5.468
+      },
+      "prevControl": {
+        "x": 5.9773192313568835,
+        "y": 5.512047971793907
+      },
+      "nextControl": {
+        "x": 5.264874707152744,
+        "y": 5.384526053213694
+      },
+      "isLocked": false,
       "linkedName": null
     },
     {
@@ -64,44 +80,44 @@
     },
     {
       "anchor": {
-        "x": 5.767259180535456,
-        "y": 5.772
+        "x": 5.731230271464646,
+        "y": 5.468
       },
       "prevControl": {
-        "x": 6.55157069607382,
-        "y": 5.739828828167072
+        "x": 6.51554178700301,
+        "y": 5.435828828167072
       },
       "nextControl": {
-        "x": 5.318051585990408,
-        "y": 5.790425758676825
+        "x": 5.282022676919598,
+        "y": 5.486425758676825
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.289129431982634,
-        "y": 5.772
+        "x": 3.26147941468254,
+        "y": 5.468
       },
       "prevControl": {
-        "x": 3.610907327843177,
-        "y": 5.749931715532312
+        "x": 3.583257310543083,
+        "y": 5.4459317155323115
       },
       "nextControl": {
-        "x": 2.8864936708750726,
-        "y": 5.7996137069304385
+        "x": 2.8588436535749784,
+        "y": 5.495613706930438
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.1142584343342987,
-        "y": 5.772
+        "x": 1.6755279919733046,
+        "y": 5.468
       },
       "prevControl": {
-        "x": 1.8590296446854344,
-        "y": 5.768682781063293
+        "x": 1.4202992023244403,
+        "y": 5.464682781063293
       },
       "nextControl": null,
       "isLocked": false,
@@ -110,48 +126,35 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.052028276955602575,
+      "waypointRelativePos": 0.1,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.8511330602537002,
+      "waypointRelativePos": 1.7,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.95058139534884,
+      "waypointRelativePos": 2.95058139534884,
       "rotationDegrees": -90.0
     },
     {
-      "waypointRelativePos": 2.984853990486254,
+      "waypointRelativePos": 3.984853990486254,
       "rotationDegrees": -90.0
     },
     {
-      "waypointRelativePos": 3.997753699788581,
+      "waypointRelativePos": 4.997753699788581,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 4.95,
+      "waypointRelativePos": 5.95,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
     {
       "name": "intake",
-      "minWaypointRelativePos": 2.1714189403553306,
-      "maxWaypointRelativePos": 3.121529980964469,
-      "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 12.0,
-        "maxAngularVelocity": 720.0,
-        "maxAngularAcceleration": 1440.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
-      "name": "cross first",
-      "minWaypointRelativePos": 0.12896573604060882,
-      "maxWaypointRelativePos": 0.8028830901015229,
+      "minWaypointRelativePos": 3.1714189403553306,
+      "maxWaypointRelativePos": 4.121529980964469,
       "constraints": {
         "maxVelocity": 1.75,
         "maxAcceleration": 9.0,
@@ -162,11 +165,24 @@
       }
     },
     {
-      "name": "cross second",
-      "minWaypointRelativePos": 4.073723032994922,
-      "maxWaypointRelativePos": 4.9321065989847686,
+      "name": "cross first",
+      "minWaypointRelativePos": 0.25,
+      "maxWaypointRelativePos": 1.6,
       "constraints": {
-        "maxVelocity": 1.75,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 9.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 1440.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "cross second",
+      "minWaypointRelativePos": 5.073723032994922,
+      "maxWaypointRelativePos": 5.9321065989847686,
+      "constraints": {
+        "maxVelocity": 2.5,
         "maxAcceleration": 9.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 1440.0,
@@ -179,25 +195,25 @@
   "eventMarkers": [
     {
       "name": "DeployIntake",
-      "waypointRelativePos": 1.3182106598984777,
+      "waypointRelativePos": 2.3182106598984777,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "RunIntake",
-      "waypointRelativePos": 1.6781012055837552,
+      "waypointRelativePos": 2.678101205583755,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "StopIntake",
-      "waypointRelativePos": 3.3168226522842685,
+      "waypointRelativePos": 4.3168226522842685,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "ToggleHubTracking",
-      "waypointRelativePos": 4.799631186548219,
+      "waypointRelativePos": 5.799631186548219,
       "endWaypointRelativePos": null,
       "command": null
     }

@@ -1,17 +1,17 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleUnaryOperator;
+
 import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.*;
 import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
@@ -52,6 +52,9 @@ public class Scoring extends SubsystemBase {
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
+
+        SmartDashboard.putNumber("kFactor", 1.9);
+        SmartDashboard.putNumber("kAdjustment", 0.42);
     }
 
     /**
