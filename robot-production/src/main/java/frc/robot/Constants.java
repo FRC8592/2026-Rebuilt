@@ -160,18 +160,18 @@ public final class Constants {
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; // 0.4;
     public static final double TURRET_S = 0.6;
-    public static final double TURRET_P1 = 1;
-    public static final double TURRET_I1 = 0.0;
-    public static final double TURRET_D1 = 0.0;
-
+    public static final double TURRET_V = 0;
+    public static final double TURRET_A = 0;
     public static final int TURRET_TG = 80;
     public static final int TURRET_G1 = 19;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23.0) / 360;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
-    public static final int CRUISE_VELOCITY = 50;
+    public static final int CRUISE_VELOCITY = 50; 
+    public static final int LOW_VELOCITY = 0;
+    public static final int LOW_ACCELERATION = 0;
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
     public static final double FORWARD_LIMIT = 160; // Degrees
