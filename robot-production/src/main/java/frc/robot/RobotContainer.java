@@ -139,8 +139,7 @@ public class RobotContainer {
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand()).onFalse(scoring.intake.stopRollerCommand());
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(new DeferredCommand(() -> scoring.intake.retractIntakeCommand(), Set.of(this.scoring.intake)))
-        .onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
