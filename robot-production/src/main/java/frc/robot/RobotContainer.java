@@ -157,9 +157,11 @@ public class RobotContainer {
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
-    SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().withTimeout(3) // shoot for 3s
+    SHOOT_SQUEEZE.whileTrue(scoring.indexer.runIndexerCommand() // shoot for 3s
+        .alongWith(Commands.waitSeconds(3))
         // start retracting intake + squeeze for 3s
-        .andThen(scoring.intake.retractWithRollersCommand()).withTimeout(3)
+        .andThen(scoring.intake.retractWithRollersCommand())
+        .alongWith(Commands.waitSeconds(3))
         .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
         .andThen(scoring.indexer.stopCommand()));
 
