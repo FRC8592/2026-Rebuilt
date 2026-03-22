@@ -9,60 +9,58 @@ import frc.robot.Constants.TURRET;
 import org.littletonrobotics.junction.Logger;
 import java.lang.Math;
 
-
-public class AutoTurretAngle extends SubsystemBase{
+public class AutoTurretAngle extends SubsystemBase {
     public double rawAngle = 0;
 
     // TODO: Delete empty constructor
-    public AutoTurretAngle(){
-    }
+    public AutoTurretAngle() {}
+
     /**
-     * Compute the angle for the turret based on the position of target and the position and rotation of the robot.
+     * Compute the angle for the turret based on the position of target and the position and
+     * rotation of the robot.
+     * 
      * @param robotPosition
      * @param targetLocation
      * @return The angle the turret needs to turn to face the target
      */
-    public double TurretAngleCalc(Pose2d robotPosition, Pose2d targetLocation){
+    public double TurretAngleCalc(Pose2d robotPosition, Pose2d targetLocation) {
         double targetRelativeX = targetLocation.getX() - robotPosition.getX();
         double targetRelativeY = targetLocation.getY() - robotPosition.getY();
 
-        double triangleAngle = Math.toDegrees(Math.atan(targetRelativeY/targetRelativeX));
+        double triangleAngle = Math.toDegrees(Math.atan(targetRelativeY / targetRelativeX));
 
-        //angle turret has to turn if the robot is at angle 0
+        // angle turret has to turn if the robot is at angle 0
         double thetaR = 0;
 
-        //triangleAngle is positive
-        if (targetRelativeX > 0 && targetRelativeY >= 0){
+        // triangleAngle is positive
+        if (targetRelativeX > 0 && targetRelativeY >= 0) {
             thetaR = triangleAngle;
         }
-        //triangleAngle is negative
-        else if (targetRelativeX < 0 && targetRelativeY >= 0){
+        // triangleAngle is negative
+        else if (targetRelativeX < 0 && targetRelativeY >= 0) {
             thetaR = 180 + triangleAngle;
         }
-        //triangleAngle is negative
-        else if (targetRelativeX > 0 && targetRelativeY <= 0){
+        // triangleAngle is negative
+        else if (targetRelativeX > 0 && targetRelativeY <= 0) {
             thetaR = triangleAngle;
         }
-        //triangleAngle is positive
-        else if (targetRelativeX < 0 && targetRelativeY <= 0){
+        // triangleAngle is positive
+        else if (targetRelativeX < 0 && targetRelativeY <= 0) {
             thetaR = -180 + triangleAngle;
-        }
-        else if (targetRelativeX == 0 && targetRelativeY > 0){
+        } else if (targetRelativeX == 0 && targetRelativeY > 0) {
             thetaR = 270;
-        }
-        else if (targetRelativeX == 0 && targetRelativeY < 0){
+        } else if (targetRelativeX == 0 && targetRelativeY < 0) {
             thetaR = 90;
-        }
-        else{
+        } else {
             System.out.println("you are on top of the target");
         }
-        
+
         // robotAngle is in degrees
         double robotAngle = robotPosition.getRotation().getDegrees();
 
         // Compute the angle offset from robot zero and accounting for turret zero
         double turretTurn = thetaR - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
-    
+
         return turretTurn;
     }
 }

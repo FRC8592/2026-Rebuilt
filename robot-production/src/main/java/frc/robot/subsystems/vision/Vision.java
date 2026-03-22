@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision;    
+package frc.robot.subsystems.vision;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,10 +35,11 @@ public class Vision extends SubsystemBase {
 
     /**
      * Creates a vision subsystem for a camera on the robot
+     * 
      * @param camName name of the camera
      * @param camOffsets camera position relative to the robot center
      */
-    public Vision(String camName, Transform3d camOffsets){
+    public Vision(String camName, Transform3d camOffsets) {
         initializeCommon(camName, camOffsets);
     }
 
@@ -50,8 +51,9 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation. 
-     * Don't use this constructor for simple or early testing. 
+     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation.
+     * Don't use this constructor for simple or early testing.
+     * 
      * @param camName name of the camera
      * @param camOffsets camera position relative to the robot center
      * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
@@ -60,14 +62,17 @@ public class Vision extends SubsystemBase {
      * @param calibrationErrorStdPx std in error of the calibration in pixels
      * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
      */
-    public Vision(String camName, Transform3d camOffsets, int calibrationWidth, int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx, int fps){
+    public Vision(String camName, Transform3d camOffsets, int calibrationWidth,
+            int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx,
+            int fps) {
         initializeCommon(camName, camOffsets);
 
         visionSim = new VisionSystemSim("photonvision");
         visionSim.addAprilTags(aprilTagFieldLayout);
 
         cameraProperties = new SimCameraProperties();
-        cameraProperties.setCalibration(calibrationWidth, calibrationHeight, Rotation2d.fromDegrees(70));
+        cameraProperties.setCalibration(calibrationWidth, calibrationHeight,
+                Rotation2d.fromDegrees(70));
         cameraProperties.setCalibError(calibrationAvgErrorPx, calibrationErrorStdPx);
         cameraProperties.setFPS(fps);
 
@@ -80,33 +85,35 @@ public class Vision extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
-        results = camera.getAllUnreadResults(); //MUST ONLY CALL THIS METHOD ONCE PER LOOP
+    public void periodic() {
+        results = camera.getAllUnreadResults(); // MUST ONLY CALL THIS METHOD ONCE PER LOOP
 
         if (!results.isEmpty()) {
-            //Get the latest result from the camera and check if it contains an apriltag
-            var result = results.get(results.size()-1);
+            // Get the latest result from the camera and check if it contains an apriltag
+            var result = results.get(results.size() - 1);
             targetVisible = result.hasTargets();
 
-            if (targetVisible) { //At least one AprilTag was seen by the camera
-                targetAmbiguity = result.getBestTarget().getPoseAmbiguity();    
+            if (targetVisible) { // At least one AprilTag was seen by the camera
+                targetAmbiguity = result.getBestTarget().getPoseAmbiguity();
             } else {
-                targetAmbiguity = -10.0; //A large value to differentiate clearly
+                targetAmbiguity = -10.0; // A large value to differentiate clearly
             }
         }
-        
+
         SmartDashboard.putNumber("Tag Count", results.size());
-       // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+        // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
     }
 
     /**
      * Updates the vision simulation with the current swerve odometry pose
+     * 
      * @param robotPose swerve odometry pose
      */
-    public void simulationUpdatePose(Pose2d robotPose){
+    public void simulationUpdatePose(Pose2d robotPose) {
         if (visionSim == null) {
             DriverStation.reportWarning(
-                "Vision simulation update skipped because visionSim is not configured for this camera.", false);
+                    "Vision simulation update skipped because visionSim is not configured for this camera.",
+                    false);
             return;
         }
 
@@ -115,18 +122,20 @@ public class Vision extends SubsystemBase {
 
     /**
      * Gets the pose ambiguity ratio.
+     * 
      * @return Returns the pose ambiguity ratio. -10 if there are no apriltags
      */
-    public double getPoseAmbiguityRatio(){
+    public double getPoseAmbiguityRatio() {
         return targetAmbiguity;
     }
 
     /**
      * Lists the targets visible by the camera
+     * 
      * @return Returns a list of the targets visible by the camera
      */
     public List<PhotonTrackedTarget> getTargets() {
-        if(results == null || results.isEmpty())
+        if (results == null || results.isEmpty())
             return List.of();
 
         var result = results.get(results.size() - 1);
@@ -135,17 +144,18 @@ public class Vision extends SubsystemBase {
 
     /**
      * Gets the current vision pose
+     * 
      * @return Returns the current vision pose
      */
     public Optional<EstimatedRobotPose> getRobotPoseVision() {
-        if(results == null || results.isEmpty()){
+        if (results == null || results.isEmpty()) {
             return Optional.empty();
         }
 
         PhotonPipelineResult latest = results.get(results.size() - 1);
         Optional<EstimatedRobotPose> pose = estimator.estimateCoprocMultiTagPose(latest);
 
-        if(pose.isEmpty()){
+        if (pose.isEmpty()) {
             pose = estimator.estimateLowestAmbiguityPose(latest);
         }
 

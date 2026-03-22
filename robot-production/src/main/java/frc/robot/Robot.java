@@ -38,20 +38,20 @@ public class Robot extends LoggedRobot {
 
   /* log and replay timestamp and joystick data */
   // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-  //     .withTimestampReplay()
-  //     .withJoystickReplay();
-
+  // .withTimestampReplay()
+  // .withJoystickReplay();
 
   public static Field2d FIELD = new Field2d();
-  private static int periodicCounter = 0; 
-  private static int tagCounter = 0; 
+  private static int periodicCounter = 0;
+  private static int tagCounter = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
 
     CanBridge.runTCP(); // Required for Grapplehook laser reflection sensor.
@@ -65,27 +65,27 @@ public class Robot extends LoggedRobot {
       String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
 
       File sda1 = new File("/media/sda1/logs");
-      if(sda1.exists()){
-          String path = "/media/sda1/"+time+".wpilog";
-          Logger.addDataReceiver(new WPILOGWriter(path));
+      if (sda1.exists()) {
+        String path = "/media/sda1/" + time + ".wpilog";
+        Logger.addDataReceiver(new WPILOGWriter(path));
       } else {
         File sdb1 = new File("/media/sdb1/logs");
-        if(sdb1.exists()){
-            String path = "/media/sdb2/"+time+".wpilog";
-            Logger.addDataReceiver(new WPILOGWriter(path));
+        if (sdb1.exists()) {
+          String path = "/media/sdb2/" + time + ".wpilog";
+          Logger.addDataReceiver(new WPILOGWriter(path));
         } else {
-            System.err.println("UNABLE TO LOG TO A USB STICK!");
+          System.err.println("UNABLE TO LOG TO A USB STICK!");
         }
       }
 
-      LoggedPowerDistribution.getInstance(1, ModuleType.kRev);  // Enables power distribution logging
+      LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // Enables power distribution logging
     }
 
     SmartDashboard.putData("Field", FIELD);
 
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
-          
+
     m_robotContainer = new RobotContainer();
   }
 
@@ -93,24 +93,28 @@ public class Robot extends LoggedRobot {
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard
+   * integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
     // block in order for anything in the Command-based framework to work.
     // m_timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
-    
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-      //m_robotContainer.scoring.intake.setBrakeMode();
+    // m_robotContainer.scoring.intake.setBrakeMode();
   }
 
   @Override
@@ -123,8 +127,8 @@ public class Robot extends LoggedRobot {
 
     // Run vision routines
     Vision backvision = m_robotContainer.getBackVision();
-    Vision rightvision = m_robotContainer.getRightVision(); 
-    Vision leftvision = m_robotContainer.getLeftVision(); 
+    Vision rightvision = m_robotContainer.getRightVision();
+    Vision leftvision = m_robotContainer.getLeftVision();
     backvision.periodic();
     rightvision.periodic();
     leftvision.periodic();
@@ -132,55 +136,58 @@ public class Robot extends LoggedRobot {
     int backvisionCounter = backvision.getTargets().size();
     int rightVisionCounter = rightvision.getTargets().size();
     int leftVisionCounter = leftvision.getTargets().size();
-    int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter; 
+    int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter;
 
     Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
     // LED control
-  
 
-      // double average = tagCounter/10; 
-      // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
-      // m_robotContainer.leds.setHasTags((int)Math.round(average));
-    if (VisionCounter > 1 ){
-        tagCounter = 2; 
-      }
+    // double average = tagCounter/10;
+    // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+    // m_robotContainer.leds.setHasTags((int)Math.round(average));
+    if (VisionCounter > 1) {
+      tagCounter = 2;
+    }
 
-      else if (VisionCounter ==1 ){
-        tagCounter =1; 
-      }
+    else if (VisionCounter == 1) {
+      tagCounter = 1;
+    }
 
-    if(periodicCounter % 15 ==0){
+    if (periodicCounter % 15 == 0) {
       m_robotContainer.leds.setHasTags(tagCounter);
       m_robotContainer.leds.displayHasTagsLEDs();
-      tagCounter =0; 
+      tagCounter = 0;
     }
-    periodicCounter++; 
+    periodicCounter++;
 
     Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
 
-    // set the number of tags being seen by the cameras on the LEDs subsystem, and update the LEDs to reflect that information.
-    
+    // set the number of tags being seen by the cameras on the LEDs subsystem, and
+    // update the LEDs to reflect that information.
 
-    // Pass Red/Blue alliance information to the scoring subsystem so it can select the correct target
+    // Pass Red/Blue alliance information to the scoring subsystem so it can select
+    // the correct target
     Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
 
-    if (alliance.isPresent()){
+    if (alliance.isPresent()) {
       m_robotContainer.scoring.setAlliance(alliance.get());
     }
 
-    // Update PID values from SmartDashboard for all subsystems that use PID.  This allows for tuning while the robot is disabled.
+    // Update PID values from SmartDashboard for all subsystems that use PID. This
+    // allows for tuning while the robot is disabled.
     m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
-    //m_robotContainer.scoring.intake.updatePID();
+    // m_robotContainer.scoring.intake.updatePID();
     // m_robotContainer.scoring.turret.updatePID();
 
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
-    m_robotContainer.scoring.disableTrackingCommand(); 
+    m_robotContainer.scoring.disableTrackingCommand();
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -195,15 +202,15 @@ public class Robot extends LoggedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-    public void autonomousExit() {}
+  public void autonomousExit() {}
 
   @Override
   public void teleopInit() {
     m_robotContainer.scoring.disableTrackingCommand();
-    m_robotContainer.scoring.indexer.stop(); 
+    m_robotContainer.scoring.indexer.stop();
 
     boolean cancelledAuto = false;
-    
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -212,18 +219,17 @@ public class Robot extends LoggedRobot {
       cancelledAuto = true;
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
       Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
-    //m_robotContainer.scoring.intake.setCoastMode();
-     //   m_autonomousCommand.cancel();
+      // m_robotContainer.scoring.intake.setCoastMode();
+      // m_autonomousCommand.cancel();
     }
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
-    public void teleopExit() {}
+  public void teleopExit() {}
 
   @Override
   public void testInit() {
@@ -235,8 +241,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {}
 
-   @Override
-    public void testExit() {}
+  @Override
+  public void testExit() {}
 
   /** This function is called once when the robot is first started up. */
   @Override
@@ -245,6 +251,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    
+
   }
 }
