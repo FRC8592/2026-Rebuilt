@@ -27,6 +27,7 @@ public class Swerve extends SubsystemBase {
     private PIDController snapToController;
 
     private boolean isSlowMode;
+    private boolean alignedHeading = false;
 
     private SmoothingFilter smoothingFilter;
 
@@ -168,13 +169,20 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
-        double targetHeadingRadians = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
-        Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
-        double omega = snapToAngle(targetHeading);
+        if (alignedHeading) {
+            double targetHeadingRadians =
+                    Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+            Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
+            double omega = snapToAngle(targetHeading);
 
-        swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
-                .withVelocityY(speeds.vyMetersPerSecond)
-                .withRotationalRate(omega));
+            swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+                    .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
+        } else {
+            swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+                    .withVelocityY(speeds.vyMetersPerSecond)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond));
+        }
+
     }
 
     /**
@@ -193,6 +201,10 @@ public class Swerve extends SubsystemBase {
      */
     public void resetHeading() {
         swerve.seedFieldCentric();
+    }
+
+    public void alignedHeading() {
+        alignedHeading = !alignedHeading;
     }
 
     /**
