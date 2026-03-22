@@ -169,14 +169,14 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
-        if (alignedHeading) {
-            double targetHeadingRadians =
-                    Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        if (alignedHeading && speeds != null && !speeds.equals(speedZero)) {
+            double targetHeadingRadians = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
             Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
             double omega = snapToAngle(targetHeading);
 
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
-                    .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
+                    .withVelocityY(speeds.vyMetersPerSecond)
+                    .withRotationalRate(omega));
         } else {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
