@@ -227,7 +227,7 @@ public final class SHOOTER {
     public static final double INTAKE_EXTEND_D = 0;
     public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 8; 
+    public static final double EXTEND_ROTATIONS = -19; 
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; //3.645
     public static final double EXTEND_CRUISE_RPM = 250.0;
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;

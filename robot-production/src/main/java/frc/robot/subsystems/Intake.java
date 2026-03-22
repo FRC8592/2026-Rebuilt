@@ -149,11 +149,15 @@ public class Intake extends SubsystemBase {
      */
     public void retractIntake() {
         // Logger.recordOutput("Voltage to Extend Motor", voltage);
-        retractionPosition -= INTAKE.RETRACT_ROTATION_INCREMENT;
-        if (getExtendPosition() <= -0.25) {
+        retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
+        if (getExtendPosition() <= -0.25) 
             extendClosedLoopCtrl.setSetpoint(retractionPosition,
                     ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-        }
+        //     extendClosedLoopCtrl.setSetpoint(6, ControlType.kVoltage);
+        // } else {
+        //     extendClosedLoopCtrl.setSetpoint(0, ControlType.kVoltage);
+
+        // }
 
     }
 
