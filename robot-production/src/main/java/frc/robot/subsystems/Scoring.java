@@ -239,8 +239,8 @@ public class Scoring extends SubsystemBase {
 
             // Lookup the required shooter speed in the range table
             shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
-           // shooterSpeed = shooterSpeedHub(targetDistance);
-            shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
+           //shooterSpeed = shooterSpeedHub(targetDistance);
+            //shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
