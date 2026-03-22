@@ -183,49 +183,35 @@ public class Scoring extends SubsystemBase {
         ;
     }
 
-    // double initialAngle = 62; //degrees
-    // double hubHeight = 6.5; //feet
-    // double initialBallHeight = 2.18; //feet
-    // double g = 32.174; //feet per s^2
-    // double flywheelRadius = 2.0; //inches
-    // double flywheelGearing = 1.0;
-    // double feetPerMeter = 3.28084;
-    // public double shooterSpeedHub(double targetDistance) {
-    //     double kFactor = SmartDashboard.getNumber("kFactor", 2.8); //extra velocity needed for flywheel
-    //     double kAdjustment = SmartDashboard.getNumber("kAdjustment",  0.1);
-    //     double AdjustedK = kFactor + kAdjustment * targetDistance;
-    //     double distanceFeet = targetDistance * feetPerMeter;
-    //     double angleRadians = initialAngle * Math.PI/180.0;
-    //     double denominator = initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight;
-    //     if (denominator<=0) return 0;
-    //     double initialBallVelocity = Math.sqrt(distanceFeet*distanceFeet*g/(2.0*(initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight))) / Math.cos(angleRadians);
-    //     double flyRadiusFeet = flywheelRadius / 12.0;
-    //     double outputRPM = AdjustedK*(initialBallVelocity/flyRadiusFeet)*(60.0/(2*Math.PI));
-    //     return outputRPM*flywheelGearing;
-    // }
-        double initialAngle = 64; //degrees
+    // CONSTANTS FOR SHOOTING:
+    double initialAngle = 64; //degrees
     double hubHeight = 6; //feet
     double initialBallHeight = 2.18; //feet
     double g = 32.174; //feet per s^2
     double flywheelRadius = 2.0; //inches
     double flywheelGearing = 1.0;
     double feetPerMeter = 3.28084;
+    /**
+     * Physics-based shooter velocity function
+     * Is not directly used in shoot on the move, but is the mathematical basis for it
+     */
     public double shooterSpeedHub(double targetDistance) {
         double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
-        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
-        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
-        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
-        double adjustedK = kFactor + kAdjustment * targetDistance;
-        double distanceFeet = targetDistance * feetPerMeter;
-        double angleRadians = initialAngle * Math.PI/180.0;
-        double denominator = initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight;
+        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42); //distance-based adjustment to the kFactor
+        double adjustedK = kFactor + kAdjustment * targetDistance; // compute adjusted k value
+        double distanceFeet = targetDistance * feetPerMeter; // distance to hub, in feet
+        double angleRadians = initialAngle * Math.PI/180.0; // shooter angle above ground, in radians
+        double denominator = initialBallHeight+Math.tan(angleRadians)*distanceFeet-hubHeight; // check if robot is far away enough that a solution exists
         if (denominator<=0) return 0.0;
-        double initialBallVelocity = Math.sqrt(distanceFeet*distanceFeet*g/(2.0*denominator)) / Math.cos(angleRadians);
-        double flyRadiusFeet = flywheelRadius / 12.0;
-        double outputRPM = adjustedK*(initialBallVelocity/flyRadiusFeet)*(60.0/(2*Math.PI));
+        double initialBallVelocity = Math.sqrt(distanceFeet*distanceFeet*g/(2.0*denominator)) / Math.cos(angleRadians); // compute physics-based initial ball velocity
+        double flyRadiusFeet = flywheelRadius / 12.0; // flywheel radius in feet
+        double outputRPM = adjustedK*(initialBallVelocity/flyRadiusFeet)*(60.0/(2*Math.PI)); // final velocity of the shooter motor
         return (outputRPM*flywheelGearing);
     }
 
+    /**
+     * (maybe not needed) functions to increase and decrease kFactor
+     */
     public void increaseK() {
         kFactor += 0.1;
     }
@@ -234,6 +220,9 @@ public class Scoring extends SubsystemBase {
         kFactor -= 0.1;
     }
 
+    /**
+     * Numerical solver to solve the SOTM equation
+     */
     public static double solveV0y(
             double thetaRad,
             double x,      // radial distance to target
@@ -246,7 +235,7 @@ public class Scoring extends SubsystemBase {
         double dh = hF - hI;
         double tanTheta = Math.tan(thetaRad);
     
-        DoubleUnaryOperator f = (v0y) -> {
+        DoubleUnaryOperator f = (v0y) -> { // function to find a solution for
             double denom = v0y + vRy;
             if (denom <= 0.0) {
                 return Double.NaN; // invalid physically
@@ -259,13 +248,13 @@ public class Scoring extends SubsystemBase {
                     - dh;
         };
     
-        // Start just above the singularity v0y = -vRy
+        // start just above the singularity v0y = -vRy
         double lower = -vRy + 1e-9;
         if (lower <= 0.0) {
             lower = 1e-9;
         }
     
-        // Search for a sign change by scanning upward.
+        // search for a sign change in the function by scanning upward
         double upper = lower + Math.max(10.0, Math.abs(x) * 10.0 + 10.0);
         double left = lower;
         double fLeft = f.applyAsDouble(left);
@@ -278,7 +267,7 @@ public class Scoring extends SubsystemBase {
             for (int i = 1; i <= samples; i++) {
                 double u = lower + (upper - lower) * i / samples;
                 double fu = f.applyAsDouble(u);
-    
+                // if a sign change is detected, narrow down using bisection
                 if (Double.isFinite(prevF) && Double.isFinite(fu)) {
                     if (prevF == 0.0) {
                         return prevU;
@@ -292,13 +281,17 @@ public class Scoring extends SubsystemBase {
                 prevF = fu;
             }
     
-            // No root in this interval; expand and try again.
+            // no root in this interval, expand and try again
             upper *= 2.0;
         }
     
         throw new IllegalArgumentException("No physical root found for v0y.");
     }
-    
+
+    /**
+     * Bisection algorithm, used in the SOTM solver
+     */
+
     private static double bisect(DoubleUnaryOperator f, double a, double b, double tol, int maxIter) {
         double fa = f.applyAsDouble(a);
         double fb = f.applyAsDouble(b);
@@ -344,37 +337,36 @@ public class Scoring extends SubsystemBase {
      */
 
     public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY) {
-        double thetaDeg = initialAngle;
-        double thetaRad = Math.toRadians(thetaDeg);
-        double targetXFeet = targetX * feetPerMeter;
-        double targetYFeet = targetY * feetPerMeter;
+        double thetaDeg = initialAngle; // shooter angle above ground
+        double thetaRad = Math.toRadians(thetaDeg); // shooter angle above ground, in radians
+        double targetXFeet = targetX * feetPerMeter; // X distance between robot and target in feet
+        double targetYFeet = targetY * feetPerMeter; // Y distance between robot and target in feet
 
-        double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
-        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
+        double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet); // total distance to target
 
-        double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet);
-
-        double angleToHub = Math.atan2(targetYFeet, targetXFeet);
-        double vRx = robotVelX * Math.sin(angleToHub) + robotVelY * Math.cos(angleToHub);
-        double vRy = robotVelX * Math.cos(angleToHub) + robotVelY * Math.sin(angleToHub);
+        double angleToTarget = Math.atan2(targetYFeet, targetXFeet); // field-relative angle to target
+        // change the robots coordinates into a coordinate system pointing towards the hub
+        // this makes the SOTM solver simpler
+        double vRx = robotVelX * Math.sin(angleToTarget) + robotVelY * Math.cos(angleToTarget);
+        double vRy = robotVelX * Math.cos(angleToTarget) + robotVelY * Math.sin(angleToTarget);
         double hI = initialBallHeight;
         double hF = hubHeight;
         double g = 32.174;
         try {
-            double v0y = solveV0y(thetaRad, x, vRx, vRy, hI, hF, g);
-            double v0x = -vRx; // if tangential motion is being canceled
-            double totalSpeedRelativeRobot = Math.sqrt(v0x * v0x + v0y * v0y)*Math.sqrt(1 + Math.tan(thetaRad)*Math.tan(thetaRad));
+            double v0y = solveV0y(thetaRad, x, vRx, vRy, hI, hF, g); // component of initial ball velocity relative to robot in the direction pointing towards the hub
+            double v0x = -vRx; // component of initial ball velocity relative to the robot in the direction going around the hub
+            double totalSpeedRelativeRobot = Math.sqrt(v0x * v0x + v0y * v0y)*Math.sqrt(1 + Math.tan(thetaRad)*Math.tan(thetaRad)); // total initial ball speed exiting shooter
             double flyRadiusFeet = flywheelRadius / 12.0;
-            double adjustedK = kFactor + kAdjustment*x/feetPerMeter;
-            double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI));
+            double adjustedK = kFactor + kAdjustment*x/feetPerMeter; //compute adjusted k factor
+            double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI)); // output RPM needed for the flywheel
 
-            double turretAngleToHub = Math.atan2(v0y, v0x);
+            double turretAngleToHub = Math.atan2(v0y, v0x); // turret angle in the rotated coordinate frame
 
-            double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub))))%360+360)%360;
+            double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToTarget))))%360+360)%360; // field-centric turret angle
 
             return new Pair<>(outputRPM*flywheelGearing, turretFieldAngle);
         } catch (IllegalArgumentException e) {
-            return new Pair<>(0.0, 0.0);
+            return new Pair<>(0.0, 0.0); // no possible initial velocity
         }
     }
 
@@ -396,6 +388,8 @@ public class Scoring extends SubsystemBase {
 
         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
 
+        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
+        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
 
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
@@ -438,67 +432,4 @@ public class Scoring extends SubsystemBase {
             }
         }
     }
-
-
-//     /**
-//      * If the tracking system is toggled on, update the required turret angle and shooter speed
-//      */
-//     @Override
-//     public void periodic() {
-//         double targetDistance;
-//         double shooterSpeed;
-
-//         // Current robot pose and target pose
-//         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-//         Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
-//         Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
-//         Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
-//         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
-
-//         // get the current robot position and select the target
-//         currentRobotPose = swerve.getCurrentOdometryPosition();
-//         currentTargetPose = getTarget(currentRobotPose);
-
-//         Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
-
-//         if (indexer.indexerRunning) {
-//             leds.displayindexerRunning();
-//         }
-
-//         if (trackingTarget) {
-//             if (indexer.indexerRunning) {
-//                 leds.displayindexerRunning();
-//             } else if (canShoot()) {
-//                 leds.setCanShoot();
-//             } else {
-//                 leds.setCannotShoot();
-//             }
-
-//             // calculate the distance to the target position
-//             targetDistance = currentRobotPose.getTranslation()
-//                     .getDistance(currentTargetPose.getTranslation());
-
-//             // Lookup the required shooter speed in the range table
-//             shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
-//            //shooterSpeed = shooterSpeedHub(targetDistance);
-//             //shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
-
-//             // Log the current distance-to-target and shooter speed for debugging
-//             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
-//             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per
-//                                                                                    // second
-
-//             // Update turret angle and shooter speed
-//             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-//             shooter.runAtSpeed(shooterSpeed);
-//         } else {
-//             // Shut down the shooter motors. The turret will hold the last position, so we
-//             // don't need to send any command to it.
-//             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
-//                 leds.setOff();
-//                 shooter.stop();
-//             }
-//         }
-//     }
-
 }
