@@ -159,8 +159,7 @@ public class RobotContainer {
 
     SHOOT_SQUEEZE.whileTrue(scoring.indexer.runIndexerCommand().withTimeout(3) // shoot for 3s
         // start retracting intake + squeeze for 3s
-        .andThen(scoring.intake.runIntakeRollersCommand().alongWith(scoring.intake.retractIntakeCommand()))
-        .withTimeout(3)
+        .andThen(scoring.intake.retractWithRollersCommand()).withTimeout(3)
         .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
         .andThen(scoring.indexer.stopCommand()));
 
