@@ -158,7 +158,18 @@ public class Turret extends SubsystemBase {
         // tMotor.setControl(motionMagicRequest.withSlot(currentSlot).withPosition(targetAngle
         // * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
-
+    public void TurrettoAngle(Pose2d robotPosition, double angle) {
+        double robotAngle = robotPosition.getRotation().getDegrees();
+        double targetAngle = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
+        if(Math.abs(targetAngle) > 180){
+            if(targetAngle < 0)
+                targetAngle += 360;
+            else
+                targetAngle -= 360;
+        }
+        Logger.recordOutput(TURRET.LOG_PATH + "targetAngleSOTM", targetAngle);
+        tMotor.setControl(positionRequest.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+    }
     /**
      * Stop the turret motor. Not normally used; we want the turret to hold position with the motor
      */
