@@ -49,6 +49,7 @@ public class RobotContainer {
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
   // private final Trigger SLOW_MODE = driverController.leftTrigger();
+  private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
@@ -133,6 +134,8 @@ public class RobotContainer {
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
+    ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
+
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
@@ -157,6 +160,8 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+
+
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
