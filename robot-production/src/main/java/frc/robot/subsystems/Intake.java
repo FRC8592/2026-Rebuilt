@@ -108,6 +108,8 @@ public class Intake extends SubsystemBase {
         extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
         extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
         extendConfig.closedLoop.maxMotion.allowedProfileError(10);
+        extendConfig.softLimit.forwardSoftLimitEnabled(true);
+        extendConfig.softLimit.forwardSoftLimit(2);
 
         extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -147,18 +149,11 @@ public class Intake extends SubsystemBase {
     /**
      * Retract the intake at controlled speed
      */
-    public void retractIntake(double voltage) {
+    public void retractIntake() {
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
-        if (getExtendPosition() <= -0.25) {
+        if (getExtendPosition() <= -0.5) {
             extendMotor.setVoltage(6);
-            // extendClosedLoopCtrl.setSetpoint(retractionPosition,
-            //     ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-
-            // extendClosedLoopCtrl.setSetpoint(getExtendPosition() - retractionPosition,
-            // ControlType.kMAXMotionPositionControl);
-            // extendClosedLoopCtrl.setSetpoint(retractionPosition,
-            // ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
         }
     }
 
@@ -177,6 +172,15 @@ public class Intake extends SubsystemBase {
 
     public void runReversedIntakeRollers() {
         rollerRightMotor.setVoltage(-11);
+    }
+
+    public void retractWithRollers() {
+        runIntakeRollers();
+        retractIntake();
+    }
+
+    public Command retractWithRollersCommand() {
+        return this.runOnce(() -> retractWithRollers());
     }
 
     /**
@@ -205,8 +209,8 @@ public class Intake extends SubsystemBase {
     /**
      * Command to retract the intake at controlled speed
      */
-    public Command retractIntakeCommand(double voltage) {
-        return this.runOnce(() -> retractIntake(voltage));
+    public Command retractIntakeCommand() {
+        return this.runOnce(() -> retractIntake());
     }
 
     /**
