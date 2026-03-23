@@ -213,6 +213,8 @@ public class Scoring extends SubsystemBase {
     public double shooterSpeedHub(double targetDistance) {
         double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
         double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
+        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
+        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
         double adjustedK = kFactor + kAdjustment * targetDistance;
         double distanceFeet = targetDistance * feetPerMeter;
         double angleRadians = initialAngle * Math.PI/180.0;
@@ -347,6 +349,9 @@ public class Scoring extends SubsystemBase {
         double targetXFeet = targetX * feetPerMeter;
         double targetYFeet = targetY * feetPerMeter;
 
+        double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
+        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
+
         double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet);
 
         double angleToHub = Math.atan2(targetYFeet, targetXFeet);
@@ -391,8 +396,6 @@ public class Scoring extends SubsystemBase {
 
         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
 
-        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
-        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
 
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
