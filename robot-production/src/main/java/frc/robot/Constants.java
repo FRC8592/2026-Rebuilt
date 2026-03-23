@@ -39,18 +39,18 @@ public final class Constants {
 
     // camera G
     public static final Transform3d CAMERA_OFFSETS_RIGHT =
-        (new Transform3d(new Translation3d(-0.334588, -0.072009, 0.5212334),
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(270))));
+        (new Transform3d(new Translation3d(-0.07,-0.33,0.56), //x: -0.020817 z: 0.5653 y: -0.29
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(270)))); //-0.334588, -0.072009, 0.5212334
 
     // camera F
     public static final Transform3d CAMERA_OFFSETS_BACK =
-        (new Transform3d(new Translation3d(0.2797302, -0.0772414, -0.5218176),
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(180))));
+        (new Transform3d(new Translation3d(-0.07,-0.29,0.56), //0.2797302, -0.0772414, -0.5218176
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(180)))); //x: -0.020817 z: 0.5653 y: -0.26
 
     // camera H
     public static final Transform3d CAMERA_OFFSETS_LEFT =
-        (new Transform3d(new Translation3d(0.334588, -0.072009, 0.5212334),
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90))));
+        (new Transform3d(new Translation3d(-0.07, 0.33,0.56),  //x: -0.020817 z: 0.5653 y: 0.29
+            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90)))); //-0.334588, -0.072009, 0.5212334
 
     public static final String CAMERA_NAME_RIGHT = ("Right_Arducam_OV9782_G");
 
@@ -65,7 +65,7 @@ public final class Constants {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SWERVE/";
 
     // TODO: Double check that these PID constants still work
-    public static final double SNAP_TO_kP = 3.7;
+    public static final double SNAP_TO_kP = 3.2;
     public static final double SNAP_TO_kI = 0.0;
     public static final double SNAP_TO_kD = 0.1;
 
@@ -123,15 +123,15 @@ public final class Constants {
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
     public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 40.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
     // PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double FLYWHEEL_P = 7.0;
+    public static final double FLYWHEEL_P = 6.0;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
 
-    public static final double BACKWHEEL_P = 3.0;
+    public static final double BACKWHEEL_P = 5.0;
     public static final double BACKWHEEL_I = 0.0;
     public static final double BACKWHEEL_D = 0.0;
     public static final double BACKWHEEL_S = 0.4;
@@ -163,7 +163,7 @@ public final class Constants {
     public static final double TURRET_V = 0;
     public static final double TURRET_A = 0;
     public static final int TURRET_TG = 80;
-    public static final int TURRET_G1 = 19;
+    public static final int TURRET_G1 = 21;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23.0) / 360;
@@ -172,11 +172,14 @@ public final class Constants {
     public static final int CRUISE_VELOCITY = 50; 
     public static final int LOW_VELOCITY = 0;
     public static final int LOW_ACCELERATION = 0;
+    //TODO: Update these constants
     public static final double E1_OFFSET = 286;
     public static final double E2_OFFSET = 323.4;
-    public static final double FORWARD_LIMIT = 160; // Degrees
-    public static final double REVERSE_LIMIT = -160; // Degrees
-    public static final double TURRET_TOLERANCE = 8; // Degrees
+    //Try these out?
+    public static final double FORWARD_LIMIT = 180; // Degrees
+    public static final double REVERSE_LIMIT = -180; // Degrees
+    public static final double TURRET_TOLERANCE = 0.75; // Degrees
+    public static final double CRT_TOLERANCE = 0.004;
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180
                                                           // degrees relative to the
                                                           // front of the robot
@@ -207,7 +210,7 @@ public final class Constants {
 
     // Current limit for the Intake motor
     public static final int EXTEND_CURRENT_LIMIT = 50;
-    public static final int ROLLER_CURRENT_LIMIT = 50;
+    public static final int ROLLER_CURRENT_LIMIT = 55;
 
     // PID tuning constants for the NEO Motors, these are initial and WILL change
     public static final double INTAKE_LEFT_P = 0.01;
@@ -220,18 +223,17 @@ public final class Constants {
     public static final double INTAKE_RIGHT_D = 0;
     public static final double INTAKE_RIGHT_VI = 6000;
 
-    public static final double INTAKE_EXTEND_P = 0.5;
+    public static final double INTAKE_EXTEND_P = 0.5; //0.5
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
-    public static final double INTAKE_EXTEND_POS = 3000;
 
-    public static final double EXTEND_ROTATIONS = 8;
+    public static final double EXTEND_ROTATIONS = -19;
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; // 3.645
     public static final double EXTEND_CRUISE_RPM = 250.0;
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
     public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
-    public static double RETRACT_ROTATION_INCREMENT = 0.005;
+    public static double RETRACT_ROTATION_INCREMENT = 0.01;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 1000;
@@ -253,6 +255,8 @@ public final class Constants {
     public static final double OUTPUT_P = 0.0001;
     public static final double OUTPUT_I = 0;
     public static final double OUTPUT_D = 0;
+    public static final double OUTPUT_S = 0.1;
+    public static final double OUTPUT_KV = 0.001821; 
 
     // Current limits for the Indexer motors
     // TODO: tune these limits

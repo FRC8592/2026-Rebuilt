@@ -6,6 +6,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -43,6 +44,7 @@ public class Indexer extends SubsystemBase {
     private double PO_OLD;
     private double IO_OLD;
     private double DO_OLD;
+    private double SO_OLD; 
     public boolean indexerRunning = false;
 
     /**
@@ -68,6 +70,7 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
         SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
         SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
+        SmartDashboard.putNumber("S_OUTPUT", INDEXER.OUTPUT_S);
         SmartDashboard.putNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED);
 
         spinMotorConfig.closedLoop.pid(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D,
@@ -77,6 +80,10 @@ public class Indexer extends SubsystemBase {
         spinMotorConfig.closedLoop.apply(spinFeedForward);
 
         outputMotorConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
+
+        outputFeedForward.kS(INDEXER.OUTPUT_S, ClosedLoopSlot.kSlot0);
+        outputFeedForward.kV(INDEXER.OUTPUT_KV, ClosedLoopSlot.kSlot0);
+        outputMotorConfig.closedLoop.apply(outputFeedForward);
 
         // assigns configuration to motor
         spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
@@ -123,9 +130,8 @@ public class Indexer extends SubsystemBase {
      * Runs the output motor on the indexer at given speed
      */
     public void runOutput() {
-        outputMotor.setVoltage(11.0);
-        // outputMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_OUTPUT",
-        // INDEXER.OUTPUT_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+        //outputMotor.setVoltage(12.0);
+        outputMotorClosedLoopCtrl.setSetpoint(4000, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
     /**
@@ -207,15 +213,17 @@ public class Indexer extends SubsystemBase {
         double Output_P = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
         double Output_I = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
         double Output_D = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
+        double Output_S = SmartDashboard.getNumber("S_OUTPUT", INDEXER.OUTPUT_S);
 
         if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD
-                || Output_P != PO_OLD || Output_I != IO_OLD || Output_D != DO_OLD) {
+                || Output_P != PO_OLD || Output_I != IO_OLD || Output_D != DO_OLD|| Output_S != SO_OLD) {
 
             spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
             spinFeedForward.kS(Spin_S, ClosedLoopSlot.kSlot0);
             spinMotorConfig.closedLoop.apply(spinFeedForward);
 
             outputMotorConfig.closedLoop.pid(Output_P, Output_I, Output_D, ClosedLoopSlot.kSlot0);
+            outputFeedForward.kS(Output_S, ClosedLoopSlot.kSlot0);
 
             PS_OLD = Spin_P;
             IS_OLD = Spin_I;
@@ -225,6 +233,7 @@ public class Indexer extends SubsystemBase {
             PO_OLD = Output_P;
             IO_OLD = Output_I;
             DO_OLD = Output_D;
+            SO_OLD = Output_S;
 
             spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
                     PersistMode.kNoPersistParameters);

@@ -49,12 +49,15 @@ public class RobotContainer {
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
   // private final Trigger SLOW_MODE = driverController.leftTrigger();
+  private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
+
+  private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   // private final Trigger SNAP_TO = driverController.povUp();
 
@@ -104,6 +107,11 @@ public class RobotContainer {
     new EventTrigger("WaitAndShoot")
         .onTrue(Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand()));
 
+    new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
+        .andThen(Commands.waitSeconds(3)).andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(3)).andThen(scoring.intake.stopRollerCommand())
+        .andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
@@ -126,6 +134,8 @@ public class RobotContainer {
     // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
     // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
+    ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
+
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
@@ -133,9 +143,8 @@ public class RobotContainer {
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(new DeferredCommand(
-        () -> scoring.intake.retractIntakeCommand(driverController.getLeftTriggerAxis() * -6.0),
-        Set.of(this.scoring.intake))).onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
+        .onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
@@ -152,7 +161,15 @@ public class RobotContainer {
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
+
+
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
+
+    SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
+        .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
+        .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+        .andThen(scoring.indexer.stopCommand()));
+
   }
 
   /**
