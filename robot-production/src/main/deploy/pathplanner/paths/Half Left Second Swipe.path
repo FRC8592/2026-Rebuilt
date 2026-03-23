@@ -48,48 +48,48 @@
     },
     {
       "anchor": {
-        "x": 5.786194585323467,
-        "y": 4.037780237086474
+        "x": 5.946534215856482,
+        "y": 4.234193576388889
       },
       "prevControl": {
-        "x": 5.8316876932967965,
-        "y": 4.283606145255094
+        "x": 5.992027323829811,
+        "y": 4.480019484557509
       },
       "nextControl": {
-        "x": 5.735284455175266,
-        "y": 3.762682985300535
+        "x": 5.895624085708281,
+        "y": 3.95909632460295
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.786194585323467,
-        "y": 2.779419509463645
+        "x": 5.946534215856482,
+        "y": 2.7819044415509255
       },
       "prevControl": {
-        "x": 5.774930495426168,
-        "y": 3.0291656211026163
+        "x": 5.935270125959183,
+        "y": 3.031650553189897
       },
       "nextControl": {
-        "x": 5.797458675220766,
-        "y": 2.5296733978246735
+        "x": 5.957798305753781,
+        "y": 2.532158329911954
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.786194585323467,
-        "y": 5.039920552521749
+        "x": 6.528237196180556,
+        "y": 5.0014431423611105
       },
       "prevControl": {
-        "x": 5.753968176117984,
-        "y": 4.6992519731368665
+        "x": 6.496010786975073,
+        "y": 4.660774562976228
       },
       "nextControl": {
-        "x": 5.809738859429929,
-        "y": 5.288809417593692
+        "x": 6.551781470287018,
+        "y": 5.2503320074330535
       },
       "isLocked": false,
       "linkedName": null
@@ -143,11 +143,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.4766450845665962,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 180.0
     },
     {
       "waypointRelativePos": 1.9724663054968243,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 180.0
     },
     {
       "waypointRelativePos": 2.597482822410149,
@@ -172,7 +172,7 @@
       "minWaypointRelativePos": 2.59,
       "maxWaypointRelativePos": 3.9,
       "constraints": {
-        "maxVelocity": 1.75,
+        "maxVelocity": 1.25,
         "maxAcceleration": 9.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 1440.0,
@@ -218,12 +218,6 @@
     {
       "name": "StopIntake",
       "waypointRelativePos": 4.329869923857877,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "ToggleHubTracking",
-      "waypointRelativePos": 6.9115640862944145,
       "endWaypointRelativePos": null,
       "command": null
     }

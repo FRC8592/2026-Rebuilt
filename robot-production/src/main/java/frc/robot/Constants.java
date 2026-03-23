@@ -235,7 +235,7 @@ public final class Constants {
     public static double RETRACT_ROTATION_INCREMENT = 0.03;
 
     // TODO: Tune and change these!
-    public static final double CRUISE_VELOCITY = 1000;
+    public static final double CRUISE_VELOCITY = 2000;
     public static final double MAX_ACCELERATION = 1000;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";

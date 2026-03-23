@@ -29,7 +29,7 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
-    private double kFactor = 1.9; //extra velocity needed for flywheel
+    private double kFactor = 1.4; //extra velocity needed for flywheel
     private double kAdjustment = 0.42;
     private boolean targetIsHub;
     private Alliance alliance;
@@ -52,9 +52,6 @@ public class Scoring extends SubsystemBase {
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
-
-        SmartDashboard.putNumber("kFactor", 1.9);
-        SmartDashboard.putNumber("kAdjustment", 0.42);
     }
 
     /**
@@ -349,8 +346,6 @@ public class Scoring extends SubsystemBase {
         double targetXFeet = targetX * feetPerMeter;
         double targetYFeet = targetY * feetPerMeter;
 
-        double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
-        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
 
         double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet);
 

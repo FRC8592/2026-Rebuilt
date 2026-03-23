@@ -327,6 +327,7 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",
                 getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotorEncoder.getVelocity());
     }
 
 }
