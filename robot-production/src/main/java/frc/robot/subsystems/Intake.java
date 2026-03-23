@@ -108,6 +108,8 @@ public class Intake extends SubsystemBase {
         extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
         extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
         extendConfig.closedLoop.maxMotion.allowedProfileError(10);
+        extendConfig.softLimit.forwardSoftLimitEnabled(true);
+        extendConfig.softLimit.forwardSoftLimit(0.4);
 
         extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -150,7 +152,7 @@ public class Intake extends SubsystemBase {
     public void retractIntake() {
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
-        if (getExtendPosition() <= -0.25) {
+        if (getExtendPosition() <= -0.5) {
             extendMotor.setVoltage(6);
         }
     }
