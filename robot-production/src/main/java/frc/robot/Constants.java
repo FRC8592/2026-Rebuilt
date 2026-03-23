@@ -105,6 +105,8 @@ public final class Constants {
     public static final double DRIVE_KV = 0.119;
     public static final double DRIVE_KA = 0.0028462;
 
+//    public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
+
     public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
     public static final double PATH_FOLLOW_DRIVE_KI = 0;
     public static final double PATH_FOLLOW_DRIVE_KD = 0;
