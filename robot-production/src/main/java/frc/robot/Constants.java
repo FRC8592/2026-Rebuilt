@@ -39,18 +39,18 @@ public final class Constants {
 
     // camera G
     public static final Transform3d CAMERA_OFFSETS_RIGHT =
-        (new Transform3d(new Translation3d(-0.07,-0.33,0.56), //x: -0.020817 z: 0.5653 y: -0.29
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(270)))); //-0.334588, -0.072009, 0.5212334
+        (new Transform3d(new Translation3d(-0.07478,-0.33655,0.56), //x: -0.020817 z: 0.5653 y: -0.29
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(270)))); //-0.334588, -0.072009, 0.5212334
 
     // camera F
     public static final Transform3d CAMERA_OFFSETS_BACK =
-        (new Transform3d(new Translation3d(-0.07,-0.29,0.56), //0.2797302, -0.0772414, -0.5218176
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(180)))); //x: -0.020817 z: 0.5653 y: -0.26
+        (new Transform3d(new Translation3d(-0.08267,-0.28369,0.56), //0.2797302, -0.0772414, -0.5218176
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180)))); //x: -0.020817 z: 0.5653 y: -0.26
 
     // camera H
     public static final Transform3d CAMERA_OFFSETS_LEFT =
-        (new Transform3d(new Translation3d(-0.07, 0.33,0.56),  //x: -0.020817 z: 0.5653 y: 0.29
-            new Rotation3d(0, Math.toRadians(-30), Math.toRadians(90)))); //-0.334588, -0.072009, 0.5212334
+        (new Transform3d(new Translation3d(-0.07478, 0.33655,0.56),  //x: -0.020817 z: 0.5653 y: 0.29
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(90)))); //-0.334588, -0.072009, 0.5212334
 
     public static final String CAMERA_NAME_RIGHT = ("Right_Arducam_OV9782_G");
 
