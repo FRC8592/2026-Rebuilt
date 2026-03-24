@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
         // flyWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
         // backWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
 
-
+        flywheelConfiguration.Feedback.VelocityFilterTimeConstant = 0.01;
 
         /**
          * Flywheel and Backwheel Motor Configuration. This configures the motors themselves with the configuration we have done.

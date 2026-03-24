@@ -61,6 +61,7 @@ public class Turret extends SubsystemBase {
         // Create the turret motor, configuration object and controller
         tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
         tMotorConfiguration = new TalonFXConfiguration();
+        TurretMMConfig = new MotionMagicConfigs();
         turretMMETorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0);
 
         // Put motor in brake mode, invert, and apply current limits
