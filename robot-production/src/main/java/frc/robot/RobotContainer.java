@@ -4,16 +4,12 @@
 
 package frc.robot;
 
-import java.util.Set;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -111,6 +107,7 @@ public class RobotContainer {
         .andThen(Commands.waitSeconds(3)).andThen(scoring.intake.retractWithRollersCommand())
         .andThen(Commands.waitSeconds(3)).andThen(scoring.intake.stopRollerCommand())
         .andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+        
 
     // Configure the trigger bindings
     configureBindings();
