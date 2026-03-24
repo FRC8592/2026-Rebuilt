@@ -65,7 +65,7 @@ public final class Constants {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SWERVE/";
 
     // TODO: Double check that these PID constants still work
-    public static final double SNAP_TO_kP = 3.7;
+    public static final double SNAP_TO_kP = 3.2;
     public static final double SNAP_TO_kI = 0.0;
     public static final double SNAP_TO_kD = 0.1;
 
