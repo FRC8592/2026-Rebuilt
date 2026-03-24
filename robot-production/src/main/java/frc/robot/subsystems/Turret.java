@@ -27,22 +27,17 @@ import java.util.Set;
 import java.lang.Math;
 
 public class Turret extends SubsystemBase {
-    // Motor for turret rotation
+
     private TalonFX tMotor;
     private TalonFXConfiguration tMotorConfiguration;
-    // private MotionMagicExpoTorqueCurrentFOC turretMMETorqueCurrentFOC;
     // private MotionMagicConfigs TurretMMConfig;
-
+    
+    // private MotionMagicExpoTorqueCurrentFOC turretMMETorqueCurrentFOC;
     // private PositionTorqueCurrentFOC positionTorqueCurrent;
     private PositionVoltage positionVoltage;
 
-    // Absolute encoders used to find the starting position of the turret
     private DutyCycleEncoder E1;
     private DutyCycleEncoder E2;
-    private double E1_value;
-    private double E2_value;
-    // Calculate turret angle based on a target location and the robot's current
-    // position
 
     private double P_OLD;
     private double I_OLD;
@@ -55,55 +50,87 @@ public class Turret extends SubsystemBase {
     private static Set<Double> set = new HashSet<Double>();
 
     public Turret() {
-        // Instantiate the absolute encoders and get our starting position
+       
+        /**
+         * Instantiate Absolute Encoders necessary for CRT Calculation
+         */
         E1 = new DutyCycleEncoder(0, 360, 0);
         E2 = new DutyCycleEncoder(1, 360, 0);
-        E1_value = E1.get();
-        E2_value = E2.get();
 
-        // Create the turret motor, configuration object and controller
+
+
+        /**
+         * Initialize the Turret Motor and Turret Motor Config
+         */
         tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
         tMotorConfiguration = new TalonFXConfiguration();
+
+
+
+        /**
+         * Initialize Turret Motor Config, three to chose from
+         */
         positionVoltage = new PositionVoltage(0);
         // TurretMMConfig = new MotionMagicConfigs();
         // turretMMETorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0);
 
-        // Put motor in brake mode, invert, and apply current limits
-        // tMotor.setNeutralMode(NeutralModeValue.Brake);
+
+
+        /**
+         * Turret Motor Inverted Value Configuration
+         * ONLY LOOK AT THE VALUE OF THE INVERTEDVALUE, THAT GIVES US THE ROTATION FOR POSITIVE MOTION
+         */
         tMotorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+
+
+        /**
+         * Turret Motor Current Limit Configuration, which limits supply current too.
+         */
+        //TODO: Reconfigure this
         tMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         tMotorConfiguration.CurrentLimits.StatorCurrentLimit = TURRET.TURRET_CURRENT_LIMIT;
+
+
+
+        /**
+         * Turret Motor Neutral Mode Configuration. Tells the motor what to do when at 0V
+         * (I believe so)
+         */
+        //TODO: Check why turret was very easy to move even when motor was in brake mode
         tMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        // Set soft limits
+
+
+        /**
+         * Turret Motor Software "Soft" Limit Configurations. These prevent overrotation of the turret.
+         */
         tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-                TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
-        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-                TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
+        tMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
+        tMotorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS;
 
-        // Apply soft limits to help avoid driving the turret past the cable extension
-        // ToDO: Enable and configure soft limits
 
-        // Configure PID controls
+        
+        /**
+         * Turret Motor PID Configuration and Constants
+         */
         tMotorConfiguration.Slot0.kP = TURRET.TURRET_P0;
         tMotorConfiguration.Slot0.kI = TURRET.TURRET_I0;
         tMotorConfiguration.Slot0.kD = TURRET.TURRET_D0;
         tMotorConfiguration.Slot0.kS = TURRET.TURRET_S;
-        // tMotorConfiguration.MotionMagic.MotionMagicAcceleration =
-        // TURRET.MAX_ACCELERATION;
-        // tMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity =
-        // TURRET.CRUISE_VELOCITY;
-        // tMotorConfiguration.MotionMagic.MotionMagicJerk = TURRET.MAX_JERK;
-        // tMotorConfiguration.ClosedLoopGeneral.GainSchedErrorThreshold = 0.5; // TODO:
-        // Understand this parameter or delete!
 
-        //Motion Magic Parameters
+
+
+        /**
+         * Motion Magic Configuration and Constants
+         */
         // TurretMMConfig.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
         // TurretMMConfig.MotionMagicJerk = TURRET.MAX_JERK;
         // TurretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
+        //tMotorConfiguration.MotionMagic = TurretMMConfig;
 
+        /** */
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
         SmartDashboard.putNumber("P_TUR", 0);
