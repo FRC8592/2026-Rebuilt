@@ -65,6 +65,9 @@ public class RobotContainer {
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
+  private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
+  private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
+
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
   // private final Trigger TURRET_TEST = operatorController.x();
@@ -160,6 +163,10 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+
+    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90));
+
+    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90));
 
 
 

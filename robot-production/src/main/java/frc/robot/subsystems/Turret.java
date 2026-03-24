@@ -15,8 +15,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-
-
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import java.lang.Math;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +30,11 @@ public class Turret extends SubsystemBase {
     // Motor for turret rotation
     private TalonFX tMotor;
     private TalonFXConfiguration tMotorConfiguration;
-    private MotionMagicExpoTorqueCurrentFOC turretMMETorqueCurrentFOC;
-    private MotionMagicConfigs TurretMMConfig;
+    // private MotionMagicExpoTorqueCurrentFOC turretMMETorqueCurrentFOC;
+    // private MotionMagicConfigs TurretMMConfig;
+
+    // private PositionTorqueCurrentFOC positionTorqueCurrent;
+    private PositionVoltage positionVoltage;
 
     // Absolute encoders used to find the starting position of the turret
     private DutyCycleEncoder E1;
@@ -61,8 +64,9 @@ public class Turret extends SubsystemBase {
         // Create the turret motor, configuration object and controller
         tMotor = new TalonFX(TURRET.TURRET_MOTOR_CAN_ID);
         tMotorConfiguration = new TalonFXConfiguration();
-        TurretMMConfig = new MotionMagicConfigs();
-        turretMMETorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0);
+        positionVoltage = new PositionVoltage(0);
+        // TurretMMConfig = new MotionMagicConfigs();
+        // turretMMETorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0);
 
         // Put motor in brake mode, invert, and apply current limits
         // tMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -96,9 +100,9 @@ public class Turret extends SubsystemBase {
         // Understand this parameter or delete!
 
         //Motion Magic Parameters
-        TurretMMConfig.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
-        TurretMMConfig.MotionMagicJerk = TURRET.MAX_JERK;
-        TurretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
+        // TurretMMConfig.MotionMagicAcceleration = TURRET.MAX_ACCELERATION;
+        // TurretMMConfig.MotionMagicJerk = TURRET.MAX_JERK;
+        // TurretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY;
 
         tMotor.getConfigurator().apply(tMotorConfiguration);
 
@@ -114,15 +118,15 @@ public class Turret extends SubsystemBase {
 
     public void TurrettoAngle(Pose2d robotPosition, double angle) {
         double robotAngle = robotPosition.getRotation().getDegrees();
-        double targetAngle = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
-        if(Math.abs(targetAngle) > 180){
-            if(targetAngle < 0)
-                targetAngle += 360;
+        double target = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
+        if(Math.abs(target) > 180){
+            if(target < 0)
+                target += 360;
             else
-                targetAngle -= 360;
+                target -= 360;
         }
-        Logger.recordOutput(TURRET.LOG_PATH + "targetAngleSOTM", targetAngle);
-        tMotor.setControl(turretMMETorqueCurrentFOC.withSlot(0).withPosition(targetAngle * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
+        targetAngle = target;
+        tMotor.setControl(positionVoltage.withSlot(0).withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
     }
     /**
      * Stop the turret motor. Not normally used; we want the turret to hold position with the motor
@@ -137,7 +141,16 @@ public class Turret extends SubsystemBase {
 
     public void holdPosition() {
         double holdPos = tMotor.getPosition().getValueAsDouble();
-        tMotor.setControl(turretMMETorqueCurrentFOC.withSlot(0).withPosition(holdPos));
+        tMotor.setControl(positionVoltage.withSlot(0).withPosition(holdPos));
+    }
+
+    public void basicTurretToPos(double angle){
+        targetAngle = angle;
+        tMotor.setControl(positionVoltage.withSlot(0).withPosition(angle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+    }
+
+    public Command basicTurretToPosCommand(double angle){
+        return this.runOnce(() -> basicTurretToPos(angle));
     }
 
     /**
@@ -271,6 +284,9 @@ public class Turret extends SubsystemBase {
                                                           // per second
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
                 tMotor.getMotorVoltage().getValueAsDouble());
+
+        Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
+
     }
 
     public void updatePID() {

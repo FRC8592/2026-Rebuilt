@@ -426,6 +426,7 @@ public class Scoring extends SubsystemBase {
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
+            Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
