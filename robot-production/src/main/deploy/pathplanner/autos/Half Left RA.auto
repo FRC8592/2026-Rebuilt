@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Pt1"
+            "pathName": "HALF LEFT RA"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot Pt2"
+            "waitTime": 3.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "StopSqueeze"
           }
         }
       ]

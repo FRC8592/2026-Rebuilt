@@ -4,7 +4,6 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -332,6 +331,7 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",
                 getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotorEncoder.getVelocity());
     }
 
 }

@@ -105,6 +105,8 @@ public final class Constants {
     public static final double DRIVE_KV = 0.119;
     public static final double DRIVE_KA = 0.0028462;
 
+//    public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
+
     public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
     public static final double PATH_FOLLOW_DRIVE_KI = 0;
     public static final double PATH_FOLLOW_DRIVE_KD = 0;
@@ -231,7 +233,7 @@ public final class Constants {
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
     public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
-    public static double RETRACT_ROTATION_INCREMENT = 0.01;
+    public static double RETRACT_ROTATION_INCREMENT = 0.03;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 2000;
