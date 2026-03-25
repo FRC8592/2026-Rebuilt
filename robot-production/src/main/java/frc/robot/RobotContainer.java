@@ -48,7 +48,7 @@ public class RobotContainer {
 
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
-  // private final Trigger SLOW_MODE = driverController.leftTrigger();
+
   private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
@@ -139,12 +139,15 @@ public class RobotContainer {
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
+
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
+        .onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
