@@ -11,21 +11,21 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ShootWhileSqueezing"
+            "name": "StopSqueeze"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Half Left Second Swipe"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootWhileSqueezing"
           }
         }
       ]

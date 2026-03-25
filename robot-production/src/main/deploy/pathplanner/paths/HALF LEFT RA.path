@@ -216,6 +216,12 @@
       "waypointRelativePos": 5.799631186548219,
       "endWaypointRelativePos": null,
       "command": null
+    },
+    {
+      "name": "ShootWhileSqueezing",
+      "waypointRelativePos": 7.0,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
