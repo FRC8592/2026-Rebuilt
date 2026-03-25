@@ -209,7 +209,7 @@ public final class Constants {
     public static final int INTAKE_EXTEND_CAN_ID = 31;
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 50;
+    public static final int EXTEND_CURRENT_LIMIT = 35;
     public static final int ROLLER_CURRENT_LIMIT = 55;
 
     // PID tuning constants for the NEO Motors, these are initial and WILL change
