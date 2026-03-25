@@ -207,10 +207,10 @@ public class Scoring extends SubsystemBase {
     double flywheelGearing = 1.0;
     double feetPerMeter = 3.28084;
     public double shooterSpeedHub(double targetDistance) {
-        double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
-        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
-        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
-        Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
+        // double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
+        // double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
+        // Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
+        // Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
         double adjustedK = kFactor + kAdjustment * targetDistance;
         double distanceFeet = targetDistance * feetPerMeter;
         double angleRadians = initialAngle * Math.PI/180.0;
