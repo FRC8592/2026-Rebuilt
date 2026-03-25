@@ -410,6 +410,13 @@ public class Scoring extends SubsystemBase {
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (trackingTarget) {
+            if (indexer.indexerRunning) {
+                leds.displayindexerRunning();
+            } else if (canShoot()) {
+                leds.setCanShoot();
+            } else {
+                leds.setCannotShoot();
+            }
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
             targetX = currentTargetPose.getX() - currentRobotPose.getX();
@@ -434,6 +441,7 @@ public class Scoring extends SubsystemBase {
         } else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking) {
+                leds.setOff();
                 shooter.stop();
             }
         }

@@ -27,7 +27,7 @@
         "x": 3.429633212623296,
         "y": 5.7587038869274085
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -48,32 +48,32 @@
     },
     {
       "anchor": {
-        "x": 7.725186310117113,
-        "y": 6.849
+        "x": 7.833624348958335,
+        "y": 6.860320746527777
       },
       "prevControl": {
-        "x": 7.742273407935981,
-        "y": 7.146413840475168
+        "x": 7.850711446777202,
+        "y": 7.1577345870029445
       },
       "nextControl": {
-        "x": 7.710846890684782,
-        "y": 6.5994115766900565
+        "x": 7.819284929526003,
+        "y": 6.610732323217833
       },
       "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.725186310117113,
-        "y": 4.355522009259733
+        "x": 7.833624348958335,
+        "y": 4.293111834490741
       },
       "prevControl": {
-        "x": 7.725267045255433,
-        "y": 4.605521996223407
+        "x": 7.833705084096654,
+        "y": 4.543111821454415
       },
       "nextControl": {
-        "x": 7.725105574978794,
-        "y": 4.105522022296059
+        "x": 7.833543613820015,
+        "y": 4.043111847527067
       },
       "isLocked": true,
       "linkedName": null
@@ -91,7 +91,7 @@
         "x": 5.282022676919598,
         "y": 5.795613544502402
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -107,7 +107,7 @@
         "x": 2.879381606787849,
         "y": 5.804801492756015
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -120,7 +120,7 @@
         "y": 5.77387056688887
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "LeftEnding"
     }
   ],
@@ -214,12 +214,6 @@
     {
       "name": "ToggleHubTracking",
       "waypointRelativePos": 5.799631186548219,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "ShootWhileSqueezing",
-      "waypointRelativePos": 7.0,
       "endWaypointRelativePos": null,
       "command": null
     }

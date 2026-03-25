@@ -47,6 +47,8 @@ public class Indexer extends SubsystemBase {
     private double SO_OLD; 
     public boolean indexerRunning = false;
 
+    //private ParallelRaceGroup waitandShoot = new ParallelRaceGroup();
+
     /**
      * Constructor for the Indexer subsystem
      * 
@@ -95,8 +97,9 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic() {
         // Get motors speeds in RPM
-        Logger.recordOutput("Spinner RPM", getSpinnerVelocity());
-        Logger.recordOutput("Output RPM", getOutputVelocity());
+        Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
+        Logger.recordOutput(INDEXER.LOG_PATH + "Output RPM", getOutputVelocity());
+        //Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
     }
 
     /**
@@ -143,6 +146,7 @@ public class Indexer extends SubsystemBase {
         indexerRunning = true;
 
     }
+    
 
     public void stopIndexer() {
         runSpinner();
@@ -204,7 +208,13 @@ public class Indexer extends SubsystemBase {
         return outputMotorEncoder.getVelocity();
     }
 
-    public void updatePID() {
+    // public Command waitandShootCommand(){
+    //     waitandShoot = new ParallelRaceGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
+    //     return waitandShoot;
+    // }
+
+
+    public void updatePID(){
         double Spin_P = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
         double Spin_I = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
         double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);

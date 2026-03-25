@@ -10,6 +10,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -91,7 +92,10 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     // TODO: Figure out the issues with these, they are very temporary
+    Command ShootandStop = new ParallelRaceGroup(scoring.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+    NamedCommands.registerCommand("ShootWait3Stop", ShootandStop);
+
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
