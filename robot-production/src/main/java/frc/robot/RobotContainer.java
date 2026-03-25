@@ -44,7 +44,7 @@ public class RobotContainer {
 
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
-  // private final Trigger SLOW_MODE = driverController.leftTrigger();
+
   private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
@@ -60,6 +60,9 @@ public class RobotContainer {
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
+
+  private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
+  private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
@@ -133,12 +136,15 @@ public class RobotContainer {
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
+
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
+        .onFalse(scoring.intake.stopExtendCommand());
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
@@ -157,6 +163,10 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+
+    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90));
+
+    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90));
 
 
 

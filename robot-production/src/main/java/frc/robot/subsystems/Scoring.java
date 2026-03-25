@@ -172,8 +172,7 @@ public class Scoring extends SubsystemBase {
      */
     public boolean canShoot() {
         // TODO: Change so it can use blue or red hub tracking
-        return Math.abs(turret.getAngle() - turret.calcAngle(swerve.getCurrentOdometryPosition(),
-                getTarget(swerve.getCurrentOdometryPosition()))) <= TURRET.TURRET_TOLERANCE
+        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE
         // && Math.abs(shooter.getVelocityFlywheel() -
         // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
@@ -422,6 +421,7 @@ public class Scoring extends SubsystemBase {
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
+            Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
