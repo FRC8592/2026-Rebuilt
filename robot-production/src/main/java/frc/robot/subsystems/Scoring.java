@@ -29,8 +29,8 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
-    private double kFactor = 1.9; //extra velocity needed for flywheel
-    private double kAdjustment = 0.42;
+    private double kFactor = 0.85793; //extra velocity needed for flywheel
+    private double kAdjustment = 0.68153;
     private boolean targetIsHub;
     private Alliance alliance;
 
@@ -119,7 +119,7 @@ public class Scoring extends SubsystemBase {
         trackingTarget = false;
         overrideTracking = true;
         turret.holdPosition();
-        shooter.runAtSpeed(5900);
+        shooter.runAtSpeed(3800);
     }
 
     public Command overrideTrackingCommand() {
@@ -348,8 +348,6 @@ public class Scoring extends SubsystemBase {
         double targetXFeet = targetX * feetPerMeter;
         double targetYFeet = targetY * feetPerMeter;
 
-        double kFactor = SmartDashboard.getNumber("kFactor", 1.9); //extra velocity needed for flywheel
-        double kAdjustment = SmartDashboard.getNumber("kAdjustment", 0.42);
 
         double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet);
 
@@ -365,6 +363,9 @@ public class Scoring extends SubsystemBase {
             double totalSpeedRelativeRobot = Math.sqrt(v0x * v0x + v0y * v0y)*Math.sqrt(1 + Math.tan(thetaRad)*Math.tan(thetaRad));
             double flyRadiusFeet = flywheelRadius / 12.0;
             double adjustedK = kFactor + kAdjustment*x/feetPerMeter;
+            if(x/feetPerMeter < 2){
+                adjustedK = 2.3;
+            }
             double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI));
 
             double turretAngleToHub = Math.atan2(v0y, v0x);
@@ -407,6 +408,9 @@ public class Scoring extends SubsystemBase {
         } else {
             LEDs.setCanShoot(false);
         }
+        //TODO: Put this back in tracking method
+        targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+        Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (trackingTarget) {
             // calculate the distance to the target position
@@ -424,7 +428,6 @@ public class Scoring extends SubsystemBase {
             // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
-            Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 

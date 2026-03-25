@@ -118,18 +118,20 @@ public final class Constants {
   }
 
   public final class SHOOTER {
-    // Left and right classifications are for looking from the robots viewpoint
+
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
     public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
     public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
-    // PID tuning constants for the NEO Motors, these are initial and WILL change
+
+
     public static final double FLYWHEEL_P = 6.0;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
     public static final double FLYWHEEL_S = 0.3;
     public static final double FLYWHEEL_V = 0.1054;
+
 
     public static final double BACKWHEEL_P = 5.0;
     public static final double BACKWHEEL_I = 0.0;
@@ -137,7 +139,6 @@ public final class Constants {
     public static final double BACKWHEEL_S = 0.4;
     public static final double BACKWHEEL_V = 0.125;
 
-    public static final double FLYWHEEL_VI = 3200;
 
     public static final double BACKWHEEL_VELOCITY = 1146;
 
@@ -146,9 +147,6 @@ public final class Constants {
 
     public static final double SHOOTER_TOLERANCE = 50;
 
-    public static final double FLYWHEEL_DIAMETER_INCHES = 4;
-    public static final double BACKWHEEL_DIAMETER_INCHES = 2; // TODO: Update if wheel diameter
-                                                              // changes
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/SHOOTER/";
   }
@@ -166,7 +164,7 @@ public final class Constants {
     public static final int TURRET_G1 = 21;
     public static final int TURRET_G2 = 23;
     public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 23.0) / 360;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50; 
@@ -236,8 +234,8 @@ public final class Constants {
     public static double RETRACT_ROTATION_INCREMENT = 0.01;
 
     // TODO: Tune and change these!
-    public static final double CRUISE_VELOCITY = 1000;
-    public static final double MAX_ACCELERATION = 1000;
+    public static final double CRUISE_VELOCITY = 2000;
+    public static final double MAX_ACCELERATION = 4000;
 
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/Intake/";
   }

@@ -37,6 +37,8 @@ public class Shooter extends SubsystemBase {
     private double IB_OLD;
     private double DB_OLD;
 
+    private double targetFlywheelRPM;
+
 
     /**
      * Constructor for the Shooter subsystem
@@ -108,6 +110,8 @@ public class Shooter extends SubsystemBase {
         flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
 
+
+
         /**
          * Flywheel and Backwheel Update Speed Configuration. This is to allow the flywheels to respond quicker to errors.
          */
@@ -115,6 +119,8 @@ public class Shooter extends SubsystemBase {
         // backWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
 
         flywheelConfiguration.Feedback.VelocityFilterTimeConstant = 0.01;
+
+
 
         /**
          * Flywheel and Backwheel Motor Configuration. This configures the motors themselves with the configuration we have done.
@@ -125,12 +131,17 @@ public class Shooter extends SubsystemBase {
 
 
         /**
-         * SmartDashboard Numbers, necessary to tune PID quickly without redeploying code
+         * SmartDashboard Flywheel PID Constants, necessary to tune PID quickly without redeploying code
          */
         SmartDashboard.putNumber("fP", SHOOTER.FLYWHEEL_P);
         SmartDashboard.putNumber("fI", SHOOTER.FLYWHEEL_I);
         SmartDashboard.putNumber("fD", SHOOTER.FLYWHEEL_D);
 
+
+
+        /**
+         * SmartDashboard Backwheel PID Constants, necessary to tune PID quickly without redeploying code
+         */
         SmartDashboard.putNumber("bP", SHOOTER.BACKWHEEL_P);
         SmartDashboard.putNumber("bI", SHOOTER.BACKWHEEL_I);
         SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
@@ -149,6 +160,7 @@ public class Shooter extends SubsystemBase {
                                                         // controller
         double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
 
+        targetFlywheelRPM = desiredRPM;
         //Configure the motors to run at this velocity utilizing the TorqueCurrentFOC control modes
         flywheelMotor.setControl(
                 flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
@@ -264,7 +276,7 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set Vel",
-                SmartDashboard.getNumber("V Flywheel", SHOOTER.FLYWHEEL_VI));
+                targetFlywheelRPM);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Set Vel",
                 SmartDashboard.getNumber("B Flywheel", SHOOTER.BACKWHEEL_VELOCITY));
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage",

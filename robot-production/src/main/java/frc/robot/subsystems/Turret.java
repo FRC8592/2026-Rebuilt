@@ -54,8 +54,8 @@ public class Turret extends SubsystemBase {
         /**
          * Instantiate Absolute Encoders necessary for CRT Calculation
          */
-        E1 = new DutyCycleEncoder(0, 360, 0);
-        E2 = new DutyCycleEncoder(1, 360, 0);
+        E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET);
+        E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET);
 
 
 
@@ -74,7 +74,8 @@ public class Turret extends SubsystemBase {
         // TurretMMConfig = new MotionMagicConfigs();
         // turretMMETorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0);
 
-
+        //TODO: Test if this works
+        //positionVoltage.withOverrideBrakeDurNeutral(true);
 
         /**
          * Turret Motor Inverted Value Configuration
@@ -291,19 +292,14 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double E1R = E1.get();
-        double E2R = E2.get();
-        // int E1Process = (int)(E1Raw * 1000);
-        // int E2Process = (int)(E2Raw * 1000);
-        // double E1Filter = E1Process / 1000.0;
-        // double E2Filter = E2Process / 1000.0;
+
+
         Logger.recordOutput("E1", E1.get());
         Logger.recordOutput("E2", E2.get());
-        // Logger.recordOutput("R1", ((int)(E1Filter * TURRET.TURRET_G1)));
-        // Logger.recordOutput("R2", ((int)(E2Filter * TURRET.TURRET_G2)));
-        // Logger.rec("E1: " + E1Filter + " E2: " + E2Filter);
-        Logger.recordOutput("Gear Ticks " , CRT(E1R - TURRET.E1_OFFSET, E2R -
-        TURRET.E2_OFFSET));
+
+        //TODO: Implement CRT Again!
+        // Logger.recordOutput("Gear Ticks " , CRT(E1.get(), E2.get() -
+        // ));
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
                 tMotor.getPosition().getValueAsDouble() * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
