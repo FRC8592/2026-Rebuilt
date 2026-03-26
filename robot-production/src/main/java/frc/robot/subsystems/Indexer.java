@@ -16,6 +16,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
 
@@ -47,7 +49,7 @@ public class Indexer extends SubsystemBase {
     private double SO_OLD; 
     public boolean indexerRunning = false;
 
-    //private ParallelRaceGroup waitandShoot = new ParallelRaceGroup();
+    private ParallelRaceGroup waitandShoot = new ParallelRaceGroup();
 
     /**
      * Constructor for the Indexer subsystem
@@ -99,7 +101,7 @@ public class Indexer extends SubsystemBase {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Output RPM", getOutputVelocity());
-        //Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
+        Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
     }
 
     /**
@@ -208,10 +210,10 @@ public class Indexer extends SubsystemBase {
         return outputMotorEncoder.getVelocity();
     }
 
-    // public Command waitandShootCommand(){
-    //     waitandShoot = new ParallelRaceGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
-    //     return waitandShoot;
-    // }
+    public Command waitandShootCommand(){
+        waitandShoot = new ParallelRaceGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
+        return waitandShoot;
+    }
 
 
     public void updatePID(){
