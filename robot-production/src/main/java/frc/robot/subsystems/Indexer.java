@@ -188,10 +188,6 @@ public class Indexer extends SubsystemBase {
         return this.runOnce(() -> runIndexer());
     }
 
-    public Command runStopIndexerCommand() {
-        return this.runOnce(() -> runIndexer());
-    }
-
     /**
      * Get the velocity of the spinner motor in RPM
      * 
