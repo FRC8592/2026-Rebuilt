@@ -155,7 +155,7 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 200;
+    public static final int TURRET_CURRENT_LIMIT = 50;
     public static final double TURRET_P0 = 40; // 12;
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; // 0.4;
@@ -209,7 +209,7 @@ public final class Constants {
     public static final int INTAKE_EXTEND_CAN_ID = 31;
 
     // Current limit for the Intake motor
-    public static final int EXTEND_CURRENT_LIMIT = 50;
+    public static final int EXTEND_CURRENT_LIMIT = 25;
     public static final int ROLLER_CURRENT_LIMIT = 55;
 
     // PID tuning constants for the NEO Motors, these are initial and WILL change
