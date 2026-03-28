@@ -91,7 +91,7 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     // TODO: Figure out the issues with these, they are very temporary
-    //Command ShootandStop = new ParallelRaceGroup(scoring.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
+    //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
     //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
 
@@ -158,7 +158,7 @@ public class RobotContainer {
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand().andThen(scoring.intake.runIntakeRollersSlowerCommand()))
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()) 
         .onFalse(scoring.intake.stopExtendCommand());
