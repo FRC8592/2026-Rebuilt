@@ -99,13 +99,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("Wait", Commands.waitSeconds(2.0));
 
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
-    NamedCommands.registerCommand("stopIndexerRollers", scoring.intake.stopRollerCommand());
-    NamedCommands.registerCommand("stopExtenstion", scoring.intake.stopExtendCommand());
+    NamedCommands.registerCommand("Stop Intake", scoring.intake.stopIntakeCommand());
+    // NamedCommands.registerCommand("stopIndexerRollers", scoring.intake.stopRollerCommand());
+    // NamedCommands.registerCommand("stopExtenstion", scoring.intake.stopExtendCommand());
     NamedCommands.registerCommand("SqueezeWaitStop", scoring.indexer.runIndexerCommand()
         .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
         .andThen(Commands.waitSeconds(1.5)));
-    new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
-    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
+
+    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
+    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand()).onFalse(scoring.intake.stopExtendCommand());
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // new

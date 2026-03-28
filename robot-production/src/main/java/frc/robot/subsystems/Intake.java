@@ -151,7 +151,7 @@ public class Intake extends SubsystemBase {
     public void retractIntake() {
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
-        if (getExtendPosition() <= -0.5) {
+        if (getExtendPosition() <= -3.2) {
             extendMotor.setVoltage(6);
         }
     }
@@ -183,7 +183,10 @@ public class Intake extends SubsystemBase {
 
     public void retractWithRollers() {
         runIntakeRollersSlower();
-        retractIntake();
+        if(getExtendPosition() <= -3.2){
+            retractIntake();
+        }
+        
     }
 
     public Command retractWithRollersCommand() {
@@ -288,6 +291,15 @@ public class Intake extends SubsystemBase {
 
     public Command stopExtendCommand() {
         return this.runOnce(() -> stopExtender());
+    }
+
+    public void stopIntake(){
+        stopRoller();
+        stopExtender();
+    }
+
+    public Command stopIntakeCommand(){
+        return this.runOnce(() -> stopIntake());
     }
 
     /**

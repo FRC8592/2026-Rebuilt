@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "stopExtenstion"
+            "name": "SqueezeWaitStop"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "stopIndexerRollers"
+            "name": "Stop Intake"
           }
         },
         {

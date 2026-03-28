@@ -36,7 +36,7 @@ public final class AutoManager {
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Half Left RA").mirrorPath();
+            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Copy of Half Left Second Swipe").mirrorPath();
             Command halfMirroredAuto = AutoBuilder.followPath(halfRight);
 
             pathPlannerAutos.addOption("ONE Half Right", halfMirroredAuto);
