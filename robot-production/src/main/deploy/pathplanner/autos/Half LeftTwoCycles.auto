@@ -13,19 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "name": "SqueezeWaitStop"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Half Left Second Swipe"
+            "pathName": "Half Left Second Swipe"
           }
         }
       ]

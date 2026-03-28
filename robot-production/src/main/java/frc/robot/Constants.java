@@ -155,7 +155,7 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 50;
+    public static final int TURRET_CURRENT_LIMIT = 65;
     public static final double TURRET_P0 = 40; // 12;
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; // 0.4;

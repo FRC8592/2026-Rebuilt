@@ -101,8 +101,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
 
     NamedCommands.registerCommand("SqueezeWaitStop", scoring.indexer.runIndexerCommand()
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+        .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(2.5)).andThen(scoring.indexer.stopCommand())
+        .andThen(scoring.intake.stopExtendCommand()).andThen(scoring.intake.stopRollerCommand()));
 
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
