@@ -119,7 +119,7 @@ public class RobotContainer {
 
     new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
         .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(2)));
+        .andThen(Commands.waitSeconds(2.5)));
 
             new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
