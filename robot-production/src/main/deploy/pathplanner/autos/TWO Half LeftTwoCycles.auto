@@ -13,13 +13,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "stopExtenstion"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 3.0
+            "name": "stopIndexerRollers"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
           }
         },
         {
