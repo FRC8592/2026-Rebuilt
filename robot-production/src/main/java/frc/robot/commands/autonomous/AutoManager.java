@@ -36,29 +36,33 @@ public final class AutoManager {
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Half Left").mirrorPath();
-            Command halfMirroredAuto =
-                    AutoBuilder.followPath(halfRight).andThen(scoring.indexer.runIndexerCommand());
+            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("Half Left RA").mirrorPath();
+            Command halfMirroredAuto = AutoBuilder.followPath(halfRight);
 
-            pathPlannerAutos.addOption("Half Right", halfMirroredAuto);
+            pathPlannerAutos.addOption("ONE Half Right", halfMirroredAuto);
+
+            System.out.println("Added pathplanner right auto");
         } catch (Exception e) {
             DriverStation.reportError("Failed to load mirrored path Half Left: " + e.getMessage(),
                     e.getStackTrace());
-        }
-        try {
-            PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
-            PathPlannerPath DepotPt1Path = PathPlannerPath.fromPathFile("Depot Pt1");
-            PathPlannerPath DepotPt2Path = PathPlannerPath.fromPathFile("Depot Pt2");
 
-            PathPlannerPath depot = halfLeftPath.mirrorPath();
-            pathPlannerAutos.addOption("Depot",
-                    AutoBuilder.followPath(depot).andThen(AutoBuilder.followPath(DepotPt1Path))
-                            .andThen(Commands.waitSeconds(2.0))
-                            .andThen(AutoBuilder.followPath(DepotPt2Path))
-                            .andThen(scoring.indexer.runIndexerCommand()));
-        } catch (Exception e) {
-            DriverStation.reportError("Failed to load Depot: " + e.getMessage(), e.getStackTrace());
+            System.out.println("Exception in adding pathplanner right auto");
         }
+
+        // try {
+        //     PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
+        //     PathPlannerPath DepotPt1Path = PathPlannerPath.fromPathFile("Depot Pt1");
+        //     PathPlannerPath DepotPt2Path = PathPlannerPath.fromPathFile("Depot Pt2");
+
+        //     PathPlannerPath depot = halfLeftPath.mirrorPath();
+        //     pathPlannerAutos.addOption("Depot",
+        //             AutoBuilder.followPath(depot).andThen(AutoBuilder.followPath(DepotPt1Path))
+        //                     .andThen(Commands.waitSeconds(2.0))
+        //                     .andThen(AutoBuilder.followPath(DepotPt2Path))
+        //                     .andThen(scoring.indexer.runIndexerCommand()));
+        // } catch (Exception e) {
+        //     DriverStation.reportError("Failed to load Depot: " + e.getMessage(), e.getStackTrace());
+        // }
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
 
     }

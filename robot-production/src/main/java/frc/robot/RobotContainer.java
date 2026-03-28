@@ -158,9 +158,9 @@ public class RobotContainer {
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand().andThen(scoring.intake.runIntakeRollersSlowerCommand()))
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()) 
         .onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 

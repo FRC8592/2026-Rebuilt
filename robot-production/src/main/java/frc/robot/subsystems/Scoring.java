@@ -406,6 +406,10 @@ public class Scoring extends SubsystemBase {
         targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
+        if(indexer.indexerRunning){
+            leds.displayindexerRunning();
+        }
+
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunning();

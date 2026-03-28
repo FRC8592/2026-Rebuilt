@@ -169,12 +169,20 @@ public class Intake extends SubsystemBase {
         // rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
+    public void runIntakeRollersSlower(){
+        rollerRightMotor.setVoltage(7);
+    }
+
+    public Command runIntakeRollersSlowerCommand(){
+        return this.runOnce(() -> runIntakeRollersSlower());
+    }
+
     public void runReversedIntakeRollers() {
         rollerRightMotor.setVoltage(-11);
     }
 
     public void retractWithRollers() {
-        runIntakeRollers();
+        runIntakeRollersSlower();
         retractIntake();
     }
 
