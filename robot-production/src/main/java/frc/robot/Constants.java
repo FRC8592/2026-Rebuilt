@@ -125,7 +125,7 @@ public final class Constants {
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
     public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 65.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
 
 
     public static final double FLYWHEEL_P = 6.0;
