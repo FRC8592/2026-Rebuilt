@@ -225,6 +225,15 @@ public class Shooter extends SubsystemBase {
     }
 
 
+    public double getFlywheelCurrent(){
+        return flywheelMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    public double getBackwheelCurrent(){
+        return backwheelMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+
 
     /**
      * Update the PID values on the fly on the shooter motor. The NEO Motors do not allowed their
@@ -284,6 +293,8 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Real Vel", getVelocityFlywheel() * 60);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel",
                 getVelocityBackwheel() * -1 * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Stator Current", getFlywheelCurrent());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Stator Current", getBackwheelCurrent());
     }
 
 }

@@ -30,7 +30,7 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
-    private double kFactor = 0.9212;
+    private double kFactor = 0.90;
     // private double kFactor = 0.85793; //extra velocity needed for flywheel
     private double kAdjustment = 0.68153;
     private boolean targetIsHub;
