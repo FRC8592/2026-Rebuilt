@@ -49,7 +49,7 @@ public class Indexer extends SubsystemBase {
     private double SO_OLD; 
     public boolean indexerRunning = false;
 
-    private ParallelRaceGroup waitandShoot = new ParallelRaceGroup();
+    private Command waitandShoot = Commands.none();
 
     /**
      * Constructor for the Indexer subsystem
@@ -213,7 +213,10 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command waitandShootCommand(){
-        waitandShoot = new ParallelRaceGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
+        waitandShoot = new ParallelRaceGroup(
+                this.run(() -> runIndexer()),
+                Commands.waitSeconds(3.0))
+                .andThen(stopCommand());
         return waitandShoot;
     }
 

@@ -93,10 +93,11 @@ public class RobotContainer {
     // TODO: Figure out the issues with these, they are very temporary
     //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
     //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
-    NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
+    //NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
 
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("Wait", Commands.waitSeconds(2.0));
+    NamedCommands.registerCommand("ShootWaitStop", scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3)).andThen(scoring.indexer.stopCommand()));
 
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
 
