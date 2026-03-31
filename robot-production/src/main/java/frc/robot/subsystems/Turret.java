@@ -164,7 +164,7 @@ public class Turret extends SubsystemBase {
     }
 
     public double getAngle() {
-        return tMotor.getPosition().getValueAsDouble() * 1.0 / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        return tMotor.getPosition().getValueAsDouble() / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
     public void holdPosition() {
@@ -240,9 +240,9 @@ public class Turret extends SubsystemBase {
      public static double CRT(double E1, double E2){
         double R1 = E1/360.0;
         double R2 = E2/360.0;
-        double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_TG;
-        double G2 = (TURRET.TURRET_G2 * 1.0) / TURRET.TURRET_TG;
-        for(int i = 1; i <= TURRET.TURRET_TG; i++){
+        double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_GT;
+        double G2 = (TURRET.TURRET_G2 * 1.0) / TURRET.TURRET_GT;
+        for(int i = 1; i <= TURRET.TURRET_GT; i++){
             double V1 = (i + R1) * G1 * 1.0;
             double V2 = (i + R2) * G2 * 1.0;
             double V1New = (i + 1 + R1) * G1 * 1.0;

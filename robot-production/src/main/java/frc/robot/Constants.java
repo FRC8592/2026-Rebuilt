@@ -6,6 +6,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
+import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -124,25 +130,29 @@ public final class Constants {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
-    public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
+    public static final Current FLYWHEEL_CURRENT_LIMIT = Amps.of(120);
+    public static final Current BACKWHEEL_CURRENT_LIMIT = Amps.of(60);
 
 
-    public static final double FLYWHEEL_P = 6.0;
-    public static final double FLYWHEEL_I = 0.0;
-    public static final double FLYWHEEL_D = 0.0;
-    public static final double FLYWHEEL_S = 0.3;
-    public static final double FLYWHEEL_V = 0.1054;
+    public static final Voltage FLYWHEEL_P = Volts.of(6);
+    public static final Voltage FLYWHEEL_I = Volts.of(0);
+    public static final Voltage FLYWHEEL_D = Volts.of(0);
+    public static final Voltage FLYWHEEL_S = Volts.of(0.3);
+    public static final Voltage FLYWHEEL_V = Volts.of(0.1054);
+    public static final Voltage FLYWHEEL_A = Volts.of(0);
 
 
-    public static final double BACKWHEEL_P = 5.0;
-    public static final double BACKWHEEL_I = 0.0;
-    public static final double BACKWHEEL_D = 0.0;
-    public static final double BACKWHEEL_S = 0.4;
-    public static final double BACKWHEEL_V = 0.125;
+    public static final Voltage BACKWHEEL_P = Volts.of(5);
+    public static final Voltage BACKWHEEL_I = Volts.of(0);
+    public static final Voltage BACKWHEEL_D = Volts.of(0);
+    public static final Voltage BACKWHEEL_S = Volts.of(0.4);
+    public static final Voltage BACKWHEEL_V = Volts.of(0.125);
+    public static final Voltage BACKWHEEL_A = Volts.of(0);
 
-
-    public static final double BACKWHEEL_VELOCITY = 1146;
+    public static final Distance BACKWHEEL_DIAMETER = Inches.of(2.154);
+    public static final Distance BACKWHEEL_CIRCUMFERENCE = Inches.of(BACKWHEEL_DIAMETER.in(Inches) * Math.PI);
+    public static final LinearVelocity BACKWHEEL_DESIRED_VELOCITY = InchesPerSecond.of(FeetPerSecond.of(10d).in(FeetPerSecond) * 12);
+    public static final AngularVelocity BACKWHEEL_RPS_DESIRED = RevolutionsPerSecond.of((BACKWHEEL_DESIRED_VELOCITY).in(InchesPerSecond)/(BACKWHEEL_CIRCUMFERENCE.in(Inches)));
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -155,18 +165,19 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 200;
+    public static final int TURRET_CURRENT_LIMIT = 50;
     public static final double TURRET_P0 = 40; // 12;
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; // 0.4;
     public static final double TURRET_S = 0.6;
     public static final double TURRET_V = 0;
     public static final double TURRET_A = 0;
-    public static final int TURRET_TG = 80;
-    public static final int TURRET_G1 = 21;
-    public static final int TURRET_G2 = 23;
-    public static final int TURRET_TOTAL = TURRET_G1 * TURRET_G2;
-    public static final double DEGREES_TO_MOTOR_ROTATIONS = (80.0 / 25.0) / 360;
+    public static final double TURRET_GT = 80d;
+    public static final double TURRET_G1 = 21d;
+    public static final double TURRET_G2 = 23d;
+    public static final double TURRET_GM = 25d;
+    public static final double TURRET_TOTAL = TURRET_G1 * TURRET_G2;
+    public static final double DEGREES_TO_MOTOR_ROTATIONS = (TURRET_GT / TURRET_GM) / 360d;
     public static final double MAX_JERK = 3000;
     public static final int MAX_ACCELERATION = 300;
     public static final int CRUISE_VELOCITY = 50; 
