@@ -50,10 +50,6 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
-
     CanBridge.runTCP(); // Required for Grapplehook laser reflection sensor.
 
     // Logger configuration
@@ -86,6 +82,8 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
 
+    // Instantiate our RobotContainer. This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   }
 
@@ -118,7 +116,10 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+
+
+  }
 
   @Override
   public void disabledPeriodic() {
@@ -175,10 +176,10 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID. This
     // allows for tuning while the robot is disabled.
-    m_robotContainer.scoring.shooter.updatePID();
+    //m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.scoring.intake.updatePID();
-    // m_robotContainer.scoring.turret.updatePID();
+    m_robotContainer.scoring.turret.updatePID();
 
   }
 
@@ -208,6 +209,8 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     m_robotContainer.scoring.disableTrackingCommand();
     m_robotContainer.scoring.indexer.stop();
+    m_robotContainer.scoring.intake.stopRoller();
+    m_robotContainer.scoring.intake.stopExtender();
 
     boolean cancelledAuto = false;
 
