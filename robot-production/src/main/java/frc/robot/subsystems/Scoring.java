@@ -434,18 +434,27 @@ public class Scoring extends SubsystemBase {
             Pose3d turretActualPose;
             double targetChangeX = Math.cos(turretAngle) * targetDistance;
             double actualChangeX = Math.cos(turret.getAngle()) * targetDistance;
+            double targetChangeY = Math.sin(turretAngle) * targetDistance;
+            double actualChangeY = Math.sin(turret.getAngle()) * targetDistance;
             double targetXPose = currentRobotPose.getX();
             double actualXPose = targetXPose;
+            double targetYPose = currentRobotPose.getY();
+            double actualYPose = targetYPose;
+            int turretDirection = (int)(Math.signum(turretAngle));
             switch (alliance){
                 case Blue:
-                    targetXPose += (int)(Math.signum(turretAngle)) * targetChangeX;
-                    actualXPose += (int)(Math.signum(turretAngle)) * actualChangeX;
+                    targetXPose +=  turretDirection * targetChangeX;
+                    actualXPose += turretDirection * actualChangeX;
+                    targetYPose -= turretDirection * targetChangeY;
+                    actualYPose -= turretDirection * actualChangeY;
                 case Red:
-                    targetXPose -= (int)(Math.signum(turretAngle)) * targetChangeX;
-                    actualXPose -= (int)(Math.signum(turretAngle)) * actualChangeX;
+                    targetXPose -= turretDirection * targetChangeX;
+                    actualXPose -= turretDirection * actualChangeX;
+                    targetYPose += turretDirection * targetChangeY;
+                    actualYPose += turretDirection * actualChangeY;
             }
-            turretTrackingPose = new Pose3d(targetXPose, currentRobotPose.getY() - Math.sin(turretAngle) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
-            turretActualPose = new Pose3d(actualXPose, currentRobotPose.getY() - Math.sin(turret.getAngle()) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
+            turretTrackingPose = new Pose3d(targetXPose, targetYPose, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
+            turretActualPose = new Pose3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
 
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Actual Pose", turretActualPose);
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Tracking Pose", turretTrackingPose);
