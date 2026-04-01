@@ -208,6 +208,8 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     m_robotContainer.scoring.disableTrackingCommand();
     m_robotContainer.scoring.indexer.stop();
+    m_robotContainer.scoring.intake.stopRoller();
+    m_robotContainer.scoring.intake.stopExtender();
 
     boolean cancelledAuto = false;
 

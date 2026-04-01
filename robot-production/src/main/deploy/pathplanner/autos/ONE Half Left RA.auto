@@ -9,12 +9,6 @@
           "data": {
             "pathName": "HALF LEFT RA"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
         }
       ]
     }
