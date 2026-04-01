@@ -432,10 +432,11 @@ public class Scoring extends SubsystemBase {
 
             Pose3d turretTrackingPose;
             Pose3d turretActualPose;
+            double actualTurretAngle = turret.getAngle() + currentRobotPose.getRotation().getDegrees();
             double targetChangeX = Math.cos(turretAngle) * targetDistance;
-            double actualChangeX = Math.cos(turret.getAngle()) * targetDistance;
+            double actualChangeX = Math.cos(turret.getAngle() + actualTurretAngle) * targetDistance;
             double targetChangeY = Math.sin(turretAngle) * targetDistance;
-            double actualChangeY = Math.sin(turret.getAngle()) * targetDistance;
+            double actualChangeY = Math.sin(turret.getAngle() + actualTurretAngle) * targetDistance;
             double targetXPose = currentRobotPose.getX();
             double actualXPose = targetXPose;
             double targetYPose = currentRobotPose.getY();
