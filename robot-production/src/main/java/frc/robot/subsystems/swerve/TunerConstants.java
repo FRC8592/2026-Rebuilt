@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
@@ -111,6 +112,7 @@ public class TunerConstants {
         // This needs to be tuned to your individual robot
         public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.58);
 
+        private Pigeon2 pigeon = new Pigeon2(kPigeonId, kCANBus);
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
         // This may need to be tuned to your individual robot
         private static final double kCoupleRatio = 3.5714285714285716;

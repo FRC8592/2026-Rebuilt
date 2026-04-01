@@ -12,7 +12,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -151,6 +153,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
+        Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
 
         // TODO: do we really need to run this?
         swerve.periodic();
@@ -247,6 +250,10 @@ public class Swerve extends SubsystemBase {
      */
     public Pose2d getCurrentOdometryPosition() {
         return swerve.getState().Pose;
+    }
+    //This does not take into account z-height
+    public Pose3d get3DCurrentOdometryPosition(){
+        return new Pose3d(new Translation3d(swerve.getState().Pose.getTranslation()) , swerve.getRotation3d());
     }
 
     public void setKnownOdometryPose(Pose2d currentPose) {

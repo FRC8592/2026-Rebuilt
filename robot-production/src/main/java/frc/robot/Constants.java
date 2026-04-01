@@ -209,6 +209,7 @@ public final class Constants {
     public static final Pose2d RED_PASSING_LOW_POSE = new Pose2d(14.48, 2.02, new Rotation2d(0));
     public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
 
+    public static final double TAG_HUB_HEIGHT = 1.12395;
     public static final double SHOOTER_THRESHOLD = 500; // RPM
   }
 

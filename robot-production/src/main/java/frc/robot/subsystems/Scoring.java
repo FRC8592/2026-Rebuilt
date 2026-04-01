@@ -6,7 +6,9 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -427,6 +429,37 @@ public class Scoring extends SubsystemBase {
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
+
+            Pose3d turretTrackingPose;
+            Pose3d turretActualPose;
+            double targetXPose = 0;
+            double actualXPose = 0;
+            switch (alliance){
+                case Blue:
+                    switch((int)(Math.signum(turretAngle))){
+                        case 1:
+                            targetXPose = currentRobotPose.getX() + Math.cos(turretAngle) * targetDistance;
+                            actualXPose = currentRobotPose.getX() + Math.cos(turret.getAngle()) * targetDistance;
+                        case -1:
+                            targetXPose = currentRobotPose.getX() - Math.cos(turretAngle) * targetDistance;
+                            actualXPose = currentRobotPose.getX() - Math.cos(turret.getAngle()) * targetDistance;
+                    }
+                case Red:
+                    switch((int)(Math.signum(turretAngle))){
+                        case 1:
+                            targetXPose = currentRobotPose.getX() - Math.cos(turretAngle) * targetDistance;
+                            actualXPose = currentRobotPose.getX() - Math.cos(turret.getAngle()) * targetDistance;
+                        case -1:
+                            targetXPose = currentRobotPose.getX()  + Math.cos(turretAngle) * targetDistance;
+                            actualXPose = currentRobotPose.getX() + Math.cos(turret.getAngle()) * targetDistance;
+                    }
+            }
+            turretTrackingPose = new Pose3d(targetXPose, currentRobotPose.getY() - Math.sin(turretAngle) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
+            turretActualPose = new Pose3d(actualXPose, currentRobotPose.getY() - Math.sin(turret.getAngle()) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
+
+            Logger.recordOutput(SCORING.LOG_PATH + "Turret Actual Pose", turretActualPose);
+            Logger.recordOutput(SCORING.LOG_PATH + "Turret Tracking Pose", turretTrackingPose);
+
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
