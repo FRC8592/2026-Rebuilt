@@ -18,17 +18,17 @@ import java.util.Set;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
-    private final TalonFX flywheelMotor; // big one
-    private final TalonFX backwheelMotor; // smaller wheels
-    private final TalonFXConfiguration flywheelMotorConfig;
-    private final TalonFXConfiguration backwheelMotorConfig;
+    private TalonFX flywheelMotor; // big one
+    private TalonFX backwheelMotor; // smaller wheels
+    private TalonFXConfiguration flywheelMotorConfig;
+    private TalonFXConfiguration backwheelMotorConfig;
     
-    private final Slot0Configs flyWheelPIDConfig;
-    private final Slot0Configs backWheelPIDConfig;
+    private Slot0Configs flyWheelPIDConfig;
+    private Slot0Configs backWheelPIDConfig;
 
 
-    private final VelocityVoltage flyWheelVV;
-    private final VelocityVoltage backWheelVV;
+    private VelocityVoltage flyWheelVV;
+    private VelocityVoltage backWheelVV;
 
 
     private double PF_SET;
@@ -104,8 +104,8 @@ public class Shooter extends SubsystemBase {
 
 
 
-
-        flywheelMotorConfig.Feedback.VelocityFilterTimeConstant = 0.01;
+        //TODO: Add this back after PID Tuning if necessary
+        //flywheelMotorConfig.Feedback.VelocityFilterTimeConstant = 0.01;
 
 
         flywheelMotorConfig.withSlot0(flyWheelPIDConfig);
@@ -134,6 +134,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("bP", SHOOTER.BACKWHEEL_P.in(Volts));
         SmartDashboard.putNumber("bI", SHOOTER.BACKWHEEL_I.in(Volts));
         SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D.in(Volts));
+
+        SmartDashboard.putNumber("Shooter Voltage", 0);
     }
 
 
@@ -158,7 +160,15 @@ public class Shooter extends SubsystemBase {
     }
 
 
+    public void runAtVoltage(){
+        double voltage = SmartDashboard.getNumber("Shooter Voltage", 0);
+        flywheelMotor.setVoltage(voltage);
+        backwheelMotor.setVoltage(voltage);
+    }
 
+    public Command runAtVoltageCommand(){
+        return this.runOnce(() -> runAtVoltage());
+    }
     /**
      * Command to run the shooter motor at a set speed.
      * 

@@ -66,12 +66,10 @@ public class RobotContainer {
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
+  private final Trigger INCREASE_RPM = operatorController.povUp();
+  private final Trigger DECREASE_RPM = operatorController.povDown();
 
-  // Controls for running sysId tests
-  // private final Trigger QUASI_FORWARD = driverController.a();
-  // private final Trigger QUASI_REVERSE = driverController.y();
-  // private final Trigger DYNAMIC_FORWARD = driverController.b();
-  // private final Trigger DYNAMIC_REVERSE = driverController.x();
+  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -170,15 +168,21 @@ public class RobotContainer {
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
+    //TODO: Test kFactor change on-the-fly
+    INCREASE_RPM.onTrue(scoring.runOnce(() -> scoring.increaseK()));
+
+    DECREASE_RPM.onTrue(scoring.runOnce(() -> scoring.decreaseK()));
+
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
-    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90));
+    //TODO: Remove these bindings
+    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90)).onFalse(scoring.turret.stopTurretCommand());
 
-    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90));
+    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90)).onFalse(scoring.turret.stopTurretCommand());
 
 
 

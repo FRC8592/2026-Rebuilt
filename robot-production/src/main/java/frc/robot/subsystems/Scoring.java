@@ -19,7 +19,7 @@ import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
 import frc.robot.subsystems.swerve.Swerve;
-
+import static edu.wpi.first.units.Units.*;
 public class Scoring extends SubsystemBase {
     // Subsystems
     Swerve swerve; // Passed into the constructor so that we can get the current robot pose for
@@ -32,8 +32,8 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
-    private double kFactor = 0.85793; //extra velocity needed for flywheel
-    private double kAdjustment = 0.68153;
+    private double kFactor = 0.92; //extra velocity needed for flywheel
+    private double kAdjustment = 0.735;
     private boolean targetIsHub;
     private Alliance alliance;
 
@@ -132,6 +132,7 @@ public class Scoring extends SubsystemBase {
     public void disableTracking() {
         trackingTarget = false;
         overrideTracking = false;
+        //TODO: Disable the turret stop command to use OverrideBrakeDurNeutral
         turret.stop();
         shooter.stop();
     }
@@ -175,7 +176,7 @@ public class Scoring extends SubsystemBase {
      */
     public boolean canShoot() {
         // TODO: Change so it can use blue or red hub tracking
-        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE
+        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE.in(Degrees)
         // && Math.abs(shooter.getVelocityFlywheel() -
         // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
@@ -363,6 +364,7 @@ public class Scoring extends SubsystemBase {
             double totalSpeedRelativeRobot = Math.sqrt(v0x * v0x + v0y * v0y)*Math.sqrt(1 + Math.tan(thetaRad)*Math.tan(thetaRad));
             double flyRadiusFeet = flywheelRadius / 12.0;
             double adjustedK = kFactor + kAdjustment*x/feetPerMeter;
+            //TODO: Tune this as shots at that distance were falling short
             if(x/feetPerMeter < 2){
                 adjustedK = 2.3;
             }
@@ -397,6 +399,7 @@ public class Scoring extends SubsystemBase {
         Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
 
         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
+        Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
 
 
         // get the current robot position and select the target

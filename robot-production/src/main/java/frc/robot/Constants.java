@@ -6,10 +6,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -165,33 +169,33 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 50;
-    public static final double TURRET_P0 = 40; // 12;
-    public static final double TURRET_I0 = 0.01;
-    public static final double TURRET_D0 = 0.8; // 0.4;
-    public static final double TURRET_S = 0.6;
-    public static final double TURRET_V = 0;
-    public static final double TURRET_A = 0;
+    public static final Current CURRENT_LIMIT = Amps.of(50);
+    public static final Voltage TURRET_P = Volts.of(40d); // 12;
+    public static final Voltage TURRET_I = Volts.of(0.01);
+    public static final Voltage TURRET_D = Volts.of(0.8); // 0.4;
+    public static final Voltage TURRET_S = Volts.of(0.6);
+    public static final Voltage TURRET_V = Volts.of(0);
+    public static final Voltage TURRET_A = Volts.of(0);
     public static final double TURRET_GT = 80d;
     public static final double TURRET_G1 = 21d;
     public static final double TURRET_G2 = 23d;
     public static final double TURRET_GM = 25d;
     public static final double TURRET_TOTAL = TURRET_G1 * TURRET_G2;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (TURRET_GT / TURRET_GM) / 360d;
-    public static final double MAX_JERK = 3000;
-    public static final int MAX_ACCELERATION = 300;
-    public static final int CRUISE_VELOCITY = 50; 
-    public static final int LOW_VELOCITY = 0;
-    public static final int LOW_ACCELERATION = 0;
+    //TODO: Check if this works
+    public static final Velocity<AngularAccelerationUnit> MAX_JERK = RotationsPerSecondPerSecond.per(Second).of(3000);
+    public static final AngularAcceleration MAX_ACCELERATION = RotationsPerSecondPerSecond.of(300);
+    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(50); 
     //TODO: Update these constants
-    public static final double E1_OFFSET = 286;
-    public static final double E2_OFFSET = 323.4;
+    public static final Angle E1_OFFSET = Degrees.of(286);
+    public static final Angle E2_OFFSET = Degrees.of(323.4);
     //Try these out?
-    public static final double FORWARD_LIMIT = 180; // Degrees
-    public static final double REVERSE_LIMIT = -180; // Degrees
-    public static final double TURRET_TOLERANCE = 0.75; // Degrees
-    public static final double CRT_TOLERANCE = 0.004;
-    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180
+    public static final Angle MAX_ROTATION_LIMIT = Degrees.of(180);
+    public static final Angle FORWARD_LIMIT = MAX_ROTATION_LIMIT; // Degrees
+    public static final Angle REVERSE_LIMIT = MAX_ROTATION_LIMIT.unaryMinus(); // Degrees
+    public static final Angle TURRET_TOLERANCE = Degrees.of(0.75); // Degrees
+    public static final Angle CRT_TOLERANCE = Rotations.of(0.004);
+    public static final Angle TURRET_ANGLE_OFFSET = Degrees.of(180); // The turret zero position is at 180
                                                           // degrees relative to the
                                                           // front of the robot
 
