@@ -432,27 +432,17 @@ public class Scoring extends SubsystemBase {
 
             Pose3d turretTrackingPose;
             Pose3d turretActualPose;
-            double targetXPose = 0;
-            double actualXPose = 0;
+            double targetChangeX = Math.cos(turretAngle) * targetDistance;
+            double actualChangeX = Math.cos(turret.getAngle()) * targetDistance;
+            double targetXPose = currentRobotPose.getX();
+            double actualXPose = targetXPose;
             switch (alliance){
                 case Blue:
-                    switch((int)(Math.signum(turretAngle))){
-                        case 1:
-                            targetXPose = currentRobotPose.getX() + Math.cos(turretAngle) * targetDistance;
-                            actualXPose = currentRobotPose.getX() + Math.cos(turret.getAngle()) * targetDistance;
-                        case -1:
-                            targetXPose = currentRobotPose.getX() - Math.cos(turretAngle) * targetDistance;
-                            actualXPose = currentRobotPose.getX() - Math.cos(turret.getAngle()) * targetDistance;
-                    }
+                    targetXPose += (int)(Math.signum(turretAngle)) * targetChangeX;
+                    actualXPose += (int)(Math.signum(turretAngle)) * actualChangeX;
                 case Red:
-                    switch((int)(Math.signum(turretAngle))){
-                        case 1:
-                            targetXPose = currentRobotPose.getX() - Math.cos(turretAngle) * targetDistance;
-                            actualXPose = currentRobotPose.getX() - Math.cos(turret.getAngle()) * targetDistance;
-                        case -1:
-                            targetXPose = currentRobotPose.getX()  + Math.cos(turretAngle) * targetDistance;
-                            actualXPose = currentRobotPose.getX() + Math.cos(turret.getAngle()) * targetDistance;
-                    }
+                    targetXPose -= (int)(Math.signum(turretAngle)) * targetChangeX;
+                    actualXPose -= (int)(Math.signum(turretAngle)) * actualChangeX;
             }
             turretTrackingPose = new Pose3d(targetXPose, currentRobotPose.getY() - Math.sin(turretAngle) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
             turretActualPose = new Pose3d(actualXPose, currentRobotPose.getY() - Math.sin(turret.getAngle()) * targetDistance, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
