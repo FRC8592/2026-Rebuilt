@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -368,8 +369,10 @@ public class Scoring extends SubsystemBase {
             double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI));
 
             double turretAngleToHub = Math.atan2(v0y, v0x);
+            Logger.recordOutput(SCORING.LOG_PATH +"Turret Angle To Hub Based on Hub Coordinate Systems", turretAngleToHub);
 
             double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub))))%360+360)%360;
+            Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
 
             return new Pair<>(outputRPM*flywheelGearing, turretFieldAngle);
         } catch (IllegalArgumentException e) {
@@ -401,17 +404,18 @@ public class Scoring extends SubsystemBase {
         currentTargetPose = getTarget(currentRobotPose);
 
         Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
-
-        if (canShoot()) {
-            LEDs.setCanShoot(true);
-        } else {
-            LEDs.setCanShoot(false);
-        }
         //TODO: Put this back in tracking method
         targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (trackingTarget) {
+            if (indexer.indexerRunning) {
+                leds.displayindexerRunning();
+            } else if (canShoot()) {
+                leds.setCanShoot();
+            } else {
+                leds.setCannotShoot();
+            }
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
             targetX = currentTargetPose.getX() - currentRobotPose.getX();
@@ -466,7 +470,8 @@ public class Scoring extends SubsystemBase {
             shooter.runAtSpeed(shooterSpeed);
         } else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
-            if (!overrideTracking) {
+            if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
+                leds.setOff();
                 shooter.stop();
             }
         }

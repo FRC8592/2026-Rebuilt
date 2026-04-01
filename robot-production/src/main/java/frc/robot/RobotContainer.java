@@ -89,8 +89,19 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     // TODO: Figure out the issues with these, they are very temporary
+    //Command ShootandStop = new ParallelRaceGroup(scoring.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
+    //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+    NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
+
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+    NamedCommands.registerCommand("Wait", Commands.waitSeconds(2.0));
+
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
+
+    NamedCommands.registerCommand("SqueezeWaitStop", scoring.indexer.runIndexerCommand()
+        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
     new EventTrigger("StopIntake")
@@ -99,10 +110,10 @@ public class RobotContainer {
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
-    new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
+        new EventTrigger("Shoottest").onTrue(scoring.indexer.runIndexerCommand());
+    
+    //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
-    new EventTrigger("WaitAndShoot")
-        .onTrue(Commands.waitSeconds(2).andThen(scoring.indexer.runIndexerCommand()));
 
     new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
         .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
@@ -110,7 +121,8 @@ public class RobotContainer {
 
             new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
-        
+
+
 
     // Configure the trigger bindings
     configureBindings();
