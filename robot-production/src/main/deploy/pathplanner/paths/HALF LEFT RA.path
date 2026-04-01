@@ -156,7 +156,7 @@
       "minWaypointRelativePos": 3.1714189403553306,
       "maxWaypointRelativePos": 4.121529980964469,
       "constraints": {
-        "maxVelocity": 1.25,
+        "maxVelocity": 1.15,
         "maxAcceleration": 9.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 1440.0,
@@ -207,13 +207,19 @@
     },
     {
       "name": "StopIntake",
-      "waypointRelativePos": 4.3168226522842685,
+      "waypointRelativePos": 4.284425451092117,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "ToggleHubTracking",
       "waypointRelativePos": 5.799631186548219,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "ShootWhileSqueezing",
+      "waypointRelativePos": 7.0,
       "endWaypointRelativePos": null,
       "command": null
     }

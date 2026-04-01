@@ -32,8 +32,9 @@ public class Scoring extends SubsystemBase {
     // Make tracking subsystems toggle on and off
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
-    private double kFactor = 0.92; //extra velocity needed for flywheel
-    private double kAdjustment = 0.735;
+    private double kFactor = 0.925;
+    // private double kFactor = 0.85793; //extra velocity needed for flywheel
+    private double kAdjustment = 0.73;
     private boolean targetIsHub;
     private Alliance alliance;
 
@@ -410,6 +411,10 @@ public class Scoring extends SubsystemBase {
         //TODO: Put this back in tracking method
         targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
+
+        if(indexer.indexerRunning){
+            leds.displayindexerRunning();
+        }
 
         if (trackingTarget) {
             if (indexer.indexerRunning) {

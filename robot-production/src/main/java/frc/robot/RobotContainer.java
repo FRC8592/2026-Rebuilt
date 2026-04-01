@@ -87,7 +87,7 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     // TODO: Figure out the issues with these, they are very temporary
-    //Command ShootandStop = new ParallelRaceGroup(scoring.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
+    //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
     //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
 
@@ -114,8 +114,8 @@ public class RobotContainer {
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
 
     new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(1.5)));
+        .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(2.5)));
 
             new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
@@ -156,7 +156,7 @@ public class RobotContainer {
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
+    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()) 
         .onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 

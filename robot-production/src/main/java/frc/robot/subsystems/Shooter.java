@@ -224,6 +224,15 @@ public class Shooter extends SubsystemBase {
     }
 
 
+    public double getFlywheelCurrent(){
+        return flywheelMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    public double getBackwheelCurrent(){
+        return backwheelMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+
 
     /**
      * Update the PID values on the fly on the shooter motor. The NEO Motors do not allowed their
