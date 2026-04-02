@@ -5,18 +5,13 @@
 package frc.robot;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import au.grapplerobotics.CanBridge;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -38,11 +33,6 @@ public class Robot extends LoggedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  /* log and replay timestamp and joystick data */
-  // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-  // .withTimestampReplay()
-  // .withJoystickReplay();
-
   public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0;
   private static int tagCounter = 0;
@@ -60,19 +50,14 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("Team", "8592");
 
     if (isReal()) { // If running on a real robot
-      // String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
-
       File sda1 = new File("/media/sda1/logs");
       if (sda1.exists()) {
-        // String path = "/media/sda1/" + time + ".wpilog";
-        // Logger.addDataReceiver(new WPILOGWriter(path));
         DataLogManager.start("/media/sda1/");
+
       } else {
         File sdb1 = new File("/media/sdb1/logs");
         if (sdb1.exists()) {
-          // String path = "/media/sdb2/" + time + ".wpilog";
           DataLogManager.start("/media/sdb2/");
-          // Logger.addDataReceiver(new WPILOGWriter(path));
         } else {
           System.err.println("UNABLE TO LOG TO A USB STICK!");
         }
@@ -81,13 +66,11 @@ public class Robot extends LoggedRobot {
       LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // Enables power distribution logging
     }
 
+    //used for simulation purposes, don't remove!
     SmartDashboard.putData("Field", FIELD);
 
-    DataLogManager.logNetworkTables(isAutonomousEnabled());
-    DataLogManager.logNetworkTables(isTeleopEnabled());
-
-    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    // Logger.start();
+    //record both ds control + joystick data
+    DriverStation.startDataLog(DataLogManager.getLog());
 
     // Instantiate our RobotContainer. This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
