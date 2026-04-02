@@ -16,6 +16,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -58,17 +60,19 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("Team", "8592");
 
     if (isReal()) { // If running on a real robot
-      String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
+      // String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
 
       File sda1 = new File("/media/sda1/logs");
       if (sda1.exists()) {
-        String path = "/media/sda1/" + time + ".wpilog";
-        Logger.addDataReceiver(new WPILOGWriter(path));
+        // String path = "/media/sda1/" + time + ".wpilog";
+        // Logger.addDataReceiver(new WPILOGWriter(path));
+        DataLogManager.start("/media/sda1/");
       } else {
         File sdb1 = new File("/media/sdb1/logs");
         if (sdb1.exists()) {
-          String path = "/media/sdb2/" + time + ".wpilog";
-          Logger.addDataReceiver(new WPILOGWriter(path));
+          // String path = "/media/sdb2/" + time + ".wpilog";
+          DataLogManager.start("/media/sdb2/");
+          // Logger.addDataReceiver(new WPILOGWriter(path));
         } else {
           System.err.println("UNABLE TO LOG TO A USB STICK!");
         }
@@ -79,13 +83,23 @@ public class Robot extends LoggedRobot {
 
     SmartDashboard.putData("Field", FIELD);
 
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    Logger.start();
+    DataLogManager.logNetworkTables(isAutonomousEnabled());
+    DataLogManager.logNetworkTables(isTeleopEnabled());
+
+    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    // Logger.start();
 
     // Instantiate our RobotContainer. This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   }
+
+  @Override
+  public void robotInit() {
+    if(DriverStation.waitForDsConnection(0)){
+
+    }
+  }  
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
