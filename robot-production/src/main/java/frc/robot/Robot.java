@@ -11,7 +11,6 @@ import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
-import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -42,13 +41,6 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
-    CanBridge.runTCP(); // Required for Grapplehook laser reflection sensor.
-
-    // Logger configuration
-    Logger.recordMetadata("Game", "REBUILT");
-    Logger.recordMetadata("Year", "2026");
-    Logger.recordMetadata("Team", "8592");
-
     if (isReal()) { // If running on a real robot
       File sda1 = new File("/media/sda1/logs");
       if (sda1.exists()) {
@@ -57,7 +49,7 @@ public class Robot extends LoggedRobot {
       } else {
         File sdb1 = new File("/media/sdb1/logs");
         if (sdb1.exists()) {
-          DataLogManager.start("/media/sdb2/");
+          DataLogManager.start("/media/sdb1/");
         } else {
           System.err.println("UNABLE TO LOG TO A USB STICK!");
         }
@@ -77,13 +69,6 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
   }
 
-  @Override
-  public void robotInit() {
-    if(DriverStation.waitForDsConnection(0)){
-
-    }
-  }  
-
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -101,22 +86,16 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods. This must be called from the
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
-    // m_timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
 
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-    // m_robotContainer.scoring.intake.setBrakeMode();
-  }
+  public void disabledInit() {}
 
   @Override
-  public void disabledExit() {
-
-
-  }
+  public void disabledExit() {}
 
   @Override
   public void disabledPeriodic() {
