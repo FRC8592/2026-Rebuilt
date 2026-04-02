@@ -28,6 +28,7 @@ public class Swerve extends SubsystemBase {
 
     private boolean isSlowMode;
     private boolean alignedHeading = false;
+    private boolean brake = false;
 
     private SmoothingFilter smoothingFilter;
 
@@ -169,7 +170,7 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
-        if (alignedHeading && speeds != null && !speeds.equals(speedZero)) {
+        if (alignedHeading && !speeds.equals(speedZero)) {
             double targetHeadingRadians = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
             Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
             double omega = snapToAngle(targetHeading);
@@ -177,6 +178,8 @@ public class Swerve extends SubsystemBase {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
                     .withRotationalRate(omega));
+        } else if (brake) {
+            swerve.setControl(new SwerveRequest.SwerveDriveBrake());
         } else {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
@@ -227,8 +230,7 @@ public class Swerve extends SubsystemBase {
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public void brake() {
-        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake();
-        swerve.setControl(brake);
+        brake = true;
     }
 
     /**
