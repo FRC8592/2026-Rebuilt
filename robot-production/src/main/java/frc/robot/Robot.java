@@ -175,7 +175,7 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID. This
     // allows for tuning while the robot is disabled.
-    //m_robotContainer.scoring.shooter.updatePID();
+    m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.scoring.intake.updatePID();
     m_robotContainer.scoring.turret.updatePID();

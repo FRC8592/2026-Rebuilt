@@ -64,6 +64,8 @@ public class RobotContainer {
   private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
   private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
 
+  private final Trigger SHOOTER_CONFIGURATION = operatorController.povRight();
+
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
   private final Trigger INCREASE_RPM = operatorController.povUp();
@@ -160,6 +162,7 @@ public class RobotContainer {
         .onFalse(scoring.intake.stopExtendCommand());
     RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
+    SHOOTER_CONFIGURATION.onTrue(scoring.shooter.runAtVoltageCommand()).onFalse(scoring.shooter.stopCommand());
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
     LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));

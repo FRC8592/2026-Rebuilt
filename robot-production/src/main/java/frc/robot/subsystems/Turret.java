@@ -334,6 +334,10 @@ public class Turret extends SubsystemBase {
         .withKD(D_NEW);
         turretMotorConfig.withSlot0(turretPIDConfig);
         turretMotor.getConfigurator().apply(turretMotorConfig);
+
+        P_SET = P_NEW;
+        I_SET = I_NEW;
+        D_SET = D_NEW;
        }
 
     }
