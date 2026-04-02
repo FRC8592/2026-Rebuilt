@@ -208,6 +208,7 @@ public class Swerve extends SubsystemBase {
 
     public void alignedHeading() {
         alignedHeading = !alignedHeading;
+        Logger.recordOutput(SWERVE.LOG_PATH + "AlignedHeading", alignedHeading);
     }
 
     /**
@@ -231,6 +232,7 @@ public class Swerve extends SubsystemBase {
      */
     public void brake() {
         brake = !brake;
+        Logger.recordOutput(SWERVE.LOG_PATH + "Brake", brake);
     }
 
     /**
