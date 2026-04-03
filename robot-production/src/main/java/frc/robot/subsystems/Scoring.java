@@ -456,7 +456,7 @@ public class Scoring extends SubsystemBase {
             int turretDirection = (int)(Math.signum(turretAngle));
             switch (alliance){
                 case Blue:
-                    targetXPose +=  turretDirection * targetChangeX;
+                    targetXPose += turretDirection * targetChangeX;
                     actualXPose += turretDirection * actualChangeX;
                     targetYPose -= turretDirection * targetChangeY;
                     actualYPose -= turretDirection * actualChangeY;
@@ -484,67 +484,5 @@ public class Scoring extends SubsystemBase {
             }
         }
     }
-
-
-//     /**
-//      * If the tracking system is toggled on, update the required turret angle and shooter speed
-//      */
-//     @Override
-//     public void periodic() {
-//         double targetDistance;
-//         double shooterSpeed;
-
-//         // Current robot pose and target pose
-//         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-//         Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
-//         Logger.recordOutput(SCORING.LOG_PATH + "kFactor", kFactor);
-//         Logger.recordOutput(SCORING.LOG_PATH + "kAdjustment", kAdjustment);
-//         Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
-
-//         // get the current robot position and select the target
-//         currentRobotPose = swerve.getCurrentOdometryPosition();
-//         currentTargetPose = getTarget(currentRobotPose);
-
-//         Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
-
-//         if (indexer.indexerRunning) {
-//             leds.displayindexerRunning();
-//         }
-
-//         if (trackingTarget) {
-//             if (indexer.indexerRunning) {
-//                 leds.displayindexerRunning();
-//             } else if (canShoot()) {
-//                 leds.setCanShoot();
-//             } else {
-//                 leds.setCannotShoot();
-//             }
-
-//             // calculate the distance to the target position
-//             targetDistance = currentRobotPose.getTranslation()
-//                     .getDistance(currentTargetPose.getTranslation());
-
-//             // Lookup the required shooter speed in the range table
-//             shooterSpeed = RangeTable.get(targetDistance, targetIsHub);
-//            //shooterSpeed = shooterSpeedHub(targetDistance);
-//             //shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
-
-//             // Log the current distance-to-target and shooter speed for debugging
-//             Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
-//             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per
-//                                                                                    // second
-
-//             // Update turret angle and shooter speed
-//             turret.TurrettoAngle(currentRobotPose, currentTargetPose);
-//             shooter.runAtSpeed(shooterSpeed);
-//         } else {
-//             // Shut down the shooter motors. The turret will hold the last position, so we
-//             // don't need to send any command to it.
-//             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
-//                 leds.setOff();
-//                 shooter.stop();
-//             }
-//         }
-//     }
 
 }

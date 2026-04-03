@@ -23,33 +23,23 @@ import frc.robot.Constants.INDEXER;
 
 public class Indexer extends SubsystemBase {
     private SparkFlex spinMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
-    private SparkFlex outputMotor = new SparkFlex(INDEXER.OUTPUT_CAN_ID, MotorType.kBrushless);
 
     private FeedForwardConfig spinFeedForward = new FeedForwardConfig();
-    private FeedForwardConfig outputFeedForward = new FeedForwardConfig();
 
     private SparkFlexConfig spinMotorConfig = new SparkFlexConfig();
-    private SparkFlexConfig outputMotorConfig = new SparkFlexConfig();
 
     private SparkClosedLoopController spinMotorClosedLoopCtrl = spinMotor.getClosedLoopController();
-    private SparkClosedLoopController outputMotorClosedLoopCtrl =
-            outputMotor.getClosedLoopController();
 
     private RelativeEncoder spinMotorEncoder = spinMotor.getEncoder();
-    private RelativeEncoder outputMotorEncoder = outputMotor.getEncoder();
 
     private double PS_OLD;
     private double IS_OLD;
     private double DS_OLD;
     private double SS_OLD;
 
-    private double PO_OLD;
-    private double IO_OLD;
-    private double DO_OLD;
-    private double SO_OLD; 
+
     public boolean indexerRunning = false;
 
-    private ParallelRaceGroup waitandShoot = new ParallelRaceGroup();
 
     /**
      * Constructor for the Indexer subsystem
@@ -61,8 +51,6 @@ public class Indexer extends SubsystemBase {
         spinMotorConfig.inverted(true); // Sets the motor to to make clockwise rotation positive
         spinMotorConfig.idleMode(IdleMode.kCoast);
 
-        outputMotorConfig.smartCurrentLimit(INDEXER.OUTPUT_CURRENT_LIMIT);
-        outputMotorConfig.idleMode(IdleMode.kCoast);
 
         // TODO: Tune pid
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
@@ -71,11 +59,6 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("S_SPINNER", INDEXER.SPIN_S);
         SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
-        SmartDashboard.putNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-        SmartDashboard.putNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-        SmartDashboard.putNumber("D_OUTPUT", INDEXER.OUTPUT_D);
-        SmartDashboard.putNumber("S_OUTPUT", INDEXER.OUTPUT_S);
-        SmartDashboard.putNumber("VEL_OUTPUT", INDEXER.OUTPUT_MOTOR_SPEED);
 
         spinMotorConfig.closedLoop.pid(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D,
                 ClosedLoopSlot.kSlot0);
@@ -83,16 +66,9 @@ public class Indexer extends SubsystemBase {
         spinFeedForward.kS(INDEXER.SPIN_S, ClosedLoopSlot.kSlot0);
         spinMotorConfig.closedLoop.apply(spinFeedForward);
 
-        outputMotorConfig.closedLoop.pid(INDEXER.OUTPUT_P, INDEXER.OUTPUT_I, INDEXER.OUTPUT_D);
-
-        outputFeedForward.kS(INDEXER.OUTPUT_S, ClosedLoopSlot.kSlot0);
-        outputFeedForward.kV(INDEXER.OUTPUT_KV, ClosedLoopSlot.kSlot0);
-        outputMotorConfig.closedLoop.apply(outputFeedForward);
 
         // assigns configuration to motor
         spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
-        outputMotor.configure(outputMotorConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
     }
 
@@ -100,61 +76,40 @@ public class Indexer extends SubsystemBase {
     public void periodic() {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
-        Logger.recordOutput(INDEXER.LOG_PATH + "Output RPM", getOutputVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
-        Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
     }
 
     /**
      * Stop the indexer motors. Use brake mode and not motor power to stop
      */
+    //TODO: No need for a stop method anymore
     public void stop() {
-        spinMotor.setVoltage(0);
-        outputMotor.setVoltage(0);
+        stopSpinner();
         indexerRunning = false;
     }
 
-    public void stopSpin() {
-        spinMotor.setVoltage(0);
-    }
-
-    public void stopOutput() {
-        outputMotor.setVoltage(0);
+    public void stopSpinner(){
+        spinMotor.setVoltage(0d);
     }
 
     /**
      * Runs the spin motor on the indexer
      */
     public void runSpinner() {
-        // spinMotorClosedLoopCtrl.setSetpoint(SmartDashboard.getNumber("VEL_SPINNER",
-        // INDEXER.SPIN_MOTOR_SPEED), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-        // TODO: Revert to closed loop control after testing
         spinMotor.setVoltage(11.0);
     }
 
-    /**
-     * Runs the output motor on the indexer at given speed
-     */
-    public void runOutput() {
-        //outputMotor.setVoltage(12.0);
-        outputMotorClosedLoopCtrl.setSetpoint(4000, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-    }
 
     /**
      * Runs both the spinner and the output motors on the indexer
      */
     public void runIndexer() {
         runSpinner();
-        runOutput();
         indexerRunning = true;
 
     }
     
 
-    public void stopIndexer() {
-        runSpinner();
-        runOutput();
-    }
 
     /**
      * Command to stop the indexer motors
@@ -171,14 +126,6 @@ public class Indexer extends SubsystemBase {
      * @return a command to run the spin motor on the indexer
      */
 
-    /**
-     * Command to run the output motor on the indexer
-     * 
-     * @return a Command to run the output motor on the indexer
-     */
-    public Command runOutputCommand() {
-        return this.runOnce(() -> runOutput());
-    }
 
     /**
      * Command to run both motors on the indexer
@@ -198,24 +145,12 @@ public class Indexer extends SubsystemBase {
         return spinMotorEncoder.getVelocity();
     }
 
-    /**
-     * Get the velocity of the output motor in RPM
-     * 
-     * @return output motor velocity in RPM
-     */
-    public double getOutputVelocity() {
-        return outputMotorEncoder.getVelocity();
-    }
 
 
     public double getSpinnerCurrent(){
         return spinMotor.getOutputCurrent();
     }
 
-    public Command waitandShootCommand(){
-        waitandShoot = new ParallelRaceGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
-        return waitandShoot;
-    }
 
 
     public void updatePID(){
@@ -224,34 +159,20 @@ public class Indexer extends SubsystemBase {
         double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
         double Spin_S = SmartDashboard.getNumber("S_SPINNER", INDEXER.SPIN_S);
 
-        double Output_P = SmartDashboard.getNumber("P_OUTPUT", INDEXER.OUTPUT_P);
-        double Output_I = SmartDashboard.getNumber("I_OUTPUT", INDEXER.OUTPUT_I);
-        double Output_D = SmartDashboard.getNumber("D_OUTPUT", INDEXER.OUTPUT_D);
-        double Output_S = SmartDashboard.getNumber("S_OUTPUT", INDEXER.OUTPUT_S);
 
-        if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD
-                || Output_P != PO_OLD || Output_I != IO_OLD || Output_D != DO_OLD|| Output_S != SO_OLD) {
+        if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD) {
 
             spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
             spinFeedForward.kS(Spin_S, ClosedLoopSlot.kSlot0);
             spinMotorConfig.closedLoop.apply(spinFeedForward);
-
-            outputMotorConfig.closedLoop.pid(Output_P, Output_I, Output_D, ClosedLoopSlot.kSlot0);
-            outputFeedForward.kS(Output_S, ClosedLoopSlot.kSlot0);
 
             PS_OLD = Spin_P;
             IS_OLD = Spin_I;
             DS_OLD = Spin_D;
             SS_OLD = Spin_S;
 
-            PO_OLD = Output_P;
-            IO_OLD = Output_I;
-            DO_OLD = Output_D;
-            SO_OLD = Output_S;
 
             spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
-                    PersistMode.kNoPersistParameters);
-            outputMotor.configure(outputMotorConfig, ResetMode.kResetSafeParameters,
                     PersistMode.kNoPersistParameters);
         }
     }

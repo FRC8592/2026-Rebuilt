@@ -213,6 +213,10 @@ public final class Constants {
 
     public static final double TAG_HUB_HEIGHT = 1.12395;
     public static final double SHOOTER_THRESHOLD = 500; // RPM
+
+    public static final double SHORT_RANGE_SHOT = 2d;
+
+    public static final double SHORT_RANGE_K = 2.3;
   }
 
   public static class INTAKE {
