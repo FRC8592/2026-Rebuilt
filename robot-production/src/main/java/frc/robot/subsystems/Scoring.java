@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.INDEXER;
 import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
@@ -407,13 +408,7 @@ public class Scoring extends SubsystemBase {
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (trackingTarget) {
-            if (indexer.indexerRunning) {
-                leds.displayindexerRunning();
-            } else if (canShoot()) {
-                leds.setCanShoot();
-            } else {
-                leds.setCannotShoot();
-            }
+
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
             targetX = currentTargetPose.getX() - currentRobotPose.getX();
@@ -443,6 +438,8 @@ public class Scoring extends SubsystemBase {
             }
         }
     }
+
+}
 
 
 //     /**
@@ -506,4 +503,4 @@ public class Scoring extends SubsystemBase {
 //         }
 //     }
 
-}
+
