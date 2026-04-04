@@ -157,10 +157,8 @@ public class LEDs extends SubsystemBase {
         // }
 
         private void setAllLEDSSolidColor(Color pColor) {
-                SolidColor solidColor = new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);
                 RGBWColor rgbwcolor = new RGBWColor((int) pColor.red * 255, (int) pColor.green * 255, (int) pColor.blue * 255);
-                solidColor = solidColor.withColor(rgbwcolor);
-
+                SolidColor solidColor = new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(rgbwcolor);
                 candle.setControl(solidColor);
         }
 
