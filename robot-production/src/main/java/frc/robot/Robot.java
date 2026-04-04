@@ -4,22 +4,16 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.LoggedPowerDistribution;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import java.util.Optional;
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LEDS;
@@ -33,15 +27,8 @@ import frc.robot.subsystems.vision.Vision;
  */
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
-
   private final RobotContainer m_robotContainer;
 
-  /* log and replay timestamp and joystick data */
-  // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-  // .withTimestampReplay()
-  // .withJoystickReplay();
-
-  public static Field2d FIELD = new Field2d();
   private static int periodicCounter = 0;
   private static int tagCounter = 0;
 
@@ -50,44 +37,38 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
 
-    CanBridge.runTCP(); // Required for Grapplehook laser reflection sensor.
-
-    // Logger configuration
+    //
+    // AdvantageKit Metadata. Update for each competition.
+    //
+    Logger.recordMetadata("Team", "8592");
     Logger.recordMetadata("Game", "REBUILT");
     Logger.recordMetadata("Year", "2026");
-    Logger.recordMetadata("Team", "8592");
+    Logger.recordMetadata("Competition", "CHS District Championship");
 
-    if (isReal()) { // If running on a real robot
-      String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
-
-      File sda1 = new File("/media/sda1/logs");
-      if (sda1.exists()) {
-        String path = "/media/sda1/" + time + ".wpilog";
-        Logger.addDataReceiver(new WPILOGWriter(path));
-      } else {
-        File sdb1 = new File("/media/sdb1/logs");
-        if (sdb1.exists()) {
-          String path = "/media/sdb2/" + time + ".wpilog";
-          Logger.addDataReceiver(new WPILOGWriter(path));
-        } else {
-          System.err.println("UNABLE TO LOG TO A USB STICK!");
-        }
-      }
-
-      LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // Enables power distribution logging
+    //
+    // Enable AdvantageKit logging
+    // The file name on the USB drive should automatically be renamed to include the match
+    // information
+    //
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      // Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    } else {
+      setUseTiming(false); // Run as fast as possible
+      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
 
-    SmartDashboard.putData("Field", FIELD);
-
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
 
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   }
+
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -175,7 +156,7 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID. This
     // allows for tuning while the robot is disabled.
-    //m_robotContainer.scoring.shooter.updatePID();
+    // m_robotContainer.scoring.shooter.updatePID();
     m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.scoring.intake.updatePID();
     m_robotContainer.scoring.turret.updatePID();
@@ -202,10 +183,13 @@ public class Robot extends LoggedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+
+  }
 
   @Override
   public void teleopInit() {
+    // Stop any mechanisms that remain running after autonomous or last teleop session
     m_robotContainer.scoring.disableTrackingCommand();
     m_robotContainer.scoring.indexer.stop();
     m_robotContainer.scoring.intake.stopRoller();
