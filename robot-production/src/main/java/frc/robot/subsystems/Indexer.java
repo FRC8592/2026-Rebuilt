@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
 
 public class Indexer extends SubsystemBase {
-    private SparkFlex spinMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
+    SparkFlex spinMotor = new SparkFlex(INDEXER.SPINNER_CAN_ID, MotorType.kBrushless);
     private SparkFlex outputMotor = new SparkFlex(INDEXER.OUTPUT_CAN_ID, MotorType.kBrushless);
 
     private FeedForwardConfig spinFeedForward = new FeedForwardConfig();
