@@ -354,6 +354,7 @@ public class Scoring extends SubsystemBase {
         double targetX;
         double targetY;
         double turretAngle;
+        double shooterSpeedOffset;
 
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
@@ -382,6 +383,9 @@ public class Scoring extends SubsystemBase {
             } else {
                 leds.setCannotShoot();
             }
+
+            shooterSpeedOffset = 0;
+
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
             targetX = currentTargetPose.getX() - currentRobotPose.getX();
@@ -391,7 +395,7 @@ public class Scoring extends SubsystemBase {
             ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, fieldRelative.vxMetersPerSecond, fieldRelative.vyMetersPerSecond);
-            shooterSpeed = SOTMResults.getFirst();
+            shooterSpeed = SOTMResults.getFirst() + shooterSpeedOffset;
             turretAngle = SOTMResults.getSecond();
             // shooterSpeed = shooterSpeedHub(targetDistance);
             // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
