@@ -184,15 +184,17 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousExit() {
-    // Stop any mechanisms that remain running after autonomous
-    m_robotContainer.scoring.disableTrackingCommand();
-    m_robotContainer.scoring.indexer.stop();
-    m_robotContainer.scoring.intake.stopRoller();
-    m_robotContainer.scoring.intake.stopExtender();
+
   }
 
   @Override
   public void teleopInit() {
+    // Stop any mechanisms that remain running after autonomous or last teleop session
+    m_robotContainer.scoring.disableTrackingCommand();
+    m_robotContainer.scoring.indexer.stop();
+    m_robotContainer.scoring.intake.stopRoller();
+    m_robotContainer.scoring.intake.stopExtender();
+
     boolean cancelledAuto = false;
 
     // This makes sure that the autonomous stops running when
