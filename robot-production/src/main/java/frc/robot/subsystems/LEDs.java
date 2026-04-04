@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDS;
 
+// 1. Spindexer Jamming  2. Shooting 3. Running Indexer 
+
 public class LEDs extends SubsystemBase {
         // TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE
         private CANdle candle;
@@ -39,21 +41,21 @@ public class LEDs extends SubsystemBase {
                         configAll.CANdleFeatures = new CANdleFeaturesConfigs()
                                         .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
                                         .withVBatOutputMode(VBatOutputModeValue.Modulated);
-                        candle = new CANdle(33); // TODO: Change this value when the device name is giving.
+                        candle = new CANdle(33);
                         candle.getConfigurator().apply(configAll);
                         timer.start();
                 }
         
                 // SETTERS 
                 public void setCanShoot() { //(3)
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.LED_HALF_STRIP_LENGTH)
                                         .withColor(new RGBWColor((int) (LEDS.TEAL.red * 255),
                                                         (int) (LEDS.TEAL.green * 255),
                                                         (int) (LEDS.TEAL.blue * 255))));
                 }
         
                 public void setCannotShoot() { //(2)
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.LED_HALF_STRIP_LENGTH)
                                         .withColor(new RGBWColor((int) (LEDS.ORANGE.red * 255),
                                                         (int) (LEDS.ORANGE.green * 255),
                                                         (int) (LEDS.ORANGE.blue * 255))));
@@ -67,7 +69,7 @@ public class LEDs extends SubsystemBase {
                 }
         
                 public void displayindexerRunning() { //(4)
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
+                        candle.setControl(new SolidColor(LEDS.LED_HALF_STRIP_LENGTH, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.WHITE.red * 255),
                                                         (int) (LEDS.WHITE.green * 255),
                                                         (int) (LEDS.WHITE.blue * 255))));
@@ -103,7 +105,7 @@ public class LEDs extends SubsystemBase {
 
                 // rainbow for the X - mode (aka. Locking the wheels) // FLASH// 
                 public void displayRainbow() {
-                candle.setControl(rainbow);
+                candle.setControl (rainbow);
                 }
 
                 public void setRainbow(boolean useRainbow) {
