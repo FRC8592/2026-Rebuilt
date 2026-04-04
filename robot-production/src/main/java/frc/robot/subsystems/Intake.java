@@ -47,8 +47,6 @@ public class Intake extends SubsystemBase {
     private double IE_OLD = INTAKE.INTAKE_EXTEND_I;
     private double DE_OLD = INTAKE.INTAKE_EXTEND_D;
 
-    private double extendMotorVoltage;
-
     private double retractionPosition;
 
     // private final NeutralOut extend_brake = new NeutralOut();
@@ -107,8 +105,8 @@ public class Intake extends SubsystemBase {
         extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
         extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
         extendConfig.closedLoop.maxMotion.allowedProfileError(10);
-        extendConfig.softLimit.forwardSoftLimitEnabled(true);
-        extendConfig.softLimit.forwardSoftLimit(-3);
+        extendConfig.softLimit.reverseSoftLimitEnabled(true);
+        extendConfig.softLimit.reverseSoftLimit(INTAKE.EXTEND_SOFTLIMIT);
 
         extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -126,10 +124,6 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
         SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
         SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
-
-        SmartDashboard.putNumber("Retraction Voltage", 0);
-
-        SmartDashboard.putNumber("Intake Roller Voltage", 2);
     }
 
     /**
@@ -151,9 +145,7 @@ public class Intake extends SubsystemBase {
     public void retractIntake() {
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
-        if (getExtendPosition() <= -0.5) {
-            extendMotor.setVoltage(6);
-        }
+        extendMotor.setVoltage(-6);
     }
 
     /**
@@ -164,7 +156,6 @@ public class Intake extends SubsystemBase {
         // double IntakeVoltage = SmartDashboard.getNumber("Intake Motor Voltage", 2);
         // double RPMRight = SmartDashboard.getNumber("INTAKE_VI",
         // INTAKE.INTAKE_RIGHT_VI);
-        System.out.println("Running Roller Command");
         rollerRightMotor.setVoltage(11);
         // rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
@@ -340,6 +331,7 @@ public class Intake extends SubsystemBase {
                 getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotorEncoder.getVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor AppliedOutput", extendMotor.getAppliedOutput());
     }
 
 }

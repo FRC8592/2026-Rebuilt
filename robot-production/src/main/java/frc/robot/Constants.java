@@ -227,13 +227,14 @@ public final class Constants {
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
 
-    public static final double EXTEND_ROTATIONS = -19;
+    public static final double EXTEND_ROTATIONS = 18.5; //18.8 mechanical max
+    public static final double EXTEND_SOFTLIMIT = 3;
     public static final double DESIRED_ROTATIONS_EXTEND = 3.4; // 3.645
     public static final double EXTEND_CRUISE_RPM = 250.0;
     public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
     public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
 
-    public static double RETRACT_ROTATION_INCREMENT = 0.03;
+    public static final double RETRACT_ROTATION_INCREMENT = -0.03;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 2000;
