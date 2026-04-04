@@ -59,7 +59,6 @@ public class Shooter extends SubsystemBase {
      * 
      */
     public Shooter() {
-
         /**
          * Flywheel and Backwheel Motor initialization and their respective configurations
          */
@@ -146,7 +145,6 @@ public class Shooter extends SubsystemBase {
      *  
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
-    // TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM) {
         double shooterMotorVelocity = desiredRPM / 60d;  // Convert from RPM to RPS for the motor
                                                         // controller
@@ -181,14 +179,13 @@ public class Shooter extends SubsystemBase {
 
 
     /**
-     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
+     * Stops motors, thus bringing the flywheel to a gradual stop.
      * 
      * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
      */
     public void stop() {
         leftMotor.setVoltage(0d);
     }
-
 
 
     /**
@@ -199,7 +196,6 @@ public class Shooter extends SubsystemBase {
     public Command stopCommand() {
         return this.runOnce(() -> stop());
     }
-
 
 
     /**
@@ -231,10 +227,9 @@ public class Shooter extends SubsystemBase {
     }
 
 
-
     /**
-     * Update the PID values on the fly on the shooter motor. The NEO Motors do not allowed their
-     * PID Profile to be updated while running.
+     * Update the PID values for the shooter motor. The NEO Motors do not allow their
+     * PID Profile to be updated while running, so this must only be called while disabled.
      * 
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
@@ -265,14 +260,14 @@ public class Shooter extends SubsystemBase {
     }
 
 
-
     /**
      * Periodic method, primarily for logging.
      */
     @Override
+    //TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of feedforward constants
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Real Vel", getVelocityShooter() * 60d);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Real Vel", getVelocityShooter()); //* 60d);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", getLeftMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage", getRightMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current", getLeftMotorCurrent());

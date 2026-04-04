@@ -31,6 +31,8 @@ public class Swerve extends SubsystemBase {
     private boolean isSlowMode;
     private boolean alignedHeading = false;
 
+    private boolean isSim;
+
     private SmoothingFilter smoothingFilter;
 
     private CommandSwerveDrivetrain swerve;
@@ -50,7 +52,7 @@ public class Swerve extends SubsystemBase {
 
     private RobotConfig config = null;
 
-    public Swerve(CommandSwerveDrivetrain drivetrain) {
+    public Swerve(CommandSwerveDrivetrain drivetrain, boolean isSim) {
         smoothingFilter = new SmoothingFilter(SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
                 SWERVE.TRANSLATION_SMOOTHING_AMOUNT, SWERVE.ROTATION_SMOOTHING_AMOUNT);
 
@@ -66,6 +68,8 @@ public class Swerve extends SubsystemBase {
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
 
         swerve = drivetrain;
+        
+        this.isSim = isSim;
 
         // PathPlanner AutoBuilder configuration below.
         https: // pathplanner.dev/pplib-build-an-auto.html
@@ -154,6 +158,7 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
+        Logger.recordOutput(SWERVE.LOG_PATH + "isSim", isSim);
 
         // TODO: do we really need to run this?
         swerve.periodic();
@@ -230,7 +235,7 @@ public class Swerve extends SubsystemBase {
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public void brake() {
-        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake();
+        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
         swerve.setControl(brake);
     }
 
@@ -288,21 +293,32 @@ public class Swerve extends SubsystemBase {
     /**
      * Process joystick inputs for swerve control
      *
-     * @param rawX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
+     * @param processX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
      * @param rawY the raw Y input from a joystick. Should be -1 to 1 (FORWARD motion)
      * @param rawRot the raw rotation input from a joystick. Should be -1 to 1
      *
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
-        double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
+        double processX = rawX;
+        double processY = rawY;
+        double processRot = rawRot;
+        if(isSim){
+            processX = -rawX;
+            processY = -rawY;
+            processRot = -rawRot;
+        }
+        Logger.recordOutput(SWERVE.LOG_PATH + "processX" , processX);
+        Logger.recordOutput(SWERVE.LOG_PATH + "processY" , processY);
+        Logger.recordOutput(SWERVE.LOG_PATH + "processRot" , processRot);
+        double driveTranslateX = (processX >= 0 ? (Math.pow(Math.abs(processX), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(processX), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveTranslateY = (rawY >= 0 ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT)));
+        double driveTranslateY = (processY >= 0 ? (Math.pow(Math.abs(processY), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(processY), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveRotate = (rawRot >= 0 ? (Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT)));
+        double driveRotate = (processRot >= 0 ? (Math.pow(Math.abs(processRot), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(processRot), SWERVE.JOYSTICK_EXPONENT)));
 
         if (isSlowMode) {
             driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW

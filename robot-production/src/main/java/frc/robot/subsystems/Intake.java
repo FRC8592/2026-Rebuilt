@@ -108,7 +108,7 @@ public class Intake extends SubsystemBase {
         extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
         extendConfig.closedLoop.maxMotion.allowedProfileError(10);
         extendConfig.softLimit.forwardSoftLimitEnabled(true);
-        extendConfig.softLimit.forwardSoftLimit(-3);
+        extendConfig.softLimit.forwardSoftLimit(2);
 
         extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -333,7 +333,7 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
         Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",

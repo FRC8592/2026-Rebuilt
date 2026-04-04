@@ -42,6 +42,8 @@ public class RobotContainer {
   public final Scoring scoring;
   public final LEDs leds;
 
+  private boolean isSim;
+
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
 
@@ -75,9 +77,10 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(boolean isReal) {
+    isSim = !isReal;
     leds = new LEDs();
-    swerve = new Swerve(drivetrain);
+    swerve = new Swerve(drivetrain, isSim);
     scoring = new Scoring(swerve, leds);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
@@ -86,6 +89,8 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
+
+
 
     // TODO: Figure out the issues with these, they are very temporary
     //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));

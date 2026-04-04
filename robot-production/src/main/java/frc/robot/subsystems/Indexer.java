@@ -35,7 +35,6 @@ public class Indexer extends SubsystemBase {
     private double PS_OLD;
     private double IS_OLD;
     private double DS_OLD;
-    private double SS_OLD;
 
 
     public boolean indexerRunning = false;
@@ -56,7 +55,6 @@ public class Indexer extends SubsystemBase {
         SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
         SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
         SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
-        SmartDashboard.putNumber("S_SPINNER", INDEXER.SPIN_S);
         SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
 
@@ -157,20 +155,15 @@ public class Indexer extends SubsystemBase {
         double Spin_P = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
         double Spin_I = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
         double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
-        double Spin_S = SmartDashboard.getNumber("S_SPINNER", INDEXER.SPIN_S);
 
 
-        if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD || Spin_S != SS_OLD) {
+        if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD) {
 
             spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
-            spinFeedForward.kS(Spin_S, ClosedLoopSlot.kSlot0);
-            spinMotorConfig.closedLoop.apply(spinFeedForward);
 
             PS_OLD = Spin_P;
             IS_OLD = Spin_I;
             DS_OLD = Spin_D;
-            SS_OLD = Spin_S;
-
 
             spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
                     PersistMode.kNoPersistParameters);

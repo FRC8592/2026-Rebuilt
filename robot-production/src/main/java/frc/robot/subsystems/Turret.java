@@ -52,8 +52,8 @@ public class Turret extends SubsystemBase {
 
     private double targetAngle;
 
-    private static Map<Double, Double> map = new HashMap<Double, Double>();
-    private static Set<Double> set = new HashSet<Double>();
+    private static Map<Double, Double> mapValues = new HashMap<Double, Double>();
+    private static Set<Double> setLeast = new HashSet<Double>();
 
     public Turret() {
        
@@ -167,7 +167,7 @@ public class Turret extends SubsystemBase {
         double robotAngle = robotPosition.getRotation().getDegrees();
         double target = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET.in(Degrees);
         if(Math.abs(target) > TURRET.MAX_ROTATION_LIMIT.in(Degrees))
-            target -= (int)(Math.signum(target)) * 360;
+            target -= (int)(Math.signum(target)) * 360d;
         logAngle(target);
         turretMotor.setControl(positionRequest.withSlot(0).withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control for testing
         //turretMotor.setControl(positionMMRequest.withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
@@ -201,7 +201,6 @@ public class Turret extends SubsystemBase {
      * Get the encoder values the define the turret zero position.
      */
     public void resetPos() {
-        System.out.println("Resetting Pose");
         turretMotor.setPosition(0);
     }
 
@@ -227,7 +226,7 @@ public class Turret extends SubsystemBase {
      * @param E2
      * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
-     public static double CRT(double E1, double E2){
+     public static double calcAngle(double E1, double E2){
         double R1 = E1/360d;
         double R2 = E2/360d;
         double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_GT;
@@ -241,40 +240,40 @@ public class Turret extends SubsystemBase {
             double V2New  = (i + 1 + R2) * G2 * 1.0;
 
             if(Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
+                mapValues.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
             }            
             
             if(Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
+                mapValues.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
             }
 
             if(Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
+                mapValues.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
             }
             
             if(Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
+                mapValues.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
             }
             if(Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
+                mapValues.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
             }
 
             if(Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
+                mapValues.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
             }
 
             if(Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE.in(Rotations)){
-                map.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
+                mapValues.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
             }
 
-            set = map.keySet();
-            if(set.size() != 0){
-            System.out.println("Set: " + set.toString());
+            setLeast = mapValues.keySet();
+            if(setLeast.size() != 0){
+            System.out.println("Set: " + setLeast.toString());
 
-            Double lowest = Collections.min(set);
+            Double lowest = Collections.min(setLeast);
             System.out.println("Lowest: " + lowest);
 
-            return map.get(lowest);
+            return mapValues.get(lowest);
             }
         }
         return 0;
