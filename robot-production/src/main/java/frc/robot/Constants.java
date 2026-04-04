@@ -125,8 +125,8 @@ public final class Constants {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
-    public static final double FLYWHEEL_CURRENT_LIMIT = 120.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
+    public static final double FLYWHEEL_CURRENT_LIMIT = 100.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 100.0;
 
 
     public static final double FLYWHEEL_P = 6.0;
@@ -156,7 +156,7 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final int TURRET_CURRENT_LIMIT = 50;
+    public static final int TURRET_CURRENT_LIMIT = 65;
     public static final double TURRET_P0 = 40; // 12;
     public static final double TURRET_I0 = 0.01;
     public static final double TURRET_D0 = 0.8; // 0.4;

@@ -101,6 +101,7 @@ public class Indexer extends SubsystemBase {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Output RPM", getOutputVelocity());
+        Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
         Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
     }
 
@@ -204,6 +205,11 @@ public class Indexer extends SubsystemBase {
      */
     public double getOutputVelocity() {
         return outputMotorEncoder.getVelocity();
+    }
+
+
+    public double getSpinnerCurrent(){
+        return spinMotor.getOutputCurrent();
     }
 
     public Command waitandShootCommand(){
