@@ -201,7 +201,7 @@ public class Scoring extends SubsystemBase {
     //     double outputRPM = AdjustedK*(initialBallVelocity/flyRadiusFeet)*(60.0/(2*Math.PI));
     //     return outputRPM*flywheelGearing;
     // }
-        double initialAngle = 64; //degrees
+    double initialAngle = 64; //degrees
     double hubHeight = 6; //feet
     double initialBallHeight = 2.18; //feet
     double g = 32.174; //feet per s^2
