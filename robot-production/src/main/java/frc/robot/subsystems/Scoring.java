@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -366,8 +367,8 @@ public class Scoring extends SubsystemBase {
             double flyRadiusFeet = flywheelRadius / 12.0;
             double adjustedK = kFactor + kAdjustment*x/feetPerMeter;
             //TODO: Tune this as shots at that distance were falling short
-            if(x/feetPerMeter < 2){
-                adjustedK = 2.3;
+            if(x/feetPerMeter < SCORING.SHORT_RANGE_SHOT){
+                adjustedK = SCORING.SHORT_RANGE_K;
             }
             double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI));
 
@@ -442,32 +443,32 @@ public class Scoring extends SubsystemBase {
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
-            Pose3d turretTrackingPose;
-            Pose3d turretActualPose;
-            double actualTurretAngle = turret.getAngle() + currentRobotPose.getRotation().getDegrees();
+            Translation3d turretTrackingPose;
+            Translation3d turretActualPose;
+            double actualTurretAngle = turret.getRawTurretAngle() + currentRobotPose.getRotation().getDegrees() + TURRET.TURRET_ANGLE_OFFSET.in(Degrees);
             double targetChangeX = Math.cos(turretAngle) * targetDistance;
-            double actualChangeX = Math.cos(turret.getAngle() + actualTurretAngle) * targetDistance;
+            double actualChangeX = Math.cos(actualTurretAngle) * targetDistance;
             double targetChangeY = Math.sin(turretAngle) * targetDistance;
-            double actualChangeY = Math.sin(turret.getAngle() + actualTurretAngle) * targetDistance;
+            double actualChangeY = Math.sin(actualTurretAngle) * targetDistance;
             double targetXPose = currentRobotPose.getX();
             double actualXPose = targetXPose;
             double targetYPose = currentRobotPose.getY();
             double actualYPose = targetYPose;
-            int turretDirection = (int)(Math.signum(turretAngle));
+            double turretDirection = Math.signum(turretAngle);
             switch (alliance){
                 case Blue:
                     targetXPose += turretDirection * targetChangeX;
                     actualXPose += turretDirection * actualChangeX;
-                    targetYPose -= turretDirection * targetChangeY;
-                    actualYPose -= turretDirection * actualChangeY;
+                    targetYPose += turretDirection * targetChangeY;
+                    actualYPose += turretDirection * actualChangeY;
                 case Red:
                     targetXPose -= turretDirection * targetChangeX;
                     actualXPose -= turretDirection * actualChangeX;
-                    targetYPose += turretDirection * targetChangeY;
-                    actualYPose += turretDirection * actualChangeY;
+                    targetYPose -= turretDirection * targetChangeY;
+                    actualYPose -= turretDirection * actualChangeY;
             }
-            turretTrackingPose = new Pose3d(targetXPose, targetYPose, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
-            turretActualPose = new Pose3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT, new Rotation3d());
+            turretTrackingPose = new Translation3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT);
+            turretActualPose = new Translation3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT);
 
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Actual Pose", turretActualPose);
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Tracking Pose", turretTrackingPose);

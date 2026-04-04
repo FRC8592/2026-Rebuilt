@@ -135,13 +135,13 @@ public final class Constants {
     public static final int RIGHT_MOTOR_CAN_ID = 19;
     public static final int LEFT_MOTOR_CAN_ID = 13;
 
-    public static final Current SHOOTER_CURRENT_LIMIT = Amps.of(120);
+    public static final Current SHOOTER_CURRENT_LIMIT = Amps.of(100);
 
 
     public static final Voltage SHOOTER_P = Volts.of(6);
     public static final Voltage SHOOTER_I = Volts.of(0);
     public static final Voltage SHOOTER_D = Volts.of(0);
-    public static final Voltage SHOOTER_S = Volts.of(0.3);
+    public static final Voltage SHOOTER_S = Volts.of(0.5);
     public static final Voltage SHOOTER_V = Volts.of(0.1054);
     public static final Voltage SHOOTER_A = Volts.of(0);
 
@@ -231,27 +231,17 @@ public final class Constants {
     public static final int ROLLER_CURRENT_LIMIT = 55;
 
     // PID tuning constants for the NEO Motors, these are initial and WILL change
-    public static final double INTAKE_LEFT_P = 0.01;
-    public static final double INTAKE_LEFT_I = 0;
-    public static final double INTAKE_LEFT_D = 0;
-    public static final double INTAKE_LEFT_VI = 10000;
-
-    public static final double INTAKE_RIGHT_P = 1;
-    public static final double INTAKE_RIGHT_I = 0;
-    public static final double INTAKE_RIGHT_D = 0;
-    public static final double INTAKE_RIGHT_VI = 6000;
 
     public static final double INTAKE_EXTEND_P = 0.5; //0.5
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
-
-    public static final double EXTEND_ROTATIONS = -19;
-    public static final double DESIRED_ROTATIONS_EXTEND = 3.4; // 3.645
-    public static final double EXTEND_CRUISE_RPM = 250.0;
-    public static final double EXTEND_MAX_ACCEL_RPM_PER_SEC = 200;
-    public static final double EXTEND_ALLOWED_ERROR_ROT = 0.05;
-
-    public static double RETRACT_ROTATION_INCREMENT = 0.03;
+    public static final double EXTEND_ROTATIONS = 18.8;
+    public static final double EXTEND_SOFT_LIMIT = 3;
+    public static final double EXTEND_PROFILE_ERROR = 10;
+    public static final double RETRACT_LIMIT = 0.5;
+    public static final double RETRACT_VOLTAGE = -6;
+    public static final double ROLLER_VOLTAGE = 11;
+    public static final double ROLLER_VOLTAGE_SLOW = 7;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 2000;
@@ -270,11 +260,6 @@ public final class Constants {
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
 
-    public static final double OUTPUT_P = 0.0001;
-    public static final double OUTPUT_I = 0;
-    public static final double OUTPUT_D = 0;
-    public static final double OUTPUT_S = 0.1;
-    public static final double OUTPUT_KV = 0.001821; 
 
     // Current limits for the Indexer motors
     // TODO: tune these limits

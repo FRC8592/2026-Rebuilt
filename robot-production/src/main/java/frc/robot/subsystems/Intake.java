@@ -34,20 +34,12 @@ public class Intake extends SubsystemBase {
     private TalonFXConfiguration rollerLeftConfig;
     private SparkFlexConfig extendConfig;
 
-    private VelocityVoltage rollerMotorCtrl = new VelocityVoltage(0);
     private SparkClosedLoopController extendClosedLoopCtrl;
 
     private RelativeEncoder extendMotorEncoder;
 
-    private double PR_OLD = INTAKE.INTAKE_RIGHT_P;
-    private double IR_OLD = INTAKE.INTAKE_RIGHT_I;
-    private double DR_OLD = INTAKE.INTAKE_RIGHT_D;
 
-    private double PE_OLD = INTAKE.INTAKE_EXTEND_P;
-    private double IE_OLD = INTAKE.INTAKE_EXTEND_I;
-    private double DE_OLD = INTAKE.INTAKE_EXTEND_D;
 
-    private double extendMotorVoltage;
 
     private double retractionPosition;
 
@@ -76,9 +68,6 @@ public class Intake extends SubsystemBase {
         rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
 
-        rollerRightConfig.Slot0.kP = INTAKE.INTAKE_RIGHT_P;
-        rollerRightConfig.Slot0.kI = INTAKE.INTAKE_RIGHT_I;
-        rollerRightConfig.Slot0.kD = INTAKE.INTAKE_RIGHT_D;
 
         rollerRightMotor.getConfigurator().apply(rollerRightConfig);
 
@@ -118,41 +107,25 @@ public class Intake extends SubsystemBase {
 
         // TODO: For tuning, put the PID and velocity values on the dashboard. Remove
         // before competition
-        SmartDashboard.putNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
-        SmartDashboard.putNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
-        SmartDashboard.putNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
-        SmartDashboard.putNumber("Vi_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_VI);
 
-        SmartDashboard.putNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        SmartDashboard.putNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        SmartDashboard.putNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
-
-        SmartDashboard.putNumber("Retraction Voltage", 0);
-
-        SmartDashboard.putNumber("Intake Roller Voltage", 2);
     }
 
     /**
      * Extend the intake at controlled speed
      */
     public void extendIntake() {
-        // To run at raw power
-        // rollerMotorRightClosedLoopController.setSetpoint(12, ControlType.kVoltage,
-        // ClosedLoopSlot.kSlot0);
         // TODO: Research why Neo Motors undershoot velocity sent to the motor
         extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS,
                 ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-        retractionPosition = getExtendPosition();
     }
 
     /**
      * Retract the intake at controlled speed
      */
     public void retractIntake() {
-        retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
-        if (getExtendPosition() <= -0.5) {
-            extendMotor.setVoltage(6);
+        if (getExtendPosition() >= 0.5) {
+            extendMotor.setVoltage(-6);
         }
     }
 
@@ -190,13 +163,6 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> retractWithRollers());
     }
 
-    /**
-     * Reset the position of the intake extension motor to 0
-     */
-    public void resetExtenderPos() {
-        System.out.println("Resetting Extender Command");
-        extendMotorEncoder.setPosition(2);
-    }
 
     public double getRightIntakeVoltage() {
         return rollerRightMotor.getMotorVoltage().getValueAsDouble();
@@ -231,24 +197,6 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> runReversedIntakeRollers());
     }
 
-    /**
-     * Command to reset the position of the intake extension motor to 0
-     */
-    public Command resetExtenderCommand() {
-        return this.runOnce(() -> resetExtenderPos());
-    }
-
-    // public void setCoastMode(){
-    // extendConfig.idleMode(IdleMode.kCoast);
-    // extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
-    // PersistMode.kPersistParameters);
-    // }
-
-    // public void setBrakeMode(){
-    // extendConfig.idleMode(IdleMode.kBrake);
-    // extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
-    // PersistMode.kPersistParameters);
-    // }
 
     public double getExtendPosition() {
         return extendMotorEncoder.getPosition();
@@ -270,11 +218,11 @@ public class Intake extends SubsystemBase {
      * setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
-        rollerRightMotor.setVoltage(0.0);
+        rollerRightMotor.setVoltage(0d);
     }
 
     public void stopExtender() {
-        extendMotor.setVoltage(0);
+        extendMotor.setVoltage(0d);
     }
 
     /**
@@ -296,37 +244,6 @@ public class Intake extends SubsystemBase {
      * The Neo Vortex motors will not accept a change to the PID parameters while running. Thusly,
      * this method must be called from disabledPeriod() in Robot.java.
      */
-    public void updatePID() {
-        double Right_P = SmartDashboard.getNumber("P_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_P);
-        double Right_I = SmartDashboard.getNumber("I_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_I);
-        double Right_D = SmartDashboard.getNumber("D_INTAKE_RIGHT", INTAKE.INTAKE_RIGHT_D);
-
-        double Extend_P = SmartDashboard.getNumber("P_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_P);
-        double Extend_I = SmartDashboard.getNumber("I_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_I);
-        double Extend_D = SmartDashboard.getNumber("D_INTAKE_EXTEND", INTAKE.INTAKE_EXTEND_D);
-
-        if (Right_P != PR_OLD || Right_I != IR_OLD || Right_D != DR_OLD || Extend_P != PE_OLD
-                || Extend_I != IE_OLD || Extend_D != DE_OLD) {
-            rollerRightConfig.Slot0.kP = Right_P;
-            rollerRightConfig.Slot0.kI = Right_I;
-            rollerRightConfig.Slot0.kD = Right_D;
-
-            rollerRightMotor.getConfigurator().apply(rollerRightConfig);
-            extendConfig.closedLoop.pid(Extend_P, Extend_I, Extend_D);
-            extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
-                    PersistMode.kNoPersistParameters);
-
-            PR_OLD = Right_P;
-            IR_OLD = Right_I;
-            DR_OLD = Right_D;
-
-            PE_OLD = Extend_P;
-            IE_OLD = Extend_I;
-            DE_OLD = Extend_D;
-
-        }
-
-    }
 
     /*
      * Periodic method, primarily used for logging

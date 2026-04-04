@@ -27,16 +27,16 @@ public class Shooter extends SubsystemBase {
     // Direction of Motors is relative to back of the shooter
     private TalonFX leftMotor;
     private TalonFX rightMotor; 
-    private TalonFXConfiguration shooterMotorConfig;
+    private TalonFXConfiguration shooterLeftMotorConfig;
+    private TalonFXConfiguration shooterRightMotorConfig;
     private Slot0Configs shooterPIDConfig;
-    private CurrentLimitsConfigs shooterCurrentLimit;
-    private FeedbackConfigs shooterFeedbackAdjustment;
-    private MotionMagicConfigs shooterMMConfig;
+    private CurrentLimitsConfigs shooterLeftCurrentLimit;
+    private CurrentLimitsConfigs shooterRightCurrentLimit;
+    //private FeedbackConfigs shooterFeedbackAdjustment;
+    //private MotionMagicConfigs shooterMMConfig;
 
     private VelocityVoltage shooterVV;
-    private MotionMagicVelocityVoltage shooterMMVV;
-
-    private boolean lukeisaChud;
+    //private MotionMagicVelocityVoltage shooterMMVV;
 
 
     private double P_SET;
@@ -65,15 +65,17 @@ public class Shooter extends SubsystemBase {
         leftMotor = new TalonFX(SHOOTER.LEFT_MOTOR_CAN_ID);
         rightMotor = new TalonFX(SHOOTER.RIGHT_MOTOR_CAN_ID);
 
-        shooterMotorConfig = new TalonFXConfiguration();
+        shooterLeftMotorConfig = new TalonFXConfiguration();
+        shooterRightMotorConfig = new TalonFXConfiguration();
         shooterPIDConfig = new Slot0Configs();
-        shooterCurrentLimit = new CurrentLimitsConfigs();
-        shooterFeedbackAdjustment = new FeedbackConfigs();
-        shooterMMConfig = new MotionMagicConfigs();
+        shooterLeftCurrentLimit = new CurrentLimitsConfigs();
+        shooterRightCurrentLimit = new CurrentLimitsConfigs();
+        // shooterFeedbackAdjustment = new FeedbackConfigs();
+        // shooterMMConfig = new MotionMagicConfigs();
 
 
         shooterVV = new VelocityVoltage(0);
-        shooterMMVV = new MotionMagicVelocityVoltage(0);
+        //shooterMMVV = new MotionMagicVelocityVoltage(0);
 
 
         /**
@@ -88,7 +90,7 @@ public class Shooter extends SubsystemBase {
         .withKA(SHOOTER.SHOOTER_A.in(Volts));
 
 
-        shooterMotorConfig.withSlot0(shooterPIDConfig);
+        // shooterMotorConfig.withSlot0(shooterPIDConfig);
 
         // shooterMMConfig
         // .withMotionMagicAcceleration(SHOOTER.MAX_ACCELERATION)
@@ -99,11 +101,17 @@ public class Shooter extends SubsystemBase {
          * Shooter Current Limit. THIS IS NOT ENABLED RIGHT NOW!
          */
         //TODO: Enable this current limit if problems!
-        shooterCurrentLimit
+        shooterLeftCurrentLimit
         .withStatorCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT)
-        .withStatorCurrentLimitEnable(false);
+        .withStatorCurrentLimitEnable(true);
 
-        shooterMotorConfig.withCurrentLimits(shooterCurrentLimit);
+        shooterLeftMotorConfig.withCurrentLimits(shooterLeftCurrentLimit);
+
+        shooterRightCurrentLimit
+        .withStatorCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT)
+        .withStatorCurrentLimitEnable(true);
+
+        shooterRightMotorConfig.withCurrentLimits(shooterRightCurrentLimit);
 
 
 
@@ -118,7 +126,9 @@ public class Shooter extends SubsystemBase {
         /**
          * Shooter Left Motor Configuration. This configures the motors themselves with the configuration we have done.
          */
-        leftMotor.getConfigurator().apply(shooterMotorConfig);
+        leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
+
+        rightMotor.getConfigurator().apply(shooterRightMotorConfig);    
 
 
 
@@ -167,14 +177,12 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> runAtVoltage());
     }
 
-    public boolean isaChud(){
-        if(Math.abs(getVelocityShooter() - targetShooterRPM) > SHOOTER.SHOOTER_TOLERANCE){
-            lukeisaChud = true;
-        }
-        else{
-            lukeisaChud = false;
-        }
-        return lukeisaChud;
+    public boolean isWithin(){
+        double toleranceMeasure = Math.abs(targetShooterRPM - getVelocityShooter());
+        if(toleranceMeasure < SHOOTER.SHOOTER_TOLERANCE)
+            return true;
+        else
+            return false;
     }
 
 
@@ -233,31 +241,31 @@ public class Shooter extends SubsystemBase {
      * 
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
-    public void updatePID() {
+    // public void updatePID() {
 
-        //Receive Shooter PID Constants from SmartDashboard
+    //     //Receive Shooter PID Constants from SmartDashboard
         
-        double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
-        double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
-        double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
+    //     double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
+    //     double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
+    //     double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
 
-        boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW);
+    //     boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW);
 
 
-       if(FDiff){
-        shooterPIDConfig
-        .withKP(SP_NEW)
-        .withKI(SI_NEW)
-        .withKD(SD_NEW);
-        shooterMotorConfig.withSlot0(shooterPIDConfig);
-        leftMotor.getConfigurator().apply(shooterMotorConfig);
+    //    if(FDiff){
+    //     shooterPIDConfig
+    //     .withKP(SP_NEW)
+    //     .withKI(SI_NEW)
+    //     .withKD(SD_NEW);
+    //     shooterMotorConfig.withSlot0(shooterPIDConfig);
+    //     leftMotor.getConfigurator().apply(shooterMotorConfig);
 
-        P_SET = SP_NEW;
-        I_SET = SI_NEW;
-        D_SET = SD_NEW;
-       }
+    //     P_SET = SP_NEW;
+    //     I_SET = SI_NEW;
+    //     D_SET = SD_NEW;
+    //    }
 
-    }
+    // }
 
 
     /**
@@ -272,7 +280,7 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage", getRightMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current", getLeftMotorCurrent());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Flywheel Motor Current", getRightMotorCurrent());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Luke is a Chud(Shooter is not in Tolerance)", isaChud());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
     }
 
 }

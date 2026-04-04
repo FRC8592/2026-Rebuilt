@@ -52,7 +52,7 @@ public class Swerve extends SubsystemBase {
 
     private RobotConfig config = null;
 
-    public Swerve(CommandSwerveDrivetrain drivetrain, boolean isSim) {
+    public Swerve(CommandSwerveDrivetrain drivetrain) {
         smoothingFilter = new SmoothingFilter(SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
                 SWERVE.TRANSLATION_SMOOTHING_AMOUNT, SWERVE.ROTATION_SMOOTHING_AMOUNT);
 
@@ -69,7 +69,6 @@ public class Swerve extends SubsystemBase {
 
         swerve = drivetrain;
         
-        this.isSim = isSim;
 
         // PathPlanner AutoBuilder configuration below.
         https: // pathplanner.dev/pplib-build-an-auto.html
@@ -158,7 +157,6 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
-        Logger.recordOutput(SWERVE.LOG_PATH + "isSim", isSim);
 
         // TODO: do we really need to run this?
         swerve.periodic();

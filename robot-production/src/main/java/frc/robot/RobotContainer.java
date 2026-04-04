@@ -42,7 +42,6 @@ public class RobotContainer {
   public final Scoring scoring;
   public final LEDs leds;
 
-  private boolean isSim;
 
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
@@ -60,12 +59,12 @@ public class RobotContainer {
 
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
-  private final Trigger SHOOT = operatorController.rightTrigger();
+  // private final Trigger SHOOT = operatorController.rightTrigger();
 
   private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
   private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
 
-  private final Trigger SHOOTER_CONFIGURATION = operatorController.povRight();
+  private final Trigger SHOOTER_CONFIGURATION = operatorController.rightTrigger();
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
@@ -77,10 +76,9 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(boolean isReal) {
-    isSim = !isReal;
+  public RobotContainer() {
     leds = new LEDs();
-    swerve = new Swerve(drivetrain, isSim);
+    swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve, leds);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
@@ -161,7 +159,6 @@ public class RobotContainer {
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     SHOOTER_CONFIGURATION.onTrue(scoring.shooter.runAtVoltageCommand()).onFalse(scoring.shooter.stopCommand());
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
@@ -177,7 +174,7 @@ public class RobotContainer {
 
     DECREASE_RPM.onTrue(scoring.runOnce(() -> scoring.decreaseK()));
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    //SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 

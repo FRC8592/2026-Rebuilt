@@ -52,10 +52,10 @@ public class Indexer extends SubsystemBase {
 
 
         // TODO: Tune pid
-        SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
-        SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
-        SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
-        SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
+        // SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
+        // SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
+        // SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
+        // SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
 
         spinMotorConfig.closedLoop.pid(INDEXER.SPIN_P, INDEXER.SPIN_I, INDEXER.SPIN_D,
@@ -151,22 +151,22 @@ public class Indexer extends SubsystemBase {
 
 
 
-    public void updatePID(){
-        double Spin_P = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
-        double Spin_I = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
-        double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
+    // public void updatePID(){
+    //     double Spin_P = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
+    //     double Spin_I = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
+    //     double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);
 
 
-        if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD) {
+    //     if (Spin_P != PS_OLD || Spin_I != IS_OLD || Spin_D != DS_OLD) {
 
-            spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
+    //         spinMotorConfig.closedLoop.pid(Spin_P, Spin_I, Spin_D, ClosedLoopSlot.kSlot0);
 
-            PS_OLD = Spin_P;
-            IS_OLD = Spin_I;
-            DS_OLD = Spin_D;
+    //         PS_OLD = Spin_P;
+    //         IS_OLD = Spin_I;
+    //         DS_OLD = Spin_D;
 
-            spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
-                    PersistMode.kNoPersistParameters);
-        }
-    }
+    //         spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters,
+    //                 PersistMode.kNoPersistParameters);
+    //     }
+    // }
 }
