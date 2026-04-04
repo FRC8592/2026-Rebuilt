@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.StripTypeValue;
 import com.ctre.phoenix6.signals.VBatOutputModeValue;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDS;
 
@@ -45,11 +46,9 @@ public class LEDs extends SubsystemBase {
 
         public LEDs() {
                 CANdleConfiguration configAll = new CANdleConfiguration();
-                configAll.LED = new LEDConfigs().withBrightnessScalar(1)
-                                .withStripType(StripTypeValue.GRB)
+                configAll.LED = new LEDConfigs().withBrightnessScalar(1).withStripType(StripTypeValue.GRB)
                                 .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning);
-                configAll.CANdleFeatures = new CANdleFeaturesConfigs()
-                                .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
+                configAll.CANdleFeatures = new CANdleFeaturesConfigs().withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
                                 .withVBatOutputMode(VBatOutputModeValue.Modulated);
                 candle = new CANdle(33); // TODO: Change this value when the device name is giving.
                 candle.getConfigurator().apply(configAll);
@@ -120,49 +119,28 @@ public class LEDs extends SubsystemBase {
         // Displaying the amount of the tags spotted, this might change cuase on the
         // controls of the operator if they decided to reject auto - shoot
         public void setCanShoot() {
-                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                .withColor(new RGBWColor((int) (LEDS.TEAL.red * 255),
-                                                (int) (LEDS.TEAL.green * 255),
-                                                (int) (LEDS.TEAL.blue * 255))));
+                setAllLEDSSolidColor(LEDS.TEAL);
         }
 
         public void setCannotShoot() {
-                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                .withColor(new RGBWColor((int) (LEDS.ORANGE.red * 255),
-                                                (int) (LEDS.ORANGE.green * 255),
-                                                (int) (LEDS.ORANGE.blue * 255))));
+                setAllLEDSSolidColor(LEDS.ORANGE);
         }
 
         public void setOff() {
-                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                .withColor(new RGBWColor((int) (LEDS.OFF.red * 255),
-                                                (int) (LEDS.OFF.green * 255),
-                                                (int) (LEDS.OFF.blue * 255))));
+                setAllLEDSSolidColor(LEDS.OFF);
         }
 
         public void displayindexerRunning() {
-                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                .withColor(new RGBWColor((int) (LEDS.WHITE.red * 255),
-                                                (int) (LEDS.WHITE.green * 255),
-                                                (int) (LEDS.WHITE.blue * 255))));
+                setAllLEDSSolidColor(LEDS.WHITE);
         }
 
         public void displayHasTagsLEDs() {
                 if (hasTags >= 2) {
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                        .withColor(new RGBWColor((int) (LEDS.GREEN.red * 255),
-                                                        (int) (LEDS.GREEN.green * 255),
-                                                        (int) (LEDS.GREEN.blue * 255))));
+                        setAllLEDSSolidColor(LEDS.GREEN);
                 } else if (hasTags == 1) {
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                        .withColor(new RGBWColor((int) (LEDS.YELLOW.red * 255),
-                                                        (int) (LEDS.YELLOW.green * 255),
-                                                        (int) (LEDS.YELLOW.blue * 255))));
+                        setAllLEDSSolidColor(LEDS.YELLOW);
                 } else {
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                        .withColor(new RGBWColor((int) (LEDS.RED.red * 255),
-                                                        (int) (LEDS.RED.green * 255),
-                                                        (int) (LEDS.RED.blue * 255))));
+                        setAllLEDSSolidColor(LEDS.RED);
                 }
         }
 
@@ -177,6 +155,14 @@ public class LEDs extends SubsystemBase {
         // public void periodic(){
         // displayCanShootLEDs();
         // }
+
+        private void setAllLEDSSolidColor(Color pColor) {
+                SolidColor solidColor = new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT);
+                RGBWColor rgbwcolor = new RGBWColor((int) pColor.red * 255, (int) pColor.green * 255, (int) pColor.blue * 255);
+                solidColor = solidColor.withColor(rgbwcolor);
+
+                candle.setControl(solidColor);
+        }
 
 }
 
