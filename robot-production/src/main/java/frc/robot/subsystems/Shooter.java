@@ -1,44 +1,40 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.INTAKE;
 import frc.robot.Constants.SHOOTER;
-import frc.robot.Constants.TURRET;
-
-import java.util.Set;
-
+import javax.sound.sampled.TargetDataLine;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
+    // Motor configurations
     private TalonFX flywheelMotor; // big one
     private TalonFX backwheelMotor; // smaller wheels
     private TalonFXConfiguration flywheelConfiguration;
     private TalonFXConfiguration backwheelConfiguration;
-
     private VelocityTorqueCurrentFOC flyWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
     private VelocityTorqueCurrentFOC backWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
-
+    // Store old PID values when updating from the SmartDashboard
     private double PF_OLD;
     private double IF_OLD;
     private double DF_OLD;
 
-    private double PB_OLD;
-    private double IB_OLD;
-    private double DB_OLD;
-
+    // Controls flywheel speed
     private double targetFlywheelRPM;
-
 
     /**
      * Constructor for the Shooter subsystem
@@ -51,7 +47,6 @@ public class Shooter extends SubsystemBase {
      * 
      */
     public Shooter() {
-
         /**
          * Flywheel and Backwheel Motor initialization and their respective configurations
          */
@@ -60,10 +55,12 @@ public class Shooter extends SubsystemBase {
         flywheelConfiguration = new TalonFXConfiguration();
         backwheelConfiguration = new TalonFXConfiguration();
 
-
-
         /**
          * Flywheel PID Tuning Configuration and Constants
+         * 
+         * The backwheel motor is now mechanically connected to the flywheel motor.
+         * Backwheel PID constants are no longer needed, and the Backwheel motor will
+         * be an inverted follower.
          */
         flywheelConfiguration.Slot0.kP = SHOOTER.FLYWHEEL_P;
         flywheelConfiguration.Slot0.kI = SHOOTER.FLYWHEEL_I;
@@ -71,64 +68,29 @@ public class Shooter extends SubsystemBase {
         flywheelConfiguration.Slot0.kS = SHOOTER.FLYWHEEL_S;
         flywheelConfiguration.Slot0.kV = SHOOTER.FLYWHEEL_V;
 
-
-
-        /**
-         * Backwheel PID Tuning Configuration and Constants
-         */
-        backwheelConfiguration.Slot0.kP = SHOOTER.BACKWHEEL_P;
-        backwheelConfiguration.Slot0.kI = SHOOTER.BACKWHEEL_I;
-        backwheelConfiguration.Slot0.kD = SHOOTER.BACKWHEEL_D;
-        backwheelConfiguration.Slot0.kS = SHOOTER.BACKWHEEL_S;
-        backwheelConfiguration.Slot0.kV = SHOOTER.BACKWHEEL_V;
-
-
-
-        /**
-         * Flywheel and Backwheel Motor Inversion Configuration
-         */
-        //DO NOT PAY ATTENTION TO THE INVERTEDVALUE CLASS NAME, THE ACTUAL INVERSION VALUE IS THE POSITIVE VALUE PASSED
-        flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        backwheelConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-
-
-        /**
-         * Flywheel and Backwheel Neutral Mode Configurations. This is to tell the motor what to do when it is at 0V.
-         * (I believe so at least)
-         */
+        // Configure the flywheel motor so that positive inputs shoot fuel
+        flywheelConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;   
+      
+        // Configure both motors to coast instead of brake
         flywheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         backwheelConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-
-
-        /**
-         * Flywheel and Backwheel Current Limit Configuration, this limits supply current limit too and prevents the motor from overheating
-         */
-        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = false;
+        // Flywheel and Backwheel Current Limits to preserve energy and help prevent brownouts
+        flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         flywheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.FLYWHEEL_CURRENT_LIMIT;
         backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
 
+        // Set PID update frequency to maximum.  Probably unnecessary.
+        flyWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
+        backWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
 
-
-        /**
-         * Flywheel and Backwheel Update Speed Configuration. This is to allow the flywheels to respond quicker to errors.
-         */
-        // flyWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
-        // backWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
-
-        flywheelConfiguration.Feedback.VelocityFilterTimeConstant = 0.01;
-
-
-
-        /**
-         * Flywheel and Backwheel Motor Configuration. This configures the motors themselves with the configuration we have done.
-         */
+        // Apply motor configurations
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
         backwheelMotor.getConfigurator().apply(backwheelConfiguration);
 
-
+        // Set backwheel as an inverted follower of the flywheel
+        backwheelMotor.setControl(new Follower(SHOOTER.FLYWHEEL_MOTOR_CAN_ID, MotorAlignmentValue.Opposed));
 
         /**
          * SmartDashboard Flywheel PID Constants, necessary to tune PID quickly without redeploying code
@@ -136,17 +98,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("fP", SHOOTER.FLYWHEEL_P);
         SmartDashboard.putNumber("fI", SHOOTER.FLYWHEEL_I);
         SmartDashboard.putNumber("fD", SHOOTER.FLYWHEEL_D);
-
-
-
-        /**
-         * SmartDashboard Backwheel PID Constants, necessary to tune PID quickly without redeploying code
-         */
-        SmartDashboard.putNumber("bP", SHOOTER.BACKWHEEL_P);
-        SmartDashboard.putNumber("bI", SHOOTER.BACKWHEEL_I);
-        SmartDashboard.putNumber("bD", SHOOTER.BACKWHEEL_D);
     }
-
 
 
     /**
@@ -154,20 +106,12 @@ public class Shooter extends SubsystemBase {
      *  
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
-    // TODO: Possibly diagnose issue with inversions, IF TIME
     public void runAtSpeed(double desiredRPM) {
-        double flyWheelMotorVelocity = desiredRPM / 60; // Convert from RPM to RPS for the motor
-                                                        // controller
-        double backwheelMotorVelocity = -1 * SHOOTER.BACKWHEEL_VELOCITY / 60;
+        targetFlywheelRPM = desiredRPM / 60; // Convert from RPM to RPS for the motor controller
 
-        targetFlywheelRPM = desiredRPM;
         //Configure the motors to run at this velocity utilizing the TorqueCurrentFOC control modes
-        flywheelMotor.setControl(
-                flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(flyWheelMotorVelocity));
-        backwheelMotor.setControl(
-                backWheelTorqueCurrentFOC.withSlot(0).withVelocity(backwheelMotorVelocity));
+        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(targetFlywheelRPM));
     }
-
 
 
     /**
@@ -180,9 +124,8 @@ public class Shooter extends SubsystemBase {
     }
 
 
-
     /**
-     * Stops the shooter motor, thus bringing the flywheel to a gradual stop.
+     * Stops motors, thus bringing the flywheel to a gradual stop.
      * 
      * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
      */
@@ -190,7 +133,6 @@ public class Shooter extends SubsystemBase {
         flywheelMotor.setVoltage(0.0);
         backwheelMotor.setVoltage(0.0);
     }
-
 
 
     /**
@@ -203,7 +145,6 @@ public class Shooter extends SubsystemBase {
     }
 
 
-
     /**
      * Returns Flywheel Velocity
      * 
@@ -212,7 +153,6 @@ public class Shooter extends SubsystemBase {
     public double getVelocityFlywheel() {
         return flywheelMotor.getVelocity().getValueAsDouble();
     }
-
 
 
     /**
@@ -225,58 +165,49 @@ public class Shooter extends SubsystemBase {
     }
 
 
+    /**
+     * Returns the current being drawn by the flywheel motor.
+     * @return Stator current for the flywheel motor in Amperes.
+     */
     public double getFlywheelCurrent(){
         return flywheelMotor.getStatorCurrent().getValueAsDouble();
     }
 
+
+    /**
+     * Returns the current being drawn by the backwheel motor.
+     * @return Stator current for the backwheel motor in Amperes.
+     */
     public double getBackwheelCurrent(){
         return backwheelMotor.getStatorCurrent().getValueAsDouble();
     }
 
 
-
     /**
-     * Update the PID values on the fly on the shooter motor. The NEO Motors do not allowed their
-     * PID Profile to be updated while running.
+     * Update the PID values for the shooter motor. The NEO Motors do not allow their
+     * PID Profile to be updated while running, so this must only be called while disabled.
      * 
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
     public void updatePID() {
-
-        //Receive Flywheel PID Constants from SmartDashboard
+        // Read Flywheel PID Constants from SmartDashboard
         double PF = SmartDashboard.getNumber("fP", SHOOTER.FLYWHEEL_P);
         double IF = SmartDashboard.getNumber("fI", SHOOTER.FLYWHEEL_I);
         double DF = SmartDashboard.getNumber("fD", SHOOTER.FLYWHEEL_D);
 
-        //Recieve Backwheel PID Constants from SmartDashboard
-        double PB = SmartDashboard.getNumber("bP", SHOOTER.BACKWHEEL_P);
-        double IB = SmartDashboard.getNumber("bI", SHOOTER.BACKWHEEL_I);
-        double DB = SmartDashboard.getNumber("bD", SHOOTER.BACKWHEEL_D);
+        if (PF != PF_OLD || IF != IF_OLD || DF != DF_OLD) {
 
-        if (PF != PF_OLD || IF != IF_OLD || DF != DF_OLD
-                || PB != PB_OLD || IB != IB_OLD || DB != DB_OLD) {
             flywheelConfiguration.Slot0.kP = PF;
             flywheelConfiguration.Slot0.kI = IF;
             flywheelConfiguration.Slot0.kD = DF;
-
-            backwheelConfiguration.Slot0.kP = PB;
-            backwheelConfiguration.Slot0.kI = IB;
-            backwheelConfiguration.Slot0.kD = DB;
 
             PF_OLD = PF;
             IF_OLD = IF;
             DF_OLD = DF;
 
-            PB_OLD = PB;
-            IB_OLD = IB;
-            DB_OLD = DB;
-
-
             flywheelMotor.getConfigurator().apply(flywheelConfiguration);
-            backwheelMotor.getConfigurator().apply(backwheelConfiguration);
         }
     }
-
 
 
     /**
@@ -284,15 +215,11 @@ public class Shooter extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set Vel",
-                targetFlywheelRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Set Vel",
-                SmartDashboard.getNumber("B Flywheel", SHOOTER.BACKWHEEL_VELOCITY));
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage",
-                flywheelMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Real Vel", getVelocityFlywheel() * 60);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Real Vel",
-                getVelocityBackwheel() * -1 * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set RPM", targetFlywheelRPM);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Actual RPM", getVelocityFlywheel() * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Actual RPM", getVelocityBackwheel() * -1 * 60);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage", flywheelMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Motor Voltage", backwheelMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Stator Current", getFlywheelCurrent());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Stator Current", getBackwheelCurrent());
     }

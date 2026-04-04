@@ -14,6 +14,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import java.util.Optional;
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LEDS;
@@ -28,6 +30,9 @@ import frc.robot.subsystems.vision.Vision;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
+
+  // Field required for simulation
+  public static Field2d FIELD = new Field2d();
 
   private static int periodicCounter = 0;
   private static int tagCounter = 0;
@@ -63,6 +68,9 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
+
+    // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
+    SmartDashboard.putData("Field", FIELD);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
