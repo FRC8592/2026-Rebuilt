@@ -53,7 +53,6 @@ public class RobotContainer {
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
-
   private final Trigger SHOOT_SQUEEZE = driverController.a();
 
 
@@ -61,17 +60,14 @@ public class RobotContainer {
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
-  private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
-  private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
-
-  private final Trigger SHOOTER_CONFIGURATION = operatorController.y();
-
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
-  private final Trigger INCREASE_RPM = operatorController.povUp();
-  private final Trigger DECREASE_RPM = operatorController.povDown();
 
-  
+  // Controls for running sysId tests
+  // private final Trigger QUASI_FORWARD = driverController.a();
+  // private final Trigger QUASI_REVERSE = driverController.y();
+  // private final Trigger DYNAMIC_FORWARD = driverController.b();
+  // private final Trigger DYNAMIC_REVERSE = driverController.x();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -162,29 +158,17 @@ public class RobotContainer {
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+    LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
-
-    //TODO: Test kFactor change on-the-fly
-    INCREASE_RPM.onTrue(scoring.runOnce(() -> scoring.increaseK()));
-
-    DECREASE_RPM.onTrue(scoring.runOnce(() -> scoring.decreaseK()));
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
-
-    //TODO: Remove these bindings
-    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90)).onFalse(scoring.turret.stopTurretCommand());
-
-    //REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90)).onFalse(scoring.turret.stopTurretCommand());
-
-
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
