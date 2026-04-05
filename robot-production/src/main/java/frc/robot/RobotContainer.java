@@ -52,7 +52,6 @@ public class RobotContainer {
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
-
   private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   // private final Trigger SNAP_TO = driverController.povUp();
@@ -61,13 +60,8 @@ public class RobotContainer {
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
 
-  private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
-  private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
-
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
-  // private final Trigger TURRET_TEST = operatorController.x();
-  // private final Trigger TURRET_TEST_BACK = operatorController.a();
 
   // Controls for running sysId tests
   // private final Trigger QUASI_FORWARD = driverController.a();
@@ -166,7 +160,7 @@ public class RobotContainer {
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    LOCK_WHEELS.whileTrue(swerve.runOnce(() -> swerve.brake()));
+    LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
@@ -177,12 +171,6 @@ public class RobotContainer {
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
-
-    POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90));
-
-    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90));
-
-
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 

@@ -124,25 +124,16 @@ public final class Constants {
     public static final int BACKWHEEL_MOTOR_CAN_ID = 19;
     public static final int FLYWHEEL_MOTOR_CAN_ID = 13;
 
-    public static final double FLYWHEEL_CURRENT_LIMIT = 100.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 100.0;
+    public static final double FLYWHEEL_CURRENT_LIMIT = 60.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
 
 
     public static final double FLYWHEEL_P = 6.0;
     public static final double FLYWHEEL_I = 0.0;
     public static final double FLYWHEEL_D = 0.0;
-    public static final double FLYWHEEL_S = 0.3;
-    public static final double FLYWHEEL_V = 0.1054;
-
-
-    public static final double BACKWHEEL_P = 5.0;
-    public static final double BACKWHEEL_I = 0.0;
-    public static final double BACKWHEEL_D = 0.0;
-    public static final double BACKWHEEL_S = 0.4;
-    public static final double BACKWHEEL_V = 0.125;
-
-
-    public static final double BACKWHEEL_VELOCITY = 1146;
+    public static final double FLYWHEEL_S = 0.5;
+    public static final double FLYWHEEL_V = 0.1037;
+    public static final double FLYWHEEL_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -178,7 +169,7 @@ public final class Constants {
     //Try these out?
     public static final double FORWARD_LIMIT = 180; // Degrees
     public static final double REVERSE_LIMIT = -180; // Degrees
-    public static final double TURRET_TOLERANCE = 0.75; // Degrees
+    public static final double TURRET_TOLERANCE = 2; // Degrees
     public static final double CRT_TOLERANCE = 0.004;
     public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180
                                                           // degrees relative to the

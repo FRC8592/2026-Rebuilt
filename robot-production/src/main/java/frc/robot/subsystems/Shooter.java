@@ -25,8 +25,8 @@ public class Shooter extends SubsystemBase {
     private TalonFX backwheelMotor; // smaller wheels
     private TalonFXConfiguration flywheelConfiguration;
     private TalonFXConfiguration backwheelConfiguration;
-    private VelocityTorqueCurrentFOC flyWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
-    private VelocityTorqueCurrentFOC backWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+    private VelocityVoltage flyWheelVelocityVoltage = new VelocityVoltage(0);
+ //   private VelocityTorqueCurrentFOC flyWheelTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
     // Store old PID values when updating from the SmartDashboard
     private double PF_OLD;
@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
     private double DF_OLD;
 
     // Controls flywheel speed
-    private double targetFlywheelRPM;
+    private double targetFlywheelRPS;
 
     /**
      * Constructor for the Shooter subsystem
@@ -82,8 +82,8 @@ public class Shooter extends SubsystemBase {
         backwheelConfiguration.CurrentLimits.StatorCurrentLimit = SHOOTER.BACKWHEEL_CURRENT_LIMIT;
 
         // Set PID update frequency to maximum.  Probably unnecessary.
-        flyWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
-        backWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
+        flyWheelVelocityVoltage.withUpdateFreqHz(1000);
+        // flyWheelTorqueCurrentFOC.withUpdateFreqHz(1000);
 
         // Apply motor configurations
         flywheelMotor.getConfigurator().apply(flywheelConfiguration);
@@ -107,10 +107,11 @@ public class Shooter extends SubsystemBase {
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM) {
-        targetFlywheelRPM = desiredRPM / 60; // Convert from RPM to RPS for the motor controller
+        targetFlywheelRPS = desiredRPM / 60; // Convert from RPM to RPS for the motor controller
 
         //Configure the motors to run at this velocity utilizing the TorqueCurrentFOC control modes
-        flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(targetFlywheelRPM));
+        flywheelMotor.setControl(flyWheelVelocityVoltage.withSlot(0).withVelocity(targetFlywheelRPS));
+        //flywheelMotor.setControl(flyWheelTorqueCurrentFOC.withSlot(0).withVelocity(targetFlywheelRPS));
     }
 
 
@@ -215,7 +216,7 @@ public class Shooter extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set RPM", targetFlywheelRPM);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Set RPM", targetFlywheelRPS);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Actual RPM", getVelocityFlywheel() * 60);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Backwheel Actual RPM", getVelocityBackwheel() * -1 * 60);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Flywheel Motor Voltage", flywheelMotor.getMotorVoltage().getValueAsDouble());
