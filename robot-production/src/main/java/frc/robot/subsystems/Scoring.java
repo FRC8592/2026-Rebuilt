@@ -439,40 +439,6 @@ public class Scoring extends SubsystemBase {
                                                                                    // second
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
-            Translation3d turretTrackingPose;
-            Translation3d turretActualPose;
-            double actualTurretAngle =
-                    turret.getRawTurretAngle() + currentRobotPose.getRotation().getDegrees()
-                            + TURRET.TURRET_ANGLE_OFFSET;
-            double targetChangeX = Math.cos(turretAngle) * targetDistance;
-            double actualChangeX = Math.cos(actualTurretAngle) * targetDistance;
-            double targetChangeY = Math.sin(turretAngle) * targetDistance;
-            double actualChangeY = Math.sin(actualTurretAngle) * targetDistance;
-            double targetXPose = currentRobotPose.getX();
-            double actualXPose = targetXPose;
-            double targetYPose = currentRobotPose.getY();
-            double actualYPose = targetYPose;
-            double turretDirection = Math.signum(turretAngle);
-            switch (alliance) {
-                case Blue:
-                    targetXPose += turretDirection * targetChangeX;
-                    actualXPose += turretDirection * actualChangeX;
-                    targetYPose += turretDirection * targetChangeY;
-                    actualYPose += turretDirection * actualChangeY;
-                case Red:
-                    targetXPose -= turretDirection * targetChangeX;
-                    actualXPose -= turretDirection * actualChangeX;
-                    targetYPose -= turretDirection * targetChangeY;
-                    actualYPose -= turretDirection * actualChangeY;
-            }
-            turretTrackingPose =
-                    new Translation3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT);
-            turretActualPose = new Translation3d(actualXPose, actualYPose, SCORING.TAG_HUB_HEIGHT);
-
-            Logger.recordOutput(SCORING.LOG_PATH + "Turret Actual Pose", turretActualPose);
-            Logger.recordOutput(SCORING.LOG_PATH + "Turret Tracking Pose", turretTrackingPose);
-
-
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
             shooter.runAtSpeed(shooterSpeed);
