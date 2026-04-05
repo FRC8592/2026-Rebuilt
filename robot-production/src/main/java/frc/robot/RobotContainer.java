@@ -59,12 +59,12 @@ public class RobotContainer {
 
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
-  // private final Trigger SHOOT = operatorController.rightTrigger();
+  private final Trigger SHOOT = operatorController.rightTrigger();
 
   private final Trigger REVERSE_TURRET_TESTING = operatorController.leftBumper();
   private final Trigger POSITIVE_TURRET_TESTING = operatorController.rightBumper();
 
-  private final Trigger SHOOTER_CONFIGURATION = operatorController.rightTrigger();
+  private final Trigger SHOOTER_CONFIGURATION = operatorController.y();
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
@@ -160,7 +160,6 @@ public class RobotContainer {
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
 
-    SHOOTER_CONFIGURATION.onTrue(scoring.shooter.runAtVoltageCommand()).onFalse(scoring.shooter.stopCommand());
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
     LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
@@ -174,7 +173,7 @@ public class RobotContainer {
 
     DECREASE_RPM.onTrue(scoring.runOnce(() -> scoring.decreaseK()));
 
-    //SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
@@ -183,7 +182,7 @@ public class RobotContainer {
     //TODO: Remove these bindings
     POSITIVE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(90)).onFalse(scoring.turret.stopTurretCommand());
 
-    REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90)).onFalse(scoring.turret.stopTurretCommand());
+    //REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90)).onFalse(scoring.turret.stopTurretCommand());
 
 
 

@@ -121,7 +121,7 @@ public class Scoring extends SubsystemBase {
         trackingTarget = false;
         overrideTracking = true;
         turret.holdPosition();
-        shooter.runAtSpeed(3800);
+        shooter.runAtSpeed(1500);
     }
 
     public Command overrideTrackingCommand() {
@@ -476,7 +476,7 @@ public class Scoring extends SubsystemBase {
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
-            shooter.runAtSpeed(shooterSpeed);
+            shooter.runAtSpeed(1800);
         } else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {

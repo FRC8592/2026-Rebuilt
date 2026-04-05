@@ -98,6 +98,8 @@ public class Robot extends LoggedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     // m_timeAndJoystickReplay.update();
+
+
     CommandScheduler.getInstance().run();
 
   }
@@ -166,7 +168,7 @@ public class Robot extends LoggedRobot {
 
     // Update PID values from SmartDashboard for all subsystems that use PID. This
     // allows for tuning while the robot is disabled.
-    //_robotContainer.scoring.shooter.updatePID();
+    m_robotContainer.scoring.shooter.updatePID();
     //m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.scoring.intake.updatePID();
     //m_robotContainer.scoring.turret.updatePID();

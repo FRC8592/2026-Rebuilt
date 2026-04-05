@@ -90,7 +90,7 @@ public class Shooter extends SubsystemBase {
         .withKA(SHOOTER.SHOOTER_A.in(Volts));
 
 
-        // shooterMotorConfig.withSlot0(shooterPIDConfig);
+        shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
 
         // shooterMMConfig
         // .withMotionMagicAcceleration(SHOOTER.MAX_ACCELERATION)
@@ -160,22 +160,16 @@ public class Shooter extends SubsystemBase {
                                                         // controller
 
         targetShooterRPM = desiredRPM;
+        Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         //Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
         leftMotor.setControl(
                 shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
+        Logger.recordOutput("Shooter Motor Velocity Voltage Info", shooterVV.toString());
         //leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
     }
 
 
-    public void runAtVoltage(){
-        double voltage = SmartDashboard.getNumber("Shooter Voltage", 0);
-        leftMotor.setVoltage(voltage);
-    }
 
-    //This is because the Trigger is onTrue, so we are able to update continuously the shooter voltage
-    public Command runAtVoltageCommand(){
-        return this.run(() -> runAtVoltage());
-    }
 
     public boolean isWithin(){
         double toleranceMeasure = Math.abs(targetShooterRPM - getVelocityShooter());
@@ -241,31 +235,31 @@ public class Shooter extends SubsystemBase {
      * 
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
-    // public void updatePID() {
+    public void updatePID() {
 
-    //     //Receive Shooter PID Constants from SmartDashboard
+        //Receive Shooter PID Constants from SmartDashboard
         
-    //     double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
-    //     double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
-    //     double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
+        double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
+        double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
+        double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
 
-    //     boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW);
+        boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW);
 
 
-    //    if(FDiff){
-    //     shooterPIDConfig
-    //     .withKP(SP_NEW)
-    //     .withKI(SI_NEW)
-    //     .withKD(SD_NEW);
-    //     shooterMotorConfig.withSlot0(shooterPIDConfig);
-    //     leftMotor.getConfigurator().apply(shooterMotorConfig);
+       if(FDiff){
+        shooterPIDConfig
+        .withKP(SP_NEW)
+        .withKI(SI_NEW)
+        .withKD(SD_NEW);
+        shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
+        leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
 
-    //     P_SET = SP_NEW;
-    //     I_SET = SI_NEW;
-    //     D_SET = SD_NEW;
-    //    }
+        P_SET = SP_NEW;
+        I_SET = SI_NEW;
+        D_SET = SD_NEW;
+       }
 
-    // }
+    }
 
 
     /**
@@ -275,7 +269,7 @@ public class Shooter extends SubsystemBase {
     //TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of feedforward constants
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Real Vel", getVelocityShooter()); //* 60d);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Real Vel", getVelocityShooter() * 60d);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", getLeftMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage", getRightMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current", getLeftMotorCurrent());

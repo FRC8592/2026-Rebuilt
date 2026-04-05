@@ -31,7 +31,6 @@ public class Swerve extends SubsystemBase {
     private boolean isSlowMode;
     private boolean alignedHeading = false;
 
-    private boolean isSim;
 
     private SmoothingFilter smoothingFilter;
 
@@ -47,6 +46,8 @@ public class Swerve extends SubsystemBase {
             new SwerveRequest.RobotCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
                     .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
                     .withDriveRequestType(DriveRequestType.Velocity);
+
+    private SwerveRequest.SwerveDriveBrake X_Mode = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
@@ -233,8 +234,7 @@ public class Swerve extends SubsystemBase {
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public void brake() {
-        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
-        swerve.setControl(brake);
+        swerve.setControl(X_Mode);
     }
 
     /**
@@ -298,25 +298,16 @@ public class Swerve extends SubsystemBase {
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
-        double processX = rawX;
-        double processY = rawY;
-        double processRot = rawRot;
-        if(isSim){
-            processX = -rawX;
-            processY = -rawY;
-            processRot = -rawRot;
-        }
-        Logger.recordOutput(SWERVE.LOG_PATH + "processX" , processX);
-        Logger.recordOutput(SWERVE.LOG_PATH + "processY" , processY);
-        Logger.recordOutput(SWERVE.LOG_PATH + "processRot" , processRot);
-        double driveTranslateX = (processX >= 0 ? (Math.pow(Math.abs(processX), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(processX), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveTranslateY = (processY >= 0 ? (Math.pow(Math.abs(processY), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(processY), SWERVE.JOYSTICK_EXPONENT)));
 
-        double driveRotate = (processRot >= 0 ? (Math.pow(Math.abs(processRot), SWERVE.JOYSTICK_EXPONENT))
-                : -(Math.pow(Math.abs(processRot), SWERVE.JOYSTICK_EXPONENT)));
+        double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
+
+        double driveTranslateY = (rawY >= 0 ? (Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(rawY), SWERVE.JOYSTICK_EXPONENT)));
+
+        double driveRotate = (rawRot >= 0 ? (Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
+                : -(Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT)));
 
         if (isSlowMode) {
             driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW

@@ -135,15 +135,15 @@ public final class Constants {
     public static final int RIGHT_MOTOR_CAN_ID = 19;
     public static final int LEFT_MOTOR_CAN_ID = 13;
 
-    public static final Current SHOOTER_CURRENT_LIMIT = Amps.of(100);
+    public static final Current SHOOTER_CURRENT_LIMIT = Amps.of(60);
 
 
-    public static final Voltage SHOOTER_P = Volts.of(6);
+    public static final Voltage SHOOTER_P = Volts.of(0.6);
     public static final Voltage SHOOTER_I = Volts.of(0);
     public static final Voltage SHOOTER_D = Volts.of(0);
     public static final Voltage SHOOTER_S = Volts.of(0.5);
-    public static final Voltage SHOOTER_V = Volts.of(0.1054);
-    public static final Voltage SHOOTER_A = Volts.of(0);
+    public static final Voltage SHOOTER_V = Volts.of(0.1037);
+    public static final Voltage SHOOTER_A = Volts.of(0.2432);
 
     public static final Time SHOOTER_FILTER_TIME_CONSTANT = Seconds.of(0.01);
 

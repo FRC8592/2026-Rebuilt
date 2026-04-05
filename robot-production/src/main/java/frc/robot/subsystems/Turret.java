@@ -160,6 +160,8 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("tI", TURRET.TURRET_I.in(Volts));
         SmartDashboard.putNumber("tD", TURRET.TURRET_D.in(Volts));
 
+        SmartDashboard.putNumber("Turret Voltage", 0);
+
         // Instantiate for calculating the turret angle based on target and robot
         // positions
         this.resetPos();
@@ -178,14 +180,17 @@ public class Turret extends SubsystemBase {
     }
 
     public void basicTurretToPos(double angle){
-        logAngle(angle);
-        turretMotor.setControl(positionRequest.withSlot(0).withPosition(angle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        double voltage = SmartDashboard.getNumber("Turret Voltage", 0);
+        turretMotor.setVoltage(voltage);
+        //logAngle(angle);
+        //turretMotor.setControl(positionRequest.withSlot(0).withPosition(angle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         //turretMotor.setControl(positionMMRequest.withPosition(angle * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public Command basicTurretToPosCommand(double angle){
         return this.runOnce(() -> basicTurretToPos(angle));
     }
+    
     /**
      * Stop the turret motor. Not normally used; we want the turret to hold position with the motor
      */
