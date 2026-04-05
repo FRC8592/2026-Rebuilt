@@ -384,6 +384,11 @@ public class Scoring extends SubsystemBase {
         }
     }
 
+    public double shootSpeed(double targetX, double targetY) {
+        double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
+        return (156.82212 * x + 1019.64733);
+    }
+
     /**
      * If the tracking system is toggled on, update the required turret angle and shooter speed
      * Shoot On The Move
@@ -434,10 +439,11 @@ public class Scoring extends SubsystemBase {
             ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, fieldRelative.vxMetersPerSecond, fieldRelative.vyMetersPerSecond);
-            shooterSpeed = SOTMResults.getFirst();
+            // shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
 //            shooterSpeed = shooterSpeedHub(targetDistance);
-            shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
+            //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
+            shooterSpeed = shootSpeed(targetX, targetY);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
