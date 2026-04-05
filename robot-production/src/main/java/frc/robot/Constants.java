@@ -207,6 +207,8 @@ public final class Constants {
     public static final double FLYWHEEL_RADIUS = 2.0; //inches
     public static final double FLYWHEEL_GEARING = 1.0;
 
+    public static final double RANGE_EXPO = 1.0033;
+
     public static final double SHORT_RANGE_SHOT = 2d;
 
     public static final double SHORT_RANGE_K = 2.3;

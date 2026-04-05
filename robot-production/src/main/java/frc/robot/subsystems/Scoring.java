@@ -363,10 +363,14 @@ public class Scoring extends SubsystemBase {
 
     public double shootSpeed(double targetX, double targetY) {
         double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
-        return (156.82212 * x + 1019.64733);
+
+        if (x <= 2.0)
+            return 156.82212 * x + 1019.64733;
+        else
+            return Math.pow((156.82212 * x + 1019.64733), SCORING.RANGE_EXPO);
     }
 
-    /**
+    /**`
      * If the tracking system is toggled on, update the required turret angle and shooter speed
      * Shoot On The Move
      **/
