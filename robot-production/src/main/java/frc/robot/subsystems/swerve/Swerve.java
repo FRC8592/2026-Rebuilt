@@ -12,7 +12,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +31,7 @@ public class Swerve extends SubsystemBase {
     private boolean isSlowMode;
     private boolean alignedHeading = false;
 
+
     private SmoothingFilter smoothingFilter;
 
     private CommandSwerveDrivetrain swerve;
@@ -43,6 +46,8 @@ public class Swerve extends SubsystemBase {
             new SwerveRequest.RobotCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
                     .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
                     .withDriveRequestType(DriveRequestType.Velocity);
+
+    private SwerveRequest.SwerveDriveBrake X_Mode = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
@@ -64,6 +69,7 @@ public class Swerve extends SubsystemBase {
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
 
         swerve = drivetrain;
+        
 
         // PathPlanner AutoBuilder configuration below.
         https: // pathplanner.dev/pplib-build-an-auto.html
@@ -151,6 +157,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
+        Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
 
         // TODO: do we really need to run this?
         swerve.periodic();
@@ -227,8 +234,7 @@ public class Swerve extends SubsystemBase {
      * Turn all wheels into an "X" position so that the chassis effectively can't move
      */
     public void brake() {
-        SwerveRequest brake = new SwerveRequest.SwerveDriveBrake();
-        swerve.setControl(brake);
+        swerve.setControl(X_Mode);
     }
 
     /**
@@ -247,6 +253,10 @@ public class Swerve extends SubsystemBase {
      */
     public Pose2d getCurrentOdometryPosition() {
         return swerve.getState().Pose;
+    }
+    //This does not take into account z-height
+    public Pose3d get3DCurrentOdometryPosition(){
+        return new Pose3d(new Translation3d(swerve.getState().Pose.getTranslation()) , swerve.getRotation3d());
     }
 
     public void setKnownOdometryPose(Pose2d currentPose) {
@@ -281,13 +291,15 @@ public class Swerve extends SubsystemBase {
     /**
      * Process joystick inputs for swerve control
      *
-     * @param rawX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
+     * @param processX the raw X input from a joystick. Should be -1 to 1 (HORIZONTAL motion)
      * @param rawY the raw Y input from a joystick. Should be -1 to 1 (FORWARD motion)
      * @param rawRot the raw rotation input from a joystick. Should be -1 to 1
      *
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
+
+
         double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
 
