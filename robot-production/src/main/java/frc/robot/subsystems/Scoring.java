@@ -412,6 +412,7 @@ public class Scoring extends SubsystemBase {
             leds.displayindexerRunning();
         }
 
+
         if (trackingTarget) {
 
             // calculate the distance to the target position

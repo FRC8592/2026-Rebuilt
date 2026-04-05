@@ -38,6 +38,7 @@ public class Indexer extends SubsystemBase {
     private double SS_OLD;
 
     public boolean indexerRunning = false;
+    public LEDs leds;
 
     private ParallelCommandGroup waitandShoot = new ParallelCommandGroup();
 
@@ -75,7 +76,13 @@ public class Indexer extends SubsystemBase {
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
         Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
+        Logger. recordOutput(INDEXER.LOG_PATH + "Applied Output", getAppliedOutput());
+        Logger. recordOutput (INDEXER.LOG_PATH + "Input Current ", getSpinnerCurrent() * getAppliedOutput());
     }
+
+    // if (spinMotor.getOutputCurrent() >= 50 && spinMotor.getVelocity() <= 300){
+    //     leds.setSpindexerStuck();
+    // }
 
     /**
      * Stop the indexer motor. Use brake mode and not motor power to stop
@@ -120,6 +127,10 @@ public class Indexer extends SubsystemBase {
         return spinMotorEncoder.getVelocity();
     }
 
+    public double getAppliedOutput(){
+        return spinMotor.getAppliedOutput();
+    }
+
     /**
      * Get the current of the spinner motor in amps
      * 
@@ -155,4 +166,5 @@ public class Indexer extends SubsystemBase {
                     PersistMode.kNoPersistParameters);
         }
     }
+
 }
