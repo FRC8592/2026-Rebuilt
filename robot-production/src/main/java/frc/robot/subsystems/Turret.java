@@ -163,6 +163,10 @@ public class Turret extends SubsystemBase {
         tMotor.setVoltage(0);
     }
 
+    /**
+     * Get the current angle of the turret in degrees
+     * @return Turret angle in degrees
+     */
     public double getAngle() {
         return tMotor.getPosition().getValueAsDouble() * 1.0 / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
@@ -196,6 +200,9 @@ public class Turret extends SubsystemBase {
         // tMotor.setPosition(0);
     }
 
+    /**
+     * Get the angle of the target, relative to the robot and robot heading
+     */
     public double getTargetAngle(){
         return targetAngle;
     }
@@ -292,7 +299,6 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-
 
         Logger.recordOutput("E1", E1.get());
         Logger.recordOutput("E2", E2.get());
