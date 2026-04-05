@@ -222,13 +222,15 @@ public final class Constants {
     public static final double INTAKE_EXTEND_P = 0.5; //0.5
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
-    public static final double EXTEND_ROTATIONS = 18.8;
+    public static final double EXTEND_ROTATIONS = 18.5;
     public static final double EXTEND_SOFT_LIMIT = 3;
     public static final double EXTEND_PROFILE_ERROR = 10;
     public static final double RETRACT_LIMIT = 0.5;
     public static final double RETRACT_VOLTAGE = -6;
     public static final double ROLLER_VOLTAGE = 11;
     public static final double ROLLER_VOLTAGE_SLOW = 7;
+
+    public static final double RETRACT_ROTATION_INCREMENT = -0.03;
 
     // TODO: Tune and change these!
     public static final double CRUISE_VELOCITY = 2000;
