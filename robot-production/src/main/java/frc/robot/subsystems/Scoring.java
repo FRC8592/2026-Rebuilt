@@ -414,15 +414,14 @@ public class Scoring extends SubsystemBase {
             targetY = currentTargetPose.getY() - currentRobotPose.getY();
 
             ChassisSpeeds velocityVector = swerve.getRobotRelativeSpeeds();
-            ChassisSpeeds fieldRelative =
-                    ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
+            ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, fieldRelative.vxMetersPerSecond, fieldRelative.vyMetersPerSecond);
             //shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
             //shooterSpeed = shooterSpeedHub(targetDistance);
             //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
-            shooterSpeed = shootSpeed(targetX, targetY);
+            shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per
@@ -433,9 +432,7 @@ public class Scoring extends SubsystemBase {
             turret.TurrettoAngle(currentRobotPose, turretAngle);
             shooter.runAtSpeed(shooterSpeed);
         } else {
-            // Shut down the shooter motors. The turret will hold the last position, so we don't
-            // need to send
-            // any command to it.
+            // Shut down the shooter motors. The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
                 leds.setOff();
                 shooter.stop();
