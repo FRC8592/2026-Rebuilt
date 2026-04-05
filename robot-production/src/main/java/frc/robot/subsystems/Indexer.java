@@ -74,19 +74,26 @@ public class Indexer extends SubsystemBase {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
-        Logger.recordOutput(INDEXER.LOG_PATH + "Auto Shoot and Stop Finished", waitandShoot.isFinished());
     }
 
     /**
      * Stop the indexer motor. Use brake mode and not motor power to stop
      */
+    // TODO: No need for a stop method anymore
     public void stop() {
         spinMotor.setVoltage(0);
         indexerRunning = false;
     }
 
     /**
-     * Command to stop the indexer motor
+     * Runs the spin motor on the indexer
+     */
+    public void runSpinner() {
+        spinMotor.setVoltage(11.0);
+    }
+
+    /**
+     * Command to stop the indexer motors
      * 
      * @return a command to stop the indexer motor
      */
@@ -125,16 +132,16 @@ public class Indexer extends SubsystemBase {
      * 
      * @return spinner motor current in amps
      */
-    public double getSpinnerCurrent(){
+    public double getSpinnerCurrent() {
         return spinMotor.getOutputCurrent();
     }
 
-    public Command waitandShootCommand(){
+    public Command waitandShootCommand() {
         waitandShoot = new ParallelCommandGroup(runIndexerCommand(), Commands.waitSeconds(3.0));
         return waitandShoot;
     }
 
-    public void updatePID(){
+    public void updatePID() {
         double Spin_P = SmartDashboard.getNumber("P_SPINNER", INDEXER.SPIN_P);
         double Spin_I = SmartDashboard.getNumber("I_SPINNER", INDEXER.SPIN_I);
         double Spin_D = SmartDashboard.getNumber("D_SPINNER", INDEXER.SPIN_D);

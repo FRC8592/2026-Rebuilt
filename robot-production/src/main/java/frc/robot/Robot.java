@@ -5,6 +5,7 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -14,6 +15,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import java.util.Optional;
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,7 +68,7 @@ public class Robot extends LoggedRobot {
       Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
       Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
-
+    LoggedPowerDistribution.getInstance(1, ModuleType.kRev);
     Logger.start();
 
     // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
@@ -96,6 +98,8 @@ public class Robot extends LoggedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     // m_timeAndJoystickReplay.update();
+
+
     CommandScheduler.getInstance().run();
 
   }
@@ -167,7 +171,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.scoring.shooter.updatePID();
     // m_robotContainer.scoring.indexer.updatePID();
     // m_robotContainer.scoring.intake.updatePID();
-    m_robotContainer.scoring.turret.updatePID();
+    //m_robotContainer.scoring.turret.updatePID();
 
   }
 

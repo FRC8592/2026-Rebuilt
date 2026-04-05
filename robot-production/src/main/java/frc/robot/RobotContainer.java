@@ -42,6 +42,7 @@ public class RobotContainer {
   public final Scoring scoring;
   public final LEDs leds;
 
+
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
 
@@ -54,7 +55,6 @@ public class RobotContainer {
   private final Trigger LOCK_WHEELS = driverController.x();
   private final Trigger SHOOT_SQUEEZE = driverController.a();
 
-  // private final Trigger SNAP_TO = driverController.povUp();
 
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
@@ -84,10 +84,11 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
+
+
     // TODO: Figure out the issues with these, they are very temporary
     //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
     //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
-    NamedCommands.registerCommand("ShootWait3Stop", scoring.indexer.waitandShootCommand());
 
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("Wait", Commands.waitSeconds(2.0));
@@ -154,9 +155,6 @@ public class RobotContainer {
         .onFalse(scoring.intake.stopExtendCommand());
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand()) 
-        .onFalse(scoring.intake.stopExtendCommand());
-    RESET_EXTEND.onTrue(scoring.intake.resetExtenderCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
