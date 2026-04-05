@@ -428,10 +428,10 @@ public class Scoring extends SubsystemBase {
             ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, fieldRelative.vxMetersPerSecond, fieldRelative.vyMetersPerSecond);
-            shooterSpeed = SOTMResults.getFirst();
+            // shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
 //            shooterSpeed = shooterSpeedHub(targetDistance);
-            // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
+            shooterSpeed = SmartDashboard.getNumber("ShooterV", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
