@@ -135,27 +135,19 @@ public final class Constants {
     public static final int RIGHT_MOTOR_CAN_ID = 19;
     public static final int LEFT_MOTOR_CAN_ID = 13;
 
-    public static final Current SHOOTER_CURRENT_LIMIT = Amps.of(60);
+    public static final double FLYWHEEL_CURRENT_LIMIT = 60.0;
+    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
 
 
-    public static final Voltage SHOOTER_P = Volts.of(0.6);
-    public static final Voltage SHOOTER_I = Volts.of(0);
-    public static final Voltage SHOOTER_D = Volts.of(0);
-    public static final Voltage SHOOTER_S = Volts.of(0.5);
-    public static final Voltage SHOOTER_V = Volts.of(0.123);
-    public static final Voltage SHOOTER_A = Volts.of(0.2432);
+    public static final double FLYWHEEL_P = 6.0;
+    public static final double FLYWHEEL_I = 0.0;
+    public static final double FLYWHEEL_D = 0.0;
+    public static final double FLYWHEEL_S = 0.5;
+    public static final double FLYWHEEL_V = 0.1037;
+    public static final double FLYWHEEL_A = 0.2432;
 
-    public static final Time SHOOTER_FILTER_TIME_CONSTANT = Seconds.of(0.01);
-
-    //TODO: Change these values, these are default
-    public static final Velocity<AngularAccelerationUnit> MAX_JERK = RotationsPerSecondPerSecond.per(Second).of(300);
-    public static final AngularAcceleration MAX_ACCELERATION = RotationsPerSecondPerSecond.of(100);
-
-    // public static final Distance BACKWHEEL_DIAMETER = Inches.of(2.154);
-    // public static final Distance BACKWHEEL_CIRCUMFERENCE = Inches.of(BACKWHEEL_DIAMETER.in(Inches) * Math.PI);
-    // public static final LinearVelocity BACKWHEEL_DESIRED_VELOCITY = InchesPerSecond.of(FeetPerSecond.of(10d).in(FeetPerSecond) * 12);
-    // public static final AngularVelocity BACKWHEEL_RPS_DESIRED = RevolutionsPerSecond.of((BACKWHEEL_DESIRED_VELOCITY).in(InchesPerSecond)/(BACKWHEEL_CIRCUMFERENCE.in(Inches)));
-
+    public static final double SHOOTER_HEIGHT = 0;
+    public static final double HUB_HEIGHT = 0;
 
     public static final double SHOOTER_TOLERANCE = 50;
 
@@ -188,12 +180,11 @@ public final class Constants {
     public static final Angle E1_OFFSET = Degrees.of(286);
     public static final Angle E2_OFFSET = Degrees.of(323.4);
     //Try these out?
-    public static final Angle MAX_ROTATION_LIMIT = Degrees.of(180);
-    public static final Angle FORWARD_LIMIT = MAX_ROTATION_LIMIT; // Degrees
-    public static final Angle REVERSE_LIMIT = MAX_ROTATION_LIMIT.unaryMinus(); // Degrees
-    public static final Angle TURRET_TOLERANCE = Degrees.of(0.75); // Degrees
-    public static final Angle CRT_TOLERANCE = Rotations.of(0.004);
-    public static final Angle TURRET_ANGLE_OFFSET = Degrees.of(180); // The turret zero position is at 180
+    public static final double FORWARD_LIMIT = 180; // Degrees
+    public static final double REVERSE_LIMIT = -180; // Degrees
+    public static final double TURRET_TOLERANCE = 2; // Degrees
+    public static final double CRT_TOLERANCE = 0.004;
+    public static final double TURRET_ANGLE_OFFSET = 180; // The turret zero position is at 180
                                                           // degrees relative to the
                                                           // front of the robot
 
