@@ -97,7 +97,7 @@ public class Intake extends SubsystemBase {
         extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
         extendConfig.closedLoop.maxMotion.allowedProfileError(10);
         extendConfig.softLimit.reverseSoftLimitEnabled(true);
-        extendConfig.softLimit.reverseSoftLimit(2);
+        extendConfig.softLimit.reverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
 
         extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
