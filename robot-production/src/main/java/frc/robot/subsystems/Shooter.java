@@ -82,9 +82,9 @@ public class Shooter extends SubsystemBase {
         /**
          * Shooter PID Tuning Configuration and Constants
          */
-        shooterPIDConfig.withKP(SHOOTER.SHOOTER_P.in(Volts)).withKI(SHOOTER.SHOOTER_I.in(Volts))
-                .withKD(SHOOTER.SHOOTER_D.in(Volts)).withKS(SHOOTER.SHOOTER_S.in(Volts))
-                .withKV(SHOOTER.SHOOTER_V.in(Volts)).withKA(SHOOTER.SHOOTER_A.in(Volts));
+        shooterPIDConfig.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
+                .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
+                .withKV(SHOOTER.SHOOTER_V).withKA(SHOOTER.SHOOTER_A);
 
 
         shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
@@ -136,10 +136,10 @@ public class Shooter extends SubsystemBase {
          * SmartDashboard Flywheel PID Constants, necessary to tune PID quickly without redeploying
          * code
          */
-        SmartDashboard.putNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
-        SmartDashboard.putNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
-        SmartDashboard.putNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
-        SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V.in(Volts));
+        SmartDashboard.putNumber("sP", SHOOTER.SHOOTER_P);
+        SmartDashboard.putNumber("sI", SHOOTER.SHOOTER_I);
+        SmartDashboard.putNumber("sD", SHOOTER.SHOOTER_D);
+        SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V);
         SmartDashboard.putNumber("Shooter Voltage", 0);
 
     }
@@ -237,10 +237,10 @@ public class Shooter extends SubsystemBase {
 
         // Receive Shooter PID Constants from SmartDashboard
 
-        double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
-        double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
-        double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
-        double SV_NEW = SmartDashboard.getNumber("sV", SHOOTER.SHOOTER_V.in(Volts));
+        double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P);
+        double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I);
+        double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D);
+        double SV_NEW = SmartDashboard.getNumber("sV", SHOOTER.SHOOTER_V);
 
         boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW || V_SET != SV_NEW);
 

@@ -17,9 +17,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.swerve.TunerConstants;
 
@@ -135,16 +132,14 @@ public final class Constants {
     public static final int RIGHT_MOTOR_CAN_ID = 19;
     public static final int LEFT_MOTOR_CAN_ID = 13;
 
-    public static final double FLYWHEEL_CURRENT_LIMIT = 60.0;
-    public static final double BACKWHEEL_CURRENT_LIMIT = 60.0;
+    public static final double SHOOTER_CURRENT_LIMIT = 60.0;
 
-
-    public static final double FLYWHEEL_P = 6.0;
-    public static final double FLYWHEEL_I = 0.0;
-    public static final double FLYWHEEL_D = 0.0;
-    public static final double FLYWHEEL_S = 0.5;
-    public static final double FLYWHEEL_V = 0.1037;
-    public static final double FLYWHEEL_A = 0.2432;
+    public static final double SHOOTER_P = 6.0;
+    public static final double SHOOTER_I = 0.0;
+    public static final double SHOOTER_D = 0.0;
+    public static final double SHOOTER_S = 0.5;
+    public static final double SHOOTER_V = 0.1037;
+    public static final double SHOOTER_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final double HUB_HEIGHT = 0;
@@ -180,6 +175,7 @@ public final class Constants {
     public static final Angle E1_OFFSET = Degrees.of(286);
     public static final Angle E2_OFFSET = Degrees.of(323.4);
     //Try these out?
+    public static final double MAX_ROTATION_LIMIT = 180; //Degrees
     public static final double FORWARD_LIMIT = 180; // Degrees
     public static final double REVERSE_LIMIT = -180; // Degrees
     public static final double TURRET_TOLERANCE = 2; // Degrees

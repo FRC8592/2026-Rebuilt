@@ -164,11 +164,6 @@ public class RobotContainer {
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    //TODO: Test kFactor change on-the-fly
-    INCREASE_RPM.onTrue(scoring.runOnce(() -> scoring.increaseK()));
-
-    DECREASE_RPM.onTrue(scoring.runOnce(() -> scoring.decreaseK()));
-
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());

@@ -125,10 +125,10 @@ public class Turret extends SubsystemBase {
 
         positionLimitConfig
                 .withForwardSoftLimitThreshold(
-                        TURRET.FORWARD_LIMIT.in(Degrees) * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                        TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withForwardSoftLimitEnable(true)
                 .withReverseSoftLimitThreshold(
-                        TURRET.REVERSE_LIMIT.in(Degrees) * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                        TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withReverseSoftLimitEnable(true);
 
 
@@ -172,9 +172,9 @@ public class Turret extends SubsystemBase {
 
     public void TurrettoAngle(Pose2d robotPosition, double angle) {
         double robotAngle = robotPosition.getRotation().getDegrees();
-        double target = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET.in(Degrees);
+        double target = angle - robotAngle - TURRET.TURRET_ANGLE_OFFSET;
         rawTargetAngle = target;
-        if (Math.abs(target) > TURRET.MAX_ROTATION_LIMIT.in(Degrees))
+        if (Math.abs(target) > TURRET.MAX_ROTATION_LIMIT)
             target -= Math.signum(target) * 360;
         logAngle(target);
         turretMotor.setControl(positionRequest.withSlot(0)
@@ -259,30 +259,30 @@ public class Turret extends SubsystemBase {
             double V1Old = (i - 1 + R1) * G1 * 1.0;
             double V2New = (i + 1 + R2) * G2 * 1.0;
 
-            if (Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
             }
 
-            if (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
             }
 
-            if (Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
             }
 
-            if (Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
             }
-            if (Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
             }
 
-            if (Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
             }
 
-            if (Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE.in(Rotations)) {
+            if (Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE) {
                 mapValues.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
             }
 

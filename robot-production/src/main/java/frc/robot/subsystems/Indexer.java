@@ -35,7 +35,7 @@ public class Indexer extends SubsystemBase {
     private double PS_OLD;
     private double IS_OLD;
     private double DS_OLD;
-
+    private double SS_OLD;
 
     public boolean indexerRunning = false;
 
@@ -91,18 +91,6 @@ public class Indexer extends SubsystemBase {
     public void runSpinner() {
         spinMotor.setVoltage(11.0);
     }
-
-
-    /**
-     * Runs both the spinner and the output motors on the indexer
-     */
-    public void runIndexer() {
-        runSpinner();
-        indexerRunning = true;
-
-    }
-
-
 
     /**
      * Command to stop the indexer motors

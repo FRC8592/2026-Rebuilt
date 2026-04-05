@@ -180,7 +180,6 @@ public class Scoring extends SubsystemBase {
     public boolean canShoot() {
         // TODO: Change so it can use blue or red hub tracking
         return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE
-                .in(Degrees)
         // && Math.abs(shooter.getVelocityFlywheel() -
         // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
@@ -444,7 +443,7 @@ public class Scoring extends SubsystemBase {
             Translation3d turretActualPose;
             double actualTurretAngle =
                     turret.getRawTurretAngle() + currentRobotPose.getRotation().getDegrees()
-                            + TURRET.TURRET_ANGLE_OFFSET.in(Degrees);
+                            + TURRET.TURRET_ANGLE_OFFSET;
             double targetChangeX = Math.cos(turretAngle) * targetDistance;
             double actualChangeX = Math.cos(actualTurretAngle) * targetDistance;
             double targetChangeY = Math.sin(turretAngle) * targetDistance;
