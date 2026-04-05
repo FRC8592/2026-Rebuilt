@@ -145,7 +145,6 @@ public final class Constants {
     public static final double BACKWHEEL_VELOCITY = 1146;
 
     public static final double SHOOTER_HEIGHT = 0;
-    public static final double HUB_HEIGHT = 0;
 
     public static final double SHOOTER_TOLERANCE = 50;
 
@@ -199,6 +198,13 @@ public final class Constants {
     public static final Pose2d RED_PASSING_HIGH_POSE = new Pose2d(14.48, 6.05, new Rotation2d(0));
 
     public static final double SHOOTER_THRESHOLD = 500; // RPM
+
+    public static final double TURRET_ANGLE = 64; //degrees
+    public static final double HUB_HEIGHT = 6; //feet
+    public static final double INITIAL_BALL_HEIGHT = 2.18; //feet
+    public static final double GRAVITY = 32.174; //feet per s^2
+    public static final double FLYWHEEL_RADIUS = 2.0; //inches
+    public static final double FLYWHEEL_GEARING = 1.0;
   }
 
   public static class INTAKE {

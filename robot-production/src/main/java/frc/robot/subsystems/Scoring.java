@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CONVERSIONS;
 import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
@@ -34,6 +35,7 @@ public class Scoring extends SubsystemBase {
     private double kAdjustment = 0.73;
     private boolean targetIsHub;
     private Alliance alliance;
+    private double shooterSpeedOffset = 0;
 
     /**
      * Scoring subsystem. Controls collecting and shooting.
@@ -169,31 +171,36 @@ public class Scoring extends SubsystemBase {
 
     /**
      * 
-     * @return
+     * @return 
      */
     public boolean canShoot() {
         // TODO: Change so it can use blue or red hub tracking
-        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE
+        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE;
         // && Math.abs(shooter.getVelocityFlywheel() -
         // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
-        ;
     }
 
-    double initialAngle = 64; //degrees
-    double hubHeight = 6; //feet
-    double initialBallHeight = 2.18; //feet
-    double g = 32.174; //feet per s^2
-    double flywheelRadius = 2.0; //inches
-    double flywheelGearing = 1.0;
-    double feetPerMeter = 3.28084;
-
-    public void increaseK() {
-        kFactor += 0.1;
+    public void increaseRPM() {
+        shooterSpeedOffset += 50;
     }
 
-    public void decreaseK() {
-        kFactor -= 0.1;
+    /**
+     * @return Command to increase RPM offset by 50
+     */
+    public Command increaseRPMCommand() {
+        return this.runOnce(() -> increaseRPM());
+    }
+
+    public void decreaseRPM() {
+        shooterSpeedOffset -= 50;
+    }
+
+    /**
+     * @return Command to decrease RPM offset by 50
+     */
+    public Command decreaseRPMCommand() {
+        return this.runOnce(() -> decreaseRPM());
     }
 
     public static double solveV0y(
@@ -201,9 +208,9 @@ public class Scoring extends SubsystemBase {
             double x,      // radial distance to target
             double vRx,    // robot tangential velocity
             double vRy,    // robot radial velocity toward target
-            double hI,
-            double hF,
-            double g
+            double hI,     // initial ball height
+            double hF,     // hub height
+            double g       // gravity
     ) {
         double dh = hF - hI;
         double tanTheta = Math.tan(thetaRad);
@@ -300,33 +307,33 @@ public class Scoring extends SubsystemBase {
 
     /**
      * Shoot on the Move
-     * Returns a pair of flywheel motor RPM and turret angle
+     * @param targetX x distance from target
+     * @param targetY y distance from target
+     * @param robotVelX x robot velocity
+     * @param robotVelY y robot velocity
+     * @return a pair of flywheel motor RPM and turret angle
      * Turret angle (degrees) is relative to the field, counterclockwise from x-axis
      * If no solutions exist, outputs (0, 0)
      */
 
     public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY) {
-        double thetaDeg = initialAngle;
-        double thetaRad = Math.toRadians(thetaDeg);
-        double targetXFeet = targetX * feetPerMeter;
-        double targetYFeet = targetY * feetPerMeter;
-
+        double thetaRad = Math.toRadians(SCORING.TURRET_ANGLE);
+        double targetXFeet = targetX * CONVERSIONS.METERS_TO_FEET;
+        double targetYFeet = targetY * CONVERSIONS.METERS_TO_FEET;
 
         double x = Math.sqrt(targetXFeet*targetXFeet + targetYFeet*targetYFeet);
 
         double angleToHub = Math.atan2(targetYFeet, targetXFeet);
         double vRx = robotVelX * Math.sin(angleToHub) + robotVelY * Math.cos(angleToHub);
         double vRy = robotVelX * Math.cos(angleToHub) + robotVelY * Math.sin(angleToHub);
-        double hI = initialBallHeight;
-        double hF = hubHeight;
-        double g = 32.174;
+
         try {
-            double v0y = solveV0y(thetaRad, x, vRx, vRy, hI, hF, g);
+            double v0y = solveV0y(thetaRad, x, vRx, vRy, SCORING.INITIAL_BALL_HEIGHT, SCORING.HUB_HEIGHT, SCORING.GRAVITY);
             double v0x = -vRx; // if tangential motion is being canceled
             double totalSpeedRelativeRobot = Math.sqrt(v0x * v0x + v0y * v0y)*Math.sqrt(1 + Math.tan(thetaRad)*Math.tan(thetaRad));
-            double flyRadiusFeet = flywheelRadius / 12.0;
-            double adjustedK = kFactor + kAdjustment*x/feetPerMeter;
-            if(x/feetPerMeter < 2){
+            double flyRadiusFeet = SCORING.FLYWHEEL_RADIUS / 12.0;
+            double adjustedK = kFactor + kAdjustment*x/CONVERSIONS.METERS_TO_FEET;
+            if(x/CONVERSIONS.METERS_TO_FEET < 2){
                 adjustedK = 2.3;
             }
             double outputRPM = adjustedK*(totalSpeedRelativeRobot/flyRadiusFeet)*(60.0/(2*Math.PI));
@@ -337,7 +344,7 @@ public class Scoring extends SubsystemBase {
             double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub))))%360+360)%360;
             Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
 
-            return new Pair<>(outputRPM*flywheelGearing, turretFieldAngle);
+            return new Pair<>(outputRPM*SCORING.FLYWHEEL_GEARING, turretFieldAngle);
         } catch (IllegalArgumentException e) {
             return new Pair<>(0.0, 0.0);
         }
@@ -354,7 +361,6 @@ public class Scoring extends SubsystemBase {
         double targetX;
         double targetY;
         double turretAngle;
-        double shooterSpeedOffset;
 
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
@@ -383,8 +389,6 @@ public class Scoring extends SubsystemBase {
             } else {
                 leds.setCannotShoot();
             }
-
-            shooterSpeedOffset = 0;
 
             // calculate the distance to the target position
             targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());

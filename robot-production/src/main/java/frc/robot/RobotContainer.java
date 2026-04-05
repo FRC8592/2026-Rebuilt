@@ -68,12 +68,8 @@ public class RobotContainer {
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
   // private final Trigger TURRET_TEST = operatorController.x();
   // private final Trigger TURRET_TEST_BACK = operatorController.a();
-
-  // Controls for running sysId tests
-  // private final Trigger QUASI_FORWARD = driverController.a();
-  // private final Trigger QUASI_REVERSE = driverController.y();
-  // private final Trigger DYNAMIC_FORWARD = driverController.b();
-  // private final Trigger DYNAMIC_REVERSE = driverController.x();
+  private final Trigger INCREASE_RPM = operatorController.povUp();
+  private final Trigger DECREASE_RPM = operatorController.povDown();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -123,9 +119,6 @@ public class RobotContainer {
 
             new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
-
-
-
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
@@ -149,7 +142,6 @@ public class RobotContainer {
     // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
-
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
@@ -182,8 +174,6 @@ public class RobotContainer {
 
     REVERSE_TURRET_TESTING.onTrue(scoring.turret.basicTurretToPosCommand(-90));
 
-
-
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
     SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
@@ -191,6 +181,8 @@ public class RobotContainer {
         .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
         .andThen(scoring.indexer.stopCommand()));
 
+    INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
+    DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
   }
 
   /**
