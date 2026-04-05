@@ -42,6 +42,7 @@ public class Shooter extends SubsystemBase {
     private double P_SET;
     private double I_SET;
     private double D_SET;
+    private double V_SET;
 
 
 
@@ -143,9 +144,9 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
         SmartDashboard.putNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
         SmartDashboard.putNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
-
-
+        SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V.in(Volts));
         SmartDashboard.putNumber("Shooter Voltage", 0);
+        
     }
 
 
@@ -166,13 +167,12 @@ public class Shooter extends SubsystemBase {
                 shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", shooterVV.toString());
         //leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
+
     }
 
 
-
-
     public boolean isWithin(){
-        double toleranceMeasure = Math.abs(targetShooterRPM - getVelocityShooter());
+        double toleranceMeasure = Math.abs(targetShooterRPM - getLeftVelocityShooter());
         if(toleranceMeasure < SHOOTER.SHOOTER_TOLERANCE)
             return true;
         else
@@ -205,8 +205,12 @@ public class Shooter extends SubsystemBase {
      * 
      * @return Returns velocity of the flywheel motor in RPS.
      */
-    public double getVelocityShooter() {
+    public double getLeftVelocityShooter() {
         return leftMotor.getVelocity().getValueAsDouble();
+    }
+
+    public double getRightVelocityShooter() {
+        return rightMotor.getVelocity().getValueAsDouble();
     }
 
 
@@ -242,21 +246,24 @@ public class Shooter extends SubsystemBase {
         double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P.in(Volts));
         double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I.in(Volts));
         double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D.in(Volts));
+        double SV_NEW = SmartDashboard.getNumber("sV", SHOOTER.SHOOTER_V.in(Volts));
 
-        boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW);
+        boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW || V_SET != SV_NEW);
 
 
        if(FDiff){
         shooterPIDConfig
         .withKP(SP_NEW)
         .withKI(SI_NEW)
-        .withKD(SD_NEW);
+        .withKD(SD_NEW)
+        .withKV(SV_NEW);
         shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
         leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
 
         P_SET = SP_NEW;
         I_SET = SI_NEW;
         D_SET = SD_NEW;
+        V_SET = SV_NEW;
        }
 
     }
@@ -269,7 +276,8 @@ public class Shooter extends SubsystemBase {
     //TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of feedforward constants
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Real Vel", getVelocityShooter() * 60d);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM", getLeftVelocityShooter() * 60d);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM", getRightVelocityShooter() * 60d);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", getLeftMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage", getRightMotorVoltage());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current", getLeftMotorCurrent());

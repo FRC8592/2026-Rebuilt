@@ -142,7 +142,7 @@ public final class Constants {
     public static final Voltage SHOOTER_I = Volts.of(0);
     public static final Voltage SHOOTER_D = Volts.of(0);
     public static final Voltage SHOOTER_S = Volts.of(0.5);
-    public static final Voltage SHOOTER_V = Volts.of(0.1037);
+    public static final Voltage SHOOTER_V = Volts.of(0.123);
     public static final Voltage SHOOTER_A = Volts.of(0.2432);
 
     public static final Time SHOOTER_FILTER_TIME_CONSTANT = Seconds.of(0.01);

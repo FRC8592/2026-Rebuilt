@@ -437,7 +437,7 @@ public class Scoring extends SubsystemBase {
             shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
 //            shooterSpeed = shooterSpeedHub(targetDistance);
-            // shooterSpeed = SmartDashboard.getNumber("V Flywheel", 0.0);
+            shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); //rotations per second
@@ -476,7 +476,7 @@ public class Scoring extends SubsystemBase {
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
-            shooter.runAtSpeed(1800);
+            shooter.runAtSpeed(shooterSpeed);
         } else {
             // Shut down the shooter motors.  The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {
