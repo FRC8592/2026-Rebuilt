@@ -142,7 +142,6 @@ public final class Constants {
     public static final double SHOOTER_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;
-    public static final double HUB_HEIGHT = 0;
 
     public static final double SHOOTER_TOLERANCE = 50;
 
@@ -200,6 +199,13 @@ public final class Constants {
 
     public static final double TAG_HUB_HEIGHT = 1.12395;
     public static final double SHOOTER_THRESHOLD = 500; // RPM
+
+    public static final double TURRET_ANGLE = 64; //degrees
+    public static final double HUB_HEIGHT = 6; //feet
+    public static final double INITIAL_BALL_HEIGHT = 2.18; //feet
+    public static final double GRAVITY = 32.174; //feet per s^2
+    public static final double FLYWHEEL_RADIUS = 2.0; //inches
+    public static final double FLYWHEEL_GEARING = 1.0;
 
     public static final double RANGE_EXPO = 1.0033;
 
