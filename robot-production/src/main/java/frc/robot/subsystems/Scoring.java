@@ -187,7 +187,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void increaseRPM() {
-        shooterSpeedOffset += 50;
+        shooterSpeedOffset += 10;
     }
 
     /**
@@ -198,7 +198,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void decreaseRPM() {
-        shooterSpeedOffset -= 50;
+        shooterSpeedOffset -= 10;
     }
 
     /**
@@ -228,8 +228,7 @@ public class Scoring extends SubsystemBase {
 
             double horizSpeedRelativeRobot = Math.sqrt(v0y * v0y + vRx * vRx);
 
-            return tanTheta * horizSpeedRelativeRobot * x / denom
-                    - 0.5 * g * x * x / (denom * denom) - dh;
+            return tanTheta * horizSpeedRelativeRobot * x / denom - 0.5 * g * x * x / (denom * denom) - dh;
         };
 
         // Start just above the singularity v0y = -vRy
@@ -272,8 +271,7 @@ public class Scoring extends SubsystemBase {
         throw new IllegalArgumentException("No physical root found for v0y.");
     }
 
-    private static double bisect(DoubleUnaryOperator f, double a, double b, double tol,
-            int maxIter) {
+    private static double bisect(DoubleUnaryOperator f, double a, double b, double tol, int maxIter) {
         double fa = f.applyAsDouble(a);
         double fb = f.applyAsDouble(b);
 
@@ -341,19 +339,13 @@ public class Scoring extends SubsystemBase {
             if(x/CONVERSIONS.METERS_TO_FEET < 2){
                 adjustedK = 2.3;
             }
-            double outputRPM =
-                    adjustedK * (totalSpeedRelativeRobot / flyRadiusFeet) * (60.0 / (2 * Math.PI));
+            double outputRPM = adjustedK * (totalSpeedRelativeRobot / flyRadiusFeet) * (60.0 / (2 * Math.PI));
 
             double turretAngleToHub = Math.atan2(v0y, v0x);
-            Logger.recordOutput(
-                    SCORING.LOG_PATH + "Turret Angle To Hub Based on Hub Coordinate Systems",
-                    turretAngleToHub);
+            Logger.recordOutput(SCORING.LOG_PATH + "Turret Angle To Hub Based on Hub Coordinate Systems", turretAngleToHub);
 
-            double turretFieldAngle =
-                    (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub))))
-                            % 360 + 360) % 360;
-            Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret",
-                    90 - Math.toDegrees(angleToHub));
+            double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub)))) % 360 + 360) % 360;
+            Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
 
             return new Pair<>(outputRPM*SCORING.FLYWHEEL_GEARING, turretFieldAngle);
         } catch (IllegalArgumentException e) {
@@ -428,8 +420,7 @@ public class Scoring extends SubsystemBase {
             shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
 
             // Log the current distance-to-target and shooter speed for debugging
-            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per
-                                                                                   // second
+            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
             // Update turret angle and shooter speed
