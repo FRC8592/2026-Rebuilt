@@ -59,6 +59,7 @@ public class RobotContainer {
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
+  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); 
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
@@ -158,24 +159,14 @@ public class RobotContainer {
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    // LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
-     LOCK_WHEELS
-    .whileTrue(
-        Commands.run(() -> {
-            swerve.brake();
-            leds.xModeActive(true);
-        })
-    )
-    .onFalse(
-        Commands.runOnce(() -> {
-            leds.xModeActive(false);
-        })
-    );
+    LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 

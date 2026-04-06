@@ -38,8 +38,6 @@ public class Indexer extends SubsystemBase {
     private double SS_OLD;
 
     public boolean indexerRunning = false;
-    public LEDs leds;
-    
 
     private ParallelCommandGroup waitandShoot = new ParallelCommandGroup();
 
@@ -71,16 +69,11 @@ public class Indexer extends SubsystemBase {
                 PersistMode.kPersistParameters);
     }
 
-
     @Override
     public void periodic() {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
-
-    if(spinMotor.getOutputCurrent() >= 50 ){
-    leds.setSpindexerStuck();
-    }
     }
 
     /**
@@ -116,6 +109,11 @@ public class Indexer extends SubsystemBase {
         indexerRunning = true;
     }
 
+    public void runReverseIndexer(){
+        spinMotor.setVoltage(-11.0);
+        indexerRunning = true;
+    }
+
     /**
      * Command to run the indexer
      * 
@@ -123,6 +121,10 @@ public class Indexer extends SubsystemBase {
      */
     public Command runIndexerCommand() {
         return this.runOnce(() -> runIndexer());
+    }
+
+    public Command runReverseIndexerCommand(){
+        return this.runOnce(()->runReverseIndexer());
     }
 
     /**
