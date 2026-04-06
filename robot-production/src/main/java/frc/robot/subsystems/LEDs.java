@@ -24,15 +24,13 @@ import frc.robot.Constants.LEDS;
 public class LEDs extends SubsystemBase {
         // TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE
         private CANdle candle;
-        private Timer timer = new Timer();
-        private boolean useRainbow = false;
+        private boolean XMODE = false;
         private static boolean canShoot = false;
-        private boolean trackingTarget = false;
         private boolean spindexerStuck = false; 
 
         private int hasTags;
-        private final RainbowAnimation rainbow = new RainbowAnimation(1, 26);
-        
+        private final RainbowAnimation rainbow = new RainbowAnimation(1, LEDS.FULL_LED_COUNT);
+
                 public LEDs() {
                         CANdleConfiguration configAll = new CANdleConfiguration();
                         configAll.LED = new LEDConfigs().withBrightnessScalar(1)
@@ -41,21 +39,20 @@ public class LEDs extends SubsystemBase {
                         configAll.CANdleFeatures = new CANdleFeaturesConfigs()
                                         .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
                                         .withVBatOutputMode(VBatOutputModeValue.Modulated);
-                        candle = new CANdle(33);
+                        candle = new CANdle(LEDS.LEDS_CAN_ID);
                         candle.getConfigurator().apply(configAll);
-                        timer.start();
                 }
         
                 // SETTERS 
                 public void setCanShoot() { //(3)
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.LED_STRIP_LENGTH)
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.TEAL.red * 255),
                                                         (int) (LEDS.TEAL.green * 255),
                                                         (int) (LEDS.TEAL.blue * 255))));
                 }
         
                 public void setCannotShoot() { //(2)
-                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.LED_STRIP_LENGTH)
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.ORANGE.red * 255),
                                                         (int) (LEDS.ORANGE.green * 255),
                                                         (int) (LEDS.ORANGE.blue * 255))));
@@ -69,7 +66,7 @@ public class LEDs extends SubsystemBase {
                 }
         
                 public void displayindexerRunning() { //(4)
-                        candle.setControl(new SolidColor(LEDS.LED_HALF_STRIP_LENGTH, LEDS.FULL_LED_COUNT)
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.WHITE.red * 255),
                                                         (int) (LEDS.WHITE.green * 255),
                                                         (int) (LEDS.WHITE.blue * 255))));
@@ -99,17 +96,22 @@ public class LEDs extends SubsystemBase {
                         Logger.recordOutput(LEDS.LOG_PATH + "hasTags", hasTags);
                 }
         
-                public static void setCanShoot(boolean newCanShoot) {
-                        canShoot = newCanShoot;
-        }
-
-                // rainbow for the X - mode (aka. Locking the wheels) // FLASH// 
-                public void displayRainbow() {
-                candle.setControl (rainbow);
+                public void setCanShootState(boolean newCanShoot) {
+                this.canShoot = newCanShoot;
                 }
 
-                public void setRainbow(boolean useRainbow) {
-                this.useRainbow = useRainbow;
+                // rainbow for the X - mode (aka. Locking the wheels) // FLASH// 
+                public void setXmode() {
+                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
+                                                .withColor(new RGBWColor(
+                                                (int)(LEDS.PURPLE.red * 255),
+                                                (int)(LEDS.PURPLE.green * 255),
+                                                (int)(LEDS.PURPLE.blue * 255)
+                                                )));
+                }
+
+                public void xModeActive(boolean xMode) {
+                this.XMODE = XMODE;
                 }
 
                 public void setSpindexerStuck(boolean spindexerStuck) {
@@ -127,6 +129,26 @@ public class LEDs extends SubsystemBase {
                         } else {
                         setOff();
                         }
+                }
+        
+                @Override
+                public void periodic() {
+                if (XMODE) {
+                setXmode();
+                return;
+                }
+
+                if (hasTags > 0){
+                        displayHasTagsLEDs();
+                }else if (spindexerStuck) {
+                        setSpindexerStuck();
+                } else if (XMODE) {
+                        setXmode();
+                } else if (canShoot) {
+                        setCanShoot();
+                } else {
+                        setCannotShoot();
+                }
                 }
 
 }

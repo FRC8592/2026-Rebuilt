@@ -161,15 +161,14 @@ public class RobotContainer {
     // LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
      LOCK_WHEELS
     .whileTrue(
-        Commands.runOnce(() -> {
+        Commands.run(() -> {
             swerve.brake();
-            leds.setRainbow(true);
+            leds.xModeActive(true);
         })
     )
     .onFalse(
         Commands.runOnce(() -> {
-          leds.setRainbow(false);
-          swerve.getCurrentCommand().cancel(); 
+            leds.xModeActive(false);
         })
     );
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
