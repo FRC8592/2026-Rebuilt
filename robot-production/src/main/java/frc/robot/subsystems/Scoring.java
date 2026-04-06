@@ -59,6 +59,7 @@ public class Scoring extends SubsystemBase {
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
+        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
     /**
@@ -188,6 +189,7 @@ public class Scoring extends SubsystemBase {
 
     public void increaseRPM() {
         shooterSpeedOffset += 10;
+        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
     /**
@@ -199,6 +201,7 @@ public class Scoring extends SubsystemBase {
 
     public void decreaseRPM() {
         shooterSpeedOffset -= 10;
+        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
     /**
