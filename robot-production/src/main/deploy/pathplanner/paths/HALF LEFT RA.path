@@ -194,12 +194,6 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ToggleHubTracking",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "DeployIntake",
       "waypointRelativePos": 2.3182106598984777,
       "endWaypointRelativePos": null,
