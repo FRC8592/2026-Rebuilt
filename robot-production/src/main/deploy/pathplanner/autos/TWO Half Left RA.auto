@@ -13,13 +13,37 @@
         {
           "type": "named",
           "data": {
-            "name": "ToggleHubTracking"
+            "name": "Shoot"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Half Left Second Swipe"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
           }
         },
         {
