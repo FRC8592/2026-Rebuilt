@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "HALF LEFT RA"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ToggleHubTracking"
