@@ -45,8 +45,8 @@ public class RobotContainer {
 
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
-
   private final Trigger ALIGN_HEADING = driverController.y();
+  private final Trigger SLOW_MODE = driverController.start();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
@@ -55,7 +55,6 @@ public class RobotContainer {
   private final Trigger LOCK_WHEELS = driverController.x();
   private final Trigger SHOOT_SQUEEZE = driverController.a();
 
-
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
@@ -63,8 +62,6 @@ public class RobotContainer {
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
-  // private final Trigger TURRET_TEST = operatorController.x();
-  // private final Trigger TURRET_TEST_BACK = operatorController.a();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
 
@@ -83,17 +80,9 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
-
-
-    // TODO: Figure out the issues with these, they are very temporary
-    //Command ShootandStop = new ParallelRaceGroup(scorin/6[g.indexer.runIndexerCommand(), Commands.waitSeconds(3.0));
-    //NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
-
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("Wait", Commands.waitSeconds(2.0));
-
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
-
     NamedCommands.registerCommand("SqueezeWaitStop", scoring.indexer.runIndexerCommand()
         .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
         .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
@@ -102,20 +91,17 @@ public class RobotContainer {
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-    // new
-    // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
+    // new EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
     new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
-        new EventTrigger("Shoottest").onTrue(scoring.indexer.runIndexerCommand());
-    
-    //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
+
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
 
     new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
         .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
         .andThen(Commands.waitSeconds(2.5)));
 
-            new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+    new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
     // Configure the trigger bindings
     configureBindings();
@@ -136,8 +122,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
-    // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
+    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode()));
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
