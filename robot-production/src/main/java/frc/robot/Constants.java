@@ -134,7 +134,7 @@ public final class Constants {
 
     public static final double SHOOTER_CURRENT_LIMIT = 60.0;
 
-    public static final double SHOOTER_P = 6.0;
+    public static final double SHOOTER_P = 0.3; // 6.0 0.5
     public static final double SHOOTER_I = 0.0;
     public static final double SHOOTER_D = 0.0;
     public static final double SHOOTER_S = 0.5;
@@ -212,6 +212,8 @@ public final class Constants {
     public static final double SHORT_RANGE_SHOT = 2d;
 
     public static final double SHORT_RANGE_K = 2.3;
+
+    public static final int RPM = 25; 
   }
 
   public static class INTAKE {
@@ -277,6 +279,8 @@ public final class Constants {
   }
 
   public final class LEDS {
+    public static final int LEDS_CAN_ID = 33; 
+    public static final Color HOT_PINK = new Color (255,29 ,206); 
     public static final Color PRISMARINE = new Color(126, 171, 172);
     public static final Color TEAL = new Color(0, 64, 192);
     public static final Color ORANGE = new Color(192, 64, 0);
@@ -286,7 +290,8 @@ public final class Constants {
     public static final Color OFF = new Color(0, 0, 0);
     public static final Color YELLOW = new Color(255, 255, 0);
     public static final Color PURPLE = new Color(255, 0, 255);
-    public static final int LED_STRIP_LENGTH = 52;
+    public static final int LED_STRIP_LENGTH = 32;
+    public static final int LED_HALF_STRIP_LENGTH = LED_STRIP_LENGTH/2; 
     public static final int LED_CANDLE_COUNT = 8;
     public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT;
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
