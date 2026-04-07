@@ -131,25 +131,25 @@ public class LEDs extends SubsystemBase {
                         }
                 }
         
-                @Override
-                public void periodic() {
-                if (XMODE) {
-                setXmode();
-                return;
-                }
+//                 @Override
+//                 public void periodic() {
+//                 if (XMODE) {
+//                 setXmode();
+//                 return;
+//                 }
 
-                if (hasTags > 0){
-                        displayHasTagsLEDs();
-                }else if (spindexerStuck) {
-                        setSpindexerStuck();
-                } else if (XMODE) {
-                        setXmode();
-                } else if (canShoot) {
-                        setCanShoot();
-                } else {
-                        setCannotShoot();
-                }
-                }
+//                 if (hasTags > 0){
+//                         displayHasTagsLEDs();
+//                 }else if (spindexerStuck) {
+//                         setSpindexerStuck();
+//                 } else if (XMODE) {
+//                         setXmode();
+//                 } else if (canShoot) {
+//                         setCanShoot();
+//                 } else {
+//                         setCannotShoot();
+//                 }
+//                 }
 
 }
       
