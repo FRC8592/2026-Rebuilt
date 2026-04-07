@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
@@ -13,35 +12,22 @@ import com.ctre.phoenix6.signals.RGBWColor;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import com.ctre.phoenix6.signals.StripTypeValue;
 import com.ctre.phoenix6.signals.VBatOutputModeValue;
+import com.ctre.phoenix6.controls.RainbowAnimation;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDS;
 
+// 1. Spindexer Jamming 2. Shooting 3. Running Indexer
+// the low (over 50 amps (current) under 300 for rpm)
+
 public class LEDs extends SubsystemBase {
         // TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE
-        // HOPPER, PERIOD OF THE GAME LED, CLIMB SUCESSFULLY
-        // For the time periods during the game: AUTO (20 seconds), TRANSITION SHIFT (10
-        // seconds), SHIFT 1 (25 seconds), SHIFT 2 (25 seconds), SHIFT 3 (25 seconds),
-        // SHIFT 4 (25 seconds), END GAME (30 seconds)
         private CANdle candle;
-        // private static boolean intakeSucession;
-        // private static boolean hasFuel;
-        // private static boolean neturalMode;
-        // private static boolean isNeturalMode;
-        // private static double progressBarHopper = -1;
-        // private static boolean climbsucession;
-        // private static boolean isClimbing;
-        // private static boolean useRainbow;
-        private Timer timer = new Timer();
-        // private static boolean restrictedWheels;
-        // private static RainbowAnimation rainbow = new RainbowAnimation(1,3);
-
         private static boolean canShoot = false;
-        private static boolean trackingTarget = false;
+
         private int hasTags;
-        // COLORS going to be used: gray , red, blue, yellow, green, white, purple,
-        // rainbow
+        private final RainbowAnimation rainbow = new RainbowAnimation(1, LEDS.FULL_LED_COUNT);
 
         public LEDs() {
                 CANdleConfiguration configAll = new CANdleConfiguration();
@@ -51,82 +37,19 @@ public class LEDs extends SubsystemBase {
                 configAll.CANdleFeatures = new CANdleFeaturesConfigs()
                                 .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled)
                                 .withVBatOutputMode(VBatOutputModeValue.Modulated);
-                candle = new CANdle(33); // TODO: Change this value when the device name is giving.
+                candle = new CANdle(LEDS.LEDS_CAN_ID);
                 candle.getConfigurator().apply(configAll);
-                timer.start();
         }
 
-        // //Creating the display for the LEDS
-        // public static void displayModeLEDs(){
-        // if(neturalMode){
-        // candle.setControl(
-        // new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-        // RGBWColor(
-        // (int)(LEDS.WHITE.red*255),
-        // (int)(LEDS.WHITE.green*255),
-        // (int)(LEDS.WHITE.blue*255)
-        // ))
-        // );
-        // }
-        // else{
-        // candle. setControl(
-        // new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-        // RGBWColor(
-        // (int)(LEDS.TEAL.red*255),
-        // (int)(LEDS.TEAL.green*255),
-        // (int)(LEDS.TEAL.blue*255)
-        // ))
-        // );
-        // }
-
-        // }
-
-        // public static void displayHasFuel(){ // need to change this statement
-        // if(!periodOfGame.hasElapsed(1) && periodOfGame.get()!=0){
-        // if((int)(timer.get()*10) % 2 == 0){ // need to change this if - else
-        // statement
-        // candle.setControl(
-        // new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-        // RGBWColor(
-        // (int)(LEDS.WHITE.red*255),
-        // (int)(LEDS.WHITE.green*255),
-        // (int)(LEDS.WHITE.blue*255)
-        // ))
-        // );
-        // }
-        // else{
-        // candle.setControl(
-        // new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-        // RGBWColor(
-        // (int)(LEDS.OFF.red*255),
-        // (int)(LEDS.OFF.green*255),
-        // (int)(LEDS.OFF.blue*255)
-        // ))
-        // );
-        // }
-        // }
-        // else{
-        // candle.setControl(
-        // new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-        // RGBWColor(
-        // (int)(LEDS.WHITE.red*255),
-        // (int)(LEDS.WHITE.green*255),
-        // (int)(LEDS.WHITE.blue*255)
-        // ))
-        // );
-        // }
-        // }
-
-        // Displaying the amount of the tags spotted, this might change cuase on the
-        // controls of the operator if they decided to reject auto - shoot
-        public void setCanShoot() {
+        // SETTERS
+        public void setCanShoot() { // (3)
                 candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                 .withColor(new RGBWColor((int) (LEDS.TEAL.red * 255),
                                                 (int) (LEDS.TEAL.green * 255),
                                                 (int) (LEDS.TEAL.blue * 255))));
         }
 
-        public void setCannotShoot() {
+        public void setCannotShoot() { // (2)
                 candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                 .withColor(new RGBWColor((int) (LEDS.ORANGE.red * 255),
                                                 (int) (LEDS.ORANGE.green * 255),
@@ -140,7 +63,7 @@ public class LEDs extends SubsystemBase {
                                                 (int) (LEDS.OFF.blue * 255))));
         }
 
-        public void displayindexerRunning() {
+        public void displayindexerRunning() { // (4)
                 candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                 .withColor(new RGBWColor((int) (LEDS.WHITE.red * 255),
                                                 (int) (LEDS.WHITE.green * 255),
@@ -171,68 +94,7 @@ public class LEDs extends SubsystemBase {
                 Logger.recordOutput(LEDS.LOG_PATH + "hasTags", hasTags);
         }
 
-        public static void setCanShoot(boolean newCanShoot) {
-                canShoot = newCanShoot;
+        public void setCanShootState(boolean newCanShoot) {
+                this.canShoot = newCanShoot;
         }
-        // public void periodic(){
-        // displayCanShootLEDs();
-        // }
 }
-
-// // While climbing lights will display and then RAINBOW
-// public static void displayClimbingProgress(){
-// candle.setControl(
-// new SolidColor (LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT).withColor(new
-// RGBWColor(
-// (int)(LEDS.PURPLE.red*255),
-// (int)(LEDS.PURPLE.green*255),
-// (int)(LEDS.PURPLE.blue*255)
-// ))
-// );
-// }
-
-// // ProgressBar for the hopper based on fullness
-// public static void displayProgressBarLEDs(){
-// candle.setControl(
-// new SolidColor (LEDS.LED_CANDLE_COUNT, (int)
-// (LEDS.FULL_LED_COUNT*progressBarHopper)).withColor(new RGBWColor(
-// (int)(LEDS.GREEN.red*255),
-// (int)(LEDS.GREEN.green*255),
-// (int)(LEDS.GREEN.blue*255)
-// ))
-// );
-// candle.setControl(
-// new SolidColor ((int) (LEDS.FULL_LED_COUNT*progressBarHopper),
-// LEDS.FULL_LED_COUNT).withColor(new RGBWColor(
-// (int)(LEDS.RED.red*255),
-// (int)(LEDS.RED.green*255),
-// (int)(LEDS.RED.blue*255)
-// ))
-// );
-// }
-
-// // rainbow for the climb
-// public static void displayRaindow(){
-// candle.setControl(rainbow);
-// }
-
-// intakesucessfully
-// public static void setHasFuel(boolean intakeSucession){
-// hasFuel = intakeSucession;
-// }
-
-// //ProgressBar for the hopper
-// public static void progressBarHopper(double progress){
-// progressBarHopper = progress;
-// }
-
-// //climbing status
-// public static void setclimbing(boolean climbsucession){
-// isClimbing = climbsucession;
-// }
-
-// //the rainbow animation
-// public static void setRainbow(boolean isRainbowAnimation){
-// useRainbow = isRainbowAnimation; // set equal to isRainbowAnimation when
-// ready to test
-// }
