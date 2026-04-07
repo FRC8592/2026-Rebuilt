@@ -109,6 +109,11 @@ public class Indexer extends SubsystemBase {
         indexerRunning = true;
     }
 
+    public void runReverseIndexer(){
+        spinMotor.setVoltage(-11.0);
+        indexerRunning = true;
+    }
+
     /**
      * Command to run the indexer
      * 
@@ -116,6 +121,10 @@ public class Indexer extends SubsystemBase {
      */
     public Command runIndexerCommand() {
         return this.runOnce(() -> runIndexer());
+    }
+
+    public Command runReverseIndexerCommand(){
+        return this.runOnce(()->runReverseIndexer());
     }
 
     /**

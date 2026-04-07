@@ -132,6 +132,7 @@ public class Swerve extends SubsystemBase {
         return swerve.getState().Speeds;
     }
 
+
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine specified in the
      * parameters
@@ -158,7 +159,6 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
-
         // TODO: do we really need to run this?
         swerve.periodic();
     }

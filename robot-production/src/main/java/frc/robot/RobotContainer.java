@@ -59,15 +59,14 @@ public class RobotContainer {
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
+  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); 
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
-
-  // Controls for running sysId tests
-  // private final Trigger QUASI_FORWARD = driverController.a();
-  // private final Trigger QUASI_REVERSE = driverController.y();
-  // private final Trigger DYNAMIC_FORWARD = driverController.b();
-  // private final Trigger DYNAMIC_REVERSE = driverController.x();
+  // private final Trigger TURRET_TEST = operatorController.x();
+  // private final Trigger TURRET_TEST_BACK = operatorController.a();
+  private final Trigger INCREASE_RPM = operatorController.povUp();
+  private final Trigger DECREASE_RPM = operatorController.povDown();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -118,6 +117,12 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
     //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
     new EventTrigger("Wait").onTrue(Commands.waitSeconds(4.0));
 
+    new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
+        .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(2.5)));
+
+            new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
@@ -142,7 +147,6 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
-
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
     INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
@@ -162,6 +166,7 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
     RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
@@ -174,6 +179,8 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
         .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
         .andThen(scoring.indexer.stopCommand()));
 
+    INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
+    DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
   }
 
   /**
