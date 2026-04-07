@@ -5,15 +5,33 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "HALF LEFT RA"
+            "name": "ToggleHubTracking"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShootWaitStop"
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
           }
         }
       ]
