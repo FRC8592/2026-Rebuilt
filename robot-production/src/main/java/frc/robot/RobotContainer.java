@@ -46,14 +46,14 @@ public class RobotContainer {
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger ALIGN_HEADING = driverController.y();
-  private final Trigger SLOW_MODE = driverController.start();
+  private final Trigger SLOW_MODE = driverController.a();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
-  private final Trigger SHOOT_SQUEEZE = driverController.a();
+  // private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
@@ -153,10 +153,10 @@ public class RobotContainer {
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
-    SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
-        .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
-        .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
-        .andThen(scoring.indexer.stopCommand()));
+    // SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
+    //     .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
+    //     .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+    //     .andThen(scoring.indexer.stopCommand()));
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
