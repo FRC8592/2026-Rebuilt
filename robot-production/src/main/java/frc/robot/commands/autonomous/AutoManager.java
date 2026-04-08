@@ -7,13 +7,10 @@ package frc.robot.commands.autonomous;
 // import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.subsystems.Scoring;
 
@@ -35,6 +32,7 @@ public final class AutoManager {
         scoring = scr;
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
+       /* 
         try {
             PathPlannerPath halfRight = PathPlannerPath.fromPathFile("HALF LEFT").mirrorPath();
             Command halfMirroredAuto = AutoBuilder.followPath(halfRight);
@@ -78,7 +76,7 @@ public final class AutoManager {
 
             System.out.println("Exception in adding pathplanner double right auto");
         }
-
+*/
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
 
     }
