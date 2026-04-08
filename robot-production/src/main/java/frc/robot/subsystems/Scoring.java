@@ -40,6 +40,10 @@ public class Scoring extends SubsystemBase {
     private boolean targetIsHub;
     private Alliance alliance;
     private double shooterSpeedOffset = 0;
+    private double dt = 0.2;
+    private double velocityFilter = 0.2;
+    double filterVelX = 0;
+    double filterVelY = 0;
 
     /**
      * Scoring subsystem. Controls collecting and shooting.
@@ -60,6 +64,7 @@ public class Scoring extends SubsystemBase {
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
+        SmartDashboard.putNumber("SOTMdt", 0.2);
     }
 
     /**
@@ -188,7 +193,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void increaseRPM() {
-        shooterSpeedOffset += 10;
+        shooterSpeedOffset += SCORING.RPM; // Orginally 10 
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
@@ -200,7 +205,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void decreaseRPM() {
-        shooterSpeedOffset -= 10;
+        shooterSpeedOffset -= SCORING.RPM; //Orginally 10
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
@@ -323,9 +328,10 @@ public class Scoring extends SubsystemBase {
      */
 
     public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY) {
+        double dt = SmartDashboard.getNumber("SOTMdt", 2.0);
         double thetaRad = Math.toRadians(SCORING.TURRET_ANGLE);
-        double targetXFeet = targetX * CONVERSIONS.METERS_TO_FEET;
-        double targetYFeet = targetY * CONVERSIONS.METERS_TO_FEET;
+        double targetXFeet = targetX * CONVERSIONS.METERS_TO_FEET - robotVelX*dt;
+        double targetYFeet = targetY * CONVERSIONS.METERS_TO_FEET - robotVelY*dt;
 
         double x = Math.sqrt(targetXFeet * targetXFeet + targetYFeet * targetYFeet);
 
@@ -360,9 +366,9 @@ public class Scoring extends SubsystemBase {
         double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
 
         if (x <= 2.0)
-            return 156.82212 * x + 1019.64733;
+            return 156.82212d * x + 1019.64733d;
         else
-            return Math.pow((156.82212 * x + 1019.64733), SCORING.RANGE_EXPO);
+            return Math.pow((156.82212d * x + 1019.64733d), SCORING.RANGE_EXPO);
     }
 
     /**`
@@ -376,6 +382,8 @@ public class Scoring extends SubsystemBase {
         double targetX;
         double targetY;
         double turretAngle;
+        double rawVelX;
+        double rawVelY;
 
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
@@ -414,8 +422,14 @@ public class Scoring extends SubsystemBase {
 
             ChassisSpeeds velocityVector = swerve.getRobotRelativeSpeeds();
             ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(velocityVector, swerve.getYaw());
+            
+            rawVelX = fieldRelative.vxMetersPerSecond;
+            rawVelY = fieldRelative.vyMetersPerSecond;
+            
+            filterVelX = filterVelX*velocityFilter + rawVelX*(1-velocityFilter);
+            filterVelY = filterVelY*velocityFilter + rawVelY*(1-velocityFilter);
 
-            Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, fieldRelative.vxMetersPerSecond, fieldRelative.vyMetersPerSecond);
+            Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY);
             //shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
             //shooterSpeed = shooterSpeedHub(targetDistance);

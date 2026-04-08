@@ -290,7 +290,7 @@ public final class Constants {
     public static final Color OFF = new Color(0, 0, 0);
     public static final Color YELLOW = new Color(255, 255, 0);
     public static final Color PURPLE = new Color(255, 0, 255);
-    public static final int LED_STRIP_LENGTH = 45;
+    public static final int LED_STRIP_LENGTH = 50;
     public static final int LED_CANDLE_COUNT = 8;
     public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT;
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
