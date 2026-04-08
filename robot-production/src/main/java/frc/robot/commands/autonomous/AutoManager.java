@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.subsystems.Scoring;
 
@@ -36,7 +35,7 @@ public final class AutoManager {
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("HALF LEFT RA").mirrorPath();
+            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("ONE Half Left RA").mirrorPath();
             Command halfMirroredAuto = AutoBuilder.followPath(halfRight);
 
             pathPlannerAutos.addOption("ONE Half Right", halfMirroredAuto);
