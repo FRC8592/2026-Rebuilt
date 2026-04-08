@@ -327,7 +327,7 @@ public class Scoring extends SubsystemBase {
      * If no solutions exist, outputs (0, 0)
      */
 
-    public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY) {
+    public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY, double robotOmega) {
         double dt = SmartDashboard.getNumber("SOTMdt", 2.0);
         double thetaRad = Math.toRadians(SCORING.TURRET_ANGLE);
         double robotVelXFeet = robotVelX * CONVERSIONS.METERS_TO_FEET;
@@ -354,7 +354,7 @@ public class Scoring extends SubsystemBase {
             double turretAngleToHub = Math.atan2(v0y, v0x);
             Logger.recordOutput(SCORING.LOG_PATH + "Turret Angle To Hub Based on Hub Coordinate Systems", turretAngleToHub);
 
-            double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub)))) % 360 + 360) % 360;
+            double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub)) - Math.toDegrees(robotOmega * dt))) % 360 + 360) % 360;
             Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
 
             return new Pair<>(outputRPM*SCORING.FLYWHEEL_GEARING, turretFieldAngle);
@@ -385,6 +385,7 @@ public class Scoring extends SubsystemBase {
         double turretAngle;
         double rawVelX;
         double rawVelY;
+        double omega;
 
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
@@ -426,11 +427,12 @@ public class Scoring extends SubsystemBase {
             
             rawVelX = fieldRelative.vxMetersPerSecond;
             rawVelY = fieldRelative.vyMetersPerSecond;
+            omega = fieldRelative.omegaRadiansPerSecond;
             
             filterVelX = filterVelX*velocityFilter + rawVelX*(1-velocityFilter);
             filterVelY = filterVelY*velocityFilter + rawVelY*(1-velocityFilter);
 
-            Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY);
+            Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY, omega);
             //shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond();
             //shooterSpeed = shooterSpeedHub(targetDistance);
