@@ -31,17 +31,12 @@ public class Turret extends SubsystemBase {
 
     private TalonFX turretMotor;
     private TalonFXConfiguration turretMotorConfig;
-    // private MotionMagicConfigs turretMMConfig;
+    private MotionMagicConfigs turretMMConfig;
     private MotorOutputConfigs turretMotorOutputConfig;
     private SoftwareLimitSwitchConfigs positionLimitConfig;
     private Slot0Configs turretPIDConfig;
-
-
-
     private PositionVoltage positionRequest;
-    // private MotionMagicVoltage positionMMRequest;
-
-
+    private MotionMagicVoltage positionMMRequest;
 
     // TODO: Remove final keyword if necessary
     private final DutyCycleEncoder E1;
@@ -52,7 +47,6 @@ public class Turret extends SubsystemBase {
     private double D_SET;
 
     private double rawTargetAngle;
-
     private double targetAngle;
 
     private static Map<Double, Double> mapValues = new HashMap<Double, Double>();
@@ -66,8 +60,6 @@ public class Turret extends SubsystemBase {
         E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET.in(Degrees));
         E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET.in(Degrees));
 
-
-
         /**
          * Initialize the Turret Motor and Turret Motor Config
          */
@@ -76,45 +68,25 @@ public class Turret extends SubsystemBase {
         turretMotorOutputConfig = new MotorOutputConfigs();
         positionLimitConfig = new SoftwareLimitSwitchConfigs();
         turretPIDConfig = new Slot0Configs();
-        // turretMMConfig = new MotionMagicConfigs();
-
-
+        turretMMConfig = new MotionMagicConfigs();
 
         /**
          * Initialize Turret Motor Control Modes, two control modes to choose from
          */
-        // TODO: First utilize positionVoltage then switch to MMVoltage
-        positionRequest = new PositionVoltage(0);
-        // positionMMRequest = new MotionMagicVoltage(0);
-
-        // TODO: Test if this works
-        positionRequest.withOverrideBrakeDurNeutral(true);
-        // positionMMRequest.withOverrideBrakeDurNeutral(true);
-
+        // positionRequest = new PositionVoltage(0);
+        // positionRequest.withOverrideBrakeDurNeutral(true);
+        positionMMRequest = new MotionMagicVoltage(0);
+        positionMMRequest.withOverrideBrakeDurNeutral(true);
 
         turretMotorOutputConfig.withInverted(InvertedValue.Clockwise_Positive);
-
-
+        turretMotorOutputConfig.withNeutralMode(NeutralModeValue.Brake);
 
         /**
          * Turret Motor Current Limit Configuration, which limits supply current too.
          */
-        // TODO: Reconfigure this
-        // turretMotorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT)
-        // .withStatorCurrentLimitEnable(true);
+        turretMotorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT).withStatorCurrentLimitEnable(true);
 
-        // TODO: Test this if PID Tuning prevents stalling, and IF and ONLY IF we utilize
-        // OverrideBrakeDurNeutral
-        // tMotorOutputConfig.withDutyCycleNeutralDeadband(0.01);
-
-
-        /**
-         * Turret Motor Neutral Mode Configuration. Tells the motor what to do when at 0V (I believe
-         * so)
-         */
-        // TODO: Check why turret was very easy to move even when motor was in brake mode
-        turretMotorOutputConfig.withNeutralMode(NeutralModeValue.Brake);
-
+        // Apply configuration
         turretMotorConfig.withMotorOutput(turretMotorOutputConfig);
 
 
@@ -122,16 +94,11 @@ public class Turret extends SubsystemBase {
          * Turret Motor Software "Soft" Limit Configurations. These prevent overrotation of the
          * turret.
          */
-
         positionLimitConfig
-                .withForwardSoftLimitThreshold(
-                        TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                .withForwardSoftLimitThreshold(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withForwardSoftLimitEnable(true)
-                .withReverseSoftLimitThreshold(
-                        TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                .withReverseSoftLimitThreshold(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withReverseSoftLimitEnable(true);
-
-
         turretMotorConfig.withSoftwareLimitSwitch(positionLimitConfig);
 
 
@@ -148,14 +115,13 @@ public class Turret extends SubsystemBase {
         /**
          * Motion Magic Configuration and Constants
          */
-        // turretMMConfig.MotionMagicAcceleration =
-        // TURRET.MAX_ACCELERATION.in(RotationsPerSecondPerSecond);
-        // turretMMConfig.MotionMagicJerk =
-        // TURRET.MAX_JERK.in(RotationsPerSecondPerSecond.per(Second));
-        // turretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY.in(RotationsPerSecond);
-        // turretMotorConfig.withMotionMagic(turretMMConfig);
+        turretMMConfig.MotionMagicJerk = TURRET.MAX_JERK.in(RotationsPerSecondPerSecond.per(Second));
+        turretMMConfig.MotionMagicAcceleration = TURRET.MAX_ACCELERATION.in(RotationsPerSecondPerSecond);
 
-        /** */
+        turretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY.in(RotationsPerSecond);
+        turretMotorConfig.withMotionMagic(turretMMConfig);
+
+        // Apply the final configuration to the turret motor
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
@@ -177,21 +143,13 @@ public class Turret extends SubsystemBase {
         if (Math.abs(target) > TURRET.MAX_ROTATION_LIMIT)
             target -= Math.signum(target) * 360;
         logAngle(target);
-        turretMotor.setControl(positionRequest.withSlot(0)
-                .withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control
-                                                                            // for testing
-        // turretMotor.setControl(positionMMRequest.withPosition(target *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        // turretMotor.setControl(positionRequest.withSlot(0).withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        turretMotor.setControl(positionMMRequest.withSlot(0).withPosition(target *TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public void basicTurretToPos(double angle) {
         double voltage = SmartDashboard.getNumber("Turret Voltage", 0);
         turretMotor.setVoltage(voltage);
-        // logAngle(angle);
-        // turretMotor.setControl(positionRequest.withSlot(0).withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        // turretMotor.setControl(positionMMRequest.withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public Command basicTurretToPosCommand(double angle) {
@@ -335,31 +293,27 @@ public class Turret extends SubsystemBase {
 
     }
 
-    // public void updatePID() {
 
-    // //Receive Turret PID Constants from SmartDashboard
+    /** Update PID values from SmartDashboard
+     *  Only call when disabled
+     */
+    public void updatePID() {
+    //Receive Turret PID Constants from SmartDashboard
+    double P_NEW = SmartDashboard.getNumber("tP", TURRET.TURRET_P.in(Volts));
+    double I_NEW = SmartDashboard.getNumber("tI", TURRET.TURRET_I.in(Volts));
+    double D_NEW = SmartDashboard.getNumber("tD", TURRET.TURRET_D.in(Volts));
 
-    // double P_NEW = SmartDashboard.getNumber("tP", TURRET.TURRET_P.in(Volts));
-    // double I_NEW = SmartDashboard.getNumber("tI", TURRET.TURRET_I.in(Volts));
-    // double D_NEW = SmartDashboard.getNumber("tD", TURRET.TURRET_D.in(Volts));
+    boolean tDiff = (P_SET != P_NEW || I_SET != I_NEW || D_SET != D_NEW);
 
-    // boolean tDiff = (P_SET != P_NEW || I_SET != I_NEW || D_SET != D_NEW);
+    if(tDiff) {
+        turretPIDConfig.withKP(P_NEW).withKI(I_NEW).withKD(D_NEW);
+        turretMotorConfig.withSlot0(turretPIDConfig);
+        turretMotor.getConfigurator().apply(turretMotorConfig);
 
-
-    // if(tDiff){
-    // turretPIDConfig
-    // .withKP(P_NEW)
-    // .withKI(I_NEW)
-    // .withKD(D_NEW);
-    // turretMotorConfig.withSlot0(turretPIDConfig);
-    // turretMotor.getConfigurator().apply(turretMotorConfig);
-
-    // P_SET = P_NEW;
-    // I_SET = I_NEW;
-    // D_SET = D_NEW;
-    // }
-
-    // }
-
+        P_SET = P_NEW;
+        I_SET = I_NEW;
+        D_SET = D_NEW;
+        }
+    }
 
 }

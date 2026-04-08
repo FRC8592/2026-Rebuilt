@@ -47,18 +47,24 @@ public final class Constants {
 
     // camera G
     public static final Transform3d CAMERA_OFFSETS_RIGHT =
-        (new Transform3d(new Translation3d(-0.07478,-0.33655,0.56), //x: -0.020817 z: 0.5653 y: -0.29
-            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(270)))); //-0.334588, -0.072009, 0.5212334
+        (new Transform3d(new Translation3d(-0.07478, -0.33655, 0.56), // x: -0.020817 z: 0.5653 y:
+                                                                      // -0.29
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(270)))); // -0.334588, -0.072009,
+                                                                           // 0.5212334
 
     // camera F
     public static final Transform3d CAMERA_OFFSETS_BACK =
-        (new Transform3d(new Translation3d(-0.08267,-0.28369,0.56), //0.2797302, -0.0772414, -0.5218176
-            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180)))); //x: -0.020817 z: 0.5653 y: -0.26
+        (new Transform3d(new Translation3d(-0.08267, -0.28369, 0.56), // 0.2797302, -0.0772414,
+                                                                      // -0.5218176
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180)))); // x: -0.020817 z: 0.5653
+                                                                           // y: -0.26
 
     // camera H
     public static final Transform3d CAMERA_OFFSETS_LEFT =
-        (new Transform3d(new Translation3d(-0.07478, 0.33655,0.56),  //x: -0.020817 z: 0.5653 y: 0.29
-            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(90)))); //-0.334588, -0.072009, 0.5212334
+        (new Transform3d(new Translation3d(-0.07478, 0.33655, 0.56), // x: -0.020817 z: 0.5653 y:
+                                                                     // 0.29
+            new Rotation3d(0, Math.toRadians(-15), Math.toRadians(90)))); // -0.334588, -0.072009,
+                                                                          // 0.5212334
 
     public static final String CAMERA_NAME_RIGHT = ("Right_Arducam_OV9782_G");
 
@@ -113,7 +119,7 @@ public final class Constants {
     public static final double DRIVE_KV = 0.119;
     public static final double DRIVE_KA = 0.0028462;
 
-//    public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
+    // public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
 
     public static final double PATH_FOLLOW_DRIVE_KP = 1.0;
     public static final double PATH_FOLLOW_DRIVE_KI = 0;
@@ -154,8 +160,8 @@ public final class Constants {
     public static final Current CURRENT_LIMIT = Amps.of(50);
     public static final Voltage TURRET_P = Volts.of(40d); // 12;
     public static final Voltage TURRET_I = Volts.of(0.01);
-    public static final Voltage TURRET_D = Volts.of(0.8); // 0.4;
-    public static final Voltage TURRET_S = Volts.of(0.6);
+    public static final Voltage TURRET_D = Volts.of(0.5);
+    public static final Voltage TURRET_S = Volts.of(0.5);
     public static final Voltage TURRET_V = Volts.of(0d);
     public static final Voltage TURRET_A = Volts.of(0d);
     public static final double TURRET_GT = 80d;
@@ -165,16 +171,17 @@ public final class Constants {
     public static final double TURRET_TOTAL = TURRET_G1 * TURRET_G2;
     public static final double DEGREES_TO_MOTOR_ROTATIONS = (TURRET_GT / TURRET_GM) / 360d;
 
-    //TODO: Check if this works
-    public static final Velocity<AngularAccelerationUnit> MAX_JERK = RotationsPerSecondPerSecond.per(Second).of(3000);
-    public static final AngularAcceleration MAX_ACCELERATION = RotationsPerSecondPerSecond.of(300);
-    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(50); 
+    // TODO: Check if this works
+    public static final Velocity<AngularAccelerationUnit> MAX_JERK =
+        RotationsPerSecondPerSecond.per(Second).of(10000);
+    public static final AngularAcceleration MAX_ACCELERATION = RotationsPerSecondPerSecond.of(1000);
+    public static final AngularVelocity CRUISE_VELOCITY = RotationsPerSecond.of(100);
 
-    //TODO: Update these constants
+    // TODO: Update these constants
     public static final Angle E1_OFFSET = Degrees.of(286);
     public static final Angle E2_OFFSET = Degrees.of(323.4);
-    //Try these out?
-    public static final double MAX_ROTATION_LIMIT = 180; //Degrees
+    // Try these out?
+    public static final double MAX_ROTATION_LIMIT = 180; // Degrees
     public static final double FORWARD_LIMIT = 180; // Degrees
     public static final double REVERSE_LIMIT = -180; // Degrees
     public static final double TURRET_TOLERANCE = 2; // Degrees
@@ -200,11 +207,11 @@ public final class Constants {
     public static final double TAG_HUB_HEIGHT = 1.12395;
     public static final double SHOOTER_THRESHOLD = 500; // RPM
 
-    public static final double TURRET_ANGLE = 64; //degrees
-    public static final double HUB_HEIGHT = 6; //feet
-    public static final double INITIAL_BALL_HEIGHT = 2.18; //feet
-    public static final double GRAVITY = 32.174; //feet per s^2
-    public static final double FLYWHEEL_RADIUS = 2.0; //inches
+    public static final double TURRET_ANGLE = 64; // degrees
+    public static final double HUB_HEIGHT = 6; // feet
+    public static final double INITIAL_BALL_HEIGHT = 2.18; // feet
+    public static final double GRAVITY = 32.174; // feet per s^2
+    public static final double FLYWHEEL_RADIUS = 2.0; // inches
     public static final double FLYWHEEL_GEARING = 1.0;
 
     public static final double RANGE_EXPO = 1.0033;
@@ -213,7 +220,7 @@ public final class Constants {
 
     public static final double SHORT_RANGE_K = 2.3;
 
-    public static final int RPM = 25; 
+    public static final int RPM = 25;
   }
 
   public static class INTAKE {
@@ -229,7 +236,7 @@ public final class Constants {
 
     // PID tuning constants for the NEO Motors, these are initial and WILL change
 
-    public static final double INTAKE_EXTEND_P = 0.5; //0.5
+    public static final double INTAKE_EXTEND_P = 0.5; // 0.5
     public static final double INTAKE_EXTEND_I = 0;
     public static final double INTAKE_EXTEND_D = 0;
     public static final double EXTEND_ROTATIONS = 18.5;
@@ -279,8 +286,8 @@ public final class Constants {
   }
 
   public final class LEDS {
-    public static final int LEDS_CAN_ID = 33; 
-    public static final Color HOT_PINK = new Color (255,29 ,206); 
+    public static final int LEDS_CAN_ID = 33;
+    public static final Color HOT_PINK = new Color(255, 29, 206);
     public static final Color PRISMARINE = new Color(126, 171, 172);
     public static final Color TEAL = new Color(0, 64, 192);
     public static final Color ORANGE = new Color(192, 64, 0);
@@ -291,7 +298,7 @@ public final class Constants {
     public static final Color YELLOW = new Color(255, 255, 0);
     public static final Color PURPLE = new Color(255, 0, 255);
     public static final int LED_STRIP_LENGTH = 32;
-    public static final int LED_HALF_STRIP_LENGTH = LED_STRIP_LENGTH/2; 
+    public static final int LED_HALF_STRIP_LENGTH = LED_STRIP_LENGTH / 2;
     public static final int LED_CANDLE_COUNT = 8;
     public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT;
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
