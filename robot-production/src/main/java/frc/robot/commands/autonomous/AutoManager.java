@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.subsystems.Scoring;
 
@@ -48,20 +49,36 @@ public final class AutoManager {
             System.out.println("Exception in adding pathplanner right auto");
         }
 
-        // try {
-        //     PathPlannerPath halfLeftPath = PathPlannerPath.fromPathFile("Half Left");
-        //     PathPlannerPath DepotPt1Path = PathPlannerPath.fromPathFile("Depot Pt1");
-        //     PathPlannerPath DepotPt2Path = PathPlannerPath.fromPathFile("Depot Pt2");
+        try {
+            PathPlannerPath halfRightTwo = PathPlannerPath.fromPathFile("HALF LEFT");
+            Command halfDoubleFirstCommand = AutoBuilder.followPath(halfRightTwo);
 
-        //     PathPlannerPath depot = halfLeftPath.mirrorPath();
-        //     pathPlannerAutos.addOption("Depot",
-        //             AutoBuilder.followPath(depot).andThen(AutoBuilder.followPath(DepotPt1Path))
-        //                     .andThen(Commands.waitSeconds(2.0))
-        //                     .andThen(AutoBuilder.followPath(DepotPt2Path))
-        //                     .andThen(scoring.indexer.runIndexerCommand()));
-        // } catch (Exception e) {
-        //     DriverStation.reportError("Failed to load Depot: " + e.getMessage(), e.getStackTrace());
-        // }
+            PathPlannerPath halfRightTwoSecond = PathPlannerPath.fromPathFile("Half Left Second Swipe");
+            Command halfDoubleSecondCommand = AutoBuilder.followPath(halfRightTwoSecond);
+
+            Command doubleSwipeAuto = halfDoubleFirstCommand.andThen(scoring.toggleTrackingCommand())
+                                                        .andThen(new WaitCommand(0.9))
+                                                        .andThen(scoring.indexer.runIndexerCommand())
+                                                        .andThen(new WaitCommand(3))
+                                                        .andThen(scoring.indexer.stopCommand())
+                                                        .andThen(scoring.toggleTrackingCommand())
+                                                        .andThen(halfDoubleSecondCommand)
+                                                        .andThen(scoring.toggleTrackingCommand())
+                                                        .andThen(new WaitCommand(0.9))
+                                                        .andThen(scoring.indexer.runIndexerCommand())
+                                                        .andThen(new WaitCommand(3))
+                                                        .andThen(scoring.indexer.stopCommand())
+                                                        .andThen(scoring.toggleTrackingCommand());
+
+            pathPlannerAutos.addOption("Double Half Right", doubleSwipeAuto);
+            
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to load mirrored path Half Left doubl: " + e.getMessage(),
+                    e.getStackTrace());
+
+            System.out.println("Exception in adding pathplanner double right auto");
+        }
+
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
 
     }
