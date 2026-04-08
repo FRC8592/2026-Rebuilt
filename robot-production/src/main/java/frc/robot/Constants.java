@@ -90,7 +90,7 @@ public final class Constants {
 
     public static final double TRANSLATE_POWER_FAST = 1.0;
     public static final double ROTATE_POWER_FAST = 0.5;
-    public static final double TRANSLATE_POWER_SLOW = 0.2;
+    public static final double TRANSLATE_POWER_SLOW = 0.5;
     public static final double ROTATE_POWER_SLOW = 0.1;
 
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
