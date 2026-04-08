@@ -96,13 +96,11 @@ public class RobotContainer {
    Command stopCommand = scoring.indexer.stopCommand();
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
         
-            NamedCommands.registerCommand("ShootWaitIntake",scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(2.0)).andThen( scoring.intake.runIntakeRollersCommand()));
 NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
-        NamedCommands.registerCommand("ShootWaitStop",scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(2.0)).andThen(scoring.indexer.stopCommand()).andThen(scoring.toggleTrackingCommand()));
-    NamedCommands.registerCommand("SqueezeWaitStop", scoring.indexer.runIndexerCommand()
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
+    NamedCommands.registerCommand("SqueezeShoot", scoring.indexer.runIndexerCommand()
+        .andThen(scoring.intake.retractWithRollersCommand())
+        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()));
 
     new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());  
     new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
@@ -110,7 +108,7 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // new
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
-    //new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
+   // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("TurnOffTracking").onTrue(scoring.toggleTrackingCommand());
         new EventTrigger("Shoottest").onTrue(scoring.indexer.runIndexerCommand());
     

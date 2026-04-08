@@ -1,0 +1,91 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of HALF LEFT RA"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Half Left Second Swipe"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SqueezeShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ToggleHubTracking"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
