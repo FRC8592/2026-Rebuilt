@@ -40,7 +40,7 @@ public class Scoring extends SubsystemBase {
     private boolean targetIsHub;
     private Alliance alliance;
     private double shooterSpeedOffset = 0;
-    private double dt = 0.6;
+    private double dt = 0.2;
     private double velocityFilter = 0.2;
     double filterVelX = 0;
     double filterVelY = 0;
@@ -330,16 +330,16 @@ public class Scoring extends SubsystemBase {
     public Pair<Double, Double> SOTM(double targetX, double targetY, double robotVelX, double robotVelY) {
         double dt = SmartDashboard.getNumber("SOTMdt", 2.0);
         double thetaRad = Math.toRadians(SCORING.TURRET_ANGLE);
-        double targetXFeet = targetX * CONVERSIONS.METERS_TO_FEET - robotVelX*dt;
-        double targetYFeet = targetY * CONVERSIONS.METERS_TO_FEET - robotVelY*dt;
         double robotVelXFeet = robotVelX * CONVERSIONS.METERS_TO_FEET;
         double robotVelYFeet = robotVelY * CONVERSIONS.METERS_TO_FEET;
+        double targetXFeet = targetX * CONVERSIONS.METERS_TO_FEET - robotVelXFeet*dt;
+        double targetYFeet = targetY * CONVERSIONS.METERS_TO_FEET - robotVelYFeet*dt;
         
         double x = Math.sqrt(targetXFeet * targetXFeet + targetYFeet * targetYFeet);
 
         double angleToHub = Math.atan2(targetYFeet, targetXFeet);
-        double vRx = robotVelX * Math.sin(angleToHub) - robotVelY * Math.cos(angleToHub);
-        double vRy = robotVelX * Math.cos(angleToHub) + robotVelY * Math.sin(angleToHub);
+        double vRx = robotVelXFeet * Math.sin(angleToHub) - robotVelYFeet * Math.cos(angleToHub);
+        double vRy = robotVelXFeet * Math.cos(angleToHub) + robotVelYFeet * Math.sin(angleToHub);
         try {
             double v0y = solveV0y(thetaRad, x, vRx, vRy, SCORING.INITIAL_BALL_HEIGHT, SCORING.HUB_HEIGHT, SCORING.GRAVITY);
             double v0x = -vRx; // if tangential motion is being canceled
