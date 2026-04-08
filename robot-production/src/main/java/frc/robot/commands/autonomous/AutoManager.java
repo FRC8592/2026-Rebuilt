@@ -36,7 +36,7 @@ public final class AutoManager {
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         try {
-            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("ONE Half Left RA").mirrorPath();
+            PathPlannerPath halfRight = PathPlannerPath.fromPathFile("HALF LEFT").mirrorPath();
             Command halfMirroredAuto = AutoBuilder.followPath(halfRight);
 
             pathPlannerAutos.addOption("ONE Half Right", halfMirroredAuto);
@@ -71,7 +71,7 @@ public final class AutoManager {
                                                         .andThen(scoring.toggleTrackingCommand());
 
             pathPlannerAutos.addOption("Double Half Right", doubleSwipeAuto);
-            
+
         } catch (Exception e) {
             DriverStation.reportError("Failed to load mirrored path Half Left doubl: " + e.getMessage(),
                     e.getStackTrace());
