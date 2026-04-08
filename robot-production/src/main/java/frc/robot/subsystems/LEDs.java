@@ -24,12 +24,8 @@ import frc.robot.Constants.LEDS;
 public class LEDs extends SubsystemBase {
         // TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE
         private CANdle candle;
-        private boolean XMODE = false;
-        private static boolean canShoot = false;
-        private boolean spindexerStuck = false; 
-
+        private static boolean canShoot = false; 
         private int hasTags;
-        private final RainbowAnimation rainbow = new RainbowAnimation(1, LEDS.FULL_LED_COUNT);
 
                 public LEDs() {
                         CANdleConfiguration configAll = new CANdleConfiguration();
@@ -99,57 +95,6 @@ public class LEDs extends SubsystemBase {
                 public void setCanShootState(boolean newCanShoot) {
                 this.canShoot = newCanShoot;
                 }
-
-                // rainbow for the X - mode (aka. Locking the wheels) // FLASH// 
-                public void setXmode() {
-                candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                                .withColor(new RGBWColor(
-                                                (int)(LEDS.PURPLE.red * 255),
-                                                (int)(LEDS.PURPLE.green * 255),
-                                                (int)(LEDS.PURPLE.blue * 255)
-                                                )));
-                }
-
-                public void xModeActive(boolean xMode) {
-                this.XMODE = XMODE;
-                }
-
-                public void setSpindexerStuck(boolean spindexerStuck) {
-                this.spindexerStuck = spindexerStuck;
-        }
-
-                public void setSpindexerStuck(){ // (1)
-                        if (spindexerStuck) {
-                                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
-                                                .withColor(new RGBWColor(
-                                                (int)(LEDS.HOT_PINK.red * 255),
-                                                (int)(LEDS.HOT_PINK.green * 255),
-                                                (int)(LEDS.HOT_PINK.blue * 255)
-                                                )));
-                        } else {
-                        setOff();
-                        }
-                }
-        
-//                 @Override
-//                 public void periodic() {
-//                 if (XMODE) {
-//                 setXmode();
-//                 return;
-//                 }
-
-//                 if (hasTags > 0){
-//                         displayHasTagsLEDs();
-//                 }else if (spindexerStuck) {
-//                         setSpindexerStuck();
-//                 } else if (XMODE) {
-//                         setXmode();
-//                 } else if (canShoot) {
-//                         setCanShoot();
-//                 } else {
-//                         setCannotShoot();
-//                 }
-//                 }
 
 }
       
