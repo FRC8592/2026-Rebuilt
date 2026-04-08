@@ -188,7 +188,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void increaseRPM() {
-        shooterSpeedOffset += SCORING.RPM; // Orginally 10 
+        shooterSpeedOffset += 10;
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
@@ -200,7 +200,7 @@ public class Scoring extends SubsystemBase {
     }
 
     public void decreaseRPM() {
-        shooterSpeedOffset -= SCORING.RPM; //Orginally 10
+        shooterSpeedOffset -= 10;
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
     }
 
@@ -360,9 +360,9 @@ public class Scoring extends SubsystemBase {
         double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
 
         if (x <= 2.0)
-            return 156.82212d * x + 1019.64733d;
+            return 156.82212 * x + 1019.64733;
         else
-            return Math.pow((156.82212d * x + 1019.64733d), SCORING.RANGE_EXPO);
+            return Math.pow((156.82212 * x + 1019.64733), SCORING.RANGE_EXPO);
     }
 
     /**`
