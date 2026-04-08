@@ -138,7 +138,7 @@ public class RobotContainer {
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
