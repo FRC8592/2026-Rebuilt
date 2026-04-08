@@ -101,7 +101,8 @@ public class Scoring extends SubsystemBase {
                 targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
                 targetIsHub = false;
             }
-        } else { // Red alliance
+        }
+        else { // If alliance == Alliance.Red
             // if we're in our alliance zone
             if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5) {
                 targetPose = SCORING.RED_HUB_POSE;
