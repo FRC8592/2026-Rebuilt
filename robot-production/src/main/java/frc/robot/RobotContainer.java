@@ -45,16 +45,15 @@ public class RobotContainer {
 
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
-
   private final Trigger ALIGN_HEADING = driverController.y();
+  private final Trigger SLOW_MODE = driverController.a();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
-  private final Trigger SHOOT_SQUEEZE = driverController.a();
-
+  // private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
@@ -63,8 +62,6 @@ public class RobotContainer {
 
   private final Trigger RESET_TURRET = operatorController.a();
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
-  // private final Trigger TURRET_TEST = operatorController.x();
-  // private final Trigger TURRET_TEST_BACK = operatorController.a();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
 
@@ -138,8 +135,7 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    // SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode(true)))
-    // .onFalse(swerve.runOnce(() -> swerve.setSlowMode(false)));
+    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode()));
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
@@ -155,7 +151,7 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    LOCK_WHEELS.onTrue(swerve.runOnce(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
@@ -170,10 +166,10 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
-    SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
-        .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
-        .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
-        .andThen(scoring.indexer.stopCommand()));
+    // SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
+    //     .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
+    //     .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+    //     .andThen(scoring.indexer.stopCommand()));
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());

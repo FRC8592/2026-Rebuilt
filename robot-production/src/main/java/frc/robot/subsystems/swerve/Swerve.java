@@ -47,7 +47,8 @@ public class Swerve extends SubsystemBase {
                     .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
                     .withDriveRequestType(DriveRequestType.Velocity);
 
-    private SwerveRequest.SwerveDriveBrake X_Mode = new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
+    private SwerveRequest.SwerveDriveBrake X_Mode =
+            new SwerveRequest.SwerveDriveBrake().withDriveRequestType(DriveRequestType.Velocity);
 
     public static ChassisSpeeds speedZero = new ChassisSpeeds();
 
@@ -69,7 +70,7 @@ public class Swerve extends SubsystemBase {
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
 
         swerve = drivetrain;
-        
+
 
         // PathPlanner AutoBuilder configuration below.
         https: // pathplanner.dev/pplib-build-an-auto.html
@@ -176,14 +177,19 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
-        if (alignedHeading && speeds != null && !speeds.equals(speedZero)) {
-            double targetHeadingRadians = Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        if (alignedHeading && !speeds.equals(speedZero)) {
+            double targetHeadingRadians =
+                    Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
             Rotation2d targetHeading = new Rotation2d(targetHeadingRadians);
             double omega = snapToAngle(targetHeading);
 
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
-                    .withVelocityY(speeds.vyMetersPerSecond)
-                    .withRotationalRate(omega));
+                    .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
+        } else if (isSlowMode) {
+            swerve.setControl(fieldCentric
+                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
+                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_SLOW));
         } else {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
@@ -254,9 +260,11 @@ public class Swerve extends SubsystemBase {
     public Pose2d getCurrentOdometryPosition() {
         return swerve.getState().Pose;
     }
-    //This does not take into account z-height
-    public Pose3d get3DCurrentOdometryPosition(){
-        return new Pose3d(new Translation3d(swerve.getState().Pose.getTranslation()) , swerve.getRotation3d());
+
+    // This does not take into account z-height
+    public Pose3d get3DCurrentOdometryPosition() {
+        return new Pose3d(new Translation3d(swerve.getState().Pose.getTranslation()),
+                swerve.getRotation3d());
     }
 
     public void setKnownOdometryPose(Pose2d currentPose) {
@@ -272,8 +280,8 @@ public class Swerve extends SubsystemBase {
      * 
      * @param slowMode whether to slow the drivetrain
      */
-    public void setSlowMode(boolean slowMode) {
-        this.isSlowMode = slowMode;
+    public void setSlowMode() {
+        isSlowMode = !isSlowMode;
     }
 
     /**
@@ -298,8 +306,6 @@ public class Swerve extends SubsystemBase {
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
-
-
         double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
 
@@ -309,21 +315,12 @@ public class Swerve extends SubsystemBase {
         double driveRotate = (rawRot >= 0 ? (Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawRot), SWERVE.JOYSTICK_EXPONENT)));
 
-        if (isSlowMode) {
-            driveTranslateX *= SWERVE.TRANSLATE_POWER_SLOW
-                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveTranslateY *= SWERVE.TRANSLATE_POWER_SLOW
-                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveRotate *=
-                    SWERVE.ROTATE_POWER_SLOW * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
-        } else {
-            driveTranslateX *= SWERVE.TRANSLATE_POWER_FAST
-                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveTranslateY *= SWERVE.TRANSLATE_POWER_FAST
-                    * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-            driveRotate *=
-                    SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
-        }
+
+        driveTranslateX *=
+                SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+        driveTranslateY *=
+                SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+        driveRotate *= SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
 
         Logger.recordOutput(SWERVE.LOG_PATH + "TranslateY", driveTranslateY);
         Logger.recordOutput(SWERVE.LOG_PATH + "TranslateX", driveTranslateX);

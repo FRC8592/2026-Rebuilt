@@ -90,8 +90,8 @@ public final class Constants {
 
     public static final double TRANSLATE_POWER_FAST = 1.0;
     public static final double ROTATE_POWER_FAST = 0.5;
-    public static final double TRANSLATE_POWER_SLOW = 0.3;
-    public static final double ROTATE_POWER_SLOW = 0.3;
+    public static final double TRANSLATE_POWER_SLOW = 0.5;
+    public static final double ROTATE_POWER_SLOW = 0.1;
 
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
@@ -290,8 +290,7 @@ public final class Constants {
     public static final Color OFF = new Color(0, 0, 0);
     public static final Color YELLOW = new Color(255, 255, 0);
     public static final Color PURPLE = new Color(255, 0, 255);
-    public static final int LED_STRIP_LENGTH = 32;
-    public static final int LED_HALF_STRIP_LENGTH = LED_STRIP_LENGTH/2; 
+    public static final int LED_STRIP_LENGTH = 51;
     public static final int LED_CANDLE_COUNT = 8;
     public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT;
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
