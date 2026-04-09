@@ -89,12 +89,12 @@ public class Scoring extends SubsystemBase {
 
         if (alliance == Alliance.Blue) {
             // if we're in our alliance zone
-            if (currentRobotPose.getX() < (MEASUREMENTS.FIELD_X_METERS / 4) + 0.5) {
+            if (currentRobotPose.getX() < ((MEASUREMENTS.FIELD_X_METERS * 0.25) + 0.5)) {
                 targetPose = SCORING.BLUE_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2) {
+            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2.0) {
                 targetPose = SCORING.BLUE_PASSING_LOW_POSE;
                 targetIsHub = false;
             } else {
@@ -104,12 +104,12 @@ public class Scoring extends SubsystemBase {
         }
         else { // If alliance == Alliance.Red
             // if we're in our alliance zone
-            if (currentRobotPose.getX() > (MEASUREMENTS.FIELD_X_METERS * (3 / 4)) - 0.5) {
+            if (currentRobotPose.getX() > ((MEASUREMENTS.FIELD_X_METERS * 0.75) - 0.5)){
                 targetPose = SCORING.RED_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2) {
+            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2.0) {
                 targetPose = SCORING.RED_PASSING_LOW_POSE;
                 targetIsHub = false;
             } else {
