@@ -140,9 +140,9 @@ public final class Constants {
     public static final double SHOOTER_I = 0.0;
     public static final double SHOOTER_D = 0.0;
     public static final double SHOOTER_S = 0.5;
-    public static final double SHOOTER_V_SHORT = 0.1;
-    public static final double SHOOTER_V_MEDIUM = 0.135;
-    public static final double SHOOTER_V_LONG = 0.14;
+    public static final double SHOOTER_V_SHORT = 0.117;
+    public static final double SHOOTER_V_MEDIUM = 0.125;
+    public static final double SHOOTER_V_LONG = 0.135;
     public static final double SHOOTER_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;

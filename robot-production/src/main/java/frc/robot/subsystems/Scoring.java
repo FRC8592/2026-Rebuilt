@@ -42,6 +42,7 @@ public class Scoring extends SubsystemBase {
     private double shooterSpeedOffset = 0;
     private double dt = 0.2;
     private double velocityFilter = 0.2;
+    private double distance = 0;
     double filterVelX = 0;
     double filterVelY = 0;
 
@@ -133,7 +134,15 @@ public class Scoring extends SubsystemBase {
         trackingTarget = false;
         overrideTracking = true;
         turret.holdPosition();
-        shooter.runAtSpeed(1500);
+        
+        if (distance <= 2.0){
+            shooter.runAtSpeed(1500, 0);
+        } else if (2.0 < distance && distance <= 4.0) {
+            shooter.runAtSpeed(1500, 1);
+        } else {
+            shooter.runAtSpeed(1500, 2);
+        }
+        
     }
 
     public Command overrideTrackingCommand() {
@@ -368,14 +377,14 @@ public class Scoring extends SubsystemBase {
     }
 
     public double shootSpeed(double targetX, double targetY) {
-        double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
+        distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
 
-        if (x <= 2.0)
-            this.shooter.
-            return 156d * x + 1019d;
-        else
-            return Math.pow((156d * x + 1019d), SCORING.RANGE_EXPO);
-    }
+        if (distance <= 2.0){
+            return 156d * distance + 1019d;
+        }  else {
+            return Math.pow((156d * distance + 1019d), SCORING.RANGE_EXPO);
+        }   
+    } 
 
     /**`
      * If the tracking system is toggled on, update the required turret angle and shooter speed
@@ -450,7 +459,14 @@ public class Scoring extends SubsystemBase {
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
-            shooter.runAtSpeed(shooterSpeed);
+            if (distance <= 2.0){
+                shooter.runAtSpeed(shooterSpeed, 0);
+            } else if (2.0 < distance && distance <= 4.0) {
+                shooter.runAtSpeed(shooterSpeed, 1);
+            } else {
+                shooter.runAtSpeed(shooterSpeed, 2);
+            }
+            
         } else {
             // Shut down the shooter motors. The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {

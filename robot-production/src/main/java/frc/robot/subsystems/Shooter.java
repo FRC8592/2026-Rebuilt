@@ -18,7 +18,6 @@ import frc.robot.Constants.SHOOTER;
 import static edu.wpi.first.units.Units.*;
 
 import java.lang.Math;
-
 import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
@@ -40,13 +39,10 @@ public class Shooter extends SubsystemBase {
     private VelocityVoltage shooterVV;
     // private MotionMagicVelocityVoltage shooterMMVV;
 
-
     private double P_SET;
     private double I_SET;
     private double D_SET;
     private double V_SET;
-
-
 
     private double targetShooterRPM;
 
@@ -78,10 +74,8 @@ public class Shooter extends SubsystemBase {
         // shooterFeedbackAdjustment = new FeedbackConfigs();
         // shooterMMConfig = new MotionMagicConfigs();
 
-
         shooterVV = new VelocityVoltage(0);
         // shooterMMVV = new MotionMagicVelocityVoltage(0);
-
 
         /**
          * Shooter PID Tuning Configuration and Constants
@@ -90,23 +84,17 @@ public class Shooter extends SubsystemBase {
         shooterPIDConfigShort.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
                 .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
                 .withKV(SHOOTER.SHOOTER_V_SHORT).withKA(SHOOTER.SHOOTER_A);
-
-
         shooterLeftMotorConfig.withSlot0(shooterPIDConfigShort);
 
          shooterPIDConfigMedium.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
                 .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
                 .withKV(SHOOTER.SHOOTER_V_MEDIUM).withKA(SHOOTER.SHOOTER_A);
-
-
-        // shooterLeftMotorConfig.withSlot1(shooterPIDConfigMedium);
+        shooterLeftMotorConfig.withSlot1(shooterPIDConfigMedium);
 
         shooterPIDConfigLong.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
                 .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
                 .withKV(SHOOTER.SHOOTER_V_LONG).withKA(SHOOTER.SHOOTER_A);
-
-
-        // shooterLeftMotorConfig.withSlot2(shooterPIDConfigLong);
+        shooterLeftMotorConfig.withSlot2(shooterPIDConfigLong);
 
         // shooterMMConfig
         // .withMotionMagicAcceleration(SHOOTER.MAX_ACCELERATION)
@@ -127,24 +115,17 @@ public class Shooter extends SubsystemBase {
 
         shooterRightMotorConfig.withCurrentLimits(shooterRightCurrentLimit);
 
-
-
         // TODO: Add this back after PID Tuning if necessary
         // shooterFeedbackAdjustment.withVelocityFilterTimeConstant(SHOOTER.SHOOTER_FILTER_TIME_CONSTANT);
 
         // shooterMotorConfig.withFeedback(shooterFeedbackAdjustment);
-
-
 
         /**
          * Shooter Left Motor Configuration. This configures the motors themselves with the
          * configuration we have done.
          */
         leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
-
         rightMotor.getConfigurator().apply(shooterRightMotorConfig);
-
-
 
         /**
          * Set the Shooter Right Motor to follow the Left Shooter Motor in the inverse direction
@@ -163,21 +144,25 @@ public class Shooter extends SubsystemBase {
 
     }
 
-
-
     /**
      * Run the shooter motor at a set speed in RPM.
      * 
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
-    public void runAtSpeed(double desiredRPM) {
+    public void runAtSpeed(double desiredRPM, int slot) {
         double shooterMotorVelocity = desiredRPM / 60d; // Convert from RPM to RPS for the motor
                                                         // controller
-
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
-        leftMotor.setControl(shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
+        if(slot == 0){
+            leftMotor.setControl(shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
+        } else if (slot == 1) {
+            leftMotor.setControl(shooterVV.withSlot(1).withVelocity(shooterMotorVelocity));
+        } else {
+            leftMotor.setControl(shooterVV.withSlot(2).withVelocity(shooterMotorVelocity));
+        }
+        
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", shooterVV.toString());
         // leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
 
