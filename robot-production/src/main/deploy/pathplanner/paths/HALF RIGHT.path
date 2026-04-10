@@ -163,10 +163,10 @@
     },
     {
       "name": "cross second",
-      "minWaypointRelativePos": 3.936934882614211,
+      "minWaypointRelativePos": 3.94,
       "maxWaypointRelativePos": 5.278930044416246,
       "constraints": {
-        "maxVelocity": 2.75,
+        "maxVelocity": 2.45,
         "maxAcceleration": 9.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 1440.0,
