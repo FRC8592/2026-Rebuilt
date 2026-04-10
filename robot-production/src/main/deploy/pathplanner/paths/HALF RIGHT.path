@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 7.8820956051781605,
-        "y": 0.9464231886736698
+        "y": 0.9464231886736696
       },
       "nextControl": {
         "x": 7.73822232813363,
@@ -166,7 +166,7 @@
       "minWaypointRelativePos": 3.936934882614211,
       "maxWaypointRelativePos": 5.278930044416246,
       "constraints": {
-        "maxVelocity": 2.25,
+        "maxVelocity": 2.75,
         "maxAcceleration": 9.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 1440.0,
