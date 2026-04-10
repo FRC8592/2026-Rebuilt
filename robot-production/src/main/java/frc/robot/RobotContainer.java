@@ -47,6 +47,7 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger SLOW_MODE = driverController.a();
+  private final Trigger LESS_SLOW_MODE = driverController.povUp();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
@@ -135,7 +136,8 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode()));
+    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
+    LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 

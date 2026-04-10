@@ -28,7 +28,8 @@ public class Swerve extends SubsystemBase {
 
     private PIDController snapToController;
 
-    private boolean isSlowMode;
+    private boolean isSnailMode;
+    private boolean isLessSlowMode;
     private boolean alignedHeading = false;
 
 
@@ -185,11 +186,16 @@ public class Swerve extends SubsystemBase {
 
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
-        } else if (isSlowMode) {
+        } else if (isSnailMode) {
             swerve.setControl(fieldCentric
-                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
-                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
-                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_SLOW));
+                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_SNAIL)
+                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_SNAIL)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_SNAIL));
+        } else if (isLessSlowMode) {
+            swerve.setControl(fieldCentric
+                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_LESS_SLOW)
+                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_LESS_SLOW)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_LESS_SLOW));
         } else {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
@@ -280,8 +286,12 @@ public class Swerve extends SubsystemBase {
      * 
      * @param slowMode whether to slow the drivetrain
      */
-    public void setSlowMode() {
-        isSlowMode = !isSlowMode;
+    public void setSnailMode() {
+        isSnailMode = !isSnailMode;
+    }
+
+    public void setLessSlowMode() {
+        isLessSlowMode = !isLessSlowMode;
     }
 
     /**
