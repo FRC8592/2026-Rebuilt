@@ -115,8 +115,13 @@ public class Intake extends SubsystemBase {
      */
     public void extendIntake() {
         // TODO: Research why Neo Motors undershoot velocity sent to the motor
-        extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS,
+        if (getExtendPosition() > INTAKE.EXTEND_ROTATIONS){
+            extendMotor.setVoltage(6);
+        }
+        else{
+            extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS,
                 ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        }
     }
 
     /**
