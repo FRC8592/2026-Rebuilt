@@ -134,11 +134,11 @@ public final class Constants {
 
     public static final double SHOOTER_CURRENT_LIMIT = 60.0;
 
-    public static final double SHOOTER_P = 0.3; // 6.0 0.5
+    public static final double SHOOTER_P = 0.3; //.3
     public static final double SHOOTER_I = 0.0;
     public static final double SHOOTER_D = 0.0;
     public static final double SHOOTER_S = 0.5;
-    public static final double SHOOTER_V = 0.1037;
+    public static final double SHOOTER_V = 0.135;
     public static final double SHOOTER_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;
