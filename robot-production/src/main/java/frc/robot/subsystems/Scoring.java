@@ -371,9 +371,9 @@ public class Scoring extends SubsystemBase {
         double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
 
         if (x <= 2.0)
-            return 156.82212d * x + 1019.64733d;
+            return 156d * x + 1195d;
         else
-            return Math.pow((156.82212d * x + 1019.64733d), SCORING.RANGE_EXPO);
+            return Math.pow((156d * x + 1195d), SCORING.RANGE_EXPO);
     }
 
     /**`
