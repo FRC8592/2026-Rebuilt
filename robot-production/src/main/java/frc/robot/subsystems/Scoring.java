@@ -459,6 +459,7 @@ public class Scoring extends SubsystemBase {
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
+            
             if (distance <= 2.0){
                 shooter.runAtSpeed(shooterSpeed, 0);
             } else if (2.0 < distance && distance <= 4.0) {

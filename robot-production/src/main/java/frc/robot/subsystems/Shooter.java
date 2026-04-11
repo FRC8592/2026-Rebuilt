@@ -155,17 +155,10 @@ public class Shooter extends SubsystemBase {
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
-        if(slot == 0){
-            leftMotor.setControl(shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
-        } else if (slot == 1) {
-            leftMotor.setControl(shooterVV.withSlot(1).withVelocity(shooterMotorVelocity));
-        } else {
-            leftMotor.setControl(shooterVV.withSlot(2).withVelocity(shooterMotorVelocity));
-        }
-        
+        leftMotor.setControl(shooterVV.withSlot(slot).withVelocity(shooterMotorVelocity));
+
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", shooterVV.toString());
         // leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
-
     }
 
 
