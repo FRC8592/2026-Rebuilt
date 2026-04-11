@@ -61,10 +61,12 @@ public class RobotContainer {
   private final Trigger SHOOT = operatorController.rightTrigger();
   private final Trigger SHOOT_REVERSE = operatorController.leftBumper(); //originally right bumper 
 
-  private final Trigger RESET_TURRET = operatorController.rightBumper();// originally on button a 
-  private final Trigger MANUAL_OVERRIDE = operatorController.back();
+  // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
+  private final Trigger MANUAL_OVERRIDE = operatorController.rightBumper();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
+  private final Trigger TURRET_RIGHT = operatorController.povRight();
+  private final Trigger TURRET_LEFT = operatorController.povLeft();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -151,7 +153,7 @@ public class RobotContainer {
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
     SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
@@ -164,6 +166,9 @@ public class RobotContainer {
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
+
+    TURRET_RIGHT.onTrue(scoring.turretRightCommand());
+    TURRET_LEFT.onTrue(scoring.turretLeftCommand());
   }
 
   /**
