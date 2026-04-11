@@ -59,9 +59,9 @@ public class RobotContainer {
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
-  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); 
+  private final Trigger SHOOT_REVERSE = operatorController.leftBumper(); //originally right bumper 
 
-  private final Trigger RESET_TURRET = operatorController.a();
+  private final Trigger RESET_TURRET = operatorController.rightBumper();// originally on button a 
   private final Trigger MANUAL_OVERRIDE = operatorController.back();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
