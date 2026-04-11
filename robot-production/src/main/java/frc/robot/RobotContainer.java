@@ -81,14 +81,10 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
-
-
-    
-
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
         
-NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
+    NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
     NamedCommands.registerCommand("SqueezeShoot", scoring.indexer.runIndexerCommand()
         .andThen(scoring.intake.retractWithRollersCommand())
@@ -100,15 +96,8 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
    // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
-        new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
-    
+    new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
 
-
-
-
-
-
-        
     //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
 
   //  new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
