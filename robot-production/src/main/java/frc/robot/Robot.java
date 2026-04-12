@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDS;
 import frc.robot.Constants.SHARED;
 import frc.robot.subsystems.vision.Vision;
@@ -38,6 +39,7 @@ public class Robot extends LoggedRobot {
 
   private static int periodicCounter = 0;
   private static int tagCounter = 0;
+  private double delay = 0.0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -73,6 +75,7 @@ public class Robot extends LoggedRobot {
 
     // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
     SmartDashboard.putData("Field", FIELD);
+    SmartDashboard.putNumber("AutoDelay", delay);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -181,11 +184,13 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.scoring.disableTrackingCommand();
+    delay = SmartDashboard.getNumber("AutoDelay", delay);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(new WaitCommand(delay));
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
