@@ -75,7 +75,6 @@ public class Robot extends LoggedRobot {
 
     // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
     SmartDashboard.putData("Field", FIELD);
-    SmartDashboard.putNumber("AutoDelay", delay);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -184,13 +183,11 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.scoring.disableTrackingCommand();
-    delay = SmartDashboard.getNumber("AutoDelay", delay);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(new WaitCommand(delay));
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
