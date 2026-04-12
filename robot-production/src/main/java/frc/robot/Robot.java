@@ -184,13 +184,15 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     m_robotContainer.scoring.disableTrackingCommand();
     
-    new WaitCommand(SmartDashboard.getNumber("Wait Command Auto", 0));
+    double delay = SmartDashboard.getNumber("Wait Command Auto", 0);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(new WaitCommand(delay));
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
+      
     }
   }
 

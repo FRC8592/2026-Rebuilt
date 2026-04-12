@@ -180,7 +180,7 @@ public class Intake extends SubsystemBase {
      * Command to extend the intake at controlled speed
      */
     public Command extendIntakeCommand() {
-        return this.run(() -> extendIntake());
+        return this.runOnce(() -> extendIntake());
     }
 
     /**
