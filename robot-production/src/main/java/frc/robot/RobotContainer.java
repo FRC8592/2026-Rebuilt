@@ -130,7 +130,7 @@ public class RobotContainer {
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
     LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
 
-    ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
+    // ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
@@ -166,9 +166,6 @@ public class RobotContainer {
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
-
-    TURRET_RIGHT.onTrue(scoring.turretRightCommand());
-    TURRET_LEFT.onTrue(scoring.turretLeftCommand());
   }
 
   /**

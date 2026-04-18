@@ -88,8 +88,8 @@ public final class Constants {
     public static final double STEER_FRICTION_VOLTAGE = 0.25;
     public static final double DRIVE_FRICTION_VOLTAGE = 0.25;
 
-    public static final double TRANSLATE_POWER_FAST = 1.0;
-    public static final double ROTATE_POWER_FAST = 0.5;
+    public static final double TRANSLATE_POWER_FAST = 0.4;
+    public static final double ROTATE_POWER_FAST = 0.2;
     public static final double TRANSLATE_POWER_SNAIL = 0.5;
     public static final double TRANSLATE_POWER_LESS_SLOW = 0.75;
     public static final double ROTATE_POWER_SNAIL = 0.3;
