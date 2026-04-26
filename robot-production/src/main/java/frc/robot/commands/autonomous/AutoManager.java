@@ -9,6 +9,7 @@ import java.util.Set;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,6 +38,7 @@ public final class AutoManager {
 
         pathPlannerAutos = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous Config").add(pathPlannerAutos);
+        SmartDashboard.putData("Auto Chooser", pathPlannerAutos);
 
     }
 
