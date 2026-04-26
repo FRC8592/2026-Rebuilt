@@ -64,10 +64,20 @@ public class Robot extends LoggedRobot {
       // Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     } else {
-      setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      /*
+       * In normal simulator runs we want live NetworkTables + sim timing.
+       * Replay mode is only enabled when AKIT_LOG_PATH is explicitly provided.
+       */
+      String replayPath = System.getenv("AKIT_LOG_PATH");
+      if (replayPath != null && !replayPath.isBlank()) {
+        setUseTiming(false); // Run as fast as possible in replay mode
+        String logPath = LogFileUtil.findReplayLog(); // Pull replay log from env var/AdvantageScope
+        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      } else {
+        Logger.addDataReceiver(new WPILOGWriter()); // Save sim logs locally
+        Logger.addDataReceiver(new NT4Publisher()); // Publish live sim telemetry/chooser to dashboards
+      }
     }
     LoggedPowerDistribution.getInstance(1, ModuleType.kRev);
     Logger.start();

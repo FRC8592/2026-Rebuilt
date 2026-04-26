@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -88,12 +91,21 @@ public class RobotContainer {
         
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
-    NamedCommands.registerCommand("SqueezeShoot", scoring.indexer.runIndexerCommand()
-        .andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()));
+    NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
+      Command squeezeRoutine = Commands.sequence(
+          scoring.intake.retractWithRollersCommand(),
+          Commands.waitSeconds(1.5),
+          scoring.intake.stopRollerCommand(),
+          scoring.intake.stopExtendCommand());
+      return Commands.sequence(
+          scoring.indexer.runIndexerCommand(),
+          Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
+    }, Set.of()));
 
-    new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());  
-    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
+    // Path event markers in our .path files are point markers (no end position),
+    // so use onTrue to avoid repeated scheduling/interruption side effects.
+    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
+    new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
