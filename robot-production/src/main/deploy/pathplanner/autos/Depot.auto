@@ -9,42 +9,6 @@
           "data": {
             "pathName": "Depot"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ToggleHubTracking"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.9
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 6.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ToggleHubTracking"
-          }
         }
       ]
     }

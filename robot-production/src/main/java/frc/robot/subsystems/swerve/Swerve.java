@@ -4,12 +4,14 @@
 package frc.robot.subsystems.swerve;
 
 import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -316,6 +318,7 @@ public class Swerve extends SubsystemBase {
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
+
         double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
 
