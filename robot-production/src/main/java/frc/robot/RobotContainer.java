@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -47,6 +50,7 @@ public class RobotContainer {
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger ALIGN_HEADING = driverController.y();
   private final Trigger SLOW_MODE = driverController.a();
+  private final Trigger LESS_SLOW_MODE = driverController.povUp();
   private final Trigger INTAKE_RUN = driverController.rightTrigger();
   private final Trigger INTAKE_REVERSE = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
@@ -58,12 +62,14 @@ public class RobotContainer {
   // Operator Controls
   private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
   private final Trigger SHOOT = operatorController.rightTrigger();
-  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); 
+  private final Trigger SHOOT_REVERSE = operatorController.leftBumper(); //originally right bumper 
 
-  private final Trigger RESET_TURRET = operatorController.a();
-  private final Trigger MANUAL_OVERRIDE = operatorController.back();
+  // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
+  private final Trigger MANUAL_OVERRIDE = operatorController.rightBumper();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
+  private final Trigger TURRET_RIGHT = operatorController.povRight();
+  private final Trigger TURRET_LEFT = operatorController.povLeft();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,34 +86,32 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
-
-
-    
-
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
         
-NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
+    NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
-    NamedCommands.registerCommand("SqueezeShoot", scoring.indexer.runIndexerCommand()
-        .andThen(scoring.intake.retractWithRollersCommand())
-        .andThen(Commands.waitSeconds(1.5)).andThen(scoring.intake.stopRollerCommand()));
+    NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
+      Command squeezeRoutine = Commands.sequence(
+          scoring.intake.retractWithRollersCommand(),
+          Commands.waitSeconds(1.5),
+          scoring.intake.stopRollerCommand(),
+          scoring.intake.stopExtendCommand());
+      return Commands.sequence(
+          scoring.indexer.runIndexerCommand(),
+          Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
+    }, Set.of()));
 
-    new EventTrigger("RunIntake").whileTrue(scoring.intake.runIntakeRollersCommand());  
-    new EventTrigger("DeployIntake").whileTrue(scoring.intake.extendIntakeCommand());
+    // Path event markers in our .path files are point markers (no end position),
+    // so use onTrue to avoid repeated scheduling/interruption side effects.
+    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
+    new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
    // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
-        new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
-    
+    new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
 
-
-
-
-
-
-        
     //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
 
   //  new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
@@ -135,7 +139,8 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
    */
   private void configureBindings() {
     RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSlowMode()));
+    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
+    LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
 
     ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
@@ -160,7 +165,7 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
     SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
-    RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
@@ -173,6 +178,9 @@ NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand(
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
+
+    TURRET_RIGHT.onTrue(scoring.turretRightCommand());
+    TURRET_LEFT.onTrue(scoring.turretLeftCommand());
   }
 
   /**

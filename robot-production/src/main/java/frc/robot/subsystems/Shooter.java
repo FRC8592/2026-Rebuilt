@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,7 +18,6 @@ import frc.robot.Constants.SHOOTER;
 import static edu.wpi.first.units.Units.*;
 
 import java.lang.Math;
-
 import java.util.Set;
 
 import org.littletonrobotics.junction.Logger;
@@ -29,7 +28,9 @@ public class Shooter extends SubsystemBase {
     private TalonFX rightMotor;
     private TalonFXConfiguration shooterLeftMotorConfig;
     private TalonFXConfiguration shooterRightMotorConfig;
-    private Slot0Configs shooterPIDConfig;
+    private Slot0Configs shooterPIDConfigShort;
+    private Slot1Configs shooterPIDConfigMedium;
+    private Slot2Configs shooterPIDConfigLong;
     private CurrentLimitsConfigs shooterLeftCurrentLimit;
     private CurrentLimitsConfigs shooterRightCurrentLimit;
     // private FeedbackConfigs shooterFeedbackAdjustment;
@@ -38,13 +39,10 @@ public class Shooter extends SubsystemBase {
     private VelocityVoltage shooterVV;
     // private MotionMagicVelocityVoltage shooterMMVV;
 
-
     private double P_SET;
     private double I_SET;
     private double D_SET;
     private double V_SET;
-
-
 
     private double targetShooterRPM;
 
@@ -68,26 +66,35 @@ public class Shooter extends SubsystemBase {
 
         shooterLeftMotorConfig = new TalonFXConfiguration();
         shooterRightMotorConfig = new TalonFXConfiguration();
-        shooterPIDConfig = new Slot0Configs();
+        shooterPIDConfigShort = new Slot0Configs();
+        shooterPIDConfigMedium = new Slot1Configs();
+        shooterPIDConfigLong = new Slot2Configs();
         shooterLeftCurrentLimit = new CurrentLimitsConfigs();
         shooterRightCurrentLimit = new CurrentLimitsConfigs();
         // shooterFeedbackAdjustment = new FeedbackConfigs();
         // shooterMMConfig = new MotionMagicConfigs();
 
-
         shooterVV = new VelocityVoltage(0);
         // shooterMMVV = new MotionMagicVelocityVoltage(0);
-
 
         /**
          * Shooter PID Tuning Configuration and Constants
          */
-        shooterPIDConfig.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
+        
+        shooterPIDConfigShort.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
                 .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
-                .withKV(SHOOTER.SHOOTER_V).withKA(SHOOTER.SHOOTER_A);
+                .withKV(SHOOTER.SHOOTER_V_SHORT).withKA(SHOOTER.SHOOTER_A);
+        shooterLeftMotorConfig.withSlot0(shooterPIDConfigShort);
 
+         shooterPIDConfigMedium.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
+                .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
+                .withKV(SHOOTER.SHOOTER_V_MEDIUM).withKA(SHOOTER.SHOOTER_A);
+        shooterLeftMotorConfig.withSlot1(shooterPIDConfigMedium);
 
-        shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
+        shooterPIDConfigLong.withKP(SHOOTER.SHOOTER_P).withKI(SHOOTER.SHOOTER_I)
+                .withKD(SHOOTER.SHOOTER_D).withKS(SHOOTER.SHOOTER_S)
+                .withKV(SHOOTER.SHOOTER_V_LONG).withKA(SHOOTER.SHOOTER_A);
+        shooterLeftMotorConfig.withSlot2(shooterPIDConfigLong);
 
         // shooterMMConfig
         // .withMotionMagicAcceleration(SHOOTER.MAX_ACCELERATION)
@@ -108,24 +115,17 @@ public class Shooter extends SubsystemBase {
 
         shooterRightMotorConfig.withCurrentLimits(shooterRightCurrentLimit);
 
-
-
         // TODO: Add this back after PID Tuning if necessary
         // shooterFeedbackAdjustment.withVelocityFilterTimeConstant(SHOOTER.SHOOTER_FILTER_TIME_CONSTANT);
 
         // shooterMotorConfig.withFeedback(shooterFeedbackAdjustment);
-
-
 
         /**
          * Shooter Left Motor Configuration. This configures the motors themselves with the
          * configuration we have done.
          */
         leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
-
         rightMotor.getConfigurator().apply(shooterRightMotorConfig);
-
-
 
         /**
          * Set the Shooter Right Motor to follow the Left Shooter Motor in the inverse direction
@@ -139,29 +139,26 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("sP", SHOOTER.SHOOTER_P);
         SmartDashboard.putNumber("sI", SHOOTER.SHOOTER_I);
         SmartDashboard.putNumber("sD", SHOOTER.SHOOTER_D);
-        SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V);
+        SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V_MEDIUM);
         SmartDashboard.putNumber("Shooter Voltage", 0);
 
     }
-
-
 
     /**
      * Run the shooter motor at a set speed in RPM.
      * 
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
-    public void runAtSpeed(double desiredRPM) {
+    public void runAtSpeed(double desiredRPM, int slot) {
         double shooterMotorVelocity = desiredRPM / 60d; // Convert from RPM to RPS for the motor
                                                         // controller
-
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
-        leftMotor.setControl(shooterVV.withSlot(0).withVelocity(shooterMotorVelocity));
+        leftMotor.setControl(shooterVV.withSlot(slot).withVelocity(shooterMotorVelocity));
+
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", shooterVV.toString());
         // leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
-
     }
 
 
@@ -240,14 +237,14 @@ public class Shooter extends SubsystemBase {
         double SP_NEW = SmartDashboard.getNumber("sP", SHOOTER.SHOOTER_P);
         double SI_NEW = SmartDashboard.getNumber("sI", SHOOTER.SHOOTER_I);
         double SD_NEW = SmartDashboard.getNumber("sD", SHOOTER.SHOOTER_D);
-        double SV_NEW = SmartDashboard.getNumber("sV", SHOOTER.SHOOTER_V);
+        double SV_NEW = SmartDashboard.getNumber("sV", SHOOTER.SHOOTER_V_MEDIUM);
 
         boolean FDiff = (P_SET != SP_NEW || I_SET != SI_NEW || D_SET != SD_NEW || V_SET != SV_NEW);
 
 
         if (FDiff) {
-            shooterPIDConfig.withKP(SP_NEW).withKI(SI_NEW).withKD(SD_NEW).withKV(SV_NEW);
-            shooterLeftMotorConfig.withSlot0(shooterPIDConfig);
+            shooterPIDConfigMedium.withKP(SP_NEW).withKI(SI_NEW).withKD(SD_NEW).withKV(SV_NEW);
+            shooterLeftMotorConfig.withSlot1(shooterPIDConfigMedium);
             leftMotor.getConfigurator().apply(shooterLeftMotorConfig);
 
             P_SET = SP_NEW;

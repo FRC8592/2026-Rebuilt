@@ -100,8 +100,8 @@ public class Turret extends SubsystemBase {
          * Turret Motor Current Limit Configuration, which limits supply current too.
          */
         // TODO: Reconfigure this
-        // turretMotorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT)
-        // .withStatorCurrentLimitEnable(true);
+        turretMotorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT)
+        .withStatorCurrentLimitEnable(true);
 
         // TODO: Test this if PID Tuning prevents stalling, and IF and ONLY IF we utilize
         // OverrideBrakeDurNeutral

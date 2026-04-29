@@ -40,8 +40,10 @@ public class Scoring extends SubsystemBase {
     private boolean targetIsHub;
     private Alliance alliance;
     private double shooterSpeedOffset = 0;
+    private double turretAngleOffset = 0;
     private double dt = 0.2;
     private double velocityFilter = 0.2;
+    private double distance = 0;
     double filterVelX = 0;
     double filterVelY = 0;
 
@@ -64,7 +66,10 @@ public class Scoring extends SubsystemBase {
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
+        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
         SmartDashboard.putNumber("SOTMdt", 0.2);
+
+        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
     }
 
     /**
@@ -133,7 +138,15 @@ public class Scoring extends SubsystemBase {
         trackingTarget = false;
         overrideTracking = true;
         turret.holdPosition();
-        shooter.runAtSpeed(1500);
+        
+        if (distance <= 2.0){
+            shooter.runAtSpeed(1500, 0);
+        } else if (2.0 < distance && distance <= 4.0) {
+            shooter.runAtSpeed(1500, 1);
+        } else {
+            shooter.runAtSpeed(1500, 2);
+        }
+        
     }
 
     public Command overrideTrackingCommand() {
@@ -218,6 +231,26 @@ public class Scoring extends SubsystemBase {
      */
     public Command decreaseRPMCommand() {
         return this.runOnce(() -> decreaseRPM());
+    }
+
+    public void turretRight() {
+        turretAngleOffset -= 5;
+        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
+        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+    }
+
+    public Command turretRightCommand(){
+        return this.runOnce(() -> turretRight());
+    }
+
+    public void turretLeft() {
+        turretAngleOffset += 5;
+        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
+        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+    }
+
+    public Command turretLeftCommand(){
+        return this.runOnce(() -> turretLeft());
     }
 
     public static double solveV0y(
@@ -368,13 +401,14 @@ public class Scoring extends SubsystemBase {
     }
 
     public double shootSpeed(double targetX, double targetY) {
-        double x = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
+        distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
 
-        if (x <= 2.0)
-            return 156.82212d * x + 1019.64733d;
-        else
-            return Math.pow((156.82212d * x + 1019.64733d), SCORING.RANGE_EXPO);
-    }
+        if (distance <= 2.0){
+            return 156d * distance + 1019d;
+        }  else {
+            return Math.pow((156d * distance + 1019d), SCORING.RANGE_EXPO);
+        }   
+    } 
 
     /**`
      * If the tracking system is toggled on, update the required turret angle and shooter speed
@@ -438,7 +472,7 @@ public class Scoring extends SubsystemBase {
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY, omega);
             //shooterSpeed = SOTMResults.getFirst();
-            turretAngle = SOTMResults.getSecond();
+            turretAngle = SOTMResults.getSecond() + turretAngleOffset;
             //shooterSpeed = shooterSpeedHub(targetDistance);
             //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
             shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
@@ -449,7 +483,15 @@ public class Scoring extends SubsystemBase {
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
-            shooter.runAtSpeed(shooterSpeed);
+            
+            if (distance <= 2.0){
+                shooter.runAtSpeed(shooterSpeed, 0);
+            } else if (2.0 < distance && distance <= 4.0) {
+                shooter.runAtSpeed(shooterSpeed, 1);
+            } else {
+                shooter.runAtSpeed(shooterSpeed, 2);
+            }
+            
         } else {
             // Shut down the shooter motors. The turret will hold the last position, so we don't need to send any command to it.
             if (!overrideTracking && !DriverStation.isDisabled() && !indexer.indexerRunning) {

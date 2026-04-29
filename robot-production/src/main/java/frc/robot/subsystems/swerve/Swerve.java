@@ -4,12 +4,14 @@
 package frc.robot.subsystems.swerve;
 
 import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -28,7 +30,8 @@ public class Swerve extends SubsystemBase {
 
     private PIDController snapToController;
 
-    private boolean isSlowMode;
+    private boolean isSnailMode;
+    private boolean isLessSlowMode;
     private boolean alignedHeading = false;
 
 
@@ -185,11 +188,16 @@ public class Swerve extends SubsystemBase {
 
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
-        } else if (isSlowMode) {
+        } else if (isSnailMode) {
             swerve.setControl(fieldCentric
-                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
-                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_SLOW)
-                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_SLOW));
+                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_SNAIL)
+                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_SNAIL)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_SNAIL));
+        } else if (isLessSlowMode) {
+            swerve.setControl(fieldCentric
+                    .withVelocityX(speeds.vxMetersPerSecond * SWERVE.TRANSLATE_POWER_LESS_SLOW)
+                    .withVelocityY(speeds.vyMetersPerSecond * SWERVE.TRANSLATE_POWER_LESS_SLOW)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * SWERVE.ROTATE_POWER_LESS_SLOW));
         } else {
             swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
                     .withVelocityY(speeds.vyMetersPerSecond)
@@ -280,8 +288,12 @@ public class Swerve extends SubsystemBase {
      * 
      * @param slowMode whether to slow the drivetrain
      */
-    public void setSlowMode() {
-        isSlowMode = !isSlowMode;
+    public void setSnailMode() {
+        isSnailMode = !isSnailMode;
+    }
+
+    public void setLessSlowMode() {
+        isLessSlowMode = !isLessSlowMode;
     }
 
     /**
@@ -306,6 +318,7 @@ public class Swerve extends SubsystemBase {
      * @return robot-relative ChassisSpeeds
      */
     public ChassisSpeeds processJoystickInputs(double rawX, double rawY, double rawRot) {
+
         double driveTranslateX = (rawX >= 0 ? (Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT))
                 : -(Math.pow(Math.abs(rawX), SWERVE.JOYSTICK_EXPONENT)));
 

@@ -90,8 +90,10 @@ public final class Constants {
 
     public static final double TRANSLATE_POWER_FAST = 1.0;
     public static final double ROTATE_POWER_FAST = 0.5;
-    public static final double TRANSLATE_POWER_SLOW = 0.5;
-    public static final double ROTATE_POWER_SLOW = 0.1;
+    public static final double TRANSLATE_POWER_SNAIL = 0.5;
+    public static final double TRANSLATE_POWER_LESS_SLOW = 0.75;
+    public static final double ROTATE_POWER_SNAIL = 0.3;
+    public static final double ROTATE_POWER_LESS_SLOW = 0.5;
 
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
@@ -134,11 +136,13 @@ public final class Constants {
 
     public static final double SHOOTER_CURRENT_LIMIT = 60.0;
 
-    public static final double SHOOTER_P = 0.3; // 6.0 0.5
+    public static final double SHOOTER_P = 0.3; //.3
     public static final double SHOOTER_I = 0.0;
     public static final double SHOOTER_D = 0.0;
     public static final double SHOOTER_S = 0.5;
-    public static final double SHOOTER_V = 0.1037;
+    public static final double SHOOTER_V_SHORT = 0.117;
+    public static final double SHOOTER_V_MEDIUM = 0.123;
+    public static final double SHOOTER_V_LONG = 0.133;
     public static final double SHOOTER_A = 0.2432;
 
     public static final double SHOOTER_HEIGHT = 0;
