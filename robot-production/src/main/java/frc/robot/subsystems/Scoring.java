@@ -475,7 +475,7 @@ public class Scoring extends SubsystemBase {
             turretAngle = SOTMResults.getSecond() + turretAngleOffset;
             //shooterSpeed = shooterSpeedHub(targetDistance);
             //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
-            shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
+            shooterSpeed = 0.6 * shootSpeed(targetX, targetY) + shooterSpeedOffset;
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
