@@ -87,6 +87,8 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+        NamedCommands.registerCommand("Shoot3sec", scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
+
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
         
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
