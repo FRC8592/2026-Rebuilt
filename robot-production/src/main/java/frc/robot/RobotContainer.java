@@ -110,6 +110,7 @@ public class RobotContainer {
     new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
+        new EventTrigger("Shooter3").onTrue(scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
    // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
