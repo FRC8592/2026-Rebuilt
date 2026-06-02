@@ -86,11 +86,19 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
+    // Main shoot comannds, sets speed to 1
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+
+    //Unused shoot command, will be utilized in shoot on the move hopefully
     NamedCommands.registerCommand("Shoot3sec", scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
+
+    //Kills all shooter related commands
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
+
+    //Toggle hub tracking, needed to start the shooter
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
-    //Working squeeze shoot command
+
+    //Working squeeze shoot command, utilized in both left and right double swipe
     NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
       Command squeezeRoutine = Commands.sequence(
           scoring.intake.retractWithRollersCommand(),
