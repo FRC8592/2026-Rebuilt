@@ -262,6 +262,11 @@ public final class Constants {
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
+    public static final double SPIN_V = 0;
+    public static final double SPIN_A = 0;
+    public static final double SPIN_G = 0;
+    public static final double SPIN_ALLOWED_ERROR = 0.02;
+    
 
 
     // Current limits for the Indexer motors
