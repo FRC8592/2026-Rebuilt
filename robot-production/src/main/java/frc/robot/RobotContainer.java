@@ -4,15 +4,8 @@
 
 package frc.robot;
 
-import java.util.Set;
-
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -85,7 +78,7 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
-
+/* 
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
@@ -112,8 +105,9 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-
+   // AutoCommands.registerAll(scoring);
     // Get autonomous ready
+    */
     AutoManager.prepare(scoring);
   }
 
