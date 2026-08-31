@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INDEXER;
@@ -12,6 +13,14 @@ public class IndexerBetter extends SubsystemBase{
     public IndexerBetter(){
         spinMotor = new SparkFlexControl(INDEXER.OUTPUT_CAN_ID, true);
         spinMotor.setInverted();
+        spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
+
+        // To Tune PID
+        // SmartDashboard.putNumber("P_SPINNER", INDEXER.SPIN_P);
+        // SmartDashboard.putNumber("I_SPINNER", INDEXER.SPIN_I);
+        // SmartDashboard.putNumber("D_SPINNER", INDEXER.SPIN_D);
+        // SmartDashboard.putNumber("S_SPINNER", INDEXER.SPIN_S);
+        // SmartDashboard.putNumber("VEL_SPINNER", INDEXER.SPIN_MOTOR_SPEED);
 
         spinMotor.setPIDF(INDEXER.SPIN_P, 
         INDEXER.SPIN_I, 
