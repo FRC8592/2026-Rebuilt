@@ -194,6 +194,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.scoring.disableTrackingCommand();
+
+    if (isSimulation()) {
+      m_robotContainer.resetGamePieceSim();
+    }
     
     double delay = SmartDashboard.getNumber("Wait Command Auto", 0);
 

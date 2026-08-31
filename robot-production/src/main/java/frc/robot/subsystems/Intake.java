@@ -225,6 +225,10 @@ public class Intake extends SubsystemBase {
         rollerRightMotor.setVoltage(0d);
     }
 
+    public boolean isRollerRunningForward() {
+        return getRightIntakeVoltage() > 1.0;
+    }
+
     public void stopExtender() {
         extendMotor.setVoltage(0d);
     }
@@ -261,6 +265,7 @@ public class Intake extends SubsystemBase {
                 getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotorEncoder.getVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Rollers Running Forward", isRollerRunningForward());
     }
 
 }

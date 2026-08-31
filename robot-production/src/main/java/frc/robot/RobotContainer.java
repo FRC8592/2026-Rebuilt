@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CONTROLLERS;
 import frc.robot.Constants.VISION;
+import frc.robot.commands.autonomous.AutoCommands;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.OdometryUpdates;
 import frc.robot.subsystems.Scoring;
+import frc.robot.simulation.GamePieceSim;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.TunerConstants;
@@ -37,6 +39,7 @@ public class RobotContainer {
   private final OdometryUpdates odometryUpdatesLeft;
   public final Scoring scoring;
   public final LEDs leds;
+  private final GamePieceSim gamePieceSim;
 
 
   // Driver Controls
@@ -71,6 +74,7 @@ public class RobotContainer {
     leds = new LEDs();
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve, leds);
+    gamePieceSim = new GamePieceSim(swerve, scoring);
     visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
     visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
     visionLeft = new Vision(VISION.CAMERA_NAME_LEFT, VISION.CAMERA_OFFSETS_LEFT);
@@ -78,36 +82,14 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
-/* 
-    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
-    NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
-    NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
-    NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
-      Command squeezeRoutine = Commands.sequence(
-          scoring.intake.retractWithRollersCommand(),
-          Commands.waitSeconds(1.5),
-          scoring.intake.stopRollerCommand(),
-          scoring.intake.stopExtendCommand());
-      return Commands.sequence(
-          scoring.indexer.runIndexerCommand(),
-          Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
-    }, Set.of()));
+    AutoCommands.registerAll(scoring);
 
-    // Path event markers in our .path files are point markers (no end position),
-    // so use onTrue to avoid repeated scheduling/interruption side effects.
-    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
-    new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
-    new EventTrigger("StopIntake")
-        .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-
-  
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-   // AutoCommands.registerAll(scoring);
+
     // Get autonomous ready
-    */
     AutoManager.prepare(scoring);
   }
 
@@ -184,6 +166,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return AutoManager.getAutonomousCommand();
+  }
+
+  public void resetGamePieceSim() {
+    gamePieceSim.resetBalls();
   }
 
   public Vision getRightVision() {

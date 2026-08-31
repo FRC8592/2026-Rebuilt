@@ -74,6 +74,7 @@ public class Indexer extends SubsystemBase {
         // Get motors speeds in RPM
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", getSpinnerVelocity());
         Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", getSpinnerCurrent());
+        Logger.recordOutput(INDEXER.LOG_PATH + "Running", indexerRunning);
     }
 
     /**
@@ -112,6 +113,10 @@ public class Indexer extends SubsystemBase {
     public void runReverseIndexer(){
         spinMotor.setVoltage(-11.0);
         indexerRunning = true;
+    }
+
+    public boolean isRunning() {
+        return indexerRunning;
     }
 
     /**
