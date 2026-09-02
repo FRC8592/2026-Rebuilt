@@ -1,29 +1,24 @@
 package frc.robot.helpers;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.MAXMotionConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import frc.robot.Constants.SHOOTER;
+import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
     private TalonFX motor;
     private TalonFXConfiguration motorConfig;
     private RelativeEncoder motorEncoder;
+    private CurrentLimitsConfigs motorCurrentLimit;
+    private int CAN_ID;
+    private boolean coastMode;
 
     public TalonFXControl(int canId, boolean coastMode){
         motor = new TalonFX(canId);
+        CAN_ID = canId;
         motorConfig = new TalonFXConfiguration();
         if (coastMode){
             motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
@@ -32,18 +27,20 @@ public class TalonFXControl {
             motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
         }
 
+        this.coastMode = coastMode;
+
         motor.getConfigurator().apply(motorConfig);
+
+        motorCurrentLimit = new CurrentLimitsConfigs();
 
         motor.set(0);
 
     }
-
-    //TODO: check the setPosition method, it may not be correct. The TalonFX uses a different control mode for position control, and the PositionVoltage class may not be the right one to use. You may want to use the PositionControl class instead.
-    // public void setPosition(double rotations){
-    //     PositionVoltage positionVoltage = new PositionVoltage(rotations, 0);
-    //     motor.setControl(positionVoltage).withPosition(rotations);
-    //     motor.setPosition(rotations);
-    // }
+    public void setPosition(double rotations){
+        PositionVoltage positionVoltage = new PositionVoltage(rotations);
+        motor.setControl(positionVoltage.withPosition(rotations));
+        motor.setPosition(rotations);
+    }
 
     public void setVoltage(double voltage){
         motor.setPosition(voltage);
@@ -61,12 +58,20 @@ public class TalonFXControl {
         return motorEncoder.getVelocity();
     }
 
+    public double getVoltage(){
+        return motor.getMotorVoltage().getValueAsDouble();
+    }
+
     public double getPosition(){
         return motorEncoder.getPosition();
     }
 
     public double getTicks(){
         return motorEncoder.getPosition()*4096;
+    }
+
+    public void setFollower(TalonFXControl followerMotor, MotorAlignmentValue alignmentValue){
+        motor.setControl(new Follower(followerMotor.CAN_ID, alignmentValue));
     }
 
     public void setForwardSoftLimit(double forwardRotations){
@@ -80,17 +85,9 @@ public class TalonFXControl {
         motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseRotations;
     }
 
-    //TODO: check the setCurrentLimit method, it may not be correct. The TalonFX uses a different control mode for current limiting, and the CurrentLimit class may not be the right one to use. You may want to use the StatorCurrentLimit class instead.
-    // public void setCurrentLimit(double currentLimit){
-    //     motor.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
-    //     motorConfig.withCurrentLimits(currentLimit);
-
-    //     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    // }
-
-
-
-    
+    public void setCurrentLimit(double currentLimit){
+        motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
+        motorConfig.withCurrentLimits(motorCurrentLimit);
+    }
 }
 

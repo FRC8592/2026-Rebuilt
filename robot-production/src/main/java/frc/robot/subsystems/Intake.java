@@ -20,26 +20,21 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INTAKE;
+import frc.robot.helpers.TalonFXControl;
 
 public class Intake extends SubsystemBase {
-    private TalonFX rollerRightMotor;
-    private TalonFX rollerLeftMotor;
+    private TalonFXControl rollerRightMotor;
+    private TalonFXControl rollerLeftMotor;
     private SparkFlex extendMotor;
 
-    private TalonFXConfiguration rollerRightConfig;
-    private TalonFXConfiguration rollerLeftConfig;
     private SparkFlexConfig extendConfig;
 
     private SparkClosedLoopController extendClosedLoopCtrl;
 
     private RelativeEncoder extendMotorEncoder;
-
-
-
 
     private double retractionPosition;
 
@@ -57,28 +52,10 @@ public class Intake extends SubsystemBase {
          * configuration Place in COAST mode (Can coast to a stop) Set current limits Set VELOCITY
          * PID parameters
          */
-        rollerRightMotor = new TalonFX(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID);
-        rollerLeftMotor = new TalonFX(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID);
-        rollerRightConfig = new TalonFXConfiguration();
-        rollerLeftConfig = new TalonFXConfiguration();
+        rollerRightMotor = new TalonFXControl(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, true);
+        rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true);
 
-        // TODO: Remove this, should not be necessary
-        rollerRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        rollerRightConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-        rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
-
-
-        rollerRightMotor.getConfigurator().apply(rollerRightConfig);
-
-        rollerLeftConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-        rollerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        rollerLeftConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
-
-        rollerLeftMotor.getConfigurator().apply(rollerLeftConfig);
-
-        rollerLeftMotor.setControl(
-                new Follower(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorAlignmentValue.Opposed));
+        rollerLeftMotor.setFollower(rollerRightMotor, MotorAlignmentValue.Opposed);
 
         /*
          * Create the Extension motor and instatiate the following features Reset to safe factory
@@ -167,13 +144,12 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> retractWithRollers());
     }
 
-
     public double getRightIntakeVoltage() {
-        return rollerRightMotor.getMotorVoltage().getValueAsDouble();
+        return rollerRightMotor.getVoltage();
     }
 
     public double getLeftIntakeVoltage() {
-        return rollerLeftMotor.getMotorVoltage().getValueAsDouble();
+        return rollerLeftMotor.getVoltage();
     }
 
     /**
@@ -212,7 +188,7 @@ public class Intake extends SubsystemBase {
      * @return velocity in RPM
      */
     public double getIntakeVelocity() {
-        return rollerRightMotor.getVelocity().getValueAsDouble();
+        return rollerRightMotor.getVelocity();
     }
 
     /**
