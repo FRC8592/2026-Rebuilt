@@ -1,11 +1,13 @@
 package frc.robot.helpers;
 
+import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
+import frc.robot.Constants.INTAKE;
 import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
@@ -89,5 +91,9 @@ public class TalonFXControl {
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
     }
+
+    // public void logMotorValues(String logPath, String motorName){
+    //     Logger.recordOutput(logPath + , getIntakeVelocity() * 60d);
+    // }
 }
 
