@@ -2,13 +2,7 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -30,16 +24,10 @@ public class Intake extends SubsystemBase {
     private TalonFXControl rollerRightMotor;
     private TalonFXControl rollerLeftMotor;
     private SparkFlex extendMotor;
-
     private SparkFlexConfig extendConfig;
-
     private SparkClosedLoopController extendClosedLoopCtrl;
-
     private RelativeEncoder extendMotorEncoder;
-
     private double retractionPosition;
-
-    // private final NeutralOut extend_brake = new NeutralOut();
 
     /**
      * Constructor for the Intake subsystem
@@ -95,10 +83,6 @@ public class Intake extends SubsystemBase {
             DriverStation.reportWarning(
                     "Intake extend motor DISABLED (INTAKE.EXTEND_PRESENT = false)", false);
         }
-
-        // TODO: For tuning, put the PID and velocity values on the dashboard. Remove
-        // before competition
-
     }
 
     /**
@@ -131,13 +115,8 @@ public class Intake extends SubsystemBase {
      */
     public void runIntakeRollers() {
         if (!INTAKE.ROLLERS_PRESENT) return;
-        // TODO: Delete this! This is only for testing purposes!
-        // double IntakeVoltage = SmartDashboard.getNumber("Intake Motor Voltage", 2);
-        // double RPMRight = SmartDashboard.getNumber("INTAKE_VI",
-        // INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
         rollerRightMotor.setVoltage(11);
-        // rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
     public void runIntakeRollersSlower(){
@@ -198,7 +177,6 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> runReversedIntakeRollers());
     }
 
-
     public double getExtendPosition() {
         if (!INTAKE.EXTEND_PRESENT) return 0;
         return extendMotorEncoder.getPosition();
@@ -227,8 +205,8 @@ public class Intake extends SubsystemBase {
     /**
      * Stop the intake motor
      * 
-     * We do this using voltage mode so that the motor will slow to a stop naturally Using
-     * setVelocity() will cause the motor to stop abruptly using battery power
+     * We do this using voltage mode so that the motor will slow to a stop naturally. 
+     * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
         if (!INTAKE.ROLLERS_PRESENT) return;
@@ -282,5 +260,4 @@ public class Intake extends SubsystemBase {
             Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", getExtendVelocity());
         }
     }
-
 }
