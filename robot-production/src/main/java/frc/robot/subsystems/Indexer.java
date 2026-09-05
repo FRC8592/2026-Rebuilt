@@ -13,7 +13,7 @@ public class Indexer extends SubsystemBase{
     public boolean indexerRunning;
 
     public Indexer(){
-        spinMotor = new SparkFlexControl(INDEXER.OUTPUT_CAN_ID, true);
+        spinMotor = new SparkFlexControl(INDEXER.OUTPUT_CAN_ID, true, "spinMotor");
         spinMotor.setInverted();
         spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
 
@@ -36,8 +36,8 @@ public class Indexer extends SubsystemBase{
 
     @Override
     public void periodic(){
-        Logger.recordOutput(INDEXER.LOG_PATH + "Spinner RPM", spinMotor.getVelocity());
-        Logger.recordOutput(INDEXER.LOG_PATH + "Spinner Current", spinMotor.getCurrent());
+        spinMotor.motorLogging(INDEXER.LOG_PATH);
+        Logger.recordOutput(INDEXER.LOG_PATH + "indexerRunning", indexerRunning);
 
     }
 

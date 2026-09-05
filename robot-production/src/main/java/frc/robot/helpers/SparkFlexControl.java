@@ -1,5 +1,6 @@
 package frc.robot.helpers;
 
+import org.littletonrobotics.junction.Logger;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -17,8 +18,9 @@ public class SparkFlexControl {
     private SparkFlexConfig motorConfig;
     private SparkClosedLoopController motorController;
     private RelativeEncoder motorEncoder;
+    private String motorName;
 
-    public SparkFlexControl(int canId, boolean coastMode){
+    public SparkFlexControl(int canId, boolean coastMode, String motorName){
         motor = new SparkFlex(canId, MotorType.kBrushless);
         motorConfig = new SparkFlexConfig();
         motorController = motor.getClosedLoopController();
@@ -35,6 +37,7 @@ public class SparkFlexControl {
 
         motor.set(0);
 
+        this.motorName = motorName;
     }
 
     public void setVelocity(double RPM){
@@ -122,6 +125,14 @@ public class SparkFlexControl {
         motorConfig.secondaryCurrentLimit(currentLimit);
 
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    public void motorLogging(String logPath){
+        Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
+        Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
+        Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
+        Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
+        Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
     }
 
 
