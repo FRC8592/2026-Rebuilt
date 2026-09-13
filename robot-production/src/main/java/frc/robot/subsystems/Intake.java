@@ -52,7 +52,6 @@ public class Intake extends SubsystemBase {
      * Extend the intake at controlled speed
      */
     public void extendIntake() {
-        // TODO: Research why Neo Motors undershoot velocity sent to the motor
         if (getExtendPosition() > INTAKE.EXTEND_ROTATIONS){
             extendMotor.setVoltage(6);
         }
@@ -161,7 +160,6 @@ public class Intake extends SubsystemBase {
 
     /**
      * Stop command for the intake motor
-     * 
      * @return stop command
      */
     public Command stopRollerCommand() {
