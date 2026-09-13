@@ -67,11 +67,25 @@ public class SparkFlexControl {
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    public void setPIDF(double kP, double kI, double kD){
+        motorConfig.closedLoop.p(kP).i(kI).d(kD);
+
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
     public void setTrapezoidalMotionMagicPosition(double maxVelocity, double maxAcceleration, double allowedError){
         motorConfig.closedLoop.maxMotion.positionMode(MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal)
         .cruiseVelocity(maxVelocity)
         .maxAcceleration(maxAcceleration)
         .allowedProfileError(allowedError);
+
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+     public void smartMotion(double maxVelocity, double maxAcceleration, double allowedError){
+        motorConfig.closedLoop.maxMotion.cruiseVelocity(maxVelocity);
+        motorConfig.closedLoop.maxMotion.maxAcceleration(maxAcceleration);
+        motorConfig.closedLoop.maxMotion.allowedProfileError(allowedError);
 
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
