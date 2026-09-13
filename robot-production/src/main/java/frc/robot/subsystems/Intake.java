@@ -3,29 +3,17 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INTAKE;
+import frc.robot.helpers.SparkFlexControl;
 import frc.robot.helpers.TalonFXControl;
 
 public class Intake extends SubsystemBase {
     private TalonFXControl rollerRightMotor;
     private TalonFXControl rollerLeftMotor;
-    private SparkFlex extendMotor;
-    private SparkFlexConfig extendConfig;
-    private SparkClosedLoopController extendClosedLoopCtrl;
-    private RelativeEncoder extendMotorEncoder;
+    private SparkFlexControl extendMotor;
     private double retractionPosition;
 
     /**
@@ -50,25 +38,14 @@ public class Intake extends SubsystemBase {
          * configuration Store persistant configuration (Flash) Place in Brake mode (Hold position)
          * Set current limits Set VELOCITY PID parameters
          */
-        extendMotor = new SparkFlex(INTAKE.INTAKE_EXTEND_CAN_ID, MotorType.kBrushless);
-        extendConfig = new SparkFlexConfig();
+        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true);
 
-        extendConfig.idleMode(IdleMode.kCoast);
-        extendConfig.smartCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
+        extendMotor.setCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
 
-        extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I,
-                INTAKE.INTAKE_EXTEND_D);
-        extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
-        extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
-        extendConfig.closedLoop.maxMotion.allowedProfileError(10);
-        extendConfig.softLimit.reverseSoftLimitEnabled(true);
-        extendConfig.softLimit.reverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
+        extendMotor.setPIDF(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I, INTAKE.INTAKE_EXTEND_D);
 
-        extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
-        extendClosedLoopCtrl = extendMotor.getClosedLoopController();
-
-        extendMotorEncoder = extendMotor.getEncoder();
+        extendMotor.smartMotion(INTAKE.CRUISE_VELOCITY,INTAKE.MAX_ACCELERATION,10);
+        extendMotor.setReverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
     }
 
     /**
@@ -80,8 +57,7 @@ public class Intake extends SubsystemBase {
             extendMotor.setVoltage(6);
         }
         else{
-            extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS,
-                ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            extendMotor.setPosition(INTAKE.EXTEND_ROTATIONS);
         }
     }
 
@@ -157,7 +133,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double getExtendPosition() {
-        return extendMotorEncoder.getPosition();
+        return extendMotor.getPosition();
     }
 
     /**
@@ -213,6 +189,6 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
         Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
-        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotorEncoder.getVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
     }
 }
