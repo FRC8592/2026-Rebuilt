@@ -4,7 +4,7 @@
 package frc.robot.subsystems.swerve;
 
 import org.littletonrobotics.junction.Logger;
-
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -34,7 +34,6 @@ public class Swerve extends SubsystemBase {
     private boolean isLessSlowMode;
     private boolean alignedHeading = false;
     private boolean isRobotRelative = false;
-
 
     private SmoothingFilter smoothingFilter;
 
@@ -162,8 +161,16 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SwerveDriveState state = swerve.getState();
+
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE, targetspeed: CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE, targetspeed: CAN 5", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK, targetspeed: CAN 9", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL, targetspeed: CAN 3", state.ModuleTargets[0].speedMetersPerSecond);
+
         // TODO: do we really need to run this?
         swerve.periodic();
     }
