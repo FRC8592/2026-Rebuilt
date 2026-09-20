@@ -1,5 +1,6 @@
 package frc.robot.helpers;
 
+import static edu.wpi.first.units.Units.Rotations;
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -45,7 +46,7 @@ public class TalonFXControl {
     }
 
     public void setVoltage(double voltage){
-        motor.setPosition(voltage);
+        motor.setVoltage(voltage);
     }
 
     public void setPercentOutput(double power){
