@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 import org.littletonrobotics.junction.Logger;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -16,7 +14,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import java.lang.Math;
 import java.util.Collections;
@@ -31,7 +28,6 @@ public class Turret extends SubsystemBase {
 
     private TalonFX turretMotor;
     private TalonFXConfiguration turretMotorConfig;
-    // private MotionMagicConfigs turretMMConfig;
     private MotorOutputConfigs turretMotorOutputConfig;
     private SoftwareLimitSwitchConfigs positionLimitConfig;
     private Slot0Configs turretPIDConfig;
@@ -39,17 +35,12 @@ public class Turret extends SubsystemBase {
 
 
     private PositionVoltage positionRequest;
-    // private MotionMagicVoltage positionMMRequest;
-
 
 
     // TODO: Remove final keyword if necessary
     private final DutyCycleEncoder E1;
     private final DutyCycleEncoder E2;
 
-    private double P_SET;
-    private double I_SET;
-    private double D_SET;
 
     private double rawTargetAngle;
 
@@ -76,8 +67,6 @@ public class Turret extends SubsystemBase {
         turretMotorOutputConfig = new MotorOutputConfigs();
         positionLimitConfig = new SoftwareLimitSwitchConfigs();
         turretPIDConfig = new Slot0Configs();
-        // turretMMConfig = new MotionMagicConfigs();
-
 
 
         /**
@@ -85,12 +74,8 @@ public class Turret extends SubsystemBase {
          */
         // TODO: First utilize positionVoltage then switch to MMVoltage
         positionRequest = new PositionVoltage(0);
-        // positionMMRequest = new MotionMagicVoltage(0);
-
         // TODO: Test if this works
         positionRequest.withOverrideBrakeDurNeutral(true);
-        // positionMMRequest.withOverrideBrakeDurNeutral(true);
-
 
         turretMotorOutputConfig.withInverted(InvertedValue.Clockwise_Positive);
 
@@ -138,24 +123,13 @@ public class Turret extends SubsystemBase {
         /**
          * Turret Motor PID Configuration and Constants
          */
+
+
         turretPIDConfig.withKP(TURRET.TURRET_P.in(Volts)).withKI(TURRET.TURRET_I.in(Volts))
                 .withKD(TURRET.TURRET_D.in(Volts)).withKS(TURRET.TURRET_S.in(Volts))
                 .withKV(TURRET.TURRET_V.in(Volts)).withKA(TURRET.TURRET_A.in(Volts));
 
         turretMotorConfig.withSlot0(turretPIDConfig);
-
-
-        /**
-         * Motion Magic Configuration and Constants
-         */
-        // turretMMConfig.MotionMagicAcceleration =
-        // TURRET.MAX_ACCELERATION.in(RotationsPerSecondPerSecond);
-        // turretMMConfig.MotionMagicJerk =
-        // TURRET.MAX_JERK.in(RotationsPerSecondPerSecond.per(Second));
-        // turretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY.in(RotationsPerSecond);
-        // turretMotorConfig.withMotionMagic(turretMMConfig);
-
-        /** */
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
@@ -180,18 +154,11 @@ public class Turret extends SubsystemBase {
         turretMotor.setControl(positionRequest.withSlot(0)
                 .withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control
                                                                             // for testing
-        // turretMotor.setControl(positionMMRequest.withPosition(target *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public void basicTurretToPos(double angle) {
         double voltage = SmartDashboard.getNumber("Turret Voltage", 0);
         turretMotor.setVoltage(voltage);
-        // logAngle(angle);
-        // turretMotor.setControl(positionRequest.withSlot(0).withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        // turretMotor.setControl(positionMMRequest.withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public Command basicTurretToPosCommand(double angle) {
@@ -323,43 +290,14 @@ public class Turret extends SubsystemBase {
         // Logger.recordOutput("Gear Ticks " , CRT(E1.get(), E2.get() -
         // ));
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
-                turretMotor.getPosition().getValueAsDouble()
-                        * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
-                turretMotor.getPosition().getValueAsDouble()); // rotations
+                turretMotor.getPosition().getValueAsDouble() * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations", turretMotor.getPosition().getValueAsDouble()); // rotations
         // per second
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
-                turretMotor.getMotorVoltage().getValueAsDouble());
-
+        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage", turretMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
+        Logger.recordOutput(TURRET.LOG_PATH + "Turrent Current Angle", rawTargetAngle);
 
     }
 
-    // public void updatePID() {
-
-    // //Receive Turret PID Constants from SmartDashboard
-
-    // double P_NEW = SmartDashboard.getNumber("tP", TURRET.TURRET_P.in(Volts));
-    // double I_NEW = SmartDashboard.getNumber("tI", TURRET.TURRET_I.in(Volts));
-    // double D_NEW = SmartDashboard.getNumber("tD", TURRET.TURRET_D.in(Volts));
-
-    // boolean tDiff = (P_SET != P_NEW || I_SET != I_NEW || D_SET != D_NEW);
-
-
-    // if(tDiff){
-    // turretPIDConfig
-    // .withKP(P_NEW)
-    // .withKI(I_NEW)
-    // .withKD(D_NEW);
-    // turretMotorConfig.withSlot0(turretPIDConfig);
-    // turretMotor.getConfigurator().apply(turretMotorConfig);
-
-    // P_SET = P_NEW;
-    // I_SET = I_NEW;
-    // D_SET = D_NEW;
-    // }
-
-    // }
-
-
+    
 }
