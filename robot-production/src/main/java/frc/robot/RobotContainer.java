@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Set;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import static com.pathplanner.lib.auto.NamedCommands.registerCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -87,7 +88,7 @@ public class RobotContainer {
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
     // Main shoot comannds, sets speed to 1
-    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+        registerCommand("Shoot", scoring.indexer.runIndexerCommand());
 
     //Unused shoot command, will be utilized in shoot on the move hopefully
     NamedCommands.registerCommand("Shoot3sec", scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
