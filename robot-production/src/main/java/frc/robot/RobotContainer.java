@@ -78,36 +78,6 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
-/* 
-    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
-    NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
-    NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
-
-    NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
-      Command squeezeRoutine = Commands.sequence(
-          scoring.intake.retractWithRollersCommand(),
-          Commands.waitSeconds(1.5),
-          scoring.intake.stopRollerCommand(),
-          scoring.intake.stopExtendCommand());
-      return Commands.sequence(
-          scoring.indexer.runIndexerCommand(),
-          Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
-    }, Set.of()));
-
-    // Path event markers in our .path files are point markers (no end position),
-    // so use onTrue to avoid repeated scheduling/interruption side effects.
-    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
-    new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
-    new EventTrigger("StopIntake")
-        .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-
-  
-    // Configure the trigger bindings
-    configureBindings();
-    configureDefaults();
-   // AutoCommands.registerAll(scoring);
-    // Get autonomous ready
-    */
     AutoManager.prepare(scoring);
   }
 
