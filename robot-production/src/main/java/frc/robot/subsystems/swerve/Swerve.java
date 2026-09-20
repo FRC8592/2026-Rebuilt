@@ -165,16 +165,22 @@ public class Swerve extends SubsystemBase {
 
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
+        Logger.recordOutput(SWERVE.LOG_PATH + "ChassisSpeeds", getRobotRelativeSpeeds());
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleStates", state.ModuleStates);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModulePositions", state.ModulePositions);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleTargets", state.ModuleTargets);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE, targetspeed: CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE, targetspeed: CAN 5", state.ModuleTargets[1].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK, targetspeed: CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL, targetspeed: CAN 3", state.ModuleTargets[3].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/targetspeed, CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/realspeed, CAN 7", state.ModuleStates[0].speedMetersPerSecond);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE, realspeed: CAN 7", state.ModuleStates[0].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE, realspeed: CAN 5", state.ModuleStates[1].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK, realspeed: CAN 9", state.ModuleStates[2].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL, realspeed: CAN 3", state.ModuleStates[3].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/targetsped, CAN 5", state.ModuleTargets[1].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/realspeed, CAN 5", state.ModuleStates[1].speedMetersPerSecond);
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/targetspeed, CAN 3", state.ModuleTargets[3].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/realspeed, CAN 3", state.ModuleStates[3].speedMetersPerSecond);
+        
+        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/targetspeed, CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/realspeed, CAN 9", state.ModuleStates[2].speedMetersPerSecond);
 
         // TODO: do we really need to run this?
         swerve.periodic();
