@@ -90,10 +90,10 @@ public final class Constants {
 
     public static final double TRANSLATE_POWER_FAST = 1.0;
     public static final double ROTATE_POWER_FAST = 0.5;
-    public static final double TRANSLATE_POWER_SNAIL = 0.5;
-    public static final double TRANSLATE_POWER_LESS_SLOW = 0.75;
-    public static final double ROTATE_POWER_SNAIL = 0.3;
-    public static final double ROTATE_POWER_LESS_SLOW = 0.5;
+    public static final double TRANSLATE_POWER_SNAIL = 0.25;
+    public static final double TRANSLATE_POWER_LESS_SLOW = 0.45;
+    public static final double ROTATE_POWER_SNAIL = 0.1;
+    public static final double ROTATE_POWER_LESS_SLOW = 0.4;
 
     public static final int TRANSLATION_SMOOTHING_AMOUNT = 3;
     public static final int ROTATION_SMOOTHING_AMOUNT = 1;
@@ -262,6 +262,11 @@ public final class Constants {
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
+    public static final double SPIN_V = 0;
+    public static final double SPIN_A = 0;
+    public static final double SPIN_G = 0;
+    public static final double SPIN_ALLOWED_ERROR = 0.02;
+    
 
 
     // Current limits for the Indexer motors
