@@ -120,37 +120,36 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+   // RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
     SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
     LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
 
-    ROBOT_RELATIVE.onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
-        .onFalse(Commands.runOnce(() -> swerve.setRobotRelative(false)).ignoringDisable(true));
+   // ALIGN_HEADING.onTrue(swerve.runOnce(() -> swerve.alignedHeading()));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
-    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
-        .onFalse(scoring.intake.stopRollerCommand());
+ //   INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
+       // .onFalse(scoring.intake.stopRollerCommand());
 
-    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
-        .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
-        .onFalse(scoring.intake.stopExtendCommand());
+ //   INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
+      //  .onFalse(scoring.intake.stopExtendCommand());
+ //   INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
+   //     .onFalse(scoring.intake.stopExtendCommand());
 
     // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
     // pushed around.
-    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+//    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
-    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+   // ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
-    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
+  //  SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
-    MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+    // MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
@@ -159,11 +158,11 @@ public class RobotContainer {
     //     .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
     //     .andThen(scoring.indexer.stopCommand()));
 
-    INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
-    DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
+    // INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
+    // DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
 
-    TURRET_RIGHT.onTrue(scoring.turretRightCommand());
-    TURRET_LEFT.onTrue(scoring.turretLeftCommand());
+    // TURRET_RIGHT.onTrue(scoring.turretRightCommand());
+    // TURRET_LEFT.onTrue(scoring.turretLeftCommand());
   }
 
   /**
