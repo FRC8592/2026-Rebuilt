@@ -30,7 +30,7 @@ public class Swerve extends SubsystemBase {
 
     private PIDController snapToController;
 
-    private boolean isSnailMode;
+    private boolean isSnailMode = true;
     private boolean isLessSlowMode;
     private boolean alignedHeading = false;
     private boolean isRobotRelative = false;

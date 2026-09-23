@@ -91,7 +91,7 @@ public class RobotContainer {
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
     // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
-   // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
+  //  new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
     new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
 
     //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
@@ -142,9 +142,9 @@ public class RobotContainer {
 
     // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
     // toggle.
-   // ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+  //  ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    SHOOT.onTrue(scoring.indexer.runIndexerCommand().alongWith(scoring.toggleTrackingCommand())).onFalse(scoring.indexer.stopCommand());
   //  SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
