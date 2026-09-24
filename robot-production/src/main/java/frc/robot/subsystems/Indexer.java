@@ -13,7 +13,7 @@ public class Indexer extends SubsystemBase{
     public boolean indexerRunning;
 
     public Indexer(){
-        spinMotor = new SparkFlexControl(INDEXER.OUTPUT_CAN_ID, true, "spinMotor");
+        spinMotor = new SparkFlexControl(INDEXER.SPINNER_CAN_ID, true, "spinMotor");
         spinMotor.setInverted();
         spinMotor.setCurrentLimit(INDEXER.SPIN_CURRENT_LIMIT);
 
