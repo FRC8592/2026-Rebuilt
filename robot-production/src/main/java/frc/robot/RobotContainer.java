@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CONTROLLERS;
@@ -144,7 +145,7 @@ public class RobotContainer {
     // toggle.
   //  ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand().alongWith(scoring.toggleTrackingCommand())).onFalse(scoring.indexer.stopCommand());
+    SHOOT.onTrue(Commands.waitSeconds(2).alongWith(scoring.toggleTrackingCommand()).andThen(scoring.indexer.runIndexerCommand())).onFalse(scoring.indexer.stopCommand());
   //  SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
