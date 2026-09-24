@@ -68,8 +68,7 @@ public class RobotContainer {
 
   // Operator Controls
 
-  private final Trigger SHOOT_REVERSE = operatorController.leftBumper(); //originally right bumper 
-  private final Trigger DYEROTOR_UNJAM = operatorController.leftTrigger();
+  private final Trigger SHOOT_REVERSE = operatorController.leftTrigger(); //Dyerotor Unjam
   private final Trigger INTAKE_RETRACT = operatorController.rightTrigger();
 
   // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
@@ -174,7 +173,6 @@ public class RobotContainer {
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
     SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
-    DYEROTOR_UNJAM.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse(scoring.indexer.stopCommand());
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
