@@ -51,21 +51,32 @@ public class RobotContainer {
   private final Trigger ROBOT_RELATIVE = driverController.y();
   private final Trigger SLOW_MODE = driverController.a();
   private final Trigger LESS_SLOW_MODE = driverController.povUp();
-  private final Trigger INTAKE_RUN = driverController.rightTrigger();
-  private final Trigger INTAKE_REVERSE = driverController.rightBumper();
+  private final Trigger INTAKE_RUN = driverController.leftTrigger();
+  private final Trigger DYE_ROTOR_RUN = driverController.rightBumper();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
-  private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
   private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
+  private final Trigger ENABLE_TRACKING = driverController.rightTrigger();
+
+  // Previous driver mappings:
+  // private final Trigger SHOOT = driverController.leftBumper();
+  // private final Trigger INTAKE_REVERSE = driverController.rightBumper();
+  // private final Trigger INTAKE_RETRACT = driverController.leftTrigger();
+
   // private final Trigger SHOOT_SQUEEZE = driverController.a();
 
   // Operator Controls
-  private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
-  private final Trigger SHOOT = operatorController.rightTrigger();
-  private final Trigger SHOOT_REVERSE = operatorController.leftBumper(); //originally right bumper 
+  private final Trigger INTAKE_RETRACT = operatorController.rightTrigger();
+  private final Trigger DYE_ROTOR_UNJAM = operatorController.leftTrigger();
+  private final Trigger TURRET_LOCK = operatorController.rightBumper();
 
-  // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
-  private final Trigger MANUAL_OVERRIDE = operatorController.rightBumper();
+  // Previous operator mappings:
+  // private final Trigger ENABLE_TRACKING = operatorController.leftTrigger();
+  // private final Trigger SHOOT = operatorController.rightTrigger();
+  // private final Trigger INTAKE_RETRACT = operatorController.leftTrigger();
+  // private final Trigger SHOOT_REVERSE = operatorController.leftBumper();
+  // private final Trigger RESET_TURRET = operatorController.a();
+  // private final Trigger MANUAL_OVERRIDE = operatorController.rightBumper();
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
   private final Trigger TURRET_RIGHT = operatorController.povRight();
@@ -147,8 +158,9 @@ public class RobotContainer {
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
-    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
-        .onFalse(scoring.intake.stopRollerCommand());
+
+    DYE_ROTOR_RUN.onTrue(scoring.indexer.runIndexerCommand())
+        .onFalse(scoring.indexer.stopCommand());
 
     INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
@@ -163,12 +175,20 @@ public class RobotContainer {
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
-    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
+    DYE_ROTOR_UNJAM.onTrue(scoring.indexer.runReverseIndexerCommand())
+        .onFalse(scoring.indexer.stopCommand());
+
+    // Previous indexer bindings:
+    // SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+    // SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand())
+    //     .onFalse(scoring.indexer.stopCommand());
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 
-    MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+    TURRET_LOCK.onTrue(scoring.overrideTrackingCommand());
+
+    // Previous turret lock binding:
+    // MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
     // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
 
