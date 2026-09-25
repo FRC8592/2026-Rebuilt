@@ -49,15 +49,15 @@ public class RobotContainer {
   // Driver Controls
   private final Trigger RESET_HEADING = driverController.back();
   private final Trigger ROBOT_RELATIVE = driverController.y();
-  private final Trigger SLOW_MODE = driverController.b();
+  private final Trigger SLOW_MODE = driverController.a();
   private final Trigger LESS_SLOW_MODE = driverController.povUp();
 
   private final Trigger INTAKE_RUN = driverController.leftTrigger();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
-  private final Trigger ENABLE_TRACKING = driverController.rightTrigger();
-  private final Trigger SHOOT = driverController.rightBumper();
+  private final Trigger ENABLE_TRACKING = driverController.rightBumper();
+  private final Trigger SHOOT = driverController.rightTrigger();
 
-  private final Trigger INTAKE_REVERSE = driverController.a();
+  private final Trigger INTAKE_REVERSE = driverController.b();
 
   // private final Trigger RESET_EXTEND = driverController.b();
   private final Trigger LOCK_WHEELS = driverController.x();
