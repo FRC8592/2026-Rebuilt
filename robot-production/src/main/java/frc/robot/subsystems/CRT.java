@@ -1,4 +1,6 @@
-class CRT {
+package frc.robot.subsystems;
+
+public class CRT {
     private int[] multiples;
     private int[] mods;
     private int lcm;
@@ -77,14 +79,4 @@ class CRT {
     public int get_lcm() {
         return lcm;
     }
-}
-
-public class Main
-{
-	public static void main(String[] args) {
-	    int[] multiples = {2,3,5};
-	    int[] mods = {1,2,3};
-		CRT crt = new CRT(multiples, mods);
-		System.out.println(crt.solve() + " + " + crt.get_lcm() + "k");
-	}
 }
