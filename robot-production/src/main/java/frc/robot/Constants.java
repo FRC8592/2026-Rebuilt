@@ -221,6 +221,12 @@ public final class Constants {
   }
 
   public static class INTAKE {
+    // Hardware-present flags. Set to false when the motors are not physically connected
+    // to the robot; the Intake subsystem then skips creating them and all of its methods
+    // no-op. SET BOTH BACK TO true ONCE THE MOTORS ARE WIRED.
+    public static final boolean ROLLERS_PRESENT = false; // TalonFX 29 + 34
+    public static final boolean EXTEND_PRESENT = false; // SparkFlex 31
+
     // CAN ID for the Intake motor
     // TODO: Change these names to match the actual location of the motors
     public static final int INTAKE_MOTOR_LEFT_CAN_ID = 34;
@@ -256,12 +262,17 @@ public final class Constants {
   public final class INDEXER {
     // CAN IDs for the Indexer motors
     public static final int SPINNER_CAN_ID = 16;
-    public static final int OUTPUT_CAN_ID = 38;
+    // public static final int OUTPUT_CAN_ID = 38; Unused at the moment.
 
     public static final double SPIN_P = 0.0001;
     public static final double SPIN_I = 0;
     public static final double SPIN_D = 0;
     public static final double SPIN_S = 0;
+    public static final double SPIN_V = 0;
+    public static final double SPIN_A = 0;
+    public static final double SPIN_G = 0;
+    public static final double SPIN_ALLOWED_ERROR = 0.02;
+    
 
 
     // Current limits for the Indexer motors
