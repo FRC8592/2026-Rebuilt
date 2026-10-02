@@ -33,6 +33,7 @@ public class Swerve extends SubsystemBase {
     private boolean isSnailMode;
     private boolean isLessSlowMode;
     private boolean alignedHeading = false;
+    private boolean isRobotRelative = false;
 
 
     private SmoothingFilter smoothingFilter;
@@ -180,6 +181,25 @@ public class Swerve extends SubsystemBase {
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
+        if (isRobotRelative) {
+            double translationMultiplier = SWERVE.TRANSLATE_POWER_FAST;
+            double rotationMultiplier = 1.0;
+
+            if (isSnailMode) {
+                translationMultiplier = SWERVE.TRANSLATE_POWER_SNAIL;
+                rotationMultiplier = SWERVE.ROTATE_POWER_SNAIL;
+            } else if (isLessSlowMode) {
+                translationMultiplier = SWERVE.TRANSLATE_POWER_LESS_SLOW;
+                rotationMultiplier = SWERVE.ROTATE_POWER_LESS_SLOW;
+            }
+
+            swerve.setControl(robotCentric
+                    .withVelocityX(speeds.vxMetersPerSecond * translationMultiplier)
+                    .withVelocityY(speeds.vyMetersPerSecond * translationMultiplier)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * rotationMultiplier));
+            return;
+        }
+
         if (alignedHeading && !speeds.equals(speedZero)) {
             double targetHeadingRadians =
                     Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
@@ -294,6 +314,10 @@ public class Swerve extends SubsystemBase {
 
     public void setLessSlowMode() {
         isLessSlowMode = !isLessSlowMode;
+    }
+
+    public void setRobotRelative(boolean robotRelative) {
+        isRobotRelative = robotRelative;
     }
 
     /**
