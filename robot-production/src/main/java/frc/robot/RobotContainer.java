@@ -103,6 +103,13 @@ public class RobotContainer {
     //Kills all shooter related commands
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
 
+    // Stops every scoring mechanism at the end of an autonomous routine.
+    NamedCommands.registerCommand("stopallsystems", Commands.parallel(
+        scoring.disableTrackingCommand(),
+        scoring.indexer.stopCommand(),
+        scoring.intake.stopRollerCommand(),
+        scoring.intake.stopExtendCommand()));
+
     //Toggle hub tracking, needed to start the shooter
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
