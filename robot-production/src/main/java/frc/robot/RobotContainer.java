@@ -54,7 +54,6 @@ public class RobotContainer {
 
   private final Trigger INTAKE_RUN = driverController.leftTrigger();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
-  private final Trigger ENABLE_TRACKING = driverController.rightBumper();
   private final Trigger SHOOT = driverController.rightTrigger();
 
   private final Trigger INTAKE_REVERSE = driverController.b();
@@ -68,17 +67,18 @@ public class RobotContainer {
 
   // Operator Controls
 
-  private final Trigger SHOOT_REVERSE = operatorController.leftTrigger(); //Dyerotor Unjam
-  private final Trigger INTAKE_RETRACT = operatorController.rightTrigger();
+  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); //Dyerotor Unjam
+  private final Trigger INTAKE_RETRACT = operatorController.leftTrigger();
 
   // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
-  private final Trigger MANUAL_OVERRIDE = operatorController.rightBumper(); // Also known as Turret Lock 
+  private final Trigger MANUAL_OVERRIDE = operatorController.a(); // Also known as Turret Lock 
 
   private final Trigger INCREASE_RPM = operatorController.povUp();
   private final Trigger DECREASE_RPM = operatorController.povDown();
   private final Trigger TURRET_RIGHT = operatorController.povRight();
   private final Trigger TURRET_LEFT = operatorController.povLeft();
 
+  private final Trigger ENABLE_TRACKING = operatorController.rightTrigger();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
