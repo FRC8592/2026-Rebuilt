@@ -177,8 +177,8 @@ public class RobotContainer {
     // toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
-    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
+    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.runReverseWholeMatchCommand());
+    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse(scoring.indexer.runReverseWholeMatchCommand()); 
 
     // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
 

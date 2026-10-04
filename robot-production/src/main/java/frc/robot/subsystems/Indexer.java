@@ -114,6 +114,11 @@ public class Indexer extends SubsystemBase {
         indexerRunning = true;
     }
 
+    public void runReverseWholeMatch(){
+        spinMotor.setVoltage(-6.0);
+        indexerRunning = true;
+    }
+
     /**
      * Command to run the indexer
      * 
@@ -126,6 +131,11 @@ public class Indexer extends SubsystemBase {
     public Command runReverseIndexerCommand(){
         return this.runOnce(()->runReverseIndexer());
     }
+
+    public Command runReverseWholeMatchCommand(){
+        return this.runOnce(()->runReverseWholeMatch());
+    }
+
 
     /**
      * Get the velocity of the spinner motor in RPM
