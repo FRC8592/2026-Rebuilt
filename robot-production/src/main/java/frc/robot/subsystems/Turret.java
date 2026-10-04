@@ -247,56 +247,76 @@ public class Turret extends SubsystemBase {
      * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
     public static double calcAngle(double E1, double E2) {
-        double R1 = E1 / 360d;
-        double R2 = E2 / 360d;
-        double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_GT;
-        double G2 = (TURRET.TURRET_G2 * 1.0) / TURRET.TURRET_GT;
-        for (int i = 1; i <= TURRET.TURRET_GT; i++) {
-            double V1 = (i + R1) * G1;
-            double V2 = (i + R2) * G2 * 1.0;
-            double V1New = (i + 1 + R1) * G1 * 1.0;
-            double V2Old = (i - 1 + R2) * G2 * 1.0;
-            double V1Old = (i - 1 + R1) * G1 * 1.0;
-            double V2New = (i + 1 + R2) * G2 * 1.0;
+        
+        // R1 and R2 is the current offsets (In teeth) for Gear 1 and Gear 2 respectively
+        int R1 = (int) (E1 * TURRET.TURRET_G1);
+        int R2 = (int) Math.round(E1 * TURRET.TURRET_G2);
 
-            if (Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
-            }
+        // Makes a mods and multilples list for the CRT class
+        int[] mods = new int[] {R1, R2};
+        int[] multiples = new int[] {(int) TURRET.TURRET_G1, (int) TURRET.TURRET_G2};
 
-            if (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
-            }
+        CRT crt = new CRT(multiples, mods);
+        int angle = crt.solve();
 
-            if (Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
-            }
-
-            if (Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
-            }
-            if (Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
-            }
-
-            if (Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
-            }
-
-            if (Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
-            }
-
-            setLeast = mapValues.keySet();
-            if (setLeast.size() != 0) {
-                System.out.println("Set: " + setLeast.toString());
-
-                Double lowest = Collections.min(setLeast);
-                System.out.println("Lowest: " + lowest);
-
-                return mapValues.get(lowest);
-            }
+        // While the angle is outside the correct limits, add or subtract the lcm of the gears
+        while (angle > TURRET.FORWARD_LIMIT && angle < TURRET.REVERSE_LIMIT) {
+            angle -= Math.signum(angle*1.0) * crt.get_lcm();
         }
-        return 0;
+
+        // retirms angle
+        return angle;
+
+
+        // .......... Fall Back Code ........... //
+        // double R2 = E2 / 360d;
+        // double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_GT;
+        // double G2 = (TURRET.TURRET_G2 * 1.0) / TURRET.TURRET_GT;
+        // for (int i = 1; i <= TURRET.TURRET_GT; i++) {
+        //     double V1 = (i + R1) * G1;
+        //     double V2 = (i + R2) * G2 * 1.0;
+        //     double V1New = (i + 1 + R1) * G1 * 1.0;
+        //     double V2Old = (i - 1 + R2) * G2 * 1.0;
+        //     double V1Old = (i - 1 + R1) * G1 * 1.0;
+        //     double V2New = (i + 1 + R2) * G2 * 1.0;
+
+        //     if (Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
+        //     }
+
+        //     if (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
+        //     }
+
+        //     if (Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
+        //     }
+
+        //     if (Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
+        //     }
+        //     if (Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
+        //     }
+
+        //     if (Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
+        //     }
+
+        //     if (Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE) {
+        //         mapValues.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
+        //     }
+
+        //     setLeast = mapValues.keySet();
+        //     if (setLeast.size() != 0) {
+        //         System.out.println("Set: " + setLeast.toString());
+
+        //         Double lowest = Collections.min(setLeast);
+        //         System.out.println("Lowest: " + lowest);
+
+        //         return mapValues.get(lowest);
+        //     }
+        // }
     }
 
     public double getAngle() {
