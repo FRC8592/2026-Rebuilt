@@ -221,12 +221,6 @@ public final class Constants {
   }
 
   public static class INTAKE {
-    // Hardware-present flags. Set to false when the motors are not physically connected
-    // to the robot; the Intake subsystem then skips creating them and all of its methods
-    // no-op. SET BOTH BACK TO true ONCE THE MOTORS ARE WIRED.
-    public static final boolean ROLLERS_PRESENT = false; // TalonFX 29 + 34
-    public static final boolean EXTEND_PRESENT = false; // SparkFlex 31
-
     // CAN ID for the Intake motor
     // TODO: Change these names to match the actual location of the motors
     public static final int INTAKE_MOTOR_LEFT_CAN_ID = 34;
