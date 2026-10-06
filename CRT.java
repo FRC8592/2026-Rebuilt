@@ -7,46 +7,45 @@ public class CRT {
         mods = remainders;
     }
     
-    public int euclids_algorithm(int a, int b) {
-        
-        if (b > a) {
-            a ^= b;
-            b = a^b;
-            a = a^b;
-        }
+    public int euclidsAlgorithm(int a, int b) {
         
         if (b <= 0) {
             return a;
         }
         
-        return euclids_algorithm(b, a % b);
+        return euclidsAlgorithm(b, a % b);
     }
     
-    public int gcd() {
-        int curr_gcd = multiples[0];
-        for (int i = 1; i < multiples.length; i++) {
-            curr_gcd = euclids_algorithm(curr_gcd, multiples[i]); 
-        }
-        
-        return curr_gcd;
+    public int gcd(int a, int b) {
+        return euclidsAlgorithm(a, b); 
+    
     }
     
     public void lcm() {
-        int product = 1;
+        lcm = 1;
         for (int i : multiples) {
-            product *= i;
+            lcm = lcm*i/gcd(lcm,i);
         }
-        
-        lcm = product/gcd();
     }
     
-    public int mod_inverse(int M, int k) {
-        int i = 1;
-        while ((M*i) % k != 1) {
-            i++;
+    public int extendedEuclideanAlgorithm(int M, int k, int T1, int T2) {
+        
+        if (k == 0) { 
+            return T1; 
         }
         
-        return i;   
+        int Q = M / k;
+        int R = M % k;
+        
+        int nextT = T1 - Q * T2;
+        
+        return extendedEuclideanAlgorithm(k, R, T2, nextT);
+    }
+    
+    public int modInverse(int M, int k) {
+        int val = extendedEuclideanAlgorithm(M, k, 1,0);  
+        
+        return (val % k + k) % k;
     }
     
     public int solve() {
@@ -54,7 +53,7 @@ public class CRT {
         lcm();
         for (int i = 0; i < multiples.length; i++) {
             int M = lcm/multiples[i];
-            int inverse = mod_inverse(M, multiples[i]);
+            int inverse = modInverse(M, multiples[i]);
             answer += (M*inverse*mods[i]);
         }
         
@@ -65,7 +64,7 @@ public class CRT {
         return answer % lcm;
     }
     
-    public int get_lcm() {
+    public int getLcm() {
         return lcm;
     }
 }
