@@ -6,17 +6,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.RelativeEncoder;
-import frc.robot.Constants.INTAKE;
 import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
     private TalonFX motor;
     private TalonFXConfiguration motorConfig;
-    private RelativeEncoder motorEncoder;
     private CurrentLimitsConfigs motorCurrentLimit;
     private int CAN_ID;
-    private boolean coastMode;
 
     public TalonFXControl(int canId, boolean coastMode){
         motor = new TalonFX(canId);
@@ -28,8 +24,6 @@ public class TalonFXControl {
         else{
             motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
         }
-
-        this.coastMode = coastMode;
 
         motor.getConfigurator().apply(motorConfig);
 
@@ -45,7 +39,7 @@ public class TalonFXControl {
     }
 
     public void setVoltage(double voltage){
-        motor.setPosition(voltage);
+        motor.setVoltage(voltage);
     }
 
     public void setPercentOutput(double power){
@@ -57,7 +51,7 @@ public class TalonFXControl {
     }
 
     public double getVelocity(){
-        return motorEncoder.getVelocity();
+        return motor.getVelocity().getValueAsDouble();
     }
 
     public double getVoltage(){
@@ -65,11 +59,11 @@ public class TalonFXControl {
     }
 
     public double getPosition(){
-        return motorEncoder.getPosition();
+        return motor.getPosition().getValueAsDouble();
     }
 
     public double getTicks(){
-        return motorEncoder.getPosition()*4096;
+        return motor.getPosition().getValueAsDouble()*4096;
     }
 
     public void setFollower(TalonFXControl followerMotor, MotorAlignmentValue alignmentValue){
