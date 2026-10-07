@@ -52,6 +52,7 @@ public class Turret extends SubsystemBase {
     private double D_SET;
 
     private double rawTargetAngle;
+    private int teethOffset;
 
     private double targetAngle;
 
@@ -156,6 +157,7 @@ public class Turret extends SubsystemBase {
         // turretMotorConfig.withMotionMagic(turretMMConfig);
 
         /** */
+        teethOffset = calcAngle(E1.get(), E2.get());
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
@@ -196,6 +198,11 @@ public class Turret extends SubsystemBase {
 
     public Command basicTurretToPosCommand(double angle) {
         return this.runOnce(() -> basicTurretToPos(angle));
+
+    }
+
+    public int getTeethOffset() {
+        return teethOffset;
     }
 
     /**
@@ -246,7 +253,7 @@ public class Turret extends SubsystemBase {
      * @param E2
      * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
-    public static double calcAngle(double E1, double E2) {
+    public int calcAngle(double E1, double E2) {
         
         // R1 and R2 is the current offsets (In teeth) for Gear 1 and Gear 2 respectively
         int R1 = (int) (E1 * TURRET.TURRET_G1);
