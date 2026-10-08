@@ -86,11 +86,19 @@ public class RobotContainer {
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
+    // Main shoot comannds, sets speed to 1
     NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+
+    //Unused shoot command, will be utilized in shoot on the move hopefully
+    NamedCommands.registerCommand("Shoot3sec", scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
+
+    //Kills all shooter related commands
     NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
-        
+
+    //Toggle hub tracking, needed to start the shooter
     NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
 
+    //Working squeeze shoot command, utilized in both left and right double swipe
     NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
       Command squeezeRoutine = Commands.sequence(
           scoring.intake.retractWithRollersCommand(),
@@ -104,27 +112,26 @@ public class RobotContainer {
 
     // Path event markers in our .path files are point markers (no end position),
     // so use onTrue to avoid repeated scheduling/interruption side effects.
+
+    //Run intake in pathplanner event marker
     new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
+
+        //Depploy intake in pathplanner event marker
     new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
+
+            //Stop intake in pathplanner event marker
     new EventTrigger("StopIntake")
         .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-    // EventTrigger("RetractIntake").whileTrue(scoring.intake.retractIntakeCommand(6));
-   // new EventTrigger("ToggleHubTracking").onTrue(scoring.toggleTrackingCommand());
+  
+   //Unused shoot event marker, can be used for testing or in case of a last minute change to the path
     new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
-
-    //new EventTrigger("StopShoot").onTrue(scoring.indexer.stopCommand());
-
-  //  new EventTrigger("ShootWhileSqueezing").onTrue(scoring.indexer.runIndexerCommand()
-   //     .andThen(Commands.waitSeconds(2)).andThen(scoring.intake.retractWithRollersCommand())
-  //      .andThen(Commands.waitSeconds(2.5)));
-
-   //         new EventTrigger("StopSqueeze").onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()).andThen(scoring.indexer.stopCommand()));
 
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-
+   // AutoCommands.registerAll(scoring);
     // Get autonomous ready
+    
     AutoManager.prepare(scoring);
   }
 

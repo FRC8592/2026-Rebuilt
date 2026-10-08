@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HALF LEFT"
+            "pathName": "Cycle Left"
           }
         },
         {
@@ -19,19 +19,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.9
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SqueezeShoot"
+            "name": "Shoot"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 2.0
           }
         },
         {
@@ -44,12 +44,6 @@
           "type": "named",
           "data": {
             "name": "ToggleHubTracking"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Half Left Second Swipe"
           }
         }
       ]
