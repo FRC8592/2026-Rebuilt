@@ -64,6 +64,7 @@ public class Intake extends SubsystemBase {
      * Retract the intake at controlled speed
      */
     public void retractIntake() {
+        if (!INTAKE.EXTEND_PRESENT) return;
         retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
 
         extendMotor.setVoltage(-6);
@@ -78,6 +79,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void runIntakeRollersSlower(){
+        if (!INTAKE.ROLLERS_PRESENT) return;
         rollerRightMotor.setVoltage(7);
     }
 
@@ -86,6 +88,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void runReversedIntakeRollers() {
+        if (!INTAKE.ROLLERS_PRESENT) return;
         rollerRightMotor.setVoltage(-11);
     }
 
@@ -136,6 +139,16 @@ public class Intake extends SubsystemBase {
     }
 
     /**
+     * Get the velocity of the extend motor in RPM
+     *
+     * @return velocity in RPM
+     */
+    private double getExtendVelocity() {
+        if (!INTAKE.EXTEND_PRESENT) return 0;
+        return extendMotorEncoder.getVelocity();
+    }
+
+    /**
      * Get the velocity of the intake motor in RPM
      * 
      * @return velocity in RPM
@@ -151,10 +164,12 @@ public class Intake extends SubsystemBase {
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
+        if (!INTAKE.ROLLERS_PRESENT) return;
         rollerRightMotor.setVoltage(0d);
     }
 
     public void stopExtender() {
+        if (!INTAKE.EXTEND_PRESENT) return;
         extendMotor.setVoltage(0d);
     }
 
@@ -182,8 +197,8 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
-        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Rollers Present", INTAKE.ROLLERS_PRESENT);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Present", INTAKE.EXTEND_PRESENT);
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
         Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());

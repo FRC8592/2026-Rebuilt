@@ -220,7 +220,7 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     // Stop any mechanisms that remain running after autonomous or last teleop session
     m_robotContainer.scoring.disableTrackingCommand();
-    m_robotContainer.scoring.indexer.stop();
+    m_robotContainer.scoring.indexer.stopCommand();
     m_robotContainer.scoring.intake.stopRoller();
     m_robotContainer.scoring.intake.stopExtender();
 
