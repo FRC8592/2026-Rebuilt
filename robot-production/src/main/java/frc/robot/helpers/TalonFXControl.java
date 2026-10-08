@@ -121,6 +121,7 @@ public class TalonFXControl {
     public void setCurrentLimit(double currentLimit){
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
+        applyConfig();
     }
 
     public void createSlot0(){
@@ -197,13 +198,12 @@ public class TalonFXControl {
     }
 
     /**
-     * Sets motor velocity using RPM
+     * Sets motor velocity using RPS
      * @param desiredRPM
      * @param slot
      */
     public void setVelocityControl(double desiredRPM, int slot){
-        
-        motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM));
+        motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
     }
 
     /**
