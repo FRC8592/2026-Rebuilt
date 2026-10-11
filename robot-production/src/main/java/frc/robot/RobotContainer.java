@@ -137,8 +137,9 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaults();
-
+   // AutoCommands.registerAll(scoring);
     // Get autonomous ready
+    
     AutoManager.prepare(scoring);
   }
 
