@@ -6,11 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CONTROLLERS;
 import frc.robot.Constants.VISION;
+import frc.robot.commands.autonomous.AutoCommands;
 import frc.robot.commands.autonomous.AutoManager;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.OdometryUpdates;
@@ -86,6 +88,10 @@ public class RobotContainer {
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
     odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
+
+    configureBindings();
+    configureDefaults();
+    AutoCommands.registerAll(scoring);
     AutoManager.prepare(scoring);
   }
 
