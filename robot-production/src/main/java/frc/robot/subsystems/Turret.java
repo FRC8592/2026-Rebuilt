@@ -267,7 +267,7 @@ public class Turret extends SubsystemBase {
         int angle = crt.solve();
 
         // While the angle is outside the correct limits, add or subtract the lcm of the gears
-        while (angle > TURRET.FORWARD_LIMIT && angle < TURRET.REVERSE_LIMIT) {
+        while (angle > TURRET.TURRET_GT/2 && angle < -1*TURRET.TURRET_GT/2) {
             angle -= Math.signum(angle*1.0) * crt.getLcm();
         }
 
