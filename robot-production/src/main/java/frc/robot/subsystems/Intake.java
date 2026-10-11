@@ -2,49 +2,19 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INTAKE;
+import frc.robot.helpers.SparkFlexControl;
+import frc.robot.helpers.TalonFXControl;
 
 public class Intake extends SubsystemBase {
-    private TalonFX rollerRightMotor;
-    private TalonFX rollerLeftMotor;
-    private SparkFlex extendMotor;
-
-    private TalonFXConfiguration rollerRightConfig;
-    private TalonFXConfiguration rollerLeftConfig;
-    private SparkFlexConfig extendConfig;
-
-    private SparkClosedLoopController extendClosedLoopCtrl;
-
-    private RelativeEncoder extendMotorEncoder;
-
-
-
-
+    private TalonFXControl rollerRightMotor;
+    private TalonFXControl rollerLeftMotor;
+    private SparkFlexControl extendMotor;
     private double retractionPosition;
-
-    // private final NeutralOut extend_brake = new NeutralOut();
 
     /**
      * Constructor for the Intake subsystem
@@ -58,81 +28,35 @@ public class Intake extends SubsystemBase {
          * configuration Place in COAST mode (Can coast to a stop) Set current limits Set VELOCITY
          * PID parameters
          */
-        if (INTAKE.ROLLERS_PRESENT) {
-            rollerRightMotor = new TalonFX(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID);
-            rollerLeftMotor = new TalonFX(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID);
-            rollerRightConfig = new TalonFXConfiguration();
-            rollerLeftConfig = new TalonFXConfiguration();
+        rollerRightMotor = new TalonFXControl(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, true);
+        rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true);
 
-            // TODO: Remove this, should not be necessary
-            rollerRightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            rollerRightConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-            rollerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-            rollerRightConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
-
-
-            rollerRightMotor.getConfigurator().apply(rollerRightConfig);
-
-            rollerLeftConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-            rollerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-            rollerLeftConfig.CurrentLimits.StatorCurrentLimit = INTAKE.ROLLER_CURRENT_LIMIT;
-
-            rollerLeftMotor.getConfigurator().apply(rollerLeftConfig);
-
-            rollerLeftMotor.setControl(
-                    new Follower(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, MotorAlignmentValue.Opposed));
-        } else {
-            DriverStation.reportWarning(
-                    "Intake roller motors DISABLED (INTAKE.ROLLERS_PRESENT = false)", false);
-        }
+        rollerLeftMotor.setFollower(rollerRightMotor, MotorAlignmentValue.Opposed);
 
         /*
          * Create the Extension motor and instatiate the following features Reset to safe factory
          * configuration Store persistant configuration (Flash) Place in Brake mode (Hold position)
          * Set current limits Set VELOCITY PID parameters
          */
-        if (INTAKE.EXTEND_PRESENT) {
-            extendMotor = new SparkFlex(INTAKE.INTAKE_EXTEND_CAN_ID, MotorType.kBrushless);
-            extendConfig = new SparkFlexConfig();
+        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true);
 
-            extendConfig.idleMode(IdleMode.kCoast);
-            extendConfig.smartCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
+        extendMotor.setCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
 
-            extendConfig.closedLoop.pid(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I,
-                    INTAKE.INTAKE_EXTEND_D);
-            extendConfig.closedLoop.maxMotion.cruiseVelocity(INTAKE.CRUISE_VELOCITY);
-            extendConfig.closedLoop.maxMotion.maxAcceleration(INTAKE.MAX_ACCELERATION);
-            extendConfig.closedLoop.maxMotion.allowedProfileError(10);
-            extendConfig.softLimit.reverseSoftLimitEnabled(true);
-            extendConfig.softLimit.reverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
+        extendMotor.setPIDF(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I, INTAKE.INTAKE_EXTEND_D);
 
-            extendMotor.configure(extendConfig, ResetMode.kResetSafeParameters,
-                    PersistMode.kPersistParameters);
-            extendClosedLoopCtrl = extendMotor.getClosedLoopController();
-
-            extendMotorEncoder = extendMotor.getEncoder();
-        } else {
-            DriverStation.reportWarning(
-                    "Intake extend motor DISABLED (INTAKE.EXTEND_PRESENT = false)", false);
-        }
-
-        // TODO: For tuning, put the PID and velocity values on the dashboard. Remove
-        // before competition
-
+        extendMotor.smartMotion(INTAKE.CRUISE_VELOCITY,INTAKE.MAX_ACCELERATION,10);
+        extendMotor.setReverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
     }
 
     /**
      * Extend the intake at controlled speed
      */
     public void extendIntake() {
-        if (!INTAKE.EXTEND_PRESENT) return;
-        // TODO: Research why Neo Motors undershoot velocity sent to the motor
         if (getExtendPosition() > INTAKE.EXTEND_ROTATIONS){
             extendMotor.setVoltage(6);
         }
         else{
-            extendClosedLoopCtrl.setSetpoint(INTAKE.EXTEND_ROTATIONS,
-                ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            extendMotor.setPosition(INTAKE.EXTEND_ROTATIONS);
         }
     }
 
@@ -150,14 +74,8 @@ public class Intake extends SubsystemBase {
      * Run the intake rollers. Currently under simple voltage control
      */
     public void runIntakeRollers() {
-        if (!INTAKE.ROLLERS_PRESENT) return;
-        // TODO: Delete this! This is only for testing purposes!
-        // double IntakeVoltage = SmartDashboard.getNumber("Intake Motor Voltage", 2);
-        // double RPMRight = SmartDashboard.getNumber("INTAKE_VI",
-        // INTAKE.INTAKE_RIGHT_VI);
         System.out.println("Running Roller Command");
         rollerRightMotor.setVoltage(11);
-        // rollerMotor.setControl(rollerMotorCtrl.withVelocity(RPMRight));
     }
 
     public void runIntakeRollersSlower(){
@@ -183,15 +101,12 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> retractWithRollers());
     }
 
-
     public double getRightIntakeVoltage() {
-        if (!INTAKE.ROLLERS_PRESENT) return 0;
-        return rollerRightMotor.getMotorVoltage().getValueAsDouble();
+        return rollerRightMotor.getVoltage();
     }
 
     public double getLeftIntakeVoltage() {
-        if (!INTAKE.ROLLERS_PRESENT) return 0;
-        return rollerLeftMotor.getMotorVoltage().getValueAsDouble();
+        return rollerLeftMotor.getVoltage();
     }
 
     /**
@@ -219,10 +134,8 @@ public class Intake extends SubsystemBase {
         return this.runOnce(() -> runReversedIntakeRollers());
     }
 
-
     public double getExtendPosition() {
-        if (!INTAKE.EXTEND_PRESENT) return 0;
-        return extendMotorEncoder.getPosition();
+        return extendMotor.getPosition();
     }
 
     /**
@@ -241,15 +154,14 @@ public class Intake extends SubsystemBase {
      * @return velocity in RPM
      */
     public double getIntakeVelocity() {
-        if (!INTAKE.ROLLERS_PRESENT) return 0;
-        return rollerRightMotor.getVelocity().getValueAsDouble();
+        return rollerRightMotor.getVelocity();
     }
 
     /**
      * Stop the intake motor
      * 
-     * We do this using voltage mode so that the motor will slow to a stop naturally Using
-     * setVelocity() will cause the motor to stop abruptly using battery power
+     * We do this using voltage mode so that the motor will slow to a stop naturally. 
+     * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
         if (!INTAKE.ROLLERS_PRESENT) return;
@@ -263,7 +175,6 @@ public class Intake extends SubsystemBase {
 
     /**
      * Stop command for the intake motor
-     * 
      * @return stop command
      */
     public Command stopRollerCommand() {
@@ -289,19 +200,8 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput(INTAKE.LOG_PATH + "Rollers Present", INTAKE.ROLLERS_PRESENT);
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Present", INTAKE.EXTEND_PRESENT);
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-
-        if (INTAKE.ROLLERS_PRESENT) {
-            Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
-            Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",
-                    getRightIntakeVoltage());
-            Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage",
-                    getLeftIntakeVoltage());
-        }
-
-        if (INTAKE.EXTEND_PRESENT) {
-            Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
-            Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", getExtendVelocity());
-        }
+        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
     }
-
 }
