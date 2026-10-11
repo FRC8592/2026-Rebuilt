@@ -125,6 +125,11 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().cancelAll();
     m_autonomousCommand = null;
 
+    // Event-marker commands can be scheduled separately from the main auto command.
+    // Cancel everything so no autonomous action resumes when the robot is enabled again.
+    CommandScheduler.getInstance().cancelAll();
+    m_autonomousCommand = null;
+
     // m_robotContainer.scoring.intake.setBrakeMode();
   }
 
