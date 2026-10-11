@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -166,6 +165,7 @@ public class TunerConstants {
         private static final int kFrontLeftSteerMotorId = 6;
         private static final int kFrontLeftEncoderId = 18;
         private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.381602); // -0.490967
+        private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.381602); // -0.490967
                                                                                      // //-0.491455078125
         private static final boolean kFrontLeftSteerMotorInverted = true;
         private static final boolean kFrontLeftEncoderInverted = false;
@@ -284,6 +284,7 @@ public class TunerConstants {
                         super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants,
                                         odometryUpdateFrequency, modules);
                 }
+                
 
                 /**
                  * Constructs a CTRE SwerveDrivetrain using the specified constants.
