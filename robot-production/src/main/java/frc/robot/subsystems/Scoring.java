@@ -40,7 +40,7 @@ public class Scoring extends SubsystemBase {
     private boolean targetIsHub;
     private Alliance alliance;
     private double shooterSpeedOffset = 0;
-    private double turretAngleOffset = 0;
+    private double turretAngleOffset;
     private double dt = 0.2;
     private double velocityFilter = 0.2;
     private double distance = 0;
@@ -63,6 +63,12 @@ public class Scoring extends SubsystemBase {
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+
+        // 1. Convert the CRT teeth directly to standard degrees
+        double teethPerTurretRotation = TURRET.TURRET_GT; // Total teeth on main ring
+        double teethDegrees = (turret.getTeethOffset()/teethPerTurretRotation) * 360.0;
+
+        turretAngleOffset = teethDegrees;
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
