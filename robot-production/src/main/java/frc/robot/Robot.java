@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -12,8 +14,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import java.util.Optional;
-import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -120,6 +120,16 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    // Event-marker commands can be scheduled separately from the main auto command.
+    // Cancel everything so no autonomous action resumes when the robot is enabled again.
+    CommandScheduler.getInstance().cancelAll();
+    m_autonomousCommand = null;
+
+    // Event-marker commands can be scheduled separately from the main auto command.
+    // Cancel everything so no autonomous action resumes when the robot is enabled again.
+    CommandScheduler.getInstance().cancelAll();
+    m_autonomousCommand = null;
+
     // m_robotContainer.scoring.intake.setBrakeMode();
   }
 
@@ -193,7 +203,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.scoring.disableTrackingCommand();
+    m_robotContainer.scoring.disableTracking();
     
     double delay = SmartDashboard.getNumber("Wait Command Auto", 0);
 
@@ -218,25 +228,16 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    // Cancel the auto path and any separately scheduled PathPlanner event commands.
+    CommandScheduler.getInstance().cancelAll();
+    m_autonomousCommand = null;
+
     // Stop any mechanisms that remain running after autonomous or last teleop session
     m_robotContainer.scoring.disableTrackingCommand();
     m_robotContainer.scoring.indexer.stopCommand();
     m_robotContainer.scoring.intake.stopRoller();
     m_robotContainer.scoring.intake.stopExtender();
-
-    boolean cancelledAuto = false;
-
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      cancelledAuto = true;
-      CommandScheduler.getInstance().cancel(m_autonomousCommand);
-      Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
-      // m_robotContainer.scoring.intake.setCoastMode();
-      // m_autonomousCommand.cancel();
-    }
+    Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", true);
   }
 
   /** This function is called periodically during operator control. */
