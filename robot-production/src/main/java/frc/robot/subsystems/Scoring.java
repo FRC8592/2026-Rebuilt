@@ -449,6 +449,12 @@ public class Scoring extends SubsystemBase {
             SmartDashboard.putBoolean("Indexer Running", true);
         }
 
+        //if(indexer.indexerJamming){
+        //     SmartDashboard.putBoolean("Indexer Jamming", ( ));
+        // }
+
+        
+
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunning();
