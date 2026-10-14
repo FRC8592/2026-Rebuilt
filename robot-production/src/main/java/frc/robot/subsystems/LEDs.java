@@ -18,9 +18,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDS;
 
-// 1. Spindexer Jamming  2. Shooting 3. Running Indexer 
-// the low (over 50 amps (current) under 300 for rpm) 
-
 public class LEDs extends SubsystemBase {
         // TODO: RESTRICTED WHEELS, INTAKE SUCCESSFULLY LEDS, PROGRESS BAR FOR THE
         private CANdle candle;
@@ -40,14 +37,14 @@ public class LEDs extends SubsystemBase {
                 }
         
                 // SETTERS 
-                public void setCanShoot() { //(3)
+                public void setCanShoot() {
                         candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.TEAL.red * 255),
                                                         (int) (LEDS.TEAL.green * 255),
                                                         (int) (LEDS.TEAL.blue * 255))));
                 }
         
-                public void setCannotShoot() { //(2)
+                public void setCannotShoot() {
                         candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.ORANGE.red * 255),
                                                         (int) (LEDS.ORANGE.green * 255),
@@ -61,11 +58,18 @@ public class LEDs extends SubsystemBase {
                                                         (int) (LEDS.OFF.blue * 255))));
                 }
         
-                public void displayindexerRunning() { //(4)
+                public void displayindexerRunningForward() { 
                         candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
                                         .withColor(new RGBWColor((int) (LEDS.WHITE.red * 255),
                                                         (int) (LEDS.WHITE.green * 255),
                                                         (int) (LEDS.WHITE.blue * 255))));
+                }
+
+                public void displayindexerRunningReverse() {
+                        candle.setControl(new SolidColor(LEDS.LED_CANDLE_COUNT, LEDS.FULL_LED_COUNT)
+                                        .withColor(new RGBWColor((int) (LEDS.PURPLE.red * 255),
+                                                        (int) (LEDS.PURPLE.green * 255),
+                                                        (int) (LEDS.PURPLE.blue * 255))));
                 }
         
                 public void displayHasTagsLEDs() {

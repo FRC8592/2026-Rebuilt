@@ -442,13 +442,20 @@ public class Scoring extends SubsystemBase {
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (indexer.indexerRunning) {
-            leds.displayindexerRunning();
+            leds.displayindexerRunningForward();
+        }
+
+        if (indexer.reverseIndexerRunning) {
+            leds.displayindexerRunningReverse();
         }
 
         if (trackingTarget) {
             if (indexer.indexerRunning) {
-                leds.displayindexerRunning();
-            } else if (canShoot()) {
+                leds.displayindexerRunningForward();
+            } else if (indexer.reverseIndexerRunning) {
+                leds.displayindexerRunningReverse();
+            }
+            else if (canShoot()) {
                 leds.setCanShoot();
             } else {
                 leds.setCannotShoot();
