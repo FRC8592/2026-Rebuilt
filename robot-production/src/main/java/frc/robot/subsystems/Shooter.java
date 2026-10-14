@@ -56,7 +56,6 @@ public class Shooter extends SubsystemBase {
         /**
          * Shooter Current Limit. THIS IS NOT ENABLED RIGHT NOW!
          */
-        // TODO: Enable this current limit if problems!
 
         leftMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
         rightMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);

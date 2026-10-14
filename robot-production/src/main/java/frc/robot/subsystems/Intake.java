@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INTAKE;
@@ -32,6 +30,7 @@ public class Intake extends SubsystemBase {
         rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true);
 
         rollerLeftMotor.setFollower(rollerRightMotor, MotorAlignmentValue.Opposed);
+        rollerLeftMotor.setCurrentLimit(INTAKE.ROLLER_CURRENT_LIMIT);
 
         /*
          * Create the Extension motor and instatiate the following features Reset to safe factory
@@ -64,9 +63,12 @@ public class Intake extends SubsystemBase {
      * Retract the intake at controlled speed
      */
     public void retractIntake() {
-        retractionPosition += INTAKE.RETRACT_ROTATION_INCREMENT;
-
-        extendMotor.setVoltage(-6);
+        if (getExtendPosition() < 0d){
+            extendMotor.setVoltage(6);
+        }
+        else{
+            extendMotor.setPosition(0d);
+        }
     }
 
     /**
