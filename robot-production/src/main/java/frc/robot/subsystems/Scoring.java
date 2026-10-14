@@ -443,6 +443,7 @@ public class Scoring extends SubsystemBase {
 
         if (indexer.indexerRunning) {
             leds.displayindexerRunning();
+            SmartDashboard.putBoolean("Indexer Running", true);
         }
 
         if (trackingTarget) {
@@ -450,6 +451,7 @@ public class Scoring extends SubsystemBase {
                 leds.displayindexerRunning();
             } else if (canShoot()) {
                 leds.setCanShoot();
+                SmartDashboard.putBoolean("Can shoot", true);
             } else {
                 leds.setCannotShoot();
             }
