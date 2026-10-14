@@ -70,6 +70,9 @@ public class Scoring extends SubsystemBase {
         SmartDashboard.putNumber("SOTMdt", 0.2);
 
         Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+
+        SmartDashboard.putBoolean("Indexer Running", false);
+        SmartDashboard.putBoolean("Can shoot", false);
     }
 
     /**
@@ -449,6 +452,7 @@ public class Scoring extends SubsystemBase {
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunning();
+                SmartDashboard.putBoolean("Indexer Running", true);
             } else if (canShoot()) {
                 leds.setCanShoot();
                 SmartDashboard.putBoolean("Can shoot", true);
