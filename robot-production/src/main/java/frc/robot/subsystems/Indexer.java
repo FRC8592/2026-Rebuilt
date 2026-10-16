@@ -58,4 +58,8 @@ public class Indexer extends SubsystemBase{
         return this.runOnce(()-> spinMotor.getCurrent()).andThen (() -> {indexerJamming = true;}); 
     }
 
+    public double getIndexerCurrent(){
+        return spinMotor.getCurrent();
+    }
+
 }

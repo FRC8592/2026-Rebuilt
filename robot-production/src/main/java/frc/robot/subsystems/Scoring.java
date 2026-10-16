@@ -212,6 +212,14 @@ public class Scoring extends SubsystemBase {
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
     }
 
+    public boolean IndexerJamming() {
+        if(indexer.getIndexerCurrent() > 50){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void increaseRPM() {
         shooterSpeedOffset += SCORING.RPM; // Orginally 10 
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
@@ -449,10 +457,9 @@ public class Scoring extends SubsystemBase {
             SmartDashboard.putBoolean("Indexer Running", true);
         }
 
-        //if(indexer.indexerJamming){
-        //     SmartDashboard.putBoolean("Indexer Jamming", ( ));
-        // }
-
+        if (indexer.indexerJamming) {
+            SmartDashboard.putBoolean("Indexer Jamming", true);
+        } 
         
 
         if (trackingTarget) {
