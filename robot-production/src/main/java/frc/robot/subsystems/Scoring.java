@@ -452,8 +452,6 @@ public class Scoring extends SubsystemBase {
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunningForward();
-            } else if (indexer.reverseIndexerRunning) {
-                leds.displayindexerRunningReverse();
             }
             else if (canShoot()) {
                 leds.setCanShoot();
