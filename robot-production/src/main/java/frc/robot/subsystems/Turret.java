@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -157,7 +158,7 @@ public class Turret extends SubsystemBase {
         // turretMotorConfig.withMotionMagic(turretMMConfig);
 
         /** */
-        teethOffset = calcAngle(E1.get(), E2.get());
+        //teethOffset = calcAngle(E1.get(), E2.get());
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
@@ -223,8 +224,15 @@ public class Turret extends SubsystemBase {
     /**
      * Get the encoder values the define the turret zero position.
      */
-    public void resetPos() {
-        turretMotor.setPosition(0);
+   public void resetPos() {
+        if (!E1.isConnected() || !E2.isConnected()) {
+            return;
+        }
+
+        teethOffset = calcAngle(E1.get(), E2.get());
+
+        double turretDeg = teethOffset * 360.0 / TURRET.TURRET_GT;
+        turretMotor.setPosition(turretDeg * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
     public double getRawTurretAngle() {
