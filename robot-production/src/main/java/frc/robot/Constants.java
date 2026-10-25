@@ -256,7 +256,7 @@ public final class Constants {
   public final class INDEXER {
     // CAN IDs for the Indexer motors
     public static final int SPINNER_CAN_ID = 16;
-    public static final int OUTPUT_CAN_ID = 38;
+    // public static final int OUTPUT_CAN_ID = 38; Unused at the moment.
 
     public static final double SPIN_P = 0.0001;
     public static final double SPIN_I = 0;
