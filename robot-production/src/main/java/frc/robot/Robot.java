@@ -258,6 +258,12 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
   }
 
+  /** This function is called periodically during teleop. */
+  @Override
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
+  }
+
   @Override
   public void teleopExit() {
     mTimer.stop();
