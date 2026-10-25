@@ -254,6 +254,7 @@ public class Shooter extends SubsystemBase {
         }
 
     }
+    
 
 
     /**
@@ -263,6 +264,8 @@ public class Shooter extends SubsystemBase {
     // TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of
     // feedforward constants
     public void periodic() {
+        boolean leftIsAbnormal = getLeftMotorCurrent() > SHOOTER.SHOOTER_CURRENT_LIMIT;
+        boolean rightIsAbnormal = getRightMotorCurrent() > SHOOTER.SHOOTER_CURRENT_LIMIT;
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
                 getLeftVelocityShooter() * 60d);
@@ -276,6 +279,8 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
                 getRightMotorCurrent());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Current Abnormal", leftIsAbnormal);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Current Abnormal", rightIsAbnormal);
     }
 
 }
