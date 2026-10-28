@@ -165,21 +165,10 @@ public class Scoring extends SubsystemBase {
     }
 
     /**
-     * Command to run the intake at a set speed Just pass the command from Intake up to the next
-     * level
-     */
-    // public Command runAtSpeedIntakeCommand() {
-    // return intake.runAtSpeedIntakeCommand();
-    // }
-
-    /**
      * Command to run the indexer at a set speed Just pass the command from Indexer up to the next
      * level
      */
     public Command runAtSpeedIndexerCommand() {
-        // if (shooter.getVelocityFlywheel() > SCORING.SHOOTER_THRESHOLD) {
-        // return indexer.runIndexerCommand();
-        // }
         return indexer.runIndexerCommand();
     }
 
@@ -471,10 +460,7 @@ public class Scoring extends SubsystemBase {
             filterVelY = filterVelY*velocityFilter + rawVelY*(1-velocityFilter);
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY, omega);
-            //shooterSpeed = SOTMResults.getFirst();
             turretAngle = SOTMResults.getSecond() + turretAngleOffset;
-            //shooterSpeed = shooterSpeedHub(targetDistance);
-            //shooterSpeed = SmartDashboard.getNumber("shooterV", 0.0);
             shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
 
             // Log the current distance-to-target and shooter speed for debugging
