@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,7 +40,11 @@ public class Robot extends LoggedRobot {
 
   private static int periodicCounter = 0;
   private static int tagCounter = 0;
-  private double delay = 0.0;
+  private Timer mTimer = new Timer();
+  private static final int AUTO_TIME = 20;
+  private static final int TELEOP_TIME = 140;
+  private static final String AUTO_TIME_KEY = "AutoTime";
+  private static final String TELOP_TIME_KEY = "TelopTime";
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -90,6 +95,9 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    SmartDashboard.putNumber(TELOP_TIME_KEY, 0);
+    SmartDashboard.putNumber(AUTO_TIME_KEY, 0);
+
   }
 
 
@@ -196,6 +204,8 @@ public class Robot extends LoggedRobot {
     // m_robotContainer.scoring.intake.updatePID();
     //m_robotContainer.scoring.turret.updatePID();
 
+    
+
   }
 
   /**
@@ -215,37 +225,59 @@ public class Robot extends LoggedRobot {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
       
     }
+    mTimer.restart();
+    mTimer.start();
+    SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int)mTimer.get());
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int)mTimer.get());
+  }
 
   @Override
   public void autonomousExit() {
-
+    mTimer.stop();
   }
 
   @Override
   public void teleopInit() {
-    // Cancel the auto path and any separately scheduled PathPlanner event commands.
-    CommandScheduler.getInstance().cancelAll();
-    m_autonomousCommand = null;
-
+    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME);
     // Stop any mechanisms that remain running after autonomous or last teleop session
     m_robotContainer.scoring.disableTrackingCommand();
     m_robotContainer.scoring.indexer.stopCommand();
     m_robotContainer.scoring.intake.stopRoller();
     m_robotContainer.scoring.intake.stopExtender();
-    Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", true);
+
+    boolean cancelledAuto = false;
+
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (m_autonomousCommand != null) {
+      cancelledAuto = true;
+      CommandScheduler.getInstance().cancel(m_autonomousCommand);
+      Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
+      // m_robotContainer.scoring.intake.setCoastMode();
+      // m_autonomousCommand.cancel();
+    }
+    mTimer.restart();
+    mTimer.start();
+    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
   }
 
-  /** This function is called periodically during operator control. */
+  /** This function is called periodically during teleop. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+    mTimer.stop();
+  }
 
   @Override
   public void testInit() {
