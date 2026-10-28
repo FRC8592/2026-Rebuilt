@@ -342,6 +342,12 @@ public class Swerve extends SubsystemBase {
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
+
+        if (driveTranslateX*driveTranslateX + driveTranslateY*driveTranslateY >= 0.6*0.6) {
+            driveTranslateX = 0;
+            driveTranslateY = 0;
+        }
+
         return smoothingFilter
                 .smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
