@@ -261,26 +261,19 @@ public class Turret extends SubsystemBase {
      * @param E2
      * @return returns value relative to main turret gear of offset necessary to recenter turret
      */
-    public int calcAngle(double E1, double E2) {
-        
-        // R1 and R2 is the current offsets (In teeth) for Gear 1 and Gear 2 respectively
-        int R1 = (int) (E1 * TURRET.TURRET_G1);
-        int R2 = (int) (E2 * TURRET.TURRET_G2);
+    public int calcAngle(double e1, double e2) {
+        int g1 = (int) TURRET.TURRET_G1;
+        int g2 = (int) TURRET.TURRET_G2;
 
-        // Makes a mods and multilples list for the CRT class
-        int[] mods = new int[] {R1, R2};
-        int[] multiples = new int[] {(int) TURRET.TURRET_G1, (int) TURRET.TURRET_G2};
+        int r1 = Math.floorMod((int) Math.round(e1 / 360.0 * g1), g1);
+        int r2 = Math.floorMod((int) Math.round(e2 / 360.0 * g2), g2);
 
-        CRT crt = new CRT(multiples, mods);
-        int angle = crt.solve();
+        CRT crt = new CRT(new int[] {g1, g2}, new int[] {r1, r2});
+        int lcm = crt.getLcm();
+        int teeth = crt.solve();
 
-        // While the angle is outside the correct limits, add or subtract the lcm of the gears
-        while (angle > TURRET.TURRET_GT/2 || angle < -1*TURRET.TURRET_GT/2) {
-            angle -= Math.signum(angle*1.0) * crt.getLcm();
-        }
-
-        // retirms angle
-        return angle;
+        return Math.floorMod(teeth + lcm / 2, lcm) - lcm / 2;
+    
 
 
         // .......... Fall Back Code ........... //

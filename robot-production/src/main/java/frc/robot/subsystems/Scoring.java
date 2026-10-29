@@ -68,7 +68,7 @@ public class Scoring extends SubsystemBase {
         double teethPerTurretRotation = TURRET.TURRET_GT; // Total teeth on main ring
         double teethDegrees = (turret.getTeethOffset()/teethPerTurretRotation) * 360.0;
 
-        turretAngleOffset = teethDegrees;
+        turretAngleOffset = (teethDegrees % 360);
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
