@@ -70,6 +70,9 @@ public class Scoring extends SubsystemBase {
         SmartDashboard.putNumber("SOTMdt", 0.2);
 
         Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+
+        SmartDashboard.putBoolean("Indexer Running", false);
+        SmartDashboard.putBoolean("Can shoot", false);
     }
 
     /**
@@ -207,6 +210,14 @@ public class Scoring extends SubsystemBase {
         // && Math.abs(shooter.getVelocityFlywheel() -
         // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
         // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
+    }
+
+    public boolean IndexerJamming() {
+        if(indexer.getIndexerCurrent() > 50){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void increaseRPM() {
@@ -449,12 +460,18 @@ public class Scoring extends SubsystemBase {
             leds.displayindexerRunningReverse();
         }
 
+        if (indexer.indexerJamming) {
+            SmartDashboard.putBoolean("Indexer Jamming", true);
+        } 
+        
+
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunningForward();
             }
             else if (canShoot()) {
                 leds.setCanShoot();
+                SmartDashboard.putBoolean("Can shoot", true);
             } else {
                 leds.setCannotShoot();
             }
