@@ -269,8 +269,8 @@ public class Turret extends SubsystemBase {
         int r2 = Math.floorMod((int) Math.round(e2 / 360.0 * g2), g2);
 
         CRT crt = new CRT(new int[] {g1, g2}, new int[] {r1, r2});
-        int lcm = crt.getLcm();
         int teeth = crt.solve();
+        int lcm = crt.getLcm();
 
         return Math.floorMod(teeth + lcm / 2, lcm) - lcm / 2;
     
