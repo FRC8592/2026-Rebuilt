@@ -453,8 +453,11 @@ public class Scoring extends SubsystemBase {
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (indexer.indexerRunning) {
-            leds.displayindexerRunning();
-            SmartDashboard.putBoolean("Indexer Running", true);
+            leds.displayindexerRunningForward();
+        }
+
+        if (indexer.reverseIndexerRunning) {
+            leds.displayindexerRunningReverse();
         }
 
         if (indexer.indexerJamming) {
@@ -464,9 +467,9 @@ public class Scoring extends SubsystemBase {
 
         if (trackingTarget) {
             if (indexer.indexerRunning) {
-                leds.displayindexerRunning();
-                SmartDashboard.putBoolean("Indexer Running", true);
-            } else if (canShoot()) {
+                leds.displayindexerRunningForward();
+            }
+            else if (canShoot()) {
                 leds.setCanShoot();
                 SmartDashboard.putBoolean("Can shoot", true);
             } else {

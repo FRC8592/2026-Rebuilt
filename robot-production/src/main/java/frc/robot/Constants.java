@@ -289,20 +289,21 @@ public final class Constants {
 
   public final class LEDS {
     public static final int LEDS_CAN_ID = 33; 
-    public static final Color HOT_PINK = new Color (255,29 ,206); 
-    public static final Color PRISMARINE = new Color(126, 171, 172);
-    public static final Color TEAL = new Color(0, 64, 192);
-    public static final Color ORANGE = new Color(192, 64, 0);
-    public static final Color WHITE = new Color(255, 255, 255);
-    public static final Color GREEN = new Color(0, 255, 0);
-    public static final Color RED = new Color(255, 0, 0);
-    public static final Color OFF = new Color(0, 0, 0);
-    public static final Color YELLOW = new Color(255, 255, 0);
-    public static final Color PURPLE = new Color(255, 0, 255);
-    public static final int LED_STRIP_LENGTH = 51;
-    public static final int LED_CANDLE_COUNT = 8;
-    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT;
-    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/";
+    public static final Color RAINBOW = new Color(255, 0, 0); // (N/A)
+    public static final Color HOT_PINK = new Color (255,29 ,206); // (N/A) 
+    public static final Color PRISMARINE = new Color(126, 171, 172); // (N/A) 
+    public static final Color TEAL = new Color(0, 64, 192); //Can shoot 
+    public static final Color ORANGE = new Color(192, 64, 0); // Cannot shoot
+    public static final Color WHITE = new Color(255, 255, 255); // Indexer running forward (attempt to change to rainbow)
+    public static final Color GREEN = new Color(0, 255, 0); // 2 or more apriltags detected 
+    public static final Color RED = new Color(255, 0, 0); // 0 apriltags detected
+    public static final Color OFF = new Color(0, 0, 0); // LEDs off
+    public static final Color YELLOW = new Color(255, 255, 0); // 1 apriltag detected
+    public static final Color PURPLE = new Color(255, 0, 255); //dyerotor reverse (operator pressed button to reverse dyerotor [priotized over shooting])
+    public static final int LED_STRIP_LENGTH = 51; //Total number of LEDs on the LED strip, excluding the CANdle LEDs
+    public static final int LED_CANDLE_COUNT = 8; // Number of CANdle LEDs
+    public static final int FULL_LED_COUNT = LED_STRIP_LENGTH + LED_CANDLE_COUNT; // Total number of LEDs including the CANdle LEDs
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/LEDS/"; 
   }
 
 }
