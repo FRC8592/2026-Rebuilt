@@ -9,6 +9,7 @@ import java.util.Set;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -159,6 +160,15 @@ private final Trigger HEADING_LOCK = driverController.rightBumper();
 
     ROBOT_RELATIVE.onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
         .onFalse(Commands.runOnce(() -> swerve.setRobotRelative(false)).ignoringDisable(true));
+HEADING_LOCK.whileTrue(
+    swerve.run(() -> {
+      ChassisSpeeds speeds = swerve.processJoystickInputs(
+          -driverController.getLeftX(),
+          -driverController.getLeftY(),
+          0.0);
+
+      swerve.driveAtHeading(speeds);
+    }));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
