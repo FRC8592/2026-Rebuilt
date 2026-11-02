@@ -65,10 +65,7 @@ public class Scoring extends SubsystemBase {
         indexer = new Indexer();
 
         // 1. Convert the CRT teeth directly to standard degrees
-        double teethPerTurretRotation = TURRET.TURRET_GT; // Total teeth on main ring
-        double teethDegrees = (turret.getTeethOffset()/teethPerTurretRotation) * 360.0;
-
-        turretAngleOffset = (teethDegrees % 360);
+        turretAngleOffset = 0;
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);

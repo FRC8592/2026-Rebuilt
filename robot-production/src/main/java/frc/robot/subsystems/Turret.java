@@ -350,6 +350,9 @@ public class Turret extends SubsystemBase {
         // TODO: Implement CRT Again!
         // Logger.recordOutput("Gear Ticks " , CRT(E1.get(), E2.get() -
         // ));
+        Logger.recordOutput(TURRET.LOG_PATH + "CRT Angle Live",
+        calcAngle(E1.get(), E2.get()) * 360.0 / TURRET.TURRET_GT);
+
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
                 turretMotor.getPosition().getValueAsDouble()
                         * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
