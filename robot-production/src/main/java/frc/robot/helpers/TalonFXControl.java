@@ -2,13 +2,20 @@ package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.measure.Current;
+import frc.robot.Constants.TURRET;
+
 import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
@@ -20,6 +27,8 @@ public class TalonFXControl {
     private Slot2Configs motorPIDSlot2Configs;
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
+    private SoftwareLimitSwitchConfigs positionLimitConfig;
+    private PositionVoltage positionRequest;
 
     /**
      * @param canId
@@ -45,7 +54,8 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
-
+        positionLimitConfig = new SoftwareLimitSwitchConfigs();
+        positionRequest = new PositionVoltage(0);
     }
 
     /**
@@ -211,6 +221,27 @@ public class TalonFXControl {
      */
     public void applyConfig(){
         motor.getConfigurator().apply(motorConfig);
+    }
+
+    /**
+     * When set to true, forces motor to utilize brake mode behaviour during a neutral state.
+     */
+    public void overrideBrakeDurNeutral(boolean override){
+        positionRequest.withOverrideBrakeDurNeutral(override);
+    }
+
+    /**
+     * Configures whether the motor spins clockwise or counterclockwise for positive control demands
+     */
+    public void inverted(InvertedValue direction){
+        motorConfig.MotorOutput.withInverted(direction);
+    }
+
+    /**
+     * Restricts the maximum electrical current allowed to flow through a motor's stator windings
+     */
+    public void statorCurrentLimit(Current currentLimit, boolean enable){
+        motorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT).withStatorCurrentLimitEnable(enable);
     }
 }
 

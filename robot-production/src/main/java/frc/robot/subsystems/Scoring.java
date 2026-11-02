@@ -6,10 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -21,27 +18,21 @@ import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.TURRET;
 import frc.robot.subsystems.swerve.Swerve;
-import static edu.wpi.first.units.Units.*;
 
 public class Scoring extends SubsystemBase {
-    // Subsystems
-    Swerve swerve; // Passed into the constructor so that we can get the current robot pose for
-                   // tracking
+    Swerve swerve; // Passed into the constructor so that we can get the current robot pose for tracking
     public Turret turret;
     public Shooter shooter;
     public Indexer indexer;
     public Intake intake;
     public LEDs leds;
-    // Make tracking subsystems toggle on and off
+
     private boolean trackingTarget = false;
     private boolean overrideTracking = false;
     private double kFactor = 0.925;
     private double kAdjustment = 0.73;
     private boolean targetIsHub;
     private Alliance alliance;
-    private double shooterSpeedOffset = 0;
-    private double turretAngleOffset = 0;
-    private double dt = 0.2;
     private double velocityFilter = 0.2;
     private double distance = 0;
     double filterVelX = 0;
@@ -56,27 +47,15 @@ public class Scoring extends SubsystemBase {
         this.swerve = swerve;
         this.leds = leds;
 
-        //
-        // Instantiate subsystems
-        //
         turret = new Turret();
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
 
         SmartDashboard.putNumber("shooterV", 0.0);
-        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
-        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
         SmartDashboard.putNumber("SOTMdt", 0.2);
-
-        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
     }
 
-    /**
-     * Sets the alliance from the DriverStation
-     * 
-     * @param alliance Alliance
-     */
     public void setAlliance(Alliance alliance) {
         this.alliance = alliance;
     }
@@ -107,7 +86,7 @@ public class Scoring extends SubsystemBase {
                 targetIsHub = false;
             }
         }
-        else { // If alliance == Alliance.Red
+        else { // if alliance == Alliance.Red
             // if we're in our alliance zone
             if (currentRobotPose.getX() > ((MEASUREMENTS.FIELD_X_METERS * 0.75) - 0.5)){
                 targetPose = SCORING.RED_HUB_POSE;
@@ -125,10 +104,6 @@ public class Scoring extends SubsystemBase {
         return targetPose;
     }
 
-    /**
-     * Toggle the Tracking system on and off. The tracking system includes the turret angle and the
-     * shooter speed
-     */
     private void toggleTracking() {
         trackingTarget = !trackingTarget;
         overrideTracking = false;
@@ -153,93 +128,35 @@ public class Scoring extends SubsystemBase {
         return this.runOnce(() -> overrideTracking());
     }
 
-    /**
-     * Turn the tracking system off.
-     */
     public void disableTracking() {
         trackingTarget = false;
         overrideTracking = false;
-        // TODO: Disable the turret stop command to use OverrideBrakeDurNeutral
         turret.stop();
         shooter.stop();
     }
 
-    /**
-     * Command to run the indexer at a set speed Just pass the command from Indexer up to the next
-     * level
-     */
-    public Command runAtSpeedIndexerCommand() {
-        return indexer.runIndexerCommand();
-    }
-
-    /**
-     * Command to toggle turret tracking and shooter wheel speed
-     */
     public Command toggleTrackingCommand() {
         return this.runOnce(() -> toggleTracking());
     }
 
-    /**
-     * Command to turn off turret tracking and shooter wheel speed
-     */
     public Command disableTrackingCommand() {
         return this.runOnce(() -> disableTracking());
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public boolean canShoot() {
-        // TODO: Change so it can use blue or red hub tracking
-        return Math.abs(turret.getAngle() - turret.getTargetAngle()) <= TURRET.TURRET_TOLERANCE;
-        // && Math.abs(shooter.getVelocityFlywheel() -
-        // RangeTable.get(swerve.getCurrentOdometryPosition().getTranslation().getDistance(getTarget(swerve.getCurrentOdometryPosition()).getTranslation()),
-        // targetIsHub)) <= SHOOTER.SHOOTER_TOLERANCE
-    }
-
-    public void increaseRPM() {
-        shooterSpeedOffset += SCORING.RPM; // Orginally 10 
-        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
-    }
-
-    /**
-     * @return Command to increase RPM offset by 50
-     */
     public Command increaseRPMCommand() {
-        return this.runOnce(() -> increaseRPM());
+        return shooter.increaseRPMCommand();
     }
 
-    public void decreaseRPM() {
-        shooterSpeedOffset -= SCORING.RPM; //Orginally 10
-        SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
-    }
-
-    /**
-     * @return Command to decrease RPM offset by 50
-     */
     public Command decreaseRPMCommand() {
-        return this.runOnce(() -> decreaseRPM());
+        return shooter.decreaseRPMCommand();
     }
 
-    public void turretRight() {
-        turretAngleOffset -= 5;
-        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
-        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+    public Command turretRightCommand() {
+        return turret.turretRightCommand();
     }
 
-    public Command turretRightCommand(){
-        return this.runOnce(() -> turretRight());
-    }
-
-    public void turretLeft() {
-        turretAngleOffset += 5;
-        SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
-        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
-    }
-
-    public Command turretLeftCommand(){
-        return this.runOnce(() -> turretLeft());
+    public Command turretLeftCommand() {
+        return turret.turretLeftCommand();
     }
 
     public static double solveV0y(
@@ -389,19 +306,13 @@ public class Scoring extends SubsystemBase {
         }
     }
 
-    public double shootSpeed(double targetX, double targetY) {
+    public void updateDistance(double targetX, double targetY){
         distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2));
+    }
 
-        if (distance <= 2.0){
-            return 156d * distance + 1019d;
-        }  else {
-            return Math.pow((156d * distance + 1019d), SCORING.RANGE_EXPO);
-        }   
-    } 
-
-    /**`
+    /**
      * If the tracking system is toggled on, update the required turret angle and shooter speed
-     * Shoot On The Move
+     * Includes Shoot On The Move
      **/
     @Override
     public void periodic() {
@@ -425,9 +336,7 @@ public class Scoring extends SubsystemBase {
         currentTargetPose = getTarget(currentRobotPose);
 
         Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
-        // TODO: Put this back in tracking method
-        targetDistance =
-                currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+        targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (indexer.indexerRunning) {
@@ -437,7 +346,7 @@ public class Scoring extends SubsystemBase {
         if (trackingTarget) {
             if (indexer.indexerRunning) {
                 leds.displayindexerRunning();
-            } else if (canShoot()) {
+            } else if (turret.canShoot()) {
                 leds.setCanShoot();
             } else {
                 leds.setCannotShoot();
@@ -460,8 +369,10 @@ public class Scoring extends SubsystemBase {
             filterVelY = filterVelY*velocityFilter + rawVelY*(1-velocityFilter);
 
             Pair<Double, Double> SOTMResults = SOTM(targetX, targetY, filterVelX, filterVelY, omega);
-            turretAngle = SOTMResults.getSecond() + turretAngleOffset;
-            shooterSpeed = shootSpeed(targetX, targetY) + shooterSpeedOffset;
+            turretAngle = SOTMResults.getSecond() + turret.getTurretAngleOffset();
+            // Update distance to target and set shooter speed
+            updateDistance(targetX, targetY);
+            shooterSpeed = shooter.shootSpeed(distance) + shooter.getShooterSpeedOffset();
 
             // Log the current distance-to-target and shooter speed for debugging
             Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second

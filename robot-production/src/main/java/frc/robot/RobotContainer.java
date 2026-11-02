@@ -170,12 +170,9 @@ public class RobotContainer {
     INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
         .onFalse(scoring.intake.stopExtendCommand());
 
-    // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
-    // pushed around.
     LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
 
-    // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
-    // toggle.
+    // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a toggle.
     ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
 
     SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
@@ -185,12 +182,6 @@ public class RobotContainer {
 
     MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
 
-    // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
-
-    // SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
-    //     .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
-    //     .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
-    //     .andThen(scoring.indexer.stopCommand()));
 
     INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
     DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
