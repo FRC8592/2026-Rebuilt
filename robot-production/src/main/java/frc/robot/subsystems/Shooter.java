@@ -45,7 +45,9 @@ public class Shooter extends SubsystemBase {
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_LONG, SHOOTER.SHOOTER_A, 2);
 
         leftMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
+        leftMotor.applyConfig();
         rightMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
+        rightMotor.applyConfig();
 
         //Set the Shooter Right Motor to follow the Left Shooter Motor in the inverse direction
         rightMotor.setFollower(leftMotor, MotorAlignmentValue.Opposed);

@@ -52,28 +52,14 @@ public class Turret extends SubsystemBase {
 
         turretMotor.overrideBrakeDurNeutral(true);
         turretMotor.inverted(InvertedValue.Clockwise_Positive);
-        turretMotor.statorCurrentLimit(TURRET.CURRENT_LIMIT, true);
+        turretMotor.statorCurrentLimit(TURRET.CURRENT_LIMIT);
 
-        /**
-         * Turret Motor Software "Soft" Limit Configurations. These prevent overrotation of the turret.
-         */
-        positionLimitConfig
-            .withForwardSoftLimitThreshold(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
-            .withReverseSoftLimitEnable(true);
-        turretMotorConfig.withSoftwareLimitSwitch(positionLimitConfig);
+        turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
 
-        /**
-         * Turret Motor PID Configuration and Constants
-         */
-        turretPIDConfig.withKP(TURRET.TURRET_P.in(Volts)).withKI(TURRET.TURRET_I.in(Volts))
-                .withKD(TURRET.TURRET_D.in(Volts)).withKS(TURRET.TURRET_S.in(Volts))
-                .withKV(TURRET.TURRET_V.in(Volts)).withKA(TURRET.TURRET_A.in(Volts));
+        turretMotor.setPID(TURRET.TURRET_P.in(Volts), TURRET.TURRET_I.in(Volts), TURRET.TURRET_D.in(Volts), TURRET.TURRET_S.in(Volts), TURRET.TURRET_V.in(Volts), TURRET.TURRET_A.in(Volts), 0);
 
-        turretMotorConfig.withSlot0(turretPIDConfig);
-
-        turretMotor.getConfigurator().apply(turretMotorConfig);
+        turretMotor.applyConfig();
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
         SmartDashboard.putNumber("tI", TURRET.TURRET_I.in(Volts));
@@ -97,6 +83,7 @@ public class Turret extends SubsystemBase {
         logAngle(target);
         turretMotor.setControl(positionRequest.withSlot(0)
                 .withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        turretMotor.setVelocityControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
     }
 
     public void basicTurretToPos(double angle) {
@@ -110,7 +97,7 @@ public class Turret extends SubsystemBase {
 
     //Not normally used; we want the turret to hold position with the motor
     public void stop() {
-        turretMotor.setVoltage(0);
+        turretMotor.stop();
     }
 
     // Not normally used; we want the turret to hold position with the motor
@@ -166,8 +153,9 @@ public class Turret extends SubsystemBase {
     }
 
     public void holdPosition() {
-        double holdPos = turretMotor.getPosition().getValueAsDouble();
-        turretMotor.setControl(positionRequest.withSlot(0).withPosition(holdPos));
+        double holdPos = turretMotor.getPosition();
+        turretMotor.setPositionSlot(0);
+        turretMotor.setPosition(holdPos);
     }
 
     /**

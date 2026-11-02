@@ -2,8 +2,6 @@ package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
@@ -27,7 +25,6 @@ public class TalonFXControl {
     private Slot2Configs motorPIDSlot2Configs;
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
-    private SoftwareLimitSwitchConfigs positionLimitConfig;
     private PositionVoltage positionRequest;
 
     /**
@@ -54,7 +51,6 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
-        positionLimitConfig = new SoftwareLimitSwitchConfigs();
         positionRequest = new PositionVoltage(0);
     }
 
@@ -64,9 +60,20 @@ public class TalonFXControl {
      */
 
     public void setPosition(double rotations){
-        PositionVoltage positionVoltage = new PositionVoltage(rotations);
-        motor.setControl(positionVoltage.withPosition(rotations));
+        motor.setControl(positionRequest.withPosition(rotations));
         motor.setPosition(rotations);
+    }
+
+    public void setPositionSlot(int slot){
+        if (slot == 0){
+            motor.setControl(positionRequest.withSlot(0));
+        }
+        else if (slot == 1){
+            motor.setControl(positionRequest.withSlot(1));
+        }
+        else if (slot == 2){
+            motor.setControl(positionRequest.withSlot(2));
+        }
     }
 
     /**
@@ -118,20 +125,20 @@ public class TalonFXControl {
     }
 
     public void setForwardSoftLimit(double forwardRotations){
-
-        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardRotations;
+        motorConfig.SoftwareLimitSwitch
+            .withForwardSoftLimitThreshold(forwardRotations)
+            .withForwardSoftLimitEnable(true);
     }
 
     public void setReverseSoftLimit(double reverseRotations){
-        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseRotations;
+        motorConfig.SoftwareLimitSwitch
+            .withReverseSoftLimitThreshold(reverseRotations)
+            .withReverseSoftLimitEnable(true);
     }
 
     public void setCurrentLimit(double currentLimit){
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
-        applyConfig();
     }
 
     public void createSlot0(){
@@ -240,8 +247,8 @@ public class TalonFXControl {
     /**
      * Restricts the maximum electrical current allowed to flow through a motor's stator windings
      */
-    public void statorCurrentLimit(Current currentLimit, boolean enable){
-        motorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT).withStatorCurrentLimitEnable(enable);
+    public void statorCurrentLimit(Current currentLimit){
+        motorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT).withStatorCurrentLimitEnable(true);
     }
 }
 
