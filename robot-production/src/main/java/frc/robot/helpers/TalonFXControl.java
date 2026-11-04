@@ -224,6 +224,16 @@ public class TalonFXControl {
     }
 
     /**
+     * Sets position using degrees
+     * @param desiredDegrees
+     * @param slot
+     */
+    public void setPositionControl (double desiredDegrees, int slot){
+        motor.setControl(positionRequest.withSlot(slot).withPosition(desiredDegrees));
+    }
+
+
+    /**
      * Configures the motors themselves with the configuration we have done.
      */
     public void applyConfig(){

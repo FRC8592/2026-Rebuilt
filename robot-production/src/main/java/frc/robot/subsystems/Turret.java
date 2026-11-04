@@ -81,8 +81,7 @@ public class Turret extends SubsystemBase {
         if (Math.abs(target) > TURRET.MAX_ROTATION_LIMIT)
             target -= Math.signum(target) * 360;
         logAngle(target);
-        turretMotor.setControl(positionRequest.withSlot(0)
-                .withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        turretMotor.setPositionControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
         turretMotor.setVelocityControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
     }
 
@@ -217,7 +216,7 @@ public class Turret extends SubsystemBase {
     }
 
     public double getAngle() {
-        return turretMotor.getPosition().getValueAsDouble() / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        return turretMotor.getPosition() / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
     public double getTargetAngle() {
@@ -235,12 +234,12 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("E2", E2.get());
 
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
-                turretMotor.getPosition().getValueAsDouble()
+                turretMotor.getPosition()
                         * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
-                turretMotor.getPosition().getValueAsDouble()); // rotations per second
+                turretMotor.getPosition()); // rotations per second
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
-                turretMotor.getMotorVoltage().getValueAsDouble());
+                turretMotor.getVoltage());
 
         Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
 
