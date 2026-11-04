@@ -26,7 +26,7 @@ public class SparkFlexControl {
      * Constructor for SparkFlex motors
      * Instantiates motor config, controller, and encoder
      */
-    public SparkFlexControl(int canId, boolean coastMode){
+    public SparkFlexControl(int canId, boolean coastMode, String name){
         motor = new SparkFlex(canId, MotorType.kBrushless);
         motorConfig = new SparkFlexConfig();
         motorController = motor.getClosedLoopController();
@@ -43,7 +43,7 @@ public class SparkFlexControl {
 
         motor.set(0);
 
-        this.motorName = motorName;
+        motorName = name;
     }
 
     /**
@@ -231,11 +231,11 @@ public class SparkFlexControl {
     }
 
     public void motorLogging(String logPath){
-        Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
-        Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
-        Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
-        Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
-        Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
+        Logger.recordOutput(logPath + motorName + "/" +  "RPM", getVelocity());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Rotations", getPosition());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Ticks", getTicks());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Voltage", getVoltage());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Current", getCurrent());
     }
 
 
