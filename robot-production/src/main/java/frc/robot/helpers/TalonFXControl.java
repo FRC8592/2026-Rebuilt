@@ -224,7 +224,7 @@ public class TalonFXControl {
     }
 
     /**
-     * Sets position using degrees
+     * Sets motor position using degrees
      * @param desiredDegrees
      * @param slot
      */
