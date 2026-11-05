@@ -28,8 +28,8 @@ public class Intake extends SubsystemBase {
          * configuration Place in COAST mode (Can coast to a stop) Set current limits Set VELOCITY
          * PID parameters
          */
-        rollerRightMotor = new TalonFXControl(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, true);
-        rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true);
+        rollerRightMotor = new TalonFXControl(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, true, "rollerRightMotor");
+        rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true, "rollerLeftMotor");
 
         rollerLeftMotor.setFollower(rollerRightMotor, MotorAlignmentValue.Opposed);
 
@@ -182,11 +182,10 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
-        Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
+        rollerRightMotor.motorLogging(INTAKE.LOG_PATH);
+        rollerLeftMotor.motorLogging(INTAKE.LOG_PATH);
     }
 }

@@ -20,6 +20,7 @@ public class TalonFXControl {
     private Slot2Configs motorPIDSlot2Configs;
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
+    private String motorName;
 
     /**
      * @param canId
@@ -27,7 +28,7 @@ public class TalonFXControl {
      * Constructor for TalonFX motors
      * Instantiates motor config, encoder, current limit, velocity voltage.
      */
-    public TalonFXControl(int canId, boolean coastMode){
+    public TalonFXControl(int canId, boolean coastMode, String name){
         motor = new TalonFX(canId);
         CAN_ID = canId;
         motorConfig = new TalonFXConfiguration();
@@ -45,6 +46,8 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
+
+        motorName = name;
 
     }
 
@@ -211,6 +214,14 @@ public class TalonFXControl {
      */
     public void applyConfig(){
         motor.getConfigurator().apply(motorConfig);
+    }
+
+    public void motorLogging(String logPath){
+        Logger.recordOutput(logPath + motorName + "/" +  "RPM", getVelocity());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Rotations", getPosition());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Ticks", getTicks());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Voltage", getVoltage());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Current", getCurrent());
     }
 }
 
