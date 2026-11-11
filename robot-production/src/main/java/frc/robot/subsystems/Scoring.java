@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CONVERSIONS;
 import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
-import frc.robot.Constants.TURRET;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Scoring extends SubsystemBase {

@@ -7,41 +7,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 import org.littletonrobotics.junction.Logger;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import java.lang.Math;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import static edu.wpi.first.units.Units.*;
 import frc.robot.helpers.TalonFXControl;
 
 public class Turret extends SubsystemBase {
     private TalonFXControl turretMotor;
 
-    private PositionVoltage positionRequest;
-
     private final DutyCycleEncoder E1;
     private final DutyCycleEncoder E2;
-
-    private double P_SET;
-    private double I_SET;
-    private double D_SET;
 
     private double rawTargetAngle;
     private double targetAngle;
     private double turretAngleOffset = 0;
-
-    private static Map<Double, Double> mapValues = new HashMap<Double, Double>();
-    private static Set<Double> setLeast = new HashSet<Double>();
 
     public Turret() {
         E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET.in(Degrees));
@@ -57,8 +36,8 @@ public class Turret extends SubsystemBase {
         turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
 
-        turretMotor.setPID(TURRET.TURRET_P.in(Volts), TURRET.TURRET_I.in(Volts), TURRET.TURRET_D.in(Volts), TURRET.TURRET_S.in(Volts), TURRET.TURRET_V.in(Volts), TURRET.TURRET_A.in(Volts), 0);
-
+        turretMotor.setPID(TURRET.TURRET_P.in(Volts), TURRET.TURRET_I.in(Volts), TURRET.TURRET_D.in(Volts),
+                TURRET.TURRET_S.in(Volts), TURRET.TURRET_V.in(Volts), TURRET.TURRET_A.in(Volts), 0);
         turretMotor.applyConfig();
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
@@ -72,7 +51,6 @@ public class Turret extends SubsystemBase {
 
         this.resetPos();
     }
-
 
     public void TurrettoAngle(Pose2d robotPosition, double angle) {
         double robotAngle = robotPosition.getRotation().getDegrees();
@@ -94,7 +72,7 @@ public class Turret extends SubsystemBase {
         return this.runOnce(() -> basicTurretToPos(angle));
     }
 
-    //Not normally used; we want the turret to hold position with the motor
+    // Not normally used; we want the turret to hold position with the motor
     public void stop() {
         turretMotor.stop();
     }
@@ -108,7 +86,7 @@ public class Turret extends SubsystemBase {
      * Get the encoder values the define the turret zero position.
      */
     public void resetPos() {
-        turretMotor.setPosition(0);
+        turretMotor.setPositionControl(0, 0);
     }
 
     public double getRawTurretAngle() {
@@ -125,7 +103,7 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("turretAngleOffset", turretAngleOffset);
     }
 
-    public Command turretRightCommand(){
+    public Command turretRightCommand() {
         return this.runOnce(() -> turretRight());
     }
 
@@ -135,17 +113,16 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("turretAngleOffset", turretAngleOffset);
     }
 
-    public Command turretLeftCommand(){
+    public Command turretLeftCommand() {
         return this.runOnce(() -> turretLeft());
     }
 
-    public double getTurretAngleOffset(){
+    public double getTurretAngleOffset() {
         return turretAngleOffset;
     }
 
     /**
-     * Command to reset the zero position of the turret. This is used to recalibrate the turret, not
-     * for live control
+     * Command to reset the zero position of the turret. This is used to recalibrate the turret, not for live control
      */
     public Command resetPosCommand() {
         return this.runOnce(() -> resetPos());
@@ -153,66 +130,7 @@ public class Turret extends SubsystemBase {
 
     public void holdPosition() {
         double holdPos = turretMotor.getPosition();
-        turretMotor.setPositionSlot(0);
-        turretMotor.setPosition(holdPos);
-    }
-
-    /**
-     * @param E1
-     * @param E2
-     * @return returns value relative to main turret gear of offset necessary to recenter turret
-     */
-    public static double calcAngle(double E1, double E2) {
-        double R1 = E1 / 360d;
-        double R2 = E2 / 360d;
-        double G1 = (TURRET.TURRET_G1 * 1.0) / TURRET.TURRET_GT;
-        double G2 = (TURRET.TURRET_G2 * 1.0) / TURRET.TURRET_GT;
-        for (int i = 1; i <= TURRET.TURRET_GT; i++) {
-            double V1 = (i + R1) * G1;
-            double V2 = (i + R2) * G2 * 1.0;
-            double V1New = (i + 1 + R1) * G1 * 1.0;
-            double V2Old = (i - 1 + R2) * G2 * 1.0;
-            double V1Old = (i - 1 + R1) * G1 * 1.0;
-            double V2New = (i + 1 + R2) * G2 * 1.0;
-
-            if (Math.abs(V1Old - V2Old) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1Old - V2Old), (V1Old + V2Old) / 2d);
-            }
-
-            if (Math.abs(V1 - V2Old) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2Old), (V1 + V2Old) / 2d);
-            }
-
-            if (Math.abs(V1Old - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1Old - V2), (V1Old + V2) / 2d);
-            }
-
-            if (Math.abs(V1 - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2), (V1 + V2) / 2d);
-            }
-            if (Math.abs(V1New - V2) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1New - V2), (V1New + V2) / 2d);
-            }
-
-            if (Math.abs(V1 - V2New) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1 - V2New), (V1 + V2New) / 2d);
-            }
-
-            if (Math.abs(V1New - V2New) <= TURRET.CRT_TOLERANCE) {
-                mapValues.put(Math.abs(V1New - V2New), (V1New + V2New) / 2d);
-            }
-
-            setLeast = mapValues.keySet();
-            if (setLeast.size() != 0) {
-                System.out.println("Set: " + setLeast.toString());
-
-                Double lowest = Collections.min(setLeast);
-                System.out.println("Lowest: " + lowest);
-
-                return mapValues.get(lowest);
-            }
-        }
-        return 0;
+        turretMotor.setPositionControl(holdPos, 0);
     }
 
     public double getAngle() {
