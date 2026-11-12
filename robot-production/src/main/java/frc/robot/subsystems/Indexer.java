@@ -12,6 +12,8 @@ public class Indexer extends SubsystemBase{
 
     public boolean indexerRunning;
     public boolean reverseIndexerRunning;
+    public boolean indexerJamming;
+
 
     public Indexer(){
         spinMotor = new SparkFlexControl(INDEXER.SPINNER_CAN_ID, true);
