@@ -31,6 +31,13 @@ public final class Constants {
 
   }
 
+  public final class FIELD {
+    public static final double AIM_TARGET_X_METERS = 4.02844;
+    public static final double AIM_TARGET_Y_METERS = 4.445;
+    public static final String AIM_TARGET_X_KEY = "Field Aim/Target X Meters";
+    public static final String AIM_TARGET_Y_KEY = "Field Aim/Target Y Meters";
+  }
+
   public final class CONVERSIONS {
     public static final double METERS_TO_FEET = 3.28084;
     public static final double FEET_TO_METERS = 0.3048;

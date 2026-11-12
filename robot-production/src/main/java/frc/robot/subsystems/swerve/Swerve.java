@@ -19,12 +19,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.FIELD;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
 import frc.robot.helpers.SmoothingFilter;
+import frc.robot.helpers.Utils;
 
 public class Swerve extends SubsystemBase {
 
@@ -71,6 +74,9 @@ public class Swerve extends SubsystemBase {
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
+
+        SmartDashboard.putNumber(FIELD.AIM_TARGET_X_KEY, FIELD.AIM_TARGET_X_METERS);
+        SmartDashboard.putNumber(FIELD.AIM_TARGET_Y_KEY, FIELD.AIM_TARGET_Y_METERS);
 
         swerve = drivetrain;
 
@@ -253,6 +259,43 @@ public class Swerve extends SubsystemBase {
         swerve.setControl(robotCentric.withVelocityX(speeds.vxMetersPerSecond)
                 .withVelocityY(speeds.vyMetersPerSecond)
                 .withRotationalRate(speeds.omegaRadiansPerSecond));
+    }
+
+    /**
+     * Keeps translation under driver control while continuously facing a field point.
+     */
+    public void driveFacingFieldPoint(ChassisSpeeds speeds) {
+        Pose2d robotPose = getCurrentOdometryPosition();
+        Pose2d blueTarget = new Pose2d(
+                SmartDashboard.getNumber(FIELD.AIM_TARGET_X_KEY, FIELD.AIM_TARGET_X_METERS),
+                SmartDashboard.getNumber(FIELD.AIM_TARGET_Y_KEY, FIELD.AIM_TARGET_Y_METERS),
+                Rotation2d.kZero);
+        boolean mirrorForRed = DriverStation.getAlliance()
+                .map(alliance -> alliance == DriverStation.Alliance.Red)
+                .orElse(false);
+        Pose2d target = Utils.mirrorPose(blueTarget, mirrorForRed);
+
+        Rotation2d desiredHeading = Rotation2d.fromRadians(Math.atan2(
+                target.getY() - robotPose.getY(),
+                target.getX() - robotPose.getX()));
+        double omega = snapToAngle(desiredHeading);
+        double errorDegrees = desiredHeading.minus(robotPose.getRotation()).getDegrees();
+
+        double translationMultiplier = SWERVE.TRANSLATE_POWER_FAST;
+        if (isSnailMode) {
+            translationMultiplier = SWERVE.TRANSLATE_POWER_SNAIL;
+        } else if (isLessSlowMode) {
+            translationMultiplier = SWERVE.TRANSLATE_POWER_LESS_SLOW;
+        }
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "FieldAim/TargetPose", target);
+        Logger.recordOutput(SWERVE.LOG_PATH + "FieldAim/DesiredHeading", desiredHeading);
+        Logger.recordOutput(SWERVE.LOG_PATH + "FieldAim/ErrorDegrees", errorDegrees);
+
+        swerve.setControl(fieldCentric
+                .withVelocityX(speeds.vxMetersPerSecond * translationMultiplier)
+                .withVelocityY(speeds.vyMetersPerSecond * translationMultiplier)
+                .withRotationalRate(omega));
     }
 
     /**

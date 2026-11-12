@@ -55,6 +55,7 @@ public class RobotContainer {
   private final Trigger INTAKE_RUN = driverController.leftTrigger();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger SHOOT = driverController.rightTrigger();
+  private final Trigger FACE_FIELD_POINT = driverController.rightBumper();
 
   private final Trigger INTAKE_REVERSE = driverController.b();
 
@@ -159,6 +160,10 @@ public class RobotContainer {
 
     ROBOT_RELATIVE.onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
         .onFalse(Commands.runOnce(() -> swerve.setRobotRelative(false)).ignoringDisable(true));
+
+    FACE_FIELD_POINT.whileTrue(swerve.run(() ->
+        swerve.driveFacingFieldPoint(swerve.processJoystickInputs(
+            -driverController.getLeftX(), -driverController.getLeftY(), 0.0))));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
         .onFalse(scoring.intake.stopRollerCommand());
