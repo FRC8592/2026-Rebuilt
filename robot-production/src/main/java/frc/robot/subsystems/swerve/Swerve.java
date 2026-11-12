@@ -5,6 +5,7 @@ package frc.robot.subsystems.swerve;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -33,7 +35,7 @@ public class Swerve extends SubsystemBase {
     private boolean isSnailMode;
     private boolean isLessSlowMode;
     private boolean alignedHeading = false;
-
+    private boolean isRobotRelative = false;
 
     private SmoothingFilter smoothingFilter;
 
@@ -71,7 +73,9 @@ public class Swerve extends SubsystemBase {
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
+    SmartDashboard.putNumber("Heading Lock (deg)", 0.0);
 
+        
         swerve = drivetrain;
 
 
@@ -161,8 +165,27 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SwerveDriveState state = swerve.getState();
+
         Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
         Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
+        Logger.recordOutput(SWERVE.LOG_PATH + "ChassisSpeeds", getRobotRelativeSpeeds());
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleStates", state.ModuleStates);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModulePositions", state.ModulePositions);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleTargets", state.ModuleTargets);
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/targetspeed, CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/realspeed, CAN 7", state.ModuleStates[0].speedMetersPerSecond);
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/targetsped, CAN 5", state.ModuleTargets[1].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/realspeed, CAN 5", state.ModuleStates[1].speedMetersPerSecond);
+
+        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/targetspeed, CAN 3", state.ModuleTargets[3].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/realspeed, CAN 3", state.ModuleStates[3].speedMetersPerSecond);
+        
+        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/targetspeed, CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
+        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/realspeed, CAN 9", state.ModuleStates[2].speedMetersPerSecond);
+
         // TODO: do we really need to run this?
         swerve.periodic();
     }
@@ -179,6 +202,25 @@ public class Swerve extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
+
+        if (isRobotRelative) {
+            double translationMultiplier = SWERVE.TRANSLATE_POWER_FAST;
+            double rotationMultiplier = 1.0;
+
+            if (isSnailMode) {
+                translationMultiplier = SWERVE.TRANSLATE_POWER_SNAIL;
+                rotationMultiplier = SWERVE.ROTATE_POWER_SNAIL;
+            } else if (isLessSlowMode) {
+                translationMultiplier = SWERVE.TRANSLATE_POWER_LESS_SLOW;
+                rotationMultiplier = SWERVE.ROTATE_POWER_LESS_SLOW;
+            }
+
+            swerve.setControl(robotCentric
+                    .withVelocityX(speeds.vxMetersPerSecond * translationMultiplier)
+                    .withVelocityY(speeds.vyMetersPerSecond * translationMultiplier)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * rotationMultiplier));
+            return;
+        }
 
         if (alignedHeading && !speeds.equals(speedZero)) {
             double targetHeadingRadians =
@@ -216,6 +258,37 @@ public class Swerve extends SubsystemBase {
                 .withVelocityY(speeds.vyMetersPerSecond)
                 .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
+    
+public void driveAtHeading(ChassisSpeeds speeds) {
+    double targetDegrees =
+            SmartDashboard.getNumber("Heading Lock (deg)", 0.0);
+
+    Rotation2d targetHeading =
+            Rotation2d.fromDegrees(targetDegrees);
+
+    double omega = snapToAngle(targetHeading);
+
+    swerve.setControl(fieldCentric
+            .withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(omega));
+
+    double currentDegrees = getYaw().getDegrees();
+    double errorDegrees =
+            targetHeading.minus(getYaw()).getDegrees();
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/TargetDegrees",
+            targetDegrees);
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/CurrentDegrees",
+            currentDegrees);
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/ErrorDegrees",
+            errorDegrees);
+}
 
     /**
      * Define whatever direction the robot is facing as forward
@@ -294,6 +367,10 @@ public class Swerve extends SubsystemBase {
 
     public void setLessSlowMode() {
         isLessSlowMode = !isLessSlowMode;
+    }
+
+    public void setRobotRelative(boolean robotRelative) {
+        isRobotRelative = robotRelative;
     }
 
     /**
