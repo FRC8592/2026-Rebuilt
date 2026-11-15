@@ -18,7 +18,7 @@ public class SparkFlexControl {
     private SparkFlexConfig motorConfig;
     private SparkClosedLoopController motorController;
     private RelativeEncoder motorEncoder;
-    //private String motorName;
+    private String motorName;
 
     /**
      * @param canId motor Can ID
@@ -43,7 +43,7 @@ public class SparkFlexControl {
 
         motor.set(0);
 
-        //this.motorName = motorName;
+        this.motorName = motorName;
     }
 
     /**
@@ -230,11 +230,15 @@ public class SparkFlexControl {
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    // public void motorLogging(String logPath){
-    //     Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
-    //     Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
-    //     Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
-    //     Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
-    //     Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
-    // }
+    public void motorLogging(String logPath){
+        Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
+        Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
+        Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
+        Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
+        Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
+    }
+
+
+
+    
 }
