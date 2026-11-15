@@ -1,6 +1,5 @@
 package frc.robot.helpers;
 
-import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -30,9 +29,8 @@ public class TalonFXControl {
     /**
      * @param canId
      * @param coastMode
-     *                  Constructor for TalonFX motors
-     *                  Instantiates motor config, encoder, current limit, velocity
-     *                  voltage.
+     * Constructor for TalonFX motors
+     * Instantiates motor config, encoder, current limit, velocity voltage.
      */
     public TalonFXControl(int canId, boolean coastMode) {
         motor = new TalonFX(canId);
