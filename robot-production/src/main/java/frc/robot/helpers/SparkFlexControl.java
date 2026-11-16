@@ -2,6 +2,7 @@ package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
 import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -44,6 +45,13 @@ public class SparkFlexControl {
         motor.set(0);
 
         this.motorName = motorName;
+    }
+
+    public SparkFlexControl() {
+        boolean motorIsConnected = motor.getLastError() == REVLibError.kOk;
+        if (!motorIsConnected) {
+            motorIsConnected = false;
+        }
     }
 
     /**
