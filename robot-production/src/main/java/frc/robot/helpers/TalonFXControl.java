@@ -20,6 +20,8 @@ public class TalonFXControl {
     private Slot2Configs motorPIDSlot2Configs;
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
+    private MotionMagicVelocityVoltage motionMagicVelocityVoltage;
+    private MotionMagicVoltage motionMagicVoltage;
 
     /**
      * @param canId
@@ -45,7 +47,8 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
-
+        motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
+        motionMagicVoltage = new MotionMagicVoltage(0);
     }
 
     /**
@@ -204,6 +207,35 @@ public class TalonFXControl {
      */
     public void setVelocityControl(double desiredRPM, int slot){
         motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
+    }
+
+    /**
+     * Sets up trapezoidal motion magic
+     * @param cruiseVel in rps
+     * @param acceleration in rps/s
+     * @param jerk in rps/s/s
+     */
+    public void setupTrapezoidalMotionMagic(double cruiseVel, double acceleration, double jerk){
+        motorConfig.MotionMagic
+            .withMotionMagicCruiseVelocity(cruiseVel)
+            .withMotionMagicAcceleration(acceleration)
+            .withMotionMagicJerk(jerk);
+    }
+    
+    /**
+     * Sets motor velocity using motion magic in rps
+     * @param velocity
+     */
+    public void setVelocityTrapezoidalMotionMagicControl(double velocity){
+        motor.setControl(motionMagicVelocityVoltage.withVelocity(velocity));
+    }
+
+    /**
+     * Sets motor position using motion magic in rotations
+     * @param position
+     */
+    public void setPositionTrapezoidalMotionMagicControl(double position){
+        motor.setControl(motionMagicVoltage.withPosition(position));
     }
 
     /**
