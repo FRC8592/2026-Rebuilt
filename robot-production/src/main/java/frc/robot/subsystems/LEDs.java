@@ -96,9 +96,9 @@ public class LEDs extends SubsystemBase {
                         Logger.recordOutput(LEDS.LOG_PATH + "hasTags", hasTags);
                 }
         
-                public void setCanShootState(boolean newCanShoot) {
-                this.canShoot = newCanShoot;
-                }
+                // public void setCanShootState(boolean newCanShoot) {
+                // this.canShoot = newCanShoot;
+                // }
 
                 
 }

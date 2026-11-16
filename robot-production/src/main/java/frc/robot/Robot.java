@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -15,6 +19,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -46,6 +51,51 @@ public class Robot extends LoggedRobot {
   private static final String AUTO_TIME_KEY = "AutoTime";
   private static final String TELOP_TIME_KEY = "TelopTime";
 
+  // Log folders are named by local (Eastern) date. AdvantageKit's own file names stay in UTC.
+  private static final ZoneId TEAM_ZONE = ZoneId.of("America/New_York");
+
+  /** Today's date in team time (e.g. "2026-11-15"), or a marker if the RIO clock isn't synced. */
+  private static String todayString() {
+    return RobotController.isSystemTimeValid()
+        ? ZonedDateTime.now(TEAM_ZONE).format(DateTimeFormatter.ISO_LOCAL_DATE)
+        : "unsynced-time";
+  }
+
+  /** USB stick if present and writable, otherwise the RIO's internal storage. */
+  private static String realLogFolder() {
+    File usb = new File("/U");
+    String root = (usb.isDirectory() && usb.canWrite()) ? "/U/logs" : "/home/lvuser/logs";
+    return root + "/" + todayString() + "/" + allianceFolderName() + "/" + matchFolderName();
+  }
+
+  // Alliance color in the folder name (e.g. /U/logs/2026-11-15/Red).
+  // CAVEAT: the folder is chosen once, when robot code starts. The alliance usually isn't known
+  // until the driver station / FMS connects, so this will usually return "no-alliance". It only
+  // works if code starts after the DS is already connected (e.g. a code restart on the field).
+  private static String allianceFolderName() {
+    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+    return alliance.isPresent() ? alliance.get().name() : "no-alliance"; // "Red" or "Blue"
+  }
+
+  // Match in the folder name (e.g. Q12, P3, E5), or "NovaL" if the match number is missing/invalid.
+  // CAVEAT: same timing issue as the alliance. The match number is usually 0 until the DS/FMS
+  // connects, so most startups will land in "NovaL".
+  private static String matchFolderName() {
+    DriverStation.MatchType type = DriverStation.getMatchType();
+    int match = DriverStation.getMatchNumber();
+    if (type == DriverStation.MatchType.None || match <= 0) {
+      return "NovaL";
+    }
+    String prefix =
+        switch (type) {
+          case Practice -> "P";
+          case Qualification -> "Q";
+          case Elimination -> "E";
+          default -> "M";
+        };
+    return prefix + match;
+  }
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -62,13 +112,18 @@ public class Robot extends LoggedRobot {
 
     //
     // Enable AdvantageKit logging
-    // The file name on the USB drive should automatically be renamed to include the match
-    // information
+    // Logs are grouped into one folder per day (e.g. /U/logs/2026-11-15/).
+    // Passing a folder (not a .wpilog path) keeps AdvantageKit's default file name, so the
+    // event/match information is still appended on FMS.
     //
     if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      // Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+      try {
+        // Falls back to /home/lvuser/logs if no USB stick, and never takes down the robot program
+        Logger.addDataReceiver(new WPILOGWriter(realLogFolder()));
+      } catch (Exception e) {
+        DriverStation.reportError("Log writer failed: " + e, true);
+      }
     } else {
       /*
        * In normal simulator runs we want live NetworkTables + sim timing.
@@ -81,7 +136,7 @@ public class Robot extends LoggedRobot {
         Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
       } else {
-        Logger.addDataReceiver(new WPILOGWriter()); // Save sim logs locally
+        Logger.addDataReceiver(new WPILOGWriter("logs/" + todayString())); // Save sim logs locally, by day
         Logger.addDataReceiver(new NT4Publisher()); // Publish live sim telemetry/chooser to dashboards
       }
     }
