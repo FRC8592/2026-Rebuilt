@@ -2,6 +2,7 @@ package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.apple.eawt.event.GestureAdapter;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -66,9 +67,11 @@ public class TalonFXControl {
      */
 
     public void setPosition(double rotations){
-        PositionVoltage positionVoltage = new PositionVoltage(rotations);
-        motor.setControl(positionVoltage.withPosition(rotations));
-        motor.setPosition(rotations);
+        if (getEnabled()) {
+            PositionVoltage positionVoltage = new PositionVoltage(rotations);
+            motor.setControl(positionVoltage.withPosition(rotations));
+            motor.setPosition(rotations);
+        }
     }
 
     /**
@@ -76,6 +79,7 @@ public class TalonFXControl {
      * @param voltage
      */
     public void setVoltage(double voltage){
+        if (getEnabled())
         motor.setVoltage(voltage);
     }
 
@@ -91,56 +95,80 @@ public class TalonFXControl {
      * @param power
      */
     public void setPercentOutput(double power){
+        if (getEnabled())
         motor.set(power);
     }
 
     public void stop(){
+        if (getEnabled())
         motor.set(0);
     }
 
     public double getVelocity(){
+        if (getEnabled())
         return motor.getVelocity().getValueAsDouble();
+
+        return 0.0;
     }
 
     public double getVoltage(){
+        if (getEnabled())
         return motor.getMotorVoltage().getValueAsDouble();
+
+        return 0.0;
     }
 
     public double getPosition(){
+        if (getEnabled())
         return motor.getPosition().getValueAsDouble();
+        return 0.0;
     }
 
     public double getTicks(){
+        if (getEnabled())
         return motor.getPosition().getValueAsDouble()*4096;
+        return 0.0;
     }
 
     public double getCurrent(){
+        if (getEnabled())
         return motor.getStatorCurrent().getValueAsDouble();
+        return 0.0;
     }
 
     public String getVelocityVoltageString(){
+        if (getEnabled())
         return velocityVoltage.toString();
+        return "";
     }
 
     public void setFollower(TalonFXControl followerMotor, MotorAlignmentValue alignmentValue){
+        if (getEnabled())
         motor.setControl(new Follower(followerMotor.CAN_ID, alignmentValue));
+        
     }
 
     public void setForwardSoftLimit(double forwardRotations){
+        if (getEnabled()) {
 
-        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardRotations;
+            motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardRotations;
+        }
     }
 
     public void setReverseSoftLimit(double reverseRotations){
-        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseRotations;
+        if (getEnabled()) {
+            motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseRotations;
+        }
     }
 
     public void setCurrentLimit(double currentLimit){
-        motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
-        motorConfig.withCurrentLimits(motorCurrentLimit);
-        applyConfig();
+        if (getEnabled()) {
+            motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
+            motorConfig.withCurrentLimits(motorCurrentLimit);
+            applyConfig();
+        }
     }
 
     public void createSlot0(){
@@ -166,21 +194,21 @@ public class TalonFXControl {
      * @param slot
      */
     public void setPID(double kP, double kI, double kD, double kS, double kV, double kA, int slot){
-        if (slot == 0){
+        if (slot == 0 && getEnabled()){
             motorPIDSlot0Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKS(kS)
                 .withKV(kV).withKA(kA);
             motorConfig.withSlot0(motorPIDSlot0Configs);
         }
 
-        else if (slot == 1){
+        else if (slot == 1 && getEnabled()){
             motorPIDSlot1Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKS(kS)
                 .withKV(kV).withKA(kA);
             motorConfig.withSlot1(motorPIDSlot1Configs);
         }
 
-        else if (slot == 2){
+        else if (slot == 2 && getEnabled()){
             motorPIDSlot2Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKS(kS)
                 .withKV(kV).withKA(kA);
@@ -197,19 +225,19 @@ public class TalonFXControl {
      * @param slot
      */
     public void setPID(double kP, double kI, double kD, double kV, int slot){
-        if (slot == 0){
+        if (slot == 0 && getEnabled()){
             motorPIDSlot0Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKV(kV);
             motorConfig.withSlot0(motorPIDSlot0Configs);
         }
 
-        else if (slot == 1){
+        else if (slot == 1 && getEnabled()){
             motorPIDSlot1Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKV(kV);
             motorConfig.withSlot1(motorPIDSlot1Configs);
         }
 
-        else if (slot == 2){
+        else if (slot == 2 && getEnabled()){
             motorPIDSlot2Configs.withKP(kP).withKI(kI)
                 .withKD(kD).withKV(kV);
             motorConfig.withSlot2(motorPIDSlot2Configs);
@@ -222,6 +250,7 @@ public class TalonFXControl {
      * @param slot
      */
     public void setVelocityControl(double desiredRPM, int slot){
+        if (getEnabled())
         motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
     }
 
@@ -229,6 +258,7 @@ public class TalonFXControl {
      * Configures the motors themselves with the configuration we have done.
      */
     public void applyConfig(){
+        if (getEnabled())
         motor.getConfigurator().apply(motorConfig);
     }
 }
