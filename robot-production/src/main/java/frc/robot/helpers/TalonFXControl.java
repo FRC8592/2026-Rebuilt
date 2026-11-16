@@ -1,6 +1,8 @@
 package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -20,6 +22,7 @@ public class TalonFXControl {
     private Slot2Configs motorPIDSlot2Configs;
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
+    private boolean enabled; 
 
     /**
      * @param canId
@@ -30,21 +33,30 @@ public class TalonFXControl {
     public TalonFXControl(int canId, boolean coastMode){
         motor = new TalonFX(canId);
         CAN_ID = canId;
-        motorConfig = new TalonFXConfiguration();
-        if (coastMode){
-            motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
+        StatusCode status = motor.getDeviceTemp().refresh().getStatus();
+
+        if (status.isOK()) {
+            setEnabled(true);
+            motorConfig = new TalonFXConfiguration();
+            if (coastMode){
+                motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
+            }
+            else{
+                motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+            }
+
+            motor.getConfigurator().apply(motorConfig);
+
+            motorCurrentLimit = new CurrentLimitsConfigs();
+
+            motor.set(0);
+
+            velocityVoltage = new VelocityVoltage(0);
         }
-        else{
-            motorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+
+        else {
+            setEnabled(false);
         }
-
-        motor.getConfigurator().apply(motorConfig);
-
-        motorCurrentLimit = new CurrentLimitsConfigs();
-
-        motor.set(0);
-
-        velocityVoltage = new VelocityVoltage(0);
 
     }
 
@@ -67,6 +79,13 @@ public class TalonFXControl {
         motor.setVoltage(voltage);
     }
 
+    public void setEnabled(boolean b) {
+        enabled = b;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
     /**
      * Sets motor percent output
      * @param power
