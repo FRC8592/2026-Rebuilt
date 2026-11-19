@@ -27,6 +27,9 @@ jobs:
       # Declares the repository safe and not under dubious ownership.
       - name: Add repository to git safe directories
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      # Need to fetch origin/main for spotless
+      - name: Fetch origin/main for Spotless ratchetFrom
+        run: git fetch origin main:refs/remotes/origin/main
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
