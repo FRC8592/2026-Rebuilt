@@ -60,7 +60,6 @@ public class Turret extends SubsystemBase {
             target -= Math.signum(target) * 360;
         logAngle(target);
         turretMotor.setPositionControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
-        turretMotor.setVelocityControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
     }
 
     public void basicTurretToPos(double angle) {
