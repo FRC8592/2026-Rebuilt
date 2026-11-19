@@ -87,9 +87,9 @@ private final Trigger HEADING_LOCK = driverController.rightBumper();
     leds = new LEDs();
     swerve = new Swerve(drivetrain);
     scoring = new Scoring(swerve, leds);
-    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
-    visionLeft = new Vision(VISION.CAMERA_NAME_LEFT, VISION.CAMERA_OFFSETS_LEFT);
+    visionBack = new Vision(VISION.CAMERA_NAME_BACK, CodeConstants.VISION.CAMERA_OFFSETS_BACK);
+    visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, CodeConstants.VISION.CAMERA_OFFSETS_RIGHT);
+    visionLeft = new Vision(VISION.CAMERA_NAME_LEFT, CodeConstants.VISION.CAMERA_OFFSETS_LEFT);
 
     odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
     odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);

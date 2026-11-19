@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.INDEXER;
 import frc.robot.helpers.SparkFlexControl;
 
@@ -39,8 +40,8 @@ public class Indexer extends SubsystemBase{
 
     @Override
     public void periodic(){
-        spinMotor.motorLogging(INDEXER.LOG_PATH);
-        Logger.recordOutput(INDEXER.LOG_PATH + "indexerRunning", indexerRunning);
+        spinMotor.motorLogging(CodeConstants.INDEXER.LOG_PATH);
+        Logger.recordOutput(CodeConstants.INDEXER.LOG_PATH + "indexerRunning", indexerRunning);
 
     }
 
