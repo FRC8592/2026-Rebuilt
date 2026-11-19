@@ -230,9 +230,12 @@ public class Turret extends SubsystemBase {
         }
 
         teethOffset = calcAngle(E1.get(), E2.get());
+        Logger.recordOutput(TURRET.LOG_PATH + " At Intialization TEETH offset", teethOffset);
 
         double turretDeg = teethOffset * 360.0 / TURRET.TURRET_GT;
         turretMotor.setPosition(turretDeg * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        Logger.recordOutput(TURRET.LOG_PATH + " At Intialization ANGLE value", turretDeg);
+
     }
 
     public double getRawTurretAngle() {
@@ -350,7 +353,8 @@ public class Turret extends SubsystemBase {
         // TODO: Implement CRT Again!
         // Logger.recordOutput("Gear Ticks " , CRT(E1.get(), E2.get() -
         // ));
-        Logger.recordOutput(TURRET.LOG_PATH + "CRT Angle Live",
+
+        Logger.recordOutput(TURRET.LOG_PATH + "Angle OFFSET LIVE",
         calcAngle(E1.get(), E2.get()) * 360.0 / TURRET.TURRET_GT);
 
         Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
