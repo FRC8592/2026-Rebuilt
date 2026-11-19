@@ -1,3 +1,4 @@
+/* (C)2026 */
 package frc.robot.commands.proxies;
 
 import edu.wpi.first.wpilibj2.command.Command;

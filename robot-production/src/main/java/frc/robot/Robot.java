@@ -1,22 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+/* (C)2026 */
 package frc.robot;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedPowerDistribution;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +12,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDS;
 import frc.robot.Constants.SHARED;
 import frc.robot.subsystems.vision.Vision;
+import java.util.Optional;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedPowerDistribution;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -32,273 +27,267 @@ import frc.robot.subsystems.vision.Vision;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
-  private final RobotContainer m_robotContainer;
+    private Command m_autonomousCommand;
+    private final RobotContainer m_robotContainer;
 
-  // Field required for simulation
-  public static Field2d FIELD = new Field2d();
+    // Field required for simulation
+    public static Field2d FIELD = new Field2d();
 
-  private static int periodicCounter = 0;
-  private static int tagCounter = 0;
-  private Timer mTimer = new Timer();
-  private static final int AUTO_TIME = 20;
-  private static final int TELEOP_TIME = 140;
-  private static final String AUTO_TIME_KEY = "AutoTime";
-  private static final String TELOP_TIME_KEY = "TelopTime";
+    private static int periodicCounter = 0;
+    private static int tagCounter = 0;
+    private Timer mTimer = new Timer();
+    private static final int AUTO_TIME = 20;
+    private static final int TELEOP_TIME = 140;
+    private static final String AUTO_TIME_KEY = "AutoTime";
+    private static final String TELOP_TIME_KEY = "TelopTime";
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  public Robot() {
+    /**
+     * This function is run when the robot is first started up and should be used for any
+     * initialization code.
+     */
+    public Robot() {
 
-    //
-    // AdvantageKit Metadata. Update for each competition.
-    //
-    Logger.recordMetadata("Team", "8592");
-    Logger.recordMetadata("Game", "REBUILT");
-    Logger.recordMetadata("Year", "2026");
-    Logger.recordMetadata("Competition", "CHS District Championship");
+        //
+        // AdvantageKit Metadata. Update for each competition.
+        //
+        Logger.recordMetadata("Team", "8592");
+        Logger.recordMetadata("Game", "REBUILT");
+        Logger.recordMetadata("Year", "2026");
+        Logger.recordMetadata("Competition", "CHS District Championship");
 
-    //
-    // Enable AdvantageKit logging
-    // The file name on the USB drive should automatically be renamed to include the match
-    // information
-    //
-    if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      // Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    } else {
-      /*
-       * In normal simulator runs we want live NetworkTables + sim timing.
-       * Replay mode is only enabled when AKIT_LOG_PATH is explicitly provided.
-       */
-      String replayPath = System.getenv("AKIT_LOG_PATH");
-      if (replayPath != null && !replayPath.isBlank()) {
-        setUseTiming(false); // Run as fast as possible in replay mode
-        String logPath = LogFileUtil.findReplayLog(); // Pull replay log from env var/AdvantageScope
-        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-      } else {
-        Logger.addDataReceiver(new WPILOGWriter()); // Save sim logs locally
-        Logger.addDataReceiver(new NT4Publisher()); // Publish live sim telemetry/chooser to dashboards
-      }
-    }
-    LoggedPowerDistribution.getInstance(1, ModuleType.kRev);
-    Logger.start();
+        //
+        // Enable AdvantageKit logging
+        // The file name on the USB drive should automatically be renamed to include the match
+        // information
+        //
+        if (isReal()) {
+            Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+            // Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        } else {
+            /*
+             * In normal simulator runs we want live NetworkTables + sim timing.
+             * Replay mode is only enabled when AKIT_LOG_PATH is explicitly provided.
+             */
+            String replayPath = System.getenv("AKIT_LOG_PATH");
+            if (replayPath != null && !replayPath.isBlank()) {
+                setUseTiming(false); // Run as fast as possible in replay mode
+                String logPath =
+                        LogFileUtil.findReplayLog(); // Pull replay log from env var/AdvantageScope
+                Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+                Logger.addDataReceiver(
+                        new WPILOGWriter(
+                                LogFileUtil.addPathSuffix(
+                                        logPath, "_sim"))); // Save outputs to a new log
+            } else {
+                Logger.addDataReceiver(new WPILOGWriter()); // Save sim logs locally
+                Logger.addDataReceiver(
+                        new NT4Publisher()); // Publish live sim telemetry/chooser to dashboards
+            }
+        }
+        LoggedPowerDistribution.getInstance(1, ModuleType.kRev);
+        Logger.start();
 
-    // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
-    SmartDashboard.putData("Field", FIELD);
-    SmartDashboard.putNumber("Wait Command Auto", 0);
+        // Put the field onto the SmarthDashboard for use in simulation (may not be necessary)
+        SmartDashboard.putData("Field", FIELD);
+        SmartDashboard.putNumber("Wait Command Auto", 0);
 
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-    SmartDashboard.putNumber(TELOP_TIME_KEY, 0);
-    SmartDashboard.putNumber(AUTO_TIME_KEY, 0);
-
-  }
-
-
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard
-   * integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    // m_timeAndJoystickReplay.update();
-
-
-    CommandScheduler.getInstance().run();
-
-  }
-
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {
-    // Event-marker commands can be scheduled separately from the main auto command.
-    // Cancel everything so no autonomous action resumes when the robot is enabled again.
-    CommandScheduler.getInstance().cancelAll();
-    m_autonomousCommand = null;
-
-    // Event-marker commands can be scheduled separately from the main auto command.
-    // Cancel everything so no autonomous action resumes when the robot is enabled again.
-    CommandScheduler.getInstance().cancelAll();
-    m_autonomousCommand = null;
-
-    // m_robotContainer.scoring.intake.setBrakeMode();
-  }
-
-  @Override
-  public void disabledExit() {}
-
-  @Override
-  public void disabledPeriodic() {
-    // Stop turret tracking and shooter speed control
-    m_robotContainer.scoring.disableTracking();
-
-    // Run vision routines
-    Vision backvision = m_robotContainer.getBackVision();
-    Vision rightvision = m_robotContainer.getRightVision();
-    Vision leftvision = m_robotContainer.getLeftVision();
-    backvision.periodic();
-    rightvision.periodic();
-    leftvision.periodic();
-
-    int backvisionCounter = backvision.getTargets().size();
-    int rightVisionCounter = rightvision.getTargets().size();
-    int leftVisionCounter = leftvision.getTargets().size();
-    int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter;
-
-    Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
-
-    // LED control
-
-    // double average = tagCounter/10;
-    // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
-    // m_robotContainer.leds.setHasTags((int)Math.round(average));
-    if (VisionCounter > 1) {
-      tagCounter = 2;
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our autonomous chooser on the dashboard.
+        m_robotContainer = new RobotContainer();
+        SmartDashboard.putNumber(TELOP_TIME_KEY, 0);
+        SmartDashboard.putNumber(AUTO_TIME_KEY, 0);
     }
 
-    else if (VisionCounter == 1) {
-      tagCounter = 1;
+    /**
+     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+     * that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>
+     * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard
+     * integrated updating.
+     */
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler. This is responsible for polling buttons, adding
+        // newly-scheduled
+        // commands, running already-scheduled commands, removing finished or
+        // interrupted commands,
+        // and running subsystem periodic() methods. This must be called from the
+        // robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        // m_timeAndJoystickReplay.update();
+
+        CommandScheduler.getInstance().run();
     }
 
-    if (periodicCounter % 15 == 0) {
-      m_robotContainer.leds.setHasTags(tagCounter);
-      m_robotContainer.leds.displayHasTagsLEDs();
-      tagCounter = 0;
-    }
-    periodicCounter++;
+    /** This function is called once each time the robot enters Disabled mode. */
+    @Override
+    public void disabledInit() {
+        // Event-marker commands can be scheduled separately from the main auto command.
+        // Cancel everything so no autonomous action resumes when the robot is enabled again.
+        CommandScheduler.getInstance().cancelAll();
+        m_autonomousCommand = null;
 
-    Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
+        // Event-marker commands can be scheduled separately from the main auto command.
+        // Cancel everything so no autonomous action resumes when the robot is enabled again.
+        CommandScheduler.getInstance().cancelAll();
+        m_autonomousCommand = null;
 
-    // set the number of tags being seen by the cameras on the LEDs subsystem, and
-    // update the LEDs to reflect that information.
-
-    // Pass Red/Blue alliance information to the scoring subsystem so it can select
-    // the correct target
-    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-
-    if (alliance.isPresent()) {
-      m_robotContainer.scoring.setAlliance(alliance.get());
+        // m_robotContainer.scoring.intake.setBrakeMode();
     }
 
-    // Update PID values from SmartDashboard for all subsystems that use PID. This
-    // allows for tuning while the robot is disabled.
-    m_robotContainer.scoring.shooter.updatePID();
-    // m_robotContainer.scoring.indexer.updatePID();
-    // m_robotContainer.scoring.intake.updatePID();
-    //m_robotContainer.scoring.turret.updatePID();
+    @Override
+    public void disabledExit() {}
 
-    
+    @Override
+    public void disabledPeriodic() {
+        // Stop turret tracking and shooter speed control
+        m_robotContainer.scoring.disableTracking();
 
-  }
+        // Run vision routines
+        Vision backvision = m_robotContainer.getBackVision();
+        Vision rightvision = m_robotContainer.getRightVision();
+        Vision leftvision = m_robotContainer.getLeftVision();
+        backvision.periodic();
+        rightvision.periodic();
+        leftvision.periodic();
 
-  /**
-   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
-   */
-  @Override
-  public void autonomousInit() {
-    m_robotContainer.scoring.disableTracking();
-    
-    double delay = SmartDashboard.getNumber("Wait Command Auto", 0);
+        int backvisionCounter = backvision.getTargets().size();
+        int rightVisionCounter = rightvision.getTargets().size();
+        int leftVisionCounter = leftvision.getTargets().size();
+        int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter;
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        Logger.recordOutput(LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(new WaitCommand(delay));
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
-      
+        // LED control
+
+        // double average = tagCounter/10;
+        // Logger.recordOutput(LEDS.LOG_PATH + "Average", average);
+        // m_robotContainer.leds.setHasTags((int)Math.round(average));
+        if (VisionCounter > 1) {
+            tagCounter = 2;
+        } else if (VisionCounter == 1) {
+            tagCounter = 1;
+        }
+
+        if (periodicCounter % 15 == 0) {
+            m_robotContainer.leds.setHasTags(tagCounter);
+            m_robotContainer.leds.displayHasTagsLEDs();
+            tagCounter = 0;
+        }
+        periodicCounter++;
+
+        Logger.recordOutput(LEDS.LOG_PATH + "tag counter", tagCounter);
+
+        // set the number of tags being seen by the cameras on the LEDs subsystem, and
+        // update the LEDs to reflect that information.
+
+        // Pass Red/Blue alliance information to the scoring subsystem so it can select
+        // the correct target
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+
+        if (alliance.isPresent()) {
+            m_robotContainer.scoring.setAlliance(alliance.get());
+        }
+
+        // Update PID values from SmartDashboard for all subsystems that use PID. This
+        // allows for tuning while the robot is disabled.
+        m_robotContainer.scoring.shooter.updatePID();
+        // m_robotContainer.scoring.indexer.updatePID();
+        // m_robotContainer.scoring.intake.updatePID();
+        // m_robotContainer.scoring.turret.updatePID();
+
     }
-    mTimer.restart();
-    mTimer.start();
-    SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int)mTimer.get());
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
-    SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int)mTimer.get());
-  }
+    /**
+     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+     */
+    @Override
+    public void autonomousInit() {
+        m_robotContainer.scoring.disableTracking();
 
-  @Override
-  public void autonomousExit() {
-    mTimer.stop();
-  }
+        double delay = SmartDashboard.getNumber("Wait Command Auto", 0);
 
-  @Override
-  public void teleopInit() {
-    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME);
-    // Stop any mechanisms that remain running after autonomous or last teleop session
-    m_robotContainer.scoring.disableTrackingCommand();
-    m_robotContainer.scoring.indexer.stopCommand();
-    m_robotContainer.scoring.intake.stopRoller();
-    m_robotContainer.scoring.intake.stopExtender();
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    boolean cancelledAuto = false;
-
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      cancelledAuto = true;
-      CommandScheduler.getInstance().cancel(m_autonomousCommand);
-      Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
-      // m_robotContainer.scoring.intake.setCoastMode();
-      // m_autonomousCommand.cancel();
+        // schedule the autonomous command (example)
+        if (m_autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(new WaitCommand(delay));
+            CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        }
+        mTimer.restart();
+        mTimer.start();
+        SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int) mTimer.get());
     }
-    mTimer.restart();
-    mTimer.start();
-    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
-  }
 
-  /** This function is called periodically during teleop. */
-  @Override
-  public void teleopPeriodic() {
-    SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int)mTimer.get());
-  }
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic() {
+        SmartDashboard.putNumber(AUTO_TIME_KEY, AUTO_TIME - (int) mTimer.get());
+    }
 
-  @Override
-  public void teleopExit() {
-    mTimer.stop();
-  }
+    @Override
+    public void autonomousExit() {
+        mTimer.stop();
+    }
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+    @Override
+    public void teleopInit() {
+        SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME);
+        // Stop any mechanisms that remain running after autonomous or last teleop session
+        m_robotContainer.scoring.disableTrackingCommand();
+        m_robotContainer.scoring.indexer.stopCommand();
+        m_robotContainer.scoring.intake.stopRoller();
+        m_robotContainer.scoring.intake.stopExtender();
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+        boolean cancelledAuto = false;
 
-  @Override
-  public void testExit() {}
+        // This makes sure that the autonomous stops running when
+        // teleop starts running. If you want the autonomous to
+        // continue until interrupted by another command, remove
+        // this line or comment it out.
+        if (m_autonomousCommand != null) {
+            cancelledAuto = true;
+            CommandScheduler.getInstance().cancel(m_autonomousCommand);
+            Logger.recordOutput(SHARED.LOG_FOLDER + "CancelledAutoCommand", cancelledAuto);
+            // m_robotContainer.scoring.intake.setCoastMode();
+            // m_autonomousCommand.cancel();
+        }
+        mTimer.restart();
+        mTimer.start();
+        SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int) mTimer.get());
+    }
 
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
+    /** This function is called periodically during teleop. */
+    @Override
+    public void teleopPeriodic() {
+        SmartDashboard.putNumber(TELOP_TIME_KEY, TELEOP_TIME - (int) mTimer.get());
+    }
 
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {
+    @Override
+    public void teleopExit() {
+        mTimer.stop();
+    }
 
-  }
+    @Override
+    public void testInit() {
+        // Cancels all running commands at the start of test mode.
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    /** This function is called periodically during test mode. */
+    @Override
+    public void testPeriodic() {}
+
+    @Override
+    public void testExit() {}
+
+    /** This function is called once when the robot is first started up. */
+    @Override
+    public void simulationInit() {}
+
+    /** This function is called periodically whilst in simulation. */
+    @Override
+    public void simulationPeriodic() {}
 }

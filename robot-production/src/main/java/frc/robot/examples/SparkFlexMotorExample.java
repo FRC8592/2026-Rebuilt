@@ -1,15 +1,16 @@
+/* (C)2026 */
 package frc.robot.examples;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 // this code will work for SparkFlex and NEO VORTEX
 public class SparkFlexMotorExample {
@@ -81,9 +82,8 @@ public class SparkFlexMotorExample {
         // SETTINGS
         // Use ResetMode.kResetSafeParameters and persistMode.kPersistParameters to
         // ensure configuration consistency
-        motor.configure(motorConfiguration, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
-
+        motor.configure(
+                motorConfiguration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     // basic method to run the motor without any type of control
@@ -147,5 +147,4 @@ public class SparkFlexMotorExample {
     public boolean atReverseLimit() {
         return motor.getReverseSoftLimit().isReached();
     }
-
 }
