@@ -4,6 +4,7 @@
 package frc.robot.subsystems.swerve;
 
 import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -71,7 +73,9 @@ public class Swerve extends SubsystemBase {
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
+    SmartDashboard.putNumber("Heading Lock (deg)", 0.0);
 
+        
         swerve = drivetrain;
 
 
@@ -254,6 +258,37 @@ public class Swerve extends SubsystemBase {
                 .withVelocityY(speeds.vyMetersPerSecond)
                 .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
+    
+public void driveAtHeading(ChassisSpeeds speeds) {
+    double targetDegrees =
+            SmartDashboard.getNumber("Heading Lock (deg)", 0.0);
+
+    Rotation2d targetHeading =
+            Rotation2d.fromDegrees(targetDegrees);
+
+    double omega = snapToAngle(targetHeading);
+
+    swerve.setControl(fieldCentric
+            .withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(omega));
+
+    double currentDegrees = getYaw().getDegrees();
+    double errorDegrees =
+            targetHeading.minus(getYaw()).getDegrees();
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/TargetDegrees",
+            targetDegrees);
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/CurrentDegrees",
+            currentDegrees);
+
+    Logger.recordOutput(
+            SWERVE.LOG_PATH + "HeadingLock/ErrorDegrees",
+            errorDegrees);
+}
 
     /**
      * Define whatever direction the robot is facing as forward

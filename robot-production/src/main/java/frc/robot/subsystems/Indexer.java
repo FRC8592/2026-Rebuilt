@@ -11,6 +11,9 @@ public class Indexer extends SubsystemBase{
     private SparkFlexControl spinMotor;
 
     public boolean indexerRunning;
+    public boolean reverseIndexerRunning;
+    public boolean indexerJamming;
+
 
     public Indexer(){
         spinMotor = new SparkFlexControl(INDEXER.SPINNER_CAN_ID, true);
@@ -50,6 +53,15 @@ public class Indexer extends SubsystemBase{
     }
 
     public Command runReverseIndexerCommand(){
-        return this.runOnce(() -> spinMotor.setVoltage(-11.0)).andThen(() -> {indexerRunning = true;});
+        return this.runOnce(() -> spinMotor.setVoltage(-11.0)).andThen(() -> {reverseIndexerRunning = true;});
     }
+
+    public Command jammingIndexerCommand(){
+        return this.runOnce(()-> spinMotor.getCurrent()).andThen (() -> {indexerJamming = true;}); 
+    }
+
+    public double getIndexerCurrent(){
+        return spinMotor.getCurrent();
+    }
+
 }

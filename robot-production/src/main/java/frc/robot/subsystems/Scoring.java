@@ -53,6 +53,11 @@ public class Scoring extends SubsystemBase {
 
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("SOTMdt", 0.2);
+
+        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
+
+        SmartDashboard.putBoolean("Indexer Running", false);
+        SmartDashboard.putBoolean("Can shoot", false);
     }
 
     public void setAlliance(Alliance alliance) {
@@ -142,6 +147,17 @@ public class Scoring extends SubsystemBase {
         return this.runOnce(() -> disableTracking());
     }
 
+    public boolean IndexerJamming() {
+        if(indexer.getIndexerCurrent() > 50){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return Command to increase RPM offset by 50
+     */
     public Command increaseRPMCommand() {
         return shooter.increaseRPMCommand();
     }
@@ -339,14 +355,25 @@ public class Scoring extends SubsystemBase {
         Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (indexer.indexerRunning) {
-            leds.displayindexerRunning();
+            leds.displayindexerRunningForward();
         }
+
+        if (indexer.reverseIndexerRunning) {
+            leds.displayindexerRunningReverse();
+        }
+
+        if (indexer.indexerJamming) {
+            SmartDashboard.putBoolean("Indexer Jamming", true);
+        } 
+        
 
         if (trackingTarget) {
             if (indexer.indexerRunning) {
-                leds.displayindexerRunning();
-            } else if (turret.canShoot()) {
+                leds.displayindexerRunningForward();
+            }
+            else if (turret.canShoot()) {
                 leds.setCanShoot();
+                SmartDashboard.putBoolean("Can shoot", true);
             } else {
                 leds.setCannotShoot();
             }
