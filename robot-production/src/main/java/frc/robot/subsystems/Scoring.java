@@ -54,8 +54,6 @@ public class Scoring extends SubsystemBase {
         SmartDashboard.putNumber("shooterV", 0.0);
         SmartDashboard.putNumber("SOTMdt", 0.2);
 
-        Logger.recordOutput("turretAngleOffset", turretAngleOffset);
-
         SmartDashboard.putBoolean("Indexer Running", false);
         SmartDashboard.putBoolean("Can shoot", false);
     }
