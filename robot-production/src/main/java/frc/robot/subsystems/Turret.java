@@ -232,7 +232,7 @@ public class Turret extends SubsystemBase {
         teethOffset = calcAngle(E1.get(), E2.get());
         Logger.recordOutput(TURRET.LOG_PATH + " At Intialization TEETH offset", teethOffset);
 
-        double turretDeg = teethOffset * 360.0 / TURRET.TURRET_GT;
+        double turretDeg = (teethOffset * 360.0 / TURRET.TURRET_GT) % 360;
         turretMotor.setPosition(turretDeg * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         Logger.recordOutput(TURRET.LOG_PATH + " At Intialization ANGLE value", turretDeg);
 
