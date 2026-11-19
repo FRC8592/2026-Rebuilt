@@ -12,6 +12,9 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class SparkFlexControl {
@@ -47,19 +50,24 @@ public class SparkFlexControl {
         this.motorName = motorName;
     }
 
-    public SparkFlexControl() {
+    public boolean motorConnected() {
         boolean motorIsConnected = motor.getLastError() == REVLibError.kOk;
-        if (!motorIsConnected) {
-            motorIsConnected = false;
-        }
+            if (!motorIsConnected) {
+                motorIsConnected = false;
+            }
+        return motorIsConnected;
     }
+    
+    boolean motorConnection = motorConnected();
 
     /**
      * @param RPM
      * sets motor velocity
      */
     public void setVelocity(double RPM){
-        motorController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+        if (motorConnection) {
+            motorController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+        }
     }
 
     /**
@@ -67,7 +75,9 @@ public class SparkFlexControl {
      * @param rotations
      */
     public void setPosition(double rotations){
-        motorController.setSetpoint(rotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        if (motorConnection) {
+            motorController.setSetpoint(rotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        }
     }
 
     /**
@@ -75,7 +85,9 @@ public class SparkFlexControl {
      * @param voltage
      */
     public void setVoltage(double voltage){
-        motorController.setSetpoint(voltage, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
+        if (motorConnection) {
+            motorController.setSetpoint(voltage, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
+        }
     }
 
     /**
@@ -83,14 +95,18 @@ public class SparkFlexControl {
      * @param power
      */
     public void setPercentOutput(double power){
-        motor.set(power);
+        if (motorConnection) {
+            motor.set(power);
+        }
     }
 
     /**
      * makes motor stop by setting speed to 0
      */
     public void stop(){
-        motor.set(0);
+        if (motorConnection) {
+            motor.set(0);
+        }
     }
     
     /**
@@ -105,13 +121,15 @@ public class SparkFlexControl {
      * @param allowedError
      */
     public void setPIDF(double kP, double kI, double kD, double kS, double kV, double kA, double kG, double allowedError){
-        motorConfig.closedLoop.p(kP).i(kI).d(kD);
+        if (motorConnection) {
+            motorConfig.closedLoop.p(kP).i(kI).d(kD);
 
-        motorConfig.closedLoop.feedForward.kS(kS).kV(kV).kA(kA).kG(kG);
+            motorConfig.closedLoop.feedForward.kS(kS).kV(kV).kA(kA).kG(kG);
 
-        motorConfig.closedLoop.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
+            motorConfig.closedLoop.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -121,9 +139,11 @@ public class SparkFlexControl {
      * @param kD
      */
     public void setPIDF(double kP, double kI, double kD){
-        motorConfig.closedLoop.p(kP).i(kI).d(kD);
+        if (motorConnection) {
+            motorConfig.closedLoop.p(kP).i(kI).d(kD);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -133,12 +153,13 @@ public class SparkFlexControl {
      * @param allowedError
      */
     public void setTrapezoidalMotionMagicPosition(double maxVelocity, double maxAcceleration, double allowedError){
-        motorConfig.closedLoop.maxMotion.positionMode(MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal)
-        .cruiseVelocity(maxVelocity)
-        .maxAcceleration(maxAcceleration)
-        .allowedProfileError(allowedError);
-
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        if (motorConnection) {
+            motorConfig.closedLoop.maxMotion.positionMode(MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal)
+            .cruiseVelocity(maxVelocity)
+            .maxAcceleration(maxAcceleration)
+            .allowedProfileError(allowedError);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -148,53 +169,82 @@ public class SparkFlexControl {
      * @param allowedError
      */
      public void smartMotion(double maxVelocity, double maxAcceleration, double allowedError){
-        motorConfig.closedLoop.maxMotion.cruiseVelocity(maxVelocity);
-        motorConfig.closedLoop.maxMotion.maxAcceleration(maxAcceleration);
-        motorConfig.closedLoop.maxMotion.allowedProfileError(allowedError);
+        if (motorConnection) {
+            motorConfig.closedLoop.maxMotion.cruiseVelocity(maxVelocity);
+            motorConfig.closedLoop.maxMotion.maxAcceleration(maxAcceleration);
+            motorConfig.closedLoop.maxMotion.allowedProfileError(allowedError);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
      * makes motor inverted
      */
     public void setInverted(){
-        motorConfig.inverted(true);
+        if (motorConnection) {
+            motorConfig.inverted(true);
+        }
     }
 
     /**
      * @return motor velocity
      */
     public double getVelocity(){
-        return motorEncoder.getVelocity();
+        if (motorConnection) {
+            return motorEncoder.getVelocity();
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
      * @return motor position
      */
     public double getPosition(){
-        return motorEncoder.getPosition();
+        if (motorConnection) {
+            return motorEncoder.getPosition();
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
      * @return gets position in ticks
      */
     public double getTicks(){
-        return motorEncoder.getPosition()*4096;
+        if (motorConnection) {
+            return motorEncoder.getPosition()*4096;
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
      * @return voltage
      */
     public double getVoltage(){
-        return motor.getBusVoltage();
+        if (motorConnection) {
+            return motor.getBusVoltage();
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
      * @return gets current output
      */
     public double getCurrent(){
-        return motor.getOutputCurrent();
+        if (motorConnection) {
+            return motor.getOutputCurrent();
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
@@ -203,9 +253,11 @@ public class SparkFlexControl {
      * @param inverted
      */
     public void setFollower(SparkFlexControl motorToFollow, boolean inverted){
-        motorConfig.follow(motorToFollow.motor, inverted);
+        if (motorConnection) {
+            motorConfig.follow(motorToFollow.motor, inverted);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -213,9 +265,11 @@ public class SparkFlexControl {
      * @param forwardRotations
      */
     public void setForwardSoftLimit(double forwardRotations){
-        motorConfig.softLimit.forwardSoftLimit(forwardRotations).forwardSoftLimitEnabled(true);
+        if (motorConnection) {
+            motorConfig.softLimit.forwardSoftLimit(forwardRotations).forwardSoftLimitEnabled(true);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -223,9 +277,11 @@ public class SparkFlexControl {
      * @param reverseRotations
      */
     public void setReverseSoftLimit(double reverseRotations){
-        motorConfig.softLimit.reverseSoftLimit(reverseRotations).reverseSoftLimitEnabled(true);
+        if (motorConnection) {
+            motorConfig.softLimit.reverseSoftLimit(reverseRotations).reverseSoftLimitEnabled(true);
         
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     /**
@@ -233,17 +289,21 @@ public class SparkFlexControl {
      * @param currentLimit
      */
     public void setCurrentLimit(double currentLimit){
-        motorConfig.secondaryCurrentLimit(currentLimit);
+        if (motorConnection) {
+            motorConfig.secondaryCurrentLimit(currentLimit);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        }
     }
 
     public void motorLogging(String logPath){
-        Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
-        Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
-        Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
-        Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
-        Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
+        if (motorConnection) {
+            Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
+            Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
+            Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
+            Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
+            Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
+    }
     }
 
 
