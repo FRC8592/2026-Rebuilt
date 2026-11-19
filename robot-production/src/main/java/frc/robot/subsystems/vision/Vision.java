@@ -1,24 +1,22 @@
+/* (C)2026 */
 package frc.robot.subsystems.vision;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.photonvision.*;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LEDs;
+import java.util.List;
+import java.util.Optional;
+import org.photonvision.*;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
     PhotonCamera camera;
@@ -35,7 +33,7 @@ public class Vision extends SubsystemBase {
 
     /**
      * Creates a vision subsystem for a camera on the robot
-     * 
+     *
      * @param camName name of the camera
      * @param camOffsets camera position relative to the robot center
      */
@@ -53,7 +51,7 @@ public class Vision extends SubsystemBase {
     /**
      * Creates a vision subsystem for a camera on the robot and additionally sets up simulation.
      * Don't use this constructor for simple or early testing.
-     * 
+     *
      * @param camName name of the camera
      * @param camOffsets camera position relative to the robot center
      * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
@@ -62,8 +60,13 @@ public class Vision extends SubsystemBase {
      * @param calibrationErrorStdPx std in error of the calibration in pixels
      * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
      */
-    public Vision(String camName, Transform3d camOffsets, int calibrationWidth,
-            int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx,
+    public Vision(
+            String camName,
+            Transform3d camOffsets,
+            int calibrationWidth,
+            int calibrationHeight,
+            double calibrationAvgErrorPx,
+            double calibrationErrorStdPx,
             int fps) {
         initializeCommon(camName, camOffsets);
 
@@ -71,8 +74,8 @@ public class Vision extends SubsystemBase {
         visionSim.addAprilTags(aprilTagFieldLayout);
 
         cameraProperties = new SimCameraProperties();
-        cameraProperties.setCalibration(calibrationWidth, calibrationHeight,
-                Rotation2d.fromDegrees(70));
+        cameraProperties.setCalibration(
+                calibrationWidth, calibrationHeight, Rotation2d.fromDegrees(70));
         cameraProperties.setCalibError(calibrationAvgErrorPx, calibrationErrorStdPx);
         cameraProperties.setFPS(fps);
 
@@ -106,13 +109,14 @@ public class Vision extends SubsystemBase {
 
     /**
      * Updates the vision simulation with the current swerve odometry pose
-     * 
+     *
      * @param robotPose swerve odometry pose
      */
     public void simulationUpdatePose(Pose2d robotPose) {
         if (visionSim == null) {
             DriverStation.reportWarning(
-                    "Vision simulation update skipped because visionSim is not configured for this camera.",
+                    "Vision simulation update skipped because visionSim is not configured for this"
+                            + " camera.",
                     false);
             return;
         }
@@ -122,7 +126,7 @@ public class Vision extends SubsystemBase {
 
     /**
      * Gets the pose ambiguity ratio.
-     * 
+     *
      * @return Returns the pose ambiguity ratio. -10 if there are no apriltags
      */
     public double getPoseAmbiguityRatio() {
@@ -131,12 +135,11 @@ public class Vision extends SubsystemBase {
 
     /**
      * Lists the targets visible by the camera
-     * 
+     *
      * @return Returns a list of the targets visible by the camera
      */
     public List<PhotonTrackedTarget> getTargets() {
-        if (results == null || results.isEmpty())
-            return List.of();
+        if (results == null || results.isEmpty()) return List.of();
 
         var result = results.get(results.size() - 1);
         return result.getTargets();
@@ -144,7 +147,7 @@ public class Vision extends SubsystemBase {
 
     /**
      * Gets the current vision pose
-     * 
+     *
      * @return Returns the current vision pose
      */
     public Optional<EstimatedRobotPose> getRobotPoseVision() {

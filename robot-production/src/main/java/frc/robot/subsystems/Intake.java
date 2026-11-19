@@ -1,14 +1,13 @@
+/* (C)2026 */
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.INTAKE;
 import frc.robot.helpers.SparkFlexControl;
 import frc.robot.helpers.TalonFXControl;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
     private TalonFXControl rollerRightMotor;
@@ -18,7 +17,7 @@ public class Intake extends SubsystemBase {
 
     /**
      * Constructor for the Intake subsystem
-     * 
+     *
      * Instatiate the motor with initial PID values from the CONSTANTS class
      */
     public Intake() {
@@ -44,7 +43,7 @@ public class Intake extends SubsystemBase {
 
         extendMotor.setPIDF(INTAKE.INTAKE_EXTEND_P, INTAKE.INTAKE_EXTEND_I, INTAKE.INTAKE_EXTEND_D);
 
-        extendMotor.smartMotion(INTAKE.CRUISE_VELOCITY,INTAKE.MAX_ACCELERATION,10);
+        extendMotor.smartMotion(INTAKE.CRUISE_VELOCITY, INTAKE.MAX_ACCELERATION, 10);
         extendMotor.setReverseSoftLimit(INTAKE.EXTEND_SOFT_LIMIT);
     }
 
@@ -52,10 +51,9 @@ public class Intake extends SubsystemBase {
      * Extend the intake at controlled speed
      */
     public void extendIntake() {
-        if (getExtendPosition() > INTAKE.EXTEND_ROTATIONS){
+        if (getExtendPosition() > INTAKE.EXTEND_ROTATIONS) {
             extendMotor.setVoltage(6);
-        }
-        else{
+        } else {
             extendMotor.setPosition(INTAKE.EXTEND_ROTATIONS);
         }
     }
@@ -77,11 +75,11 @@ public class Intake extends SubsystemBase {
         rollerRightMotor.setVoltage(11);
     }
 
-    public void runIntakeRollersSlower(){
+    public void runIntakeRollersSlower() {
         rollerRightMotor.setVoltage(7);
     }
 
-    public Command runIntakeRollersSlowerCommand(){
+    public Command runIntakeRollersSlowerCommand() {
         return this.runOnce(() -> runIntakeRollersSlower());
     }
 
@@ -137,7 +135,7 @@ public class Intake extends SubsystemBase {
 
     /**
      * Get the velocity of the intake motor in RPM
-     * 
+     *
      * @return velocity in RPM
      */
     public double getIntakeVelocity() {
@@ -146,8 +144,8 @@ public class Intake extends SubsystemBase {
 
     /**
      * Stop the intake motor
-     * 
-     * We do this using voltage mode so that the motor will slow to a stop naturally. 
+     *
+     * We do this using voltage mode so that the motor will slow to a stop naturally.
      * Using setVelocity() will cause the motor to stop abruptly using battery power
      */
     public void stopRoller() {
@@ -172,7 +170,7 @@ public class Intake extends SubsystemBase {
 
     /**
      * Update the PID constants for the intake motor from SmartDashboard values
-     * 
+     *
      * The Neo Vortex motors will not accept a change to the PID parameters while running. Thusly,
      * this method must be called from disabledPeriod() in Robot.java.
      */
@@ -185,7 +183,8 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
+        Logger.recordOutput(
+                INTAKE.LOG_PATH + "Right Roller Motor Voltage", getRightIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
         Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
     }

@@ -1,3 +1,4 @@
+/* (C)2026 */
 package frc.robot.commands.proxies;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,8 +17,11 @@ public class MultiComposableCommand extends FunctionalCommand {
      *          passed-in command will be cancelled too.
      */
     public MultiComposableCommand(Command command) {
-        super(() -> command.initialize(), () -> command.execute(),
-                (interrupted) -> command.end(interrupted), () -> command.isFinished(),
+        super(
+                () -> command.initialize(),
+                () -> command.execute(),
+                (interrupted) -> command.end(interrupted),
+                () -> command.isFinished(),
                 command.getRequirements().toArray(new Subsystem[0]));
     }
 }
