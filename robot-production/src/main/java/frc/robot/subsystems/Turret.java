@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.*;
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -63,8 +64,8 @@ public class Turret extends SubsystemBase {
         /**
          * Instantiate Absolute Encoders necessary for CRT Calculation
          */
-        E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET.in(Degrees));
-        E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET.in(Degrees));
+        E1 = new DutyCycleEncoder(0, 360, CodeConstants.TURRET.E1_OFFSET.in(Degrees));
+        E2 = new DutyCycleEncoder(1, 360, CodeConstants.TURRET.E2_OFFSET.in(Degrees));
 
 
 
@@ -100,7 +101,7 @@ public class Turret extends SubsystemBase {
          * Turret Motor Current Limit Configuration, which limits supply current too.
          */
         // TODO: Reconfigure this
-        turretMotorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT)
+        turretMotorConfig.CurrentLimits.withStatorCurrentLimit(CodeConstants.TURRET.CURRENT_LIMIT)
         .withStatorCurrentLimitEnable(true);
 
         // TODO: Test this if PID Tuning prevents stalling, and IF and ONLY IF we utilize
@@ -125,10 +126,10 @@ public class Turret extends SubsystemBase {
 
         positionLimitConfig
                 .withForwardSoftLimitThreshold(
-                        TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                        TURRET.FORWARD_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withForwardSoftLimitEnable(true)
                 .withReverseSoftLimitThreshold(
-                        TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS)
+                        TURRET.REVERSE_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS)
                 .withReverseSoftLimitEnable(true);
 
 
@@ -138,9 +139,9 @@ public class Turret extends SubsystemBase {
         /**
          * Turret Motor PID Configuration and Constants
          */
-        turretPIDConfig.withKP(TURRET.TURRET_P.in(Volts)).withKI(TURRET.TURRET_I.in(Volts))
-                .withKD(TURRET.TURRET_D.in(Volts)).withKS(TURRET.TURRET_S.in(Volts))
-                .withKV(TURRET.TURRET_V.in(Volts)).withKA(TURRET.TURRET_A.in(Volts));
+        turretPIDConfig.withKP(CodeConstants.TURRET.TURRET_P.in(Volts)).withKI(CodeConstants.TURRET.TURRET_I.in(Volts))
+                .withKD(CodeConstants.TURRET.TURRET_D.in(Volts)).withKS(CodeConstants.TURRET.TURRET_S.in(Volts))
+                .withKV(CodeConstants.TURRET.TURRET_V.in(Volts)).withKA(CodeConstants.TURRET.TURRET_A.in(Volts));
 
         turretMotorConfig.withSlot0(turretPIDConfig);
 
@@ -149,18 +150,18 @@ public class Turret extends SubsystemBase {
          * Motion Magic Configuration and Constants
          */
         // turretMMConfig.MotionMagicAcceleration =
-        // TURRET.MAX_ACCELERATION.in(RotationsPerSecondPerSecond);
+        // CodeConstants.TURRET.MAX_ACCELERATION.in(RotationsPerSecondPerSecond);
         // turretMMConfig.MotionMagicJerk =
-        // TURRET.MAX_JERK.in(RotationsPerSecondPerSecond.per(Second));
-        // turretMMConfig.MotionMagicCruiseVelocity = TURRET.CRUISE_VELOCITY.in(RotationsPerSecond);
+        // CodeConstants.TURRET.MAX_JERK.in(RotationsPerSecondPerSecond.per(Second));
+        // turretMMConfig.MotionMagicCruiseVelocity = CodeConstants.TURRET.CRUISE_VELOCITY.in(RotationsPerSecond);
         // turretMotorConfig.withMotionMagic(turretMMConfig);
 
         /** */
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
-        SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
-        SmartDashboard.putNumber("tI", TURRET.TURRET_I.in(Volts));
-        SmartDashboard.putNumber("tD", TURRET.TURRET_D.in(Volts));
+        SmartDashboard.putNumber("tP", CodeConstants.TURRET.TURRET_P.in(Volts));
+        SmartDashboard.putNumber("tI", CodeConstants.TURRET.TURRET_I.in(Volts));
+        SmartDashboard.putNumber("tD", CodeConstants.TURRET.TURRET_D.in(Volts));
 
         SmartDashboard.putNumber("Turret Voltage", 0);
 
@@ -178,10 +179,10 @@ public class Turret extends SubsystemBase {
             target -= Math.signum(target) * 360;
         logAngle(target);
         turretMotor.setControl(positionRequest.withSlot(0)
-                .withPosition(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control
+                .withPosition(target * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS)); // PID Position control
                                                                             // for testing
         // turretMotor.setControl(positionMMRequest.withPosition(target *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        // CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public void basicTurretToPos(double angle) {
@@ -189,9 +190,9 @@ public class Turret extends SubsystemBase {
         turretMotor.setVoltage(voltage);
         // logAngle(angle);
         // turretMotor.setControl(positionRequest.withSlot(0).withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        // CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS));
         // turretMotor.setControl(positionMMRequest.withPosition(angle *
-        // TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        // CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS));
     }
 
     public Command basicTurretToPosCommand(double angle) {
@@ -300,7 +301,7 @@ public class Turret extends SubsystemBase {
     }
 
     public double getAngle() {
-        return turretMotor.getPosition().getValueAsDouble() / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        return turretMotor.getPosition().getValueAsDouble() / (CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
     public double getTargetAngle() {
@@ -322,16 +323,16 @@ public class Turret extends SubsystemBase {
         // TODO: Implement CRT Again!
         // Logger.recordOutput("Gear Ticks " , CRT(E1.get(), E2.get() -
         // ));
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Angle",
                 turretMotor.getPosition().getValueAsDouble()
-                        * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
+                        * (1 / CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Rotations",
                 turretMotor.getPosition().getValueAsDouble()); // rotations
         // per second
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Voltage",
                 turretMotor.getMotorVoltage().getValueAsDouble());
 
-        Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
 
     }
 
@@ -339,9 +340,9 @@ public class Turret extends SubsystemBase {
 
     // //Receive Turret PID Constants from SmartDashboard
 
-    // double P_NEW = SmartDashboard.getNumber("tP", TURRET.TURRET_P.in(Volts));
-    // double I_NEW = SmartDashboard.getNumber("tI", TURRET.TURRET_I.in(Volts));
-    // double D_NEW = SmartDashboard.getNumber("tD", TURRET.TURRET_D.in(Volts));
+    // double P_NEW = SmartDashboard.getNumber("tP", CodeConstants.TURRET.TURRET_P.in(Volts));
+    // double I_NEW = SmartDashboard.getNumber("tI", CodeConstants.TURRET.TURRET_I.in(Volts));
+    // double D_NEW = SmartDashboard.getNumber("tD", CodeConstants.TURRET.TURRET_D.in(Volts));
 
     // boolean tDiff = (P_SET != P_NEW || I_SET != I_NEW || D_SET != D_NEW);
 
