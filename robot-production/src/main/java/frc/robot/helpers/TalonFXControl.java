@@ -11,7 +11,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Current;
-import frc.robot.Constants.TURRET;
 
 import com.ctre.phoenix6.controls.*;
 
@@ -242,7 +241,8 @@ public class TalonFXControl {
      * Restricts the maximum electrical current allowed to flow through a motor's
      * stator windings
      */
-    public void statorCurrentLimit(Current currentLimit) {
-        motorConfig.CurrentLimits.withStatorCurrentLimit(TURRET.CURRENT_LIMIT).withStatorCurrentLimitEnable(true);
+    public void statorCurrentLimit(double currentLimit) {
+        motorConfig.CurrentLimits.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
+        motor.getConfigurator().apply(motorConfig);
     }
 }
