@@ -4,7 +4,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CodeConstants;
 import frc.robot.Constants.SHOOTER;
 import frc.robot.helpers.TalonFXControl;
 
@@ -197,20 +196,20 @@ public class Shooter extends SubsystemBase {
     // TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of
     // feedforward constants
     public void periodic() {
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
                 leftMotor.getVelocity() * 60d);
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
                 rightMotor.getVelocity() * 60d);
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", 
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", 
                 leftMotor.getVoltage());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Right Shooter Motor Voltage",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage",
                 rightMotor.getVoltage());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
                 leftMotor.getCurrent());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
                 rightMotor.getCurrent());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
     }
 
 }

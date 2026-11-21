@@ -6,7 +6,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CodeConstants;
 import frc.robot.Constants.INTAKE;
 import frc.robot.helpers.SparkFlexControl;
 import frc.robot.helpers.TalonFXControl;
@@ -183,11 +182,11 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
     }
 }
