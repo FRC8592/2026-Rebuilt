@@ -43,12 +43,25 @@ public class TalonFXControl {
 
         motor.getConfigurator().apply(motorConfig);
 
+        motorPIDSlot0Configs = new Slot0Configs();
+        motorPIDSlot1Configs = new Slot1Configs();
+        motorPIDSlot2Configs = new Slot2Configs();
+
         motorCurrentLimit = new CurrentLimitsConfigs();
 
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
-        positionRequest = new PositionVoltage(0);
+    }
+
+    /**
+     * Sets motor position using rotations
+     * @param rotations
+     */
+
+    public void setPosition(double rotations){
+        PositionVoltage positionVoltage = new PositionVoltage(rotations);
+        motor.setControl(positionVoltage.withPosition(rotations));
     }
 
     /**
@@ -105,29 +118,20 @@ public class TalonFXControl {
         motorConfig.SoftwareLimitSwitch
                 .withForwardSoftLimitThreshold(forwardRotations)
                 .withForwardSoftLimitEnable(true);
+        motor.getConfigurator().apply(motorConfig);
     }
 
     public void setReverseSoftLimit(double reverseRotations) {
         motorConfig.SoftwareLimitSwitch
                 .withReverseSoftLimitThreshold(reverseRotations)
                 .withReverseSoftLimitEnable(true);
+        motor.getConfigurator().apply(motorConfig);
     }
 
     public void setCurrentLimit(double currentLimit) {
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
-    }
-
-    public void createSlot0() {
-        motorPIDSlot0Configs = new Slot0Configs();
-    }
-
-    public void createSlot1() {
-        motorPIDSlot1Configs = new Slot1Configs();
-    }
-
-    public void createSlot2() {
-        motorPIDSlot2Configs = new Slot2Configs();
+        motor.getConfigurator().apply(motorConfig);
     }
 
     /**
@@ -162,6 +166,8 @@ public class TalonFXControl {
                     .withKV(kV).withKA(kA);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
+
+        motor.getConfigurator().apply(motorConfig);
     }
 
     /**
@@ -191,6 +197,8 @@ public class TalonFXControl {
                     .withKD(kD).withKV(kV);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
+
+        motor.getConfigurator().apply(motorConfig);
     }
 
     /**
@@ -201,48 +209,5 @@ public class TalonFXControl {
      */
     public void setVelocityControl(double desiredRPM, int slot) {
         motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
-    }
-
-    /**
-     * Sets motor position using rotations
-     * 
-     * @param rotations
-     * @param slot
-     */
-
-    public void setPositionControl(double rotations, int slot) {
-        motor.setControl(positionRequest.withSlot(slot).withPosition(rotations));
-    }
-
-    /**
-     * Configures the motors themselves with the configuration we have done.
-     */
-    public void applyConfig() {
-        motor.getConfigurator().apply(motorConfig);
-    }
-
-    /**
-     * When set to true, forces motor to utilize brake mode behaviour during a
-     * neutral state.
-     */
-    public void overrideBrakeDurNeutral(boolean override) {
-        positionRequest.withOverrideBrakeDurNeutral(override);
-    }
-
-    /**
-     * Configures whether the motor spins clockwise or counterclockwise for positive
-     * control demands
-     */
-    public void inverted(InvertedValue direction) {
-        motorConfig.MotorOutput.withInverted(direction);
-    }
-
-    /**
-     * Restricts the maximum electrical current allowed to flow through a motor's
-     * stator windings
-     */
-    public void statorCurrentLimit(double currentLimit) {
-        motorConfig.CurrentLimits.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
-        motor.getConfigurator().apply(motorConfig);
     }
 }
