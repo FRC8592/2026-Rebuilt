@@ -1,3 +1,4 @@
+/* (C)2026 */
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -6,9 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHOOTER;
 import frc.robot.helpers.TalonFXControl;
-
-import java.lang.Math;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -23,16 +21,15 @@ public class Shooter extends SubsystemBase {
 
     private double targetShooterRPM;
 
-
     /**
      * Constructor for the Shooter subsystem
-     * 
+     *
      * Instantiate the motor with Initial PID values from the CONSTANTS Class
-     * 
+     *
      * Display PID Values on SmartDashboard
-     * 
+     *
      * Set the current limit of the shooter motor
-     * 
+     *
      */
     public Shooter() {
         /**
@@ -44,14 +41,34 @@ public class Shooter extends SubsystemBase {
         /**
          * Shooter PID Tuning Configuration and Constants
          */
-        
         leftMotor.createSlot0();
         leftMotor.createSlot1();
         leftMotor.createSlot2();
 
-        leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_SHORT, SHOOTER.SHOOTER_A, 0);
-        leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_MEDIUM, SHOOTER.SHOOTER_A, 1);
-        leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_LONG, SHOOTER.SHOOTER_A, 2);
+        leftMotor.setPID(
+                SHOOTER.SHOOTER_P,
+                SHOOTER.SHOOTER_I,
+                SHOOTER.SHOOTER_D,
+                SHOOTER.SHOOTER_S,
+                SHOOTER.SHOOTER_V_SHORT,
+                SHOOTER.SHOOTER_A,
+                0);
+        leftMotor.setPID(
+                SHOOTER.SHOOTER_P,
+                SHOOTER.SHOOTER_I,
+                SHOOTER.SHOOTER_D,
+                SHOOTER.SHOOTER_S,
+                SHOOTER.SHOOTER_V_MEDIUM,
+                SHOOTER.SHOOTER_A,
+                1);
+        leftMotor.setPID(
+                SHOOTER.SHOOTER_P,
+                SHOOTER.SHOOTER_I,
+                SHOOTER.SHOOTER_D,
+                SHOOTER.SHOOTER_S,
+                SHOOTER.SHOOTER_V_LONG,
+                SHOOTER.SHOOTER_A,
+                2);
 
         /**
          * Shooter Current Limit. THIS IS NOT ENABLED RIGHT NOW!
@@ -75,24 +92,23 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("sD", SHOOTER.SHOOTER_D);
         SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V_MEDIUM);
         SmartDashboard.putNumber("Shooter Voltage", 0);
-
     }
-
 
     /**
      * Run the shooter motor at a set speed in RPM.
-     * 
+     *
      * @param desiredRPM The desired RPM we want the shooter motor to achieve.
      */
     public void runAtSpeed(double desiredRPM, int slot) {
         double shooterMotorVelocity = desiredRPM / 60d; // Convert from RPM to RPS for the motor
-                                                        // controller
+        // controller
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
         leftMotor.setVelocityControl(desiredRPM, slot);
 
-        Logger.recordOutput("Shooter Motor Velocity Voltage Info", leftMotor.getVelocityVoltageString());
+        Logger.recordOutput(
+                "Shooter Motor Velocity Voltage Info", leftMotor.getVelocityVoltageString());
         // leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
     }
 
@@ -101,36 +117,31 @@ public class Shooter extends SubsystemBase {
      */
     public boolean isWithin() {
         double toleranceMeasure = Math.abs(targetShooterRPM - getLeftVelocityShooter());
-        if (toleranceMeasure < SHOOTER.SHOOTER_TOLERANCE)
-            return true;
-        else
-            return false;
+        if (toleranceMeasure < SHOOTER.SHOOTER_TOLERANCE) return true;
+        else return false;
     }
-
 
     /**
      * Stops motors, thus bringing the flywheel to a gradual stop.
-     * 
+     *
      * Utilized setVoltage instead of Velocity Control to prevent power being used to stop flywheel.
      */
     public void stop() {
         leftMotor.setVoltage(0d);
     }
 
-
     /**
      * Command form of the stopShooter method.
-     * 
+     *
      * @return Returns a command to run the stopShooter method once.
      */
     public Command stopCommand() {
         return this.runOnce(() -> stop());
     }
 
-
     /**
      * Returns Flywheel Velocity
-     * 
+     *
      * @return Returns velocity of the flywheel motor in RPS.
      */
     public double getLeftVelocityShooter() {
@@ -158,11 +169,10 @@ public class Shooter extends SubsystemBase {
         return rightMotor.getCurrent();
     }
 
-
     /**
      * Update the PID values for the shooter motor. The NEO Motors do not allow their PID Profile to
      * be updated while running, so this must only be called while disabled.
-     * 
+     *
      * Thus, this method is called in disabledPeriodic() within Robot.java.
      */
     public void updatePID() {
@@ -178,7 +188,7 @@ public class Shooter extends SubsystemBase {
 
         if (FDiff) {
             leftMotor.setPID(SP_NEW, SI_NEW, SD_NEW, SV_NEW, 1);
-            
+
             leftMotor.applyConfig();
 
             P_SET = SP_NEW;
@@ -188,7 +198,6 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-
     /**
      * Periodic method, primarily for logging.
      */
@@ -197,19 +206,18 @@ public class Shooter extends SubsystemBase {
     // feedforward constants
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
-                leftMotor.getVelocity() * 60d);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
-                rightMotor.getVelocity() * 60d);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", 
-                leftMotor.getVoltage());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Shooter Motor Voltage",
-                rightMotor.getVoltage());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
-                leftMotor.getCurrent());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
-                rightMotor.getCurrent());
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM", leftMotor.getVelocity() * 60d);
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM", rightMotor.getVelocity() * 60d);
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", leftMotor.getVoltage());
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Right Shooter Motor Voltage", rightMotor.getVoltage());
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Left Flywheel Motor Current", leftMotor.getCurrent());
+        Logger.recordOutput(
+                SHOOTER.LOG_PATH + "Right Flywheel Motor Current", rightMotor.getCurrent());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
     }
-
 }

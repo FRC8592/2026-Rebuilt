@@ -1,14 +1,8 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+/* (C)2026 */
 package frc.robot;
-
-import java.util.Set;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -27,233 +21,271 @@ import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
+import java.util.Set;
 
 public class RobotContainer {
-  private static final CommandXboxController driverController =
-      new CommandXboxController(CONTROLLERS.DRIVER_PORT);
-  private static final CommandXboxController operatorController =
-      new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
+    private static final CommandXboxController driverController =
+            new CommandXboxController(CONTROLLERS.DRIVER_PORT);
+    private static final CommandXboxController operatorController =
+            new CommandXboxController(CONTROLLERS.OPERATOR_PORT);
 
-  // Robot subsystems
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Swerve swerve;
-  private final Vision visionBack;
-  private final Vision visionRight;
-  private final Vision visionLeft;
-  private final OdometryUpdates odometryUpdatesBack;
-  private final OdometryUpdates odometryUpdatesRight;
-  private final OdometryUpdates odometryUpdatesLeft;
-  public final Scoring scoring;
-  public final LEDs leds;
+    // Robot subsystems
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final Swerve swerve;
+    private final Vision visionBack;
+    private final Vision visionRight;
+    private final Vision visionLeft;
+    private final OdometryUpdates odometryUpdatesBack;
+    private final OdometryUpdates odometryUpdatesRight;
+    private final OdometryUpdates odometryUpdatesLeft;
+    public final Scoring scoring;
+    public final LEDs leds;
 
+    // Driver Controls
+    private final Trigger RESET_HEADING = driverController.back();
+    private final Trigger ROBOT_RELATIVE = driverController.y();
+    private final Trigger SLOW_MODE = driverController.a();
+    private final Trigger LESS_SLOW_MODE = driverController.povUp();
 
-  // Driver Controls
-  private final Trigger RESET_HEADING = driverController.back();
-  private final Trigger ROBOT_RELATIVE = driverController.y();
-  private final Trigger SLOW_MODE = driverController.a();
-  private final Trigger LESS_SLOW_MODE = driverController.povUp();
+    private final Trigger INTAKE_RUN = driverController.leftTrigger();
+    private final Trigger INTAKE_EXTEND = driverController.leftBumper();
+    private final Trigger SHOOT = driverController.rightTrigger();
+    private final Trigger HEADING_LOCK = driverController.rightBumper();
+    private final Trigger INTAKE_REVERSE = driverController.b();
 
-  private final Trigger INTAKE_RUN = driverController.leftTrigger();
-  private final Trigger INTAKE_EXTEND = driverController.leftBumper();
-  private final Trigger SHOOT = driverController.rightTrigger();
-private final Trigger HEADING_LOCK = driverController.rightBumper();
-  private final Trigger INTAKE_REVERSE = driverController.b();
+    // private final Trigger RESET_EXTEND = driverController.b();
+    private final Trigger LOCK_WHEELS = driverController.x();
+    // private final Trigger SHOOT_SQUEEZE = driverController.a();
 
-  // private final Trigger RESET_EXTEND = driverController.b();
-  private final Trigger LOCK_WHEELS = driverController.x();
-  // private final Trigger SHOOT_SQUEEZE = driverController.a();
+    // Operator Controls
 
+    private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); // Dyerotor Unjam
+    private final Trigger INTAKE_RETRACT = operatorController.leftTrigger();
 
+    // private final Trigger RESET_TURRET = operatorController.a();// originally on button a
+    private final Trigger MANUAL_OVERRIDE = operatorController.a(); // Also known as Turret Lock
 
+    private final Trigger INCREASE_RPM = operatorController.povUp();
+    private final Trigger DECREASE_RPM = operatorController.povDown();
+    private final Trigger TURRET_RIGHT = operatorController.povRight();
+    private final Trigger TURRET_LEFT = operatorController.povLeft();
 
-  // Operator Controls
+    private final Trigger ENABLE_TRACKING = operatorController.rightTrigger();
 
-  private final Trigger SHOOT_REVERSE = operatorController.rightBumper(); //Dyerotor Unjam
-  private final Trigger INTAKE_RETRACT = operatorController.leftTrigger();
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        leds = new LEDs();
+        swerve = new Swerve(drivetrain);
+        scoring = new Scoring(swerve, leds);
+        visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
+        visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
+        visionLeft = new Vision(VISION.CAMERA_NAME_LEFT, VISION.CAMERA_OFFSETS_LEFT);
 
-  // private final Trigger RESET_TURRET = operatorController.a();// originally on button a 
-  private final Trigger MANUAL_OVERRIDE = operatorController.a(); // Also known as Turret Lock 
+        odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
+        odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
+        odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
 
-  private final Trigger INCREASE_RPM = operatorController.povUp();
-  private final Trigger DECREASE_RPM = operatorController.povDown();
-  private final Trigger TURRET_RIGHT = operatorController.povRight();
-  private final Trigger TURRET_LEFT = operatorController.povLeft();
+        // Main shoot comannds, sets speed to 1
+        NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
 
-  private final Trigger ENABLE_TRACKING = operatorController.rightTrigger();
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    leds = new LEDs();
-    swerve = new Swerve(drivetrain);
-    scoring = new Scoring(swerve, leds);
-    visionBack = new Vision(VISION.CAMERA_NAME_BACK, VISION.CAMERA_OFFSETS_BACK);
-    visionRight = new Vision(VISION.CAMERA_NAME_RIGHT, VISION.CAMERA_OFFSETS_RIGHT);
-    visionLeft = new Vision(VISION.CAMERA_NAME_LEFT, VISION.CAMERA_OFFSETS_LEFT);
+        // Unused shoot command, will be utilized in shoot on the move hopefully
+        NamedCommands.registerCommand(
+                "Shoot3sec",
+                scoring.indexer
+                        .runIndexerCommand()
+                        .withTimeout(3)
+                        .andThen(scoring.indexer.stopCommand()));
 
-    odometryUpdatesBack = new OdometryUpdates(visionBack, swerve);
-    odometryUpdatesLeft = new OdometryUpdates(visionLeft, swerve);
-    odometryUpdatesRight = new OdometryUpdates(visionRight, swerve);
+        // Kills all shooter related commands
+        NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
 
-    // Main shoot comannds, sets speed to 1
-    NamedCommands.registerCommand("Shoot", scoring.indexer.runIndexerCommand());
+        // Toggle hub tracking, needed to start the shooter
+        NamedCommands.registerCommand("ToggleHubTracking", scoring.toggleTrackingCommand());
 
-    //Unused shoot command, will be utilized in shoot on the move hopefully
-    NamedCommands.registerCommand("Shoot3sec", scoring.indexer.runIndexerCommand().withTimeout(3).andThen(scoring.indexer.stopCommand()));
+        // Working squeeze shoot command, utilized in both left and right double swipe
+        NamedCommands.registerCommand(
+                "SqueezeShoot",
+                Commands.defer(
+                        () -> {
+                            Command squeezeRoutine =
+                                    Commands.sequence(
+                                            scoring.intake.retractWithRollersCommand(),
+                                            Commands.waitSeconds(1.5),
+                                            scoring.intake.stopRollerCommand(),
+                                            scoring.intake.stopExtendCommand());
+                            return Commands.sequence(
+                                    scoring.indexer.runIndexerCommand(),
+                                    Commands.runOnce(
+                                            () ->
+                                                    CommandScheduler.getInstance()
+                                                            .schedule(squeezeRoutine)));
+                        },
+                        Set.of()));
 
-    //Kills all shooter related commands
-    NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
+        // Path event markers in our .path files are point markers (no end position),
+        // so use onTrue to avoid repeated scheduling/interruption side effects.
 
-    //Toggle hub tracking, needed to start the shooter
-    NamedCommands.registerCommand("ToggleHubTracking",scoring.toggleTrackingCommand());
+        // Run intake in pathplanner event marker
+        new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
 
-    //Working squeeze shoot command, utilized in both left and right double swipe
-    NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
-      Command squeezeRoutine = Commands.sequence(
-          scoring.intake.retractWithRollersCommand(),
-          Commands.waitSeconds(1.5),
-          scoring.intake.stopRollerCommand(),
-          scoring.intake.stopExtendCommand());
-      return Commands.sequence(
-          scoring.indexer.runIndexerCommand(),
-          Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
-    }, Set.of()));
+        // Depploy intake in pathplanner event marker
+        new EventTrigger("DeployIntake")
+                .onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
 
-    // Path event markers in our .path files are point markers (no end position),
-    // so use onTrue to avoid repeated scheduling/interruption side effects.
+        // Stop intake in pathplanner event marker
+        new EventTrigger("StopIntake")
+                .onTrue(
+                        scoring.intake
+                                .stopRollerCommand()
+                                .andThen(scoring.intake.stopExtendCommand()));
 
-    //Run intake in pathplanner event marker
-    new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
+        // Unused shoot event marker, can be used for testing or in case of a last minute change to
+        // the path
+        new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
 
-        //Depploy intake in pathplanner event marker
-    new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
+        // Configure the trigger bindings
+        configureBindings();
+        configureDefaults();
+        // AutoCommands.registerAll(scoring);
+        // Get autonomous ready
 
-            //Stop intake in pathplanner event marker
-    new EventTrigger("StopIntake")
-        .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
-  
-   //Unused shoot event marker, can be used for testing or in case of a last minute change to the path
-    new EventTrigger("ShootEVENT").onTrue(scoring.indexer.runIndexerCommand());
-
-    // Configure the trigger bindings
-    configureBindings();
-    configureDefaults();
-   // AutoCommands.registerAll(scoring);
-    // Get autonomous ready
-    
-    AutoManager.prepare(scoring);
-  }
-
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
-   */
-  private void configureBindings() {
-    RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
-    SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
-    LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
-
-    ROBOT_RELATIVE.onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
-        .onFalse(Commands.runOnce(() -> swerve.setRobotRelative(false)).ignoringDisable(true));
-HEADING_LOCK.whileTrue(
-    swerve.run(() -> {
-      ChassisSpeeds speeds = swerve.processJoystickInputs(
-          -driverController.getLeftX(),
-          -driverController.getLeftY(),
-          0.0);
-
-      swerve.driveAtHeading(speeds);
-    }));
-
-    INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())
-        .onFalse(scoring.intake.stopRollerCommand());
-    INTAKE_REVERSE.onTrue(scoring.intake.runReversedIntakeRollersCommand())
-        .onFalse(scoring.intake.stopRollerCommand());
-
-    INTAKE_EXTEND.onTrue(scoring.intake.extendIntakeCommand())
-        .onFalse(scoring.intake.stopExtendCommand());
-    INTAKE_RETRACT.onTrue(scoring.intake.retractIntakeCommand())
-        .onFalse(scoring.intake.stopExtendCommand());
-
-    // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
-    // pushed around.
-    LOCK_WHEELS.onTrue(swerve.run(() -> swerve.brake())).onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
-
-    // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
-    // toggle.
-    ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
-
-    SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
-    SHOOT_REVERSE.onTrue(scoring.indexer.runReverseIndexerCommand()).onFalse (scoring.indexer.stopCommand()); 
-
-    // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
-
-    MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
-
-    // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
-
-    // SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
-    //     .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
-    //     .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
-    //     .andThen(scoring.indexer.stopCommand()));
-
-    INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
-    DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
-
-    TURRET_RIGHT.onTrue(scoring.turretRightCommand());
-    TURRET_LEFT.onTrue(scoring.turretLeftCommand());
-  }
-
-  /**
-   * Place any default subsystem commands here
-   */
-  private void configureDefaults() {
-    // Set the swerve's default command to drive with joysticks
-    setDefaultCommand(swerve, swerve.run(() -> {
-      swerve.drive(swerve.processJoystickInputs(-driverController.getLeftX(),
-          -driverController.getLeftY(), -driverController.getRightX()));
-    }).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return AutoManager.getAutonomousCommand();
-  }
-
-  public Vision getRightVision() {
-    return visionRight;
-  }
-
-  public Vision getLeftVision() {
-    return visionLeft;
-  }
-
-  public Vision getBackVision() {
-    return visionBack;
-  }
-
-  /**
-   * Sets the default command for a subsystem.
-   * 
-   * @param subsystem
-   * @param command
-   */
-  private void setDefaultCommand(SubsystemBase subsystem, Command command) {
-    if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-      subsystem.setDefaultCommand(command);
-    } else {
-      // If you want to force-allow setting a cancel-incoming default command,
-      // directly call subsystem.setDefaultCommand() instead
-      throw new UnsupportedOperationException("Can't set a default command that cancels incoming!");
+        AutoManager.prepare(scoring);
     }
-  }
+
+    /**
+     * Use this method to define your trigger->command mappings. Triggers can be created via the
+     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+     * predicate, or via the named factories in
+     * {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+     * {@link CommandXboxController
+     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} controllers or
+     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
+     */
+    private void configureBindings() {
+        RESET_HEADING.onTrue(swerve.runOnce(() -> swerve.resetHeading()));
+        SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setSnailMode()));
+        LESS_SLOW_MODE.onTrue(swerve.runOnce(() -> swerve.setLessSlowMode()));
+
+        ROBOT_RELATIVE
+                .onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
+                .onFalse(
+                        Commands.runOnce(() -> swerve.setRobotRelative(false))
+                                .ignoringDisable(true));
+        HEADING_LOCK.whileTrue(
+                swerve.run(
+                        () -> {
+                            ChassisSpeeds speeds =
+                                    swerve.processJoystickInputs(
+                                            -driverController.getLeftX(),
+                                            -driverController.getLeftY(),
+                                            0.0);
+
+                            swerve.driveAtHeading(speeds);
+                        }));
+
+        INTAKE_RUN
+                .onTrue(scoring.intake.runIntakeRollersCommand())
+                .onFalse(scoring.intake.stopRollerCommand());
+        INTAKE_REVERSE
+                .onTrue(scoring.intake.runReversedIntakeRollersCommand())
+                .onFalse(scoring.intake.stopRollerCommand());
+
+        INTAKE_EXTEND
+                .onTrue(scoring.intake.extendIntakeCommand())
+                .onFalse(scoring.intake.stopExtendCommand());
+        INTAKE_RETRACT
+                .onTrue(scoring.intake.retractIntakeCommand())
+                .onFalse(scoring.intake.stopExtendCommand());
+
+        // TODO: Test binding to put swerve wheels into an "X" pattern to resist being
+        // pushed around.
+        LOCK_WHEELS
+                .onTrue(swerve.run(() -> swerve.brake()))
+                .onFalse(swerve.runOnce(() -> swerve.getCurrentCommand().cancel()));
+
+        // ENABLE_TRACKING start turret tracking and shooter wheels. It operates as a
+        // toggle.
+        ENABLE_TRACKING.onTrue(scoring.toggleTrackingCommand());
+
+        SHOOT.onTrue(scoring.indexer.runIndexerCommand()).onFalse(scoring.indexer.stopCommand());
+        SHOOT_REVERSE
+                .onTrue(scoring.indexer.runReverseIndexerCommand())
+                .onFalse(scoring.indexer.stopCommand());
+
+        // RESET_TURRET.onTrue(scoring.turret.resetPosCommand());
+
+        MANUAL_OVERRIDE.onTrue(scoring.overrideTrackingCommand());
+
+        // SNAP_TO.onTrue(swerve.runOnce(() -> swerve.snapToAngle(new Rotation2d(90))));
+
+        // SHOOT_SQUEEZE.onTrue(scoring.indexer.runIndexerCommand().andThen(Commands.waitSeconds(3))
+        //     .andThen(scoring.intake.retractWithRollersCommand()).andThen(Commands.waitSeconds(3))
+        //
+        // .andThen(scoring.intake.stopRollerCommand()).andThen(scoring.intake.stopExtendCommand())
+        //     .andThen(scoring.indexer.stopCommand()));
+
+        INCREASE_RPM.onTrue(scoring.increaseRPMCommand());
+        DECREASE_RPM.onTrue(scoring.decreaseRPMCommand());
+
+        TURRET_RIGHT.onTrue(scoring.turretRightCommand());
+        TURRET_LEFT.onTrue(scoring.turretLeftCommand());
+    }
+
+    /**
+     * Place any default subsystem commands here
+     */
+    private void configureDefaults() {
+        // Set the swerve's default command to drive with joysticks
+        setDefaultCommand(
+                swerve,
+                swerve.run(
+                                () -> {
+                                    swerve.drive(
+                                            swerve.processJoystickInputs(
+                                                    -driverController.getLeftX(),
+                                                    -driverController.getLeftY(),
+                                                    -driverController.getRightX()));
+                                })
+                        .withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return AutoManager.getAutonomousCommand();
+    }
+
+    public Vision getRightVision() {
+        return visionRight;
+    }
+
+    public Vision getLeftVision() {
+        return visionLeft;
+    }
+
+    public Vision getBackVision() {
+        return visionBack;
+    }
+
+    /**
+     * Sets the default command for a subsystem.
+     *
+     * @param subsystem
+     * @param command
+     */
+    private void setDefaultCommand(SubsystemBase subsystem, Command command) {
+        if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
+            subsystem.setDefaultCommand(command);
+        } else {
+            // If you want to force-allow setting a cancel-incoming default command,
+            // directly call subsystem.setDefaultCommand() instead
+            throw new UnsupportedOperationException(
+                    "Can't set a default command that cancels incoming!");
+        }
+    }
 }

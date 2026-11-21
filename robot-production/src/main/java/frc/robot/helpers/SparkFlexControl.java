@@ -1,17 +1,18 @@
+/* (C)2026 */
 package frc.robot.helpers;
 
-import org.littletonrobotics.junction.Logger;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import org.littletonrobotics.junction.Logger;
 
 public class SparkFlexControl {
     private SparkFlex motor;
@@ -26,20 +27,20 @@ public class SparkFlexControl {
      * Constructor for SparkFlex motors
      * Instantiates motor config, controller, and encoder
      */
-    public SparkFlexControl(int canId, boolean coastMode){
+    public SparkFlexControl(int canId, boolean coastMode) {
         motor = new SparkFlex(canId, MotorType.kBrushless);
         motorConfig = new SparkFlexConfig();
         motorController = motor.getClosedLoopController();
         motorEncoder = motor.getEncoder();
 
-        if (coastMode){
+        if (coastMode) {
             motorConfig.idleMode(IdleMode.kCoast);
-        }
-        else{
+        } else {
             motorConfig.idleMode(IdleMode.kBrake);
         }
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         motor.set(0);
 
@@ -50,7 +51,7 @@ public class SparkFlexControl {
      * @param RPM
      * sets motor velocity
      */
-    public void setVelocity(double RPM){
+    public void setVelocity(double RPM) {
         motorController.setSetpoint(RPM, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
 
@@ -58,7 +59,7 @@ public class SparkFlexControl {
      * sets motor position using rotations
      * @param rotations
      */
-    public void setPosition(double rotations){
+    public void setPosition(double rotations) {
         motorController.setSetpoint(rotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
 
@@ -66,7 +67,7 @@ public class SparkFlexControl {
      * sets motor voltage
      * @param voltage
      */
-    public void setVoltage(double voltage){
+    public void setVoltage(double voltage) {
         motorController.setSetpoint(voltage, ControlType.kVoltage, ClosedLoopSlot.kSlot0);
     }
 
@@ -74,17 +75,17 @@ public class SparkFlexControl {
      * sets motor percent output
      * @param power
      */
-    public void setPercentOutput(double power){
+    public void setPercentOutput(double power) {
         motor.set(power);
     }
 
     /**
      * makes motor stop by setting speed to 0
      */
-    public void stop(){
+    public void stop() {
         motor.set(0);
     }
-    
+
     /**
      * sets motor PID values using all possible values
      * @param kP
@@ -96,14 +97,23 @@ public class SparkFlexControl {
      * @param kG
      * @param allowedError
      */
-    public void setPIDF(double kP, double kI, double kD, double kS, double kV, double kA, double kG, double allowedError){
+    public void setPIDF(
+            double kP,
+            double kI,
+            double kD,
+            double kS,
+            double kV,
+            double kA,
+            double kG,
+            double allowedError) {
         motorConfig.closedLoop.p(kP).i(kI).d(kD);
 
         motorConfig.closedLoop.feedForward.kS(kS).kV(kV).kA(kA).kG(kG);
 
         motorConfig.closedLoop.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
@@ -112,10 +122,11 @@ public class SparkFlexControl {
      * @param kI
      * @param kD
      */
-    public void setPIDF(double kP, double kI, double kD){
+    public void setPIDF(double kP, double kI, double kD) {
         motorConfig.closedLoop.p(kP).i(kI).d(kD);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
@@ -124,13 +135,18 @@ public class SparkFlexControl {
      * @param maxAcceleration
      * @param allowedError
      */
-    public void setTrapezoidalMotionMagicPosition(double maxVelocity, double maxAcceleration, double allowedError){
-        motorConfig.closedLoop.maxMotion.positionMode(MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal)
-        .cruiseVelocity(maxVelocity)
-        .maxAcceleration(maxAcceleration)
-        .allowedProfileError(allowedError);
+    public void setTrapezoidalMotionMagicPosition(
+            double maxVelocity, double maxAcceleration, double allowedError) {
+        motorConfig
+                .closedLoop
+                .maxMotion
+                .positionMode(MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal)
+                .cruiseVelocity(maxVelocity)
+                .maxAcceleration(maxAcceleration)
+                .allowedProfileError(allowedError);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
@@ -139,53 +155,54 @@ public class SparkFlexControl {
      * @param maxAcceleration
      * @param allowedError
      */
-     public void smartMotion(double maxVelocity, double maxAcceleration, double allowedError){
+    public void smartMotion(double maxVelocity, double maxAcceleration, double allowedError) {
         motorConfig.closedLoop.maxMotion.cruiseVelocity(maxVelocity);
         motorConfig.closedLoop.maxMotion.maxAcceleration(maxAcceleration);
         motorConfig.closedLoop.maxMotion.allowedProfileError(allowedError);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
      * makes motor inverted
      */
-    public void setInverted(){
+    public void setInverted() {
         motorConfig.inverted(true);
     }
 
     /**
      * @return motor velocity
      */
-    public double getVelocity(){
+    public double getVelocity() {
         return motorEncoder.getVelocity();
     }
 
     /**
      * @return motor position
      */
-    public double getPosition(){
+    public double getPosition() {
         return motorEncoder.getPosition();
     }
 
     /**
      * @return gets position in ticks
      */
-    public double getTicks(){
-        return motorEncoder.getPosition()*4096;
+    public double getTicks() {
+        return motorEncoder.getPosition() * 4096;
     }
 
     /**
      * @return voltage
      */
-    public double getVoltage(){
+    public double getVoltage() {
         return motor.getBusVoltage();
     }
 
     /**
      * @return gets current output
      */
-    public double getCurrent(){
+    public double getCurrent() {
         return motor.getOutputCurrent();
     }
 
@@ -194,51 +211,51 @@ public class SparkFlexControl {
      * @param motorToFollow
      * @param inverted
      */
-    public void setFollower(SparkFlexControl motorToFollow, boolean inverted){
+    public void setFollower(SparkFlexControl motorToFollow, boolean inverted) {
         motorConfig.follow(motorToFollow.motor, inverted);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
      * sets the forward soft limit
      * @param forwardRotations
      */
-    public void setForwardSoftLimit(double forwardRotations){
+    public void setForwardSoftLimit(double forwardRotations) {
         motorConfig.softLimit.forwardSoftLimit(forwardRotations).forwardSoftLimitEnabled(true);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
      *  sets reverse soft limit
      * @param reverseRotations
      */
-    public void setReverseSoftLimit(double reverseRotations){
+    public void setReverseSoftLimit(double reverseRotations) {
         motorConfig.softLimit.reverseSoftLimit(reverseRotations).reverseSoftLimitEnabled(true);
-        
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
      * sets current limit
      * @param currentLimit
      */
-    public void setCurrentLimit(double currentLimit){
+    public void setCurrentLimit(double currentLimit) {
         motorConfig.secondaryCurrentLimit(currentLimit);
 
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public void motorLogging(String logPath){
+    public void motorLogging(String logPath) {
         Logger.recordOutput(logPath + motorName + " RPM", getVelocity());
         Logger.recordOutput(logPath + motorName + " Rotations", getPosition());
         Logger.recordOutput(logPath + motorName + " Ticks", getTicks());
         Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
         Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
     }
-
-
-
-    
 }

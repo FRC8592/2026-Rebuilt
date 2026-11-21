@@ -1,3 +1,4 @@
+/* (C)2026 */
 package frc.robot.examples;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -49,8 +50,8 @@ public class TalonFXMotorExample {
         // if the motor is inverted, set to Clockwise_Positive
         // the default value is InvertedValue.CounterClockwise_Positive
         motorConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <- i.e. this
-                                                                                    // inverts the
-                                                                                    // motor
+        // inverts the
+        // motor
 
         // <-------------- SET FOLLOWER MOTORS -------------->
         // use MotorAlignmentValue.Aligned when the motors spin in the same direction
@@ -65,13 +66,13 @@ public class TalonFXMotorExample {
         // <-------------- SET SOFT LIMITS -------------->
         motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0; // threshold in
-                                                                                 // rotations (the
-                                                                                 // "furthest"
-                                                                                 // position)
+        // rotations (the
+        // "furthest"
+        // position)
 
         motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0; // threshold in
-                                                                                // rotations
+        // rotations
 
         // <-------------- SET PID VALUES -------------->
         // You typically will only need to use one slot for PID
@@ -92,7 +93,7 @@ public class TalonFXMotorExample {
         double targetCruiseVelocity = 80; // Rotations per Second
         double targetAcceleration = 160; // Rotations per Second / Second (160rps/s is 0.5 seconds)
         double targetJerk = 1600; // Rotations per Second / Second / Second (1600 rps/s/s is 0.1
-                                  // seconds)
+        // seconds)
         motorConfiguration.MotionMagic.MotionMagicCruiseVelocity = targetCruiseVelocity;
         motorConfiguration.MotionMagic.MotionMagicAcceleration = targetAcceleration;
         motorConfiguration.MotionMagic.MotionMagicJerk = targetJerk;
@@ -104,7 +105,6 @@ public class TalonFXMotorExample {
         // if you're using position control, you might want to zero its position when
         // you start the robot
         motor.setPosition(0);
-
     }
 
     // basic method to run the motor without using velocity or position control
@@ -162,12 +162,13 @@ public class TalonFXMotorExample {
 
     // true if motor is at forward soft limit
     public boolean atForwardLimit() {
-        return getPositionRotations() >= motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold;
+        return getPositionRotations()
+                >= motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold;
     }
 
     // true if motor is at reverse soft limit
     public boolean atReverseLimit() {
-        return getPositionRotations() <= motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold;
+        return getPositionRotations()
+                <= motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold;
     }
-
 }

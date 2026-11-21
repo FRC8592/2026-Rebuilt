@@ -1,14 +1,13 @@
-    package frc.robot.commands.autonomous;
-
-import java.util.Set;
+/* (C)2026 */
+package frc.robot.commands.autonomous;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Scoring;
+import java.util.Set;
 
 public final class AutoCommands {
     public static void registerNamedCommands(Scoring scoring) {
@@ -16,26 +15,36 @@ public final class AutoCommands {
         NamedCommands.registerCommand("StopShoot", scoring.indexer.stopCommand());
         NamedCommands.registerCommand("ToggleHubTracking", scoring.toggleTrackingCommand());
 
-        NamedCommands.registerCommand("SqueezeShoot", Commands.defer(() -> {
-            Command squeezeRoutine = Commands.sequence(
-                    scoring.intake.retractWithRollersCommand(),
-                    Commands.waitSeconds(1.5),
-                    scoring.intake.stopRollerCommand(),
-                    scoring.intake.stopExtendCommand());
+        NamedCommands.registerCommand(
+                "SqueezeShoot",
+                Commands.defer(
+                        () -> {
+                            Command squeezeRoutine =
+                                    Commands.sequence(
+                                            scoring.intake.retractWithRollersCommand(),
+                                            Commands.waitSeconds(1.5),
+                                            scoring.intake.stopRollerCommand(),
+                                            scoring.intake.stopExtendCommand());
 
-            return Commands.sequence(
-                    scoring.indexer.runIndexerCommand(),
-                    Commands.runOnce(() -> CommandScheduler.getInstance().schedule(squeezeRoutine)));
-        }, Set.of()));
-        
+                            return Commands.sequence(
+                                    scoring.indexer.runIndexerCommand(),
+                                    Commands.runOnce(
+                                            () ->
+                                                    CommandScheduler.getInstance()
+                                                            .schedule(squeezeRoutine)));
+                        },
+                        Set.of()));
     }
-
 
     public static void registerEventTriggers(Scoring scoring) {
         new EventTrigger("RunIntake").onTrue(scoring.intake.runIntakeRollersCommand());
-        new EventTrigger("DeployIntake").onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
+        new EventTrigger("DeployIntake")
+                .onTrue(scoring.intake.extendIntakeCommand().withTimeout(0.05));
         new EventTrigger("StopIntake")
-                .onTrue(scoring.intake.stopRollerCommand().andThen(scoring.intake.stopExtendCommand()));
+                .onTrue(
+                        scoring.intake
+                                .stopRollerCommand()
+                                .andThen(scoring.intake.stopExtendCommand()));
     }
 
     public static void registerAll(Scoring scoring) {
@@ -43,6 +52,5 @@ public final class AutoCommands {
         registerEventTriggers(scoring);
     }
 
-    private AutoCommands() {
-    }
+    private AutoCommands() {}
 }
