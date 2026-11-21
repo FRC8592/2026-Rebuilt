@@ -155,7 +155,7 @@ public final class Constants {
 
   public final class TURRET {
     public static final int TURRET_MOTOR_CAN_ID = 20;
-    public static final Current CURRENT_LIMIT = Amps.of(50);
+    public static final double CURRENT_LIMIT = 50;
     public static final Voltage TURRET_P = Volts.of(40d); // 12;
     public static final Voltage TURRET_I = Volts.of(0.01);
     public static final Voltage TURRET_D = Volts.of(0.8); // 0.4;
