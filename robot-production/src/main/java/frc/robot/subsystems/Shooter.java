@@ -44,11 +44,6 @@ public class Shooter extends SubsystemBase {
         /**
          * Shooter PID Tuning Configuration and Constants
          */
-        
-        leftMotor.createSlot0();
-        leftMotor.createSlot1();
-        leftMotor.createSlot2();
-
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_SHORT, SHOOTER.SHOOTER_A, 0);
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_MEDIUM, SHOOTER.SHOOTER_A, 1);
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_LONG, SHOOTER.SHOOTER_A, 2);
@@ -178,8 +173,6 @@ public class Shooter extends SubsystemBase {
 
         if (FDiff) {
             leftMotor.setPID(SP_NEW, SI_NEW, SD_NEW, SV_NEW, 1);
-            
-            leftMotor.applyConfig();
 
             P_SET = SP_NEW;
             I_SET = SI_NEW;

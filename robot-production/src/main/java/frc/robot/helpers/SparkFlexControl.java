@@ -179,7 +179,7 @@ public class SparkFlexControl {
      * @return voltage
      */
     public double getVoltage(){
-        return motor.getBusVoltage();
+        return motor.getBusVoltage() * motor.getAppliedOutput();
     }
 
     /**
@@ -237,8 +237,4 @@ public class SparkFlexControl {
         Logger.recordOutput(logPath + motorName + " Voltage", getVoltage());
         Logger.recordOutput(logPath + motorName + " Voltage", getCurrent());
     }
-
-
-
-    
 }
