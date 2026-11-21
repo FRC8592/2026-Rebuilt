@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
          * configuration Store persistant configuration (Flash) Place in Brake mode (Hold position)
          * Set current limits Set VELOCITY PID parameters
          */
-        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true);
+        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true, "extendMotor");
 
         extendMotor.setCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
 
@@ -183,11 +183,10 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Intake Right RPM", getIntakeVelocity() * 60d);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
+        Logger.recordOutput(INTAKE.LOG_PATH + "Right Roller Motor Voltage",getRightIntakeVoltage());
+        Logger.recordOutput(INTAKE.LOG_PATH + "Left Roller Motor Voltage", getLeftIntakeVoltage());
+        extendMotor.motorLogging(INTAKE.LOG_PATH);
     }
 }
