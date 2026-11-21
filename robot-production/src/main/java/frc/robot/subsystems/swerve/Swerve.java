@@ -420,7 +420,8 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
 
-        if (driveTranslateX*driveTranslateX + driveTranslateY*driveTranslateY >= 0.6*0.6) {
+        double percent = 0.60;
+        if (Math.hypot(rawX, rawY) >= percent) {
             driveTranslateX = 0;
             driveTranslateY = 0;
         }
