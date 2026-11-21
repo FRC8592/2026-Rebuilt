@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.CodeConstants;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.Constants.*;
@@ -74,8 +73,8 @@ public class OdometryUpdates extends SubsystemBase {
 
         // when the vision captures apriltag(s)
         if (!targets.isEmpty()) {
-            Logger.recordOutput(CodeConstants.VISION.LOG_PATH + "DistanceMeters", distanceToTag);
-            Logger.recordOutput(CodeConstants.VISION.LOG_PATH + "VisionPose", robotPosition);
+            Logger.recordOutput(VISION.LOG_PATH + "DistanceMeters", distanceToTag);
+            Logger.recordOutput(VISION.LOG_PATH + "VisionPose", robotPosition);
             distanceToTag = vision.getTargets().get(0).bestCameraToTarget.getX();
         }
 
@@ -100,9 +99,9 @@ public class OdometryUpdates extends SubsystemBase {
 
         }
 
-        Logger.recordOutput(CodeConstants.VISION.LOG_PATH + "AmbiguityRatio", ambiguity);
-        Logger.recordOutput(CodeConstants.VISION.LOG_PATH + "robotPosition", robotPosition);
-        Logger.recordOutput(CodeConstants.VISION.LOG_PATH + "initialPose", initialPose);
+        Logger.recordOutput(VISION.LOG_PATH + "AmbiguityRatio", ambiguity);
+        Logger.recordOutput(VISION.LOG_PATH + "robotPosition", robotPosition);
+        Logger.recordOutput(VISION.LOG_PATH + "initialPose", initialPose);
 
     }
 
