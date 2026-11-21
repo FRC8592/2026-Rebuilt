@@ -47,6 +47,10 @@ public class TalonFXControl {
         motorPIDSlot1Configs = new Slot1Configs();
         motorPIDSlot2Configs = new Slot2Configs();
 
+        motorPIDSlot0Configs = new Slot0Configs();
+        motorPIDSlot1Configs = new Slot1Configs();
+        motorPIDSlot2Configs = new Slot2Configs();
+
         motorCurrentLimit = new CurrentLimitsConfigs();
 
         motor.set(0);
@@ -131,6 +135,7 @@ public class TalonFXControl {
     public void setCurrentLimit(double currentLimit) {
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
+        motor.getConfigurator().apply(motorConfig);
         motor.getConfigurator().apply(motorConfig);
     }
 
