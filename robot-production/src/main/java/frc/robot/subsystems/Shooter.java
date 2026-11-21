@@ -39,8 +39,8 @@ public class Shooter extends SubsystemBase {
         /**
          * Flywheel and Backwheel Motor initialization and their respective configurations
          */
-        leftMotor = new TalonFXControl(SHOOTER.LEFT_MOTOR_CAN_ID, true);
-        rightMotor = new TalonFXControl(SHOOTER.RIGHT_MOTOR_CAN_ID, true);
+        leftMotor = new TalonFXControl(SHOOTER.LEFT_MOTOR_CAN_ID, true, "leftShooterMotor");
+        rightMotor = new TalonFXControl(SHOOTER.RIGHT_MOTOR_CAN_ID, true, "rightShooterMotor");
 
         /**
          * Shooter PID Tuning Configuration and Constants
@@ -202,15 +202,11 @@ public class Shooter extends SubsystemBase {
                 leftMotor.getVelocity() * 60d);
         Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
                 rightMotor.getVelocity() * 60d);
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Left Shooter Motor Voltage", 
-                leftMotor.getVoltage());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Right Shooter Motor Voltage",
-                rightMotor.getVoltage());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
                 leftMotor.getCurrent());
         Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
                 rightMotor.getCurrent());
-        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
+        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
     }
 
 }
