@@ -1,6 +1,8 @@
 package frc.robot.helpers;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -13,12 +15,15 @@ import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SparkFlexControl {
     private SparkFlex motor;
     private SparkFlexConfig motorConfig;
     private SparkClosedLoopController motorController;
     private RelativeEncoder motorEncoder;
     private String motorName;
+    private Slot0Configs motorPIDSlot0Configs;
 
     /**
      * @param canId motor Can ID
@@ -44,6 +49,8 @@ public class SparkFlexControl {
         motor.set(0);
 
         motorName = name;
+
+        motorPIDSlot0Configs = new Slot0Configs();
     }
 
     /**
@@ -208,6 +215,15 @@ public class SparkFlexControl {
         motorConfig.softLimit.forwardSoftLimit(forwardRotations).forwardSoftLimitEnabled(true);
 
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    public void tuningPID(){
+        SmartDashboard.putNumber(motorName + "P" ,motorPIDSlot0Configs.kP);
+        SmartDashboard.putNumber(motorName + "I" ,motorPIDSlot0Configs.kI);
+        SmartDashboard.putNumber(motorName + "D" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "S" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "V" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "A" ,motorPIDSlot0Configs.kD);
     }
 
     /**
