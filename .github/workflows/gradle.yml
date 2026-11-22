@@ -30,6 +30,9 @@ jobs:
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      # Run PMD static code analysis.
+      - name: PMD
+        run: ./gradlew pmdMain
       # Runs a single command using the runners shell
       - name: Compile and run tests on robot code
         run: ./gradlew build
