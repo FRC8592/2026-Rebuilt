@@ -37,6 +37,7 @@ public class Swerve extends SubsystemBase {
     private boolean alignedHeading = false;
     private boolean isRobotRelative = false;
 
+
     private SmoothingFilter smoothingFilter;
 
     private CommandSwerveDrivetrain swerve;
@@ -68,7 +69,8 @@ public class Swerve extends SubsystemBase {
                                                                                             // the
                                                                                             // robot
                                                                                             // to a
-        SmartDashboard.putNumber("DRIVE PERCENTAGE", 0.60);                                                                                    // set
+        SmartDashboard.putNumber("DRIVE PERCENTAGE", 1.0);
+        SmartDashboard.putBoolean("DRIVE ENABLED", true);
                                                                                             // heading
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
@@ -423,7 +425,14 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         //double percent = 0.60;
         //SmartDashboard.putNumber("DRIVE PERCENTAGE", percent);
         double percent = 0.0;
-        SmartDashboard.getNumber("DRIVE PERCENTAGE", percent);
+        if (SmartDashboard.getBoolean("DRIVE ENABLED", true)) {
+            SmartDashboard.getNumber("DRIVE PERCENTAGE", percent);
+        }
+
+        else {
+            percent = 1.0;
+        }
+
         if (Math.hypot(rawX, rawY) >= percent) {
             driveTranslateX = 0.0;
             driveTranslateY = 0.0;
