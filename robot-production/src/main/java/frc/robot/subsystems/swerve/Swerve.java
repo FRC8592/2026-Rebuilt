@@ -60,6 +60,8 @@ public class Swerve extends SubsystemBase {
     private RobotConfig config = null;
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
+        SmartDashboard.putBoolean("DRIVE ENABLED", true);
+        SmartDashboard.putNumber("ROTATE RADIANS", 1.0);
         smoothingFilter = new SmoothingFilter(SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
                 SWERVE.TRANSLATION_SMOOTHING_AMOUNT, SWERVE.ROTATION_SMOOTHING_AMOUNT);
 
@@ -419,8 +421,16 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
+        double radians = 0.0;
+        if (SmartDashboard.getBoolean("DRIVE ENABLED", true)) {
+            SmartDashboard.getNumber("ROTATE RADIANS", radians);
+        }
+        else {
+            radians = (360 * Math.PI / 180);
+        }
+            
 
-        if (Math.abs(rawRot) >= 0.50) {
+        if (Math.abs(rawRot) >= radians) {
             driveRotate = 0.0;
         }
         return smoothingFilter
