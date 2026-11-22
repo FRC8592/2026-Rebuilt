@@ -26,7 +26,7 @@ public class Turret extends SubsystemBase {
         E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET.in(Degrees));
         E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET.in(Degrees));
 
-        turretMotor = new TalonFXControl(TURRET.TURRET_MOTOR_CAN_ID, false);
+        turretMotor = new TalonFXControl(TURRET.TURRET_MOTOR_CAN_ID, false, "turretMotor");
         turretMotor.createSlot0();
 
         turretMotor.overrideBrakeDurNeutral(true);
@@ -159,6 +159,8 @@ public class Turret extends SubsystemBase {
                 turretMotor.getVoltage());
 
         Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
+
+        turretMotor.motorLogging(TURRET.LOG_PATH);
 
     }
 }

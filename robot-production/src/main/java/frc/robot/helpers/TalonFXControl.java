@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -9,8 +11,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.units.measure.Current;
 
 import com.ctre.phoenix6.controls.*;
 
@@ -24,6 +24,7 @@ public class TalonFXControl {
     private int CAN_ID;
     private VelocityVoltage velocityVoltage;
     private PositionVoltage positionRequest;
+    private String motorName;
 
     /**
      * @param canId
@@ -31,7 +32,7 @@ public class TalonFXControl {
      * Constructor for TalonFX motors
      * Instantiates motor config, encoder, current limit, velocity voltage.
      */
-    public TalonFXControl(int canId, boolean coastMode) {
+    public TalonFXControl(int canId, boolean coastMode, String name){
         motor = new TalonFX(canId);
         CAN_ID = canId;
         motorConfig = new TalonFXConfiguration();
@@ -48,6 +49,20 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
+
+        motorName = name;
+
+    }
+
+    /**
+     * Sets motor position using rotations
+     * @param rotations
+     */
+
+    public void setPosition(double rotations){
+        PositionVoltage positionVoltage = new PositionVoltage(rotations);
+        motor.setControl(positionVoltage.withPosition(rotations));
+        motor.setPosition(rotations);
         positionRequest = new PositionVoltage(0);
     }
 
@@ -244,5 +259,13 @@ public class TalonFXControl {
     public void statorCurrentLimit(double currentLimit) {
         motorConfig.CurrentLimits.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motor.getConfigurator().apply(motorConfig);
+    }
+
+    public void motorLogging(String logPath){
+        Logger.recordOutput(logPath + motorName + "/" +  "RPM", getVelocity());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Rotations", getPosition());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Ticks", getTicks());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Voltage", getVoltage());
+        Logger.recordOutput(logPath +  motorName + "/" +  "Current", getCurrent());
     }
 }
