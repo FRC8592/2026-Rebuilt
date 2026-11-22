@@ -49,6 +49,7 @@ public class TalonFXControl {
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
+        positionRequest = new PositionVoltage(0);
 
         motorName = name;
 
