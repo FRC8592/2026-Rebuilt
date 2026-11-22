@@ -1,8 +1,10 @@
 package frc.robot.subsystems.vision;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.*;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -18,6 +20,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.VISION;
 import frc.robot.subsystems.LEDs;
 
 public class Vision extends SubsystemBase {
@@ -33,6 +37,8 @@ public class Vision extends SubsystemBase {
     PhotonCameraSim cameraSim;
     AprilTagFieldLayout aprilTagFieldLayout;
 
+    String cameraName;
+
     /**
      * Creates a vision subsystem for a camera on the robot
      * 
@@ -40,6 +46,7 @@ public class Vision extends SubsystemBase {
      * @param camOffsets camera position relative to the robot center
      */
     public Vision(String camName, Transform3d camOffsets) {
+        cameraName = camName;
         initializeCommon(camName, camOffsets);
     }
 
@@ -102,6 +109,28 @@ public class Vision extends SubsystemBase {
 
         SmartDashboard.putNumber("Tag Count", results.size());
         // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+
+        Logger.recordOutput(VISION.LOG_PATH + cameraName + "/visible ids", getTargets().toString());
+        getTargets().get(0).bestCameraToTarget.getX();
+        getTargets().get(0).bestCameraToTarget.getY();
+        getTargets().get(0).bestCameraToTarget.getZ();
+
+        List <Double> targetDistance = Arrays.asList(getTargets().get(0).bestCameraToTarget.getX(),
+        getTargets().get(0).bestCameraToTarget.getY(),
+        getTargets().get(0).bestCameraToTarget.getZ());
+
+        
+        for(int i=0;i<targetDistance.size();i++) {
+            Logger.recordOutput(Constants.VISION.LOG_PATH+" distance["+i+"]",targetDistance.get(i));
+        }
+
+         List <Double> bestCameraToTarget = Arrays.asList(getTargets().get(0).bestCameraToTarget.getX(),
+        getTargets().get(0).bestCameraToTarget.getY(),
+        getTargets().get(0).bestCameraToTarget.getZ());
+
+        for(int i=0;i<bestCameraToTarget.size();i++) {
+            Logger.recordOutput(Constants.VISION.LOG_PATH+" bestTarget["+i+"]",bestCameraToTarget.get(i));
+        }
     }
 
     /**
