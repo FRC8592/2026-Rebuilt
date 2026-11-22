@@ -9,6 +9,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
@@ -40,6 +43,8 @@ public class TalonFXControl {
         }
 
         motor.getConfigurator().apply(motorConfig);
+
+        motorPIDSlot0Configs = new Slot0Configs();
 
         motorCurrentLimit = new CurrentLimitsConfigs();
 
@@ -198,6 +203,14 @@ public class TalonFXControl {
                 .withKD(kD).withKV(kV);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
+    }
+    public void tuningPID(){
+        SmartDashboard.putNumber(motorName + "P" ,motorPIDSlot0Configs.kP);
+        SmartDashboard.putNumber(motorName + "I" ,motorPIDSlot0Configs.kI);
+        SmartDashboard.putNumber(motorName + "D" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "S" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "V" ,motorPIDSlot0Configs.kD);
+        SmartDashboard.putNumber(motorName + "A" ,motorPIDSlot0Configs.kD);
     }
 
     /**
