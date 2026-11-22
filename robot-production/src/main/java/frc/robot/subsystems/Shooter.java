@@ -54,9 +54,8 @@ public class Shooter extends SubsystemBase {
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_LONG, SHOOTER.SHOOTER_A, 2);
 
         /**
-         * Shooter Current Limit. THIS IS NOT ENABLED RIGHT NOW!
+         * Shooter Current Limit.
          */
-        // TODO: Enable this current limit if problems!
 
         leftMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
         rightMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
@@ -76,6 +75,10 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V_MEDIUM);
         SmartDashboard.putNumber("Shooter Voltage", 0);
 
+        /**
+         * Setting up MotionMagic
+         */
+        leftMotor.setupTrapezoidalMotionMagic(100.0, 120.0, 0.0);
     }
 
 
@@ -90,10 +93,10 @@ public class Shooter extends SubsystemBase {
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
         // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
-        leftMotor.setVelocityControl(desiredRPM, slot);
+        //leftMotor.setVelocityControl(desiredRPM, slot);
+        leftMotor.setVelocityTrapezoidalMotionMagicControl(desiredRPM, slot);
 
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", leftMotor.getVelocityVoltageString());
-        // leftMotor.setControl(shooterMMVV.withVelocity(shooterMotorVelocity));
     }
 
     /**
@@ -145,7 +148,6 @@ public class Shooter extends SubsystemBase {
         return leftMotor.getVoltage();
     }
 
-    // TODO: See if the follower does provide a negative value to the Motor and change accordingly
     public double getRightMotorVoltage() {
         return -1 * rightMotor.getVoltage();
     }
@@ -193,8 +195,6 @@ public class Shooter extends SubsystemBase {
      * Periodic method, primarily for logging.
      */
     @Override
-    // TODO: Add back *60 for RPM purposes, in RPS for shooter testing and configuration of
-    // feedforward constants
     public void periodic() {
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",

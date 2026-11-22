@@ -56,10 +56,9 @@ public class TalonFXControl {
      * @param rotations
      */
 
-    public void setPosition(double rotations){
+    public void setPosition(double rotations, int slot){
         PositionVoltage positionVoltage = new PositionVoltage(rotations);
-        motor.setControl(positionVoltage.withPosition(rotations));
-        motor.setPosition(rotations);
+        motor.setControl(positionVoltage.withSlot(slot).withPosition(rotations));
     }
 
     /**
@@ -114,17 +113,19 @@ public class TalonFXControl {
 
         motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardRotations;
+        motor.getConfigurator().apply(motorConfig);
     }
 
     public void setReverseSoftLimit(double reverseRotations){
         motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseRotations;
+        motor.getConfigurator().apply(motorConfig);
     }
 
     public void setCurrentLimit(double currentLimit){
         motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
         motorConfig.withCurrentLimits(motorCurrentLimit);
-        applyConfig();
+        motor.getConfigurator().apply(motorConfig);
     }
 
     public void createSlot0(){
@@ -170,6 +171,7 @@ public class TalonFXControl {
                 .withKV(kV).withKA(kA);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
+        motor.getConfigurator().apply(motorConfig);
     }
 
     /**
@@ -198,6 +200,7 @@ public class TalonFXControl {
                 .withKD(kD).withKV(kV);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
+        motor.getConfigurator().apply(motorConfig);
     }
 
     /**
@@ -213,29 +216,31 @@ public class TalonFXControl {
      * Sets up trapezoidal motion magic
      * @param cruiseVel in rps
      * @param acceleration in rps/s
-     * @param jerk in rps/s/s
+     * @param jerk in rps/s/s 
+     * This is no longer trapezoidal if the jerk value is set to a nonzero number; it would be an S-curve.
      */
     public void setupTrapezoidalMotionMagic(double cruiseVel, double acceleration, double jerk){
         motorConfig.MotionMagic
             .withMotionMagicCruiseVelocity(cruiseVel)
             .withMotionMagicAcceleration(acceleration)
             .withMotionMagicJerk(jerk);
+        motor.getConfigurator().apply(motorConfig);
     }
     
     /**
      * Sets motor velocity using motion magic in rps
      * @param velocity
      */
-    public void setVelocityTrapezoidalMotionMagicControl(double velocity){
-        motor.setControl(motionMagicVelocityVoltage.withVelocity(velocity));
+    public void setVelocityTrapezoidalMotionMagicControl(double velocity, int slot){
+        motor.setControl(motionMagicVelocityVoltage.withSlot(slot).withVelocity(velocity));
     }
 
     /**
      * Sets motor position using motion magic in rotations
      * @param position
      */
-    public void setPositionTrapezoidalMotionMagicControl(double position){
-        motor.setControl(motionMagicVoltage.withPosition(position));
+    public void setPositionTrapezoidalMotionMagicControl(double position, int slot){
+        motor.setControl(motionMagicVoltage.withSlot(slot).withPosition(position));
     }
 
     /**
