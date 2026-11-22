@@ -419,6 +419,10 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
+
+        if (Math.abs(rawRot) >= 0.50) {
+            driveRotate = 0.0;
+        }
         return smoothingFilter
                 .smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
