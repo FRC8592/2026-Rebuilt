@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
          * configuration Store persistant configuration (Flash) Place in Brake mode (Hold position)
          * Set current limits Set VELOCITY PID parameters
          */
-        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true);
+        extendMotor = new SparkFlexControl(INTAKE.INTAKE_EXTEND_CAN_ID, true, "extendMotor");
 
         extendMotor.setCurrentLimit(INTAKE.EXTEND_CURRENT_LIMIT);
 
@@ -182,9 +182,8 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Rotations", getExtendPosition());
         Logger.recordOutput(INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        Logger.recordOutput(INTAKE.LOG_PATH + "Extend Motor Velocity", extendMotor.getVelocity());
+        extendMotor.motorLogging(INTAKE.LOG_PATH);
         rollerRightMotor.motorLogging(INTAKE.LOG_PATH);
         rollerLeftMotor.motorLogging(INTAKE.LOG_PATH);
     }
