@@ -120,7 +120,6 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     // m_timeAndJoystickReplay.update();
 
-
     CommandScheduler.getInstance().run();
 
   }

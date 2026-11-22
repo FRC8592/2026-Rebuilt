@@ -68,7 +68,7 @@ public class Swerve extends SubsystemBase {
                                                                                             // the
                                                                                             // robot
                                                                                             // to a
-                                                                                            // set
+        SmartDashboard.putNumber("DRIVE PERCENTAGE", 0.60);                                                                                    // set
                                                                                             // heading
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
@@ -185,6 +185,7 @@ public class Swerve extends SubsystemBase {
         
         Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/targetspeed, CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
         Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/realspeed, CAN 9", state.ModuleStates[2].speedMetersPerSecond);
+        
 
         // TODO: do we really need to run this?
         swerve.periodic();
@@ -419,6 +420,14 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->
         // (translateY, translateX, rotate)
+        //double percent = 0.60;
+        //SmartDashboard.putNumber("DRIVE PERCENTAGE", percent);
+        double percent = 0.0;
+        SmartDashboard.getNumber("DRIVE PERCENTAGE", percent);
+        if (Math.hypot(rawX, rawY) >= percent) {
+            driveTranslateX = 0.0;
+            driveTranslateY = 0.0;
+        }
         return smoothingFilter
                 .smooth(new ChassisSpeeds(driveTranslateY, driveTranslateX, driveRotate));
     }
