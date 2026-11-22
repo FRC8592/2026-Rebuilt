@@ -56,7 +56,8 @@ public class RobotContainer {
   private final Trigger INTAKE_RUN = driverController.leftTrigger();
   private final Trigger INTAKE_EXTEND = driverController.leftBumper();
   private final Trigger SHOOT = driverController.rightTrigger();
-private final Trigger HEADING_LOCK = driverController.rightBumper();
+  private final Trigger HEADING_LOCK = driverController.rightBumper();
+  private final Trigger FACE_FIELD_POINT = driverController.start();
   private final Trigger INTAKE_REVERSE = driverController.b();
 
   // private final Trigger RESET_EXTEND = driverController.b();
@@ -160,14 +161,16 @@ private final Trigger HEADING_LOCK = driverController.rightBumper();
 
     ROBOT_RELATIVE.onTrue(Commands.runOnce(() -> swerve.setRobotRelative(true)).ignoringDisable(true))
         .onFalse(Commands.runOnce(() -> swerve.setRobotRelative(false)).ignoringDisable(true));
-HEADING_LOCK.whileTrue(
-    swerve.run(() -> {
-      ChassisSpeeds speeds = swerve.processJoystickInputs(
-          -driverController.getLeftX(),
-          -driverController.getLeftY(),
-          0.0);
-
+    HEADING_LOCK.whileTrue(swerve.run(() -> {
+      ChassisSpeeds speeds = swerve.processJoystickInputs(-driverController.getLeftX(),
+          -driverController.getLeftY(), 0.0);
       swerve.driveAtHeading(speeds);
+    }));
+
+    FACE_FIELD_POINT.whileTrue(swerve.run(() -> {
+      ChassisSpeeds speeds = swerve.processJoystickInputs(-driverController.getLeftX(),
+          -driverController.getLeftY(), 0.0);
+      swerve.driveFacingFieldPoint(speeds);
     }));
 
     INTAKE_RUN.onTrue(scoring.intake.runIntakeRollersCommand())

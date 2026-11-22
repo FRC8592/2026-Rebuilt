@@ -20,13 +20,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.FIELD;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
 import frc.robot.helpers.SmoothingFilter;
+import frc.robot.helpers.Utils;
 
 public class Swerve extends SubsystemBase {
 
@@ -73,7 +76,9 @@ public class Swerve extends SubsystemBase {
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
-    SmartDashboard.putNumber("Heading Lock (deg)", 0.0);
+        SmartDashboard.putNumber("Heading Lock (deg)", 0.0);
+        SmartDashboard.putNumber("Face Field Point/X (m)", FIELD.BLUE_AIM_TARGET.getX());
+        SmartDashboard.putNumber("Face Field Point/Y (m)", FIELD.BLUE_AIM_TARGET.getY());
 
         
         swerve = drivetrain;
@@ -259,36 +264,43 @@ public class Swerve extends SubsystemBase {
                 .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
     
-public void driveAtHeading(ChassisSpeeds speeds) {
-    double targetDegrees =
-            SmartDashboard.getNumber("Heading Lock (deg)", 0.0);
+    public void driveAtHeading(ChassisSpeeds speeds) {
+        Rotation2d targetHeading = Rotation2d.fromDegrees(
+                SmartDashboard.getNumber("Heading Lock (deg)", 0.0));
+        driveAtHeading(speeds, targetHeading, "HeadingLock");
+    }
 
-    Rotation2d targetHeading =
-            Rotation2d.fromDegrees(targetDegrees);
+    public void driveFacingFieldPoint(ChassisSpeeds speeds) {
+        Pose2d blueTarget = new Pose2d(
+                SmartDashboard.getNumber("Face Field Point/X (m)", FIELD.BLUE_AIM_TARGET.getX()),
+                SmartDashboard.getNumber("Face Field Point/Y (m)", FIELD.BLUE_AIM_TARGET.getY()),
+                Rotation2d.kZero);
+        boolean mirrorForRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+        Pose2d target = Utils.mirrorPose(blueTarget, mirrorForRed);
+        Rotation2d targetHeading = calculateHeadingToPoint(getCurrentOdometryPosition(), target);
 
-    double omega = snapToAngle(targetHeading);
+        driveAtHeading(speeds, targetHeading, "FieldPointAim");
+        Logger.recordOutput(SWERVE.LOG_PATH + "FieldPointAim/TargetPoint", target);
+    }
 
-    swerve.setControl(fieldCentric
-            .withVelocityX(speeds.vxMetersPerSecond)
-            .withVelocityY(speeds.vyMetersPerSecond)
-            .withRotationalRate(omega));
+    static Rotation2d calculateHeadingToPoint(Pose2d robotPose, Pose2d targetPose) {
+        double deltaX = targetPose.getX() - robotPose.getX();
+        double deltaY = targetPose.getY() - robotPose.getY();
+        return Rotation2d.fromRadians(Math.atan2(deltaY, deltaX));
+    }
 
-    double currentDegrees = getYaw().getDegrees();
-    double errorDegrees =
-            targetHeading.minus(getYaw()).getDegrees();
+    private void driveAtHeading(ChassisSpeeds speeds, Rotation2d targetHeading, String logName) {
+        double omega = snapToAngle(targetHeading);
 
-    Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/TargetDegrees",
-            targetDegrees);
+        swerve.setControl(fieldCentric.withVelocityX(speeds.vxMetersPerSecond)
+                .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(omega));
 
-    Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/CurrentDegrees",
-            currentDegrees);
-
-    Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/ErrorDegrees",
-            errorDegrees);
-}
+        Logger.recordOutput(SWERVE.LOG_PATH + logName + "/TargetDegrees",
+                targetHeading.getDegrees());
+        Logger.recordOutput(SWERVE.LOG_PATH + logName + "/CurrentDegrees", getYaw().getDegrees());
+        Logger.recordOutput(SWERVE.LOG_PATH + logName + "/ErrorDegrees",
+                targetHeading.minus(getYaw()).getDegrees());
+    }
 
     /**
      * Define whatever direction the robot is facing as forward

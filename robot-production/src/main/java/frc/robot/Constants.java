@@ -31,6 +31,10 @@ public final class Constants {
 
   }
 
+  public static final class FIELD {
+    public static final Pose2d BLUE_AIM_TARGET = new Pose2d(4.02844, 4.445, Rotation2d.kZero);
+  }
+
   public final class CONVERSIONS {
     public static final double METERS_TO_FEET = 3.28084;
     public static final double FEET_TO_METERS = 0.3048;
