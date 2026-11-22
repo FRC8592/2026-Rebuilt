@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Robot;
 import frc.robot.helpers.SmoothingFilter;
@@ -41,15 +42,15 @@ public class Swerve extends SubsystemBase {
 
     private CommandSwerveDrivetrain swerve;
     private final SwerveRequest.FieldCentric fieldCentric =
-            new SwerveRequest.FieldCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
-                    .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1%
+            new SwerveRequest.FieldCentric().withDeadband(CodeConstants.SWERVE.MAX_SPEED * 0.01)
+                    .withRotationalDeadband(CodeConstants.SWERVE.MAX_ANGULAR_RATE * 0.01) // Add a 1%
                                                                             // deadband
                     .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for
                                                                       // drive motors
 
     private final SwerveRequest.RobotCentric robotCentric =
-            new SwerveRequest.RobotCentric().withDeadband(SWERVE.MAX_SPEED * 0.01)
-                    .withRotationalDeadband(SWERVE.MAX_ANGULAR_RATE * 0.01)
+            new SwerveRequest.RobotCentric().withDeadband(CodeConstants.SWERVE.MAX_SPEED * 0.01)
+                    .withRotationalDeadband(CodeConstants.SWERVE.MAX_ANGULAR_RATE * 0.01)
                     .withDriveRequestType(DriveRequestType.Velocity);
 
     private SwerveRequest.SwerveDriveBrake X_Mode =
@@ -167,24 +168,24 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         SwerveDriveState state = swerve.getState();
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
-        Logger.recordOutput(SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
-        Logger.recordOutput(SWERVE.LOG_PATH + "ChassisSpeeds", getRobotRelativeSpeeds());
-        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleStates", state.ModuleStates);
-        Logger.recordOutput(SWERVE.LOG_PATH + "ModulePositions", state.ModulePositions);
-        Logger.recordOutput(SWERVE.LOG_PATH + "ModuleTargets", state.ModuleTargets);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "Current Pose", getCurrentOdometryPosition());
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "Current 3D Pose", get3DCurrentOdometryPosition());
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ChassisSpeeds", getRobotRelativeSpeeds());
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ModuleStates", state.ModuleStates);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ModulePositions", state.ModulePositions);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ModuleTargets", state.ModuleTargets);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/targetspeed, CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "WHITE/realspeed, CAN 7", state.ModuleStates[0].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "WHITE/targetspeed, CAN 7", state.ModuleTargets[0].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "WHITE/realspeed, CAN 7", state.ModuleStates[0].speedMetersPerSecond);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/targetsped, CAN 5", state.ModuleTargets[1].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "ORANGE/realspeed, CAN 5", state.ModuleStates[1].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ORANGE/targetsped, CAN 5", state.ModuleTargets[1].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "ORANGE/realspeed, CAN 5", state.ModuleStates[1].speedMetersPerSecond);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/targetspeed, CAN 3", state.ModuleTargets[3].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "TEAL/realspeed, CAN 3", state.ModuleStates[3].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "TEAL/targetspeed, CAN 3", state.ModuleTargets[3].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "TEAL/realspeed, CAN 3", state.ModuleStates[3].speedMetersPerSecond);
         
-        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/targetspeed, CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
-        Logger.recordOutput(SWERVE.LOG_PATH + "BLACK/realspeed, CAN 9", state.ModuleStates[2].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "BLACK/targetspeed, CAN 9", state.ModuleTargets[2].speedMetersPerSecond);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "BLACK/realspeed, CAN 9", state.ModuleStates[2].speedMetersPerSecond);
 
         // TODO: do we really need to run this?
         swerve.periodic();
@@ -201,7 +202,7 @@ public class Swerve extends SubsystemBase {
      * @param speeds robot-relative ChassisSpeeds speed to run the drivetrain at
      */
     public void drive(ChassisSpeeds speeds) {
-        Logger.recordOutput(SWERVE.LOG_PATH + "TargetSpeeds", speeds);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "TargetSpeeds", speeds);
 
         if (isRobotRelative) {
             double translationMultiplier = SWERVE.TRANSLATE_POWER_FAST;
@@ -278,15 +279,15 @@ public void driveAtHeading(ChassisSpeeds speeds) {
             targetHeading.minus(getYaw()).getDegrees();
 
     Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/TargetDegrees",
+            CodeConstants.SWERVE.LOG_PATH + "HeadingLock/TargetDegrees",
             targetDegrees);
 
     Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/CurrentDegrees",
+            CodeConstants.SWERVE.LOG_PATH + "HeadingLock/CurrentDegrees",
             currentDegrees);
 
     Logger.recordOutput(
-            SWERVE.LOG_PATH + "HeadingLock/ErrorDegrees",
+            CodeConstants.SWERVE.LOG_PATH + "HeadingLock/ErrorDegrees",
             errorDegrees);
 }
 
@@ -351,7 +352,7 @@ public void driveAtHeading(ChassisSpeeds speeds) {
     public void setKnownOdometryPose(Pose2d currentPose) {
         swerve.resetPose(currentPose);
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "Console",
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "Console",
                 ("X: " + currentPose.getX() + "; Y: " + currentPose.getY() + "; Rotation: "
                         + currentPose.getRotation().getDegrees() + "°."));
     }
@@ -410,11 +411,11 @@ public void driveAtHeading(ChassisSpeeds speeds) {
                 SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
         driveTranslateY *=
                 SWERVE.TRANSLATE_POWER_FAST * SWERVE.MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
-        driveRotate *= SWERVE.ROTATE_POWER_FAST * SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
+        driveRotate *= SWERVE.ROTATE_POWER_FAST * CodeConstants.SWERVE.MAX_ROTATIONAL_VELOCITY_RADIANS_PER_SECOND;
 
-        Logger.recordOutput(SWERVE.LOG_PATH + "TranslateY", driveTranslateY);
-        Logger.recordOutput(SWERVE.LOG_PATH + "TranslateX", driveTranslateX);
-        Logger.recordOutput(SWERVE.LOG_PATH + "driveRotate", driveRotate);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "TranslateY", driveTranslateY);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "TranslateX", driveTranslateX);
+        Logger.recordOutput(CodeConstants.SWERVE.LOG_PATH + "driveRotate", driveRotate);
 
         // returns a robot-relative ChassisSpeeds object
         // ChassisSpeeds constructor requires: (FORWARD, HORIZONTAL, ROTATION) ->

@@ -4,6 +4,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.SCORING;
 import frc.robot.Constants.SHOOTER;
 import frc.robot.helpers.TalonFXControl;
@@ -187,18 +188,18 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Set Vel", targetShooterRPM);
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Left Real Vel RPM",
                 leftMotor.getVelocity() * 60d);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Right Real Vel RPM",
                 rightMotor.getVelocity() * 60d);
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Left Flywheel Motor Current",
                 leftMotor.getCurrent());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Right Flywheel Motor Current",
                 rightMotor.getCurrent());
-        Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
-        leftMotor.motorLogging(SHOOTER.LOG_PATH);
-        rightMotor.motorLogging(SHOOTER.LOG_PATH);
+        Logger.recordOutput(CodeConstants.SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
+        leftMotor.motorLogging(CodeConstants.SHOOTER.LOG_PATH);
+        rightMotor.motorLogging(CodeConstants.SHOOTER.LOG_PATH);
     }
 
 }

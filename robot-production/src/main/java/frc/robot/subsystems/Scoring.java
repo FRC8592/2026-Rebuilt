@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.CONVERSIONS;
-import frc.robot.Constants.MEASUREMENTS;
 import frc.robot.Constants.SCORING;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -71,35 +71,35 @@ public class Scoring extends SubsystemBase {
     public Pose2d getTarget(Pose2d currentRobotPose) {
         Pose2d targetPose = new Pose2d(0, 0, new Rotation2d(0));
 
-        Logger.recordOutput(SCORING.LOG_PATH + "Alliance", alliance);
+        Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Alliance", alliance);
 
         if (alliance == Alliance.Blue) {
             // if we're in our alliance zone
-            if (currentRobotPose.getX() < ((MEASUREMENTS.FIELD_X_METERS * 0.25) + 0.5)) {
-                targetPose = SCORING.BLUE_HUB_POSE;
+            if (currentRobotPose.getX() < ((CodeConstants.MEASUREMENTS.FIELD_X_METERS * 0.25) + 0.5)) {
+                targetPose = CodeConstants.SCORING.BLUE_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2.0) {
-                targetPose = SCORING.BLUE_PASSING_LOW_POSE;
+            else if (currentRobotPose.getY() < CodeConstants.MEASUREMENTS.FIELD_Y_METERS / 2.0) {
+                targetPose = CodeConstants.SCORING.BLUE_PASSING_LOW_POSE;
                 targetIsHub = false;
             } else {
-                targetPose = SCORING.BLUE_PASSING_HIGH_POSE;
+                targetPose = CodeConstants.SCORING.BLUE_PASSING_HIGH_POSE;
                 targetIsHub = false;
             }
         }
         else { // if alliance == Alliance.Red
             // if we're in our alliance zone
-            if (currentRobotPose.getX() > ((MEASUREMENTS.FIELD_X_METERS * 0.75) - 0.5)){
-                targetPose = SCORING.RED_HUB_POSE;
+            if (currentRobotPose.getX() > ((CodeConstants.MEASUREMENTS.FIELD_X_METERS * 0.75) - 0.5)){
+                targetPose = CodeConstants.SCORING.RED_HUB_POSE;
                 targetIsHub = true;
             }
             // if we're in the bottom half of the field
-            else if (currentRobotPose.getY() < MEASUREMENTS.FIELD_Y_METERS / 2.0) {
-                targetPose = SCORING.RED_PASSING_LOW_POSE;
+            else if (currentRobotPose.getY() < CodeConstants.MEASUREMENTS.FIELD_Y_METERS / 2.0) {
+                targetPose = CodeConstants.SCORING.RED_PASSING_LOW_POSE;
                 targetIsHub = false;
             } else {
-                targetPose = SCORING.RED_PASSING_HIGH_POSE;
+                targetPose = CodeConstants.SCORING.RED_PASSING_HIGH_POSE;
                 targetIsHub = false;
             }
         }
@@ -308,10 +308,10 @@ public class Scoring extends SubsystemBase {
             double outputRPM = adjustedK * (totalSpeedRelativeRobot / flyRadiusFeet) * (60.0 / (2 * Math.PI));
 
             double turretAngleToHub = Math.atan2(v0y, v0x);
-            Logger.recordOutput(SCORING.LOG_PATH + "Turret Angle To Hub Based on Hub Coordinate Systems", turretAngleToHub);
+            Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Turret Angle To Hub Based on Hub Coordinate Systems", turretAngleToHub);
 
             double turretFieldAngle = (((Math.toDegrees(turretAngleToHub) - (90.0 - Math.toDegrees(angleToHub)) - Math.toDegrees(robotOmega * dt))) % 360 + 360) % 360;
-            Logger.recordOutput(SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
+            Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Field Angle Offset for Turret", 90 - Math.toDegrees(angleToHub));
 
             return new Pair<>(outputRPM*SCORING.FLYWHEEL_GEARING, turretFieldAngle);
         } catch (IllegalArgumentException e) {
@@ -340,17 +340,17 @@ public class Scoring extends SubsystemBase {
 
         // Current robot pose and target pose
         Pose2d currentRobotPose = new Pose2d(0, 0, new Rotation2d(0));
-        Pose2d currentTargetPose = SCORING.BLUE_HUB_POSE;
+        Pose2d currentTargetPose = CodeConstants.SCORING.BLUE_HUB_POSE;
 
-        Logger.recordOutput(SCORING.LOG_PATH + "Tracking", trackingTarget);
+        Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Tracking", trackingTarget);
 
         // get the current robot position and select the target
         currentRobotPose = swerve.getCurrentOdometryPosition();
         currentTargetPose = getTarget(currentRobotPose);
 
-        Logger.recordOutput(SCORING.LOG_PATH + "target", currentTargetPose);
+        Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "target", currentTargetPose);
         targetDistance = currentRobotPose.getTranslation().getDistance(currentTargetPose.getTranslation());
-        Logger.recordOutput(SCORING.LOG_PATH + "Target Distance", targetDistance);
+        Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Target Distance", targetDistance);
 
         if (indexer.indexerRunning) {
             leds.displayindexerRunningForward();
@@ -399,8 +399,8 @@ public class Scoring extends SubsystemBase {
             shooterSpeed = shooter.shootSpeed(distance) + shooter.getShooterSpeedOffset();
 
             // Log the current distance-to-target and shooter speed for debugging
-            Logger.recordOutput(SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
-            Logger.recordOutput(SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
+            Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Shooter Speed", shooterSpeed); // rotations per second
+            Logger.recordOutput(CodeConstants.SCORING.LOG_PATH + "Turret Field-relative Angle", turretAngle);
 
             // Update turret angle and shooter speed
             turret.TurrettoAngle(currentRobotPose, turretAngle);
