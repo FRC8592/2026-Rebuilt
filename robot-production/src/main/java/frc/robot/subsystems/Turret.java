@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CodeConstants;
 import frc.robot.Constants.*;
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,26 +24,26 @@ public class Turret extends SubsystemBase {
     private double turretAngleOffset = 0;
 
     public Turret() {
-        E1 = new DutyCycleEncoder(0, 360, TURRET.E1_OFFSET.in(Degrees));
-        E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET.in(Degrees));
+        E1 = new DutyCycleEncoder(0, 360, CodeConstants.TURRET.E1_OFFSET.in(Degrees));
+        E2 = new DutyCycleEncoder(1, 360, CodeConstants.TURRET.E2_OFFSET.in(Degrees));
 
         turretMotor = new TalonFXControl(TURRET.TURRET_MOTOR_CAN_ID, false, "turretMotor");
         turretMotor.createSlot0();
 
         turretMotor.overrideBrakeDurNeutral(true);
         turretMotor.inverted(InvertedValue.Clockwise_Positive);
-        turretMotor.statorCurrentLimit(TURRET.CURRENT_LIMIT);
+        turretMotor.statorCurrentLimit(CodeConstants.TURRET.CURRENT_LIMIT);
 
-        turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
-        turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
 
-        turretMotor.setPID(TURRET.TURRET_P.in(Volts), TURRET.TURRET_I.in(Volts), TURRET.TURRET_D.in(Volts),
-                TURRET.TURRET_S.in(Volts), TURRET.TURRET_V.in(Volts), TURRET.TURRET_A.in(Volts), 0);
+        turretMotor.setPID(CodeConstants.TURRET.TURRET_P.in(Volts), CodeConstants.TURRET.TURRET_I.in(Volts), CodeConstants.TURRET.TURRET_D.in(Volts),
+                CodeConstants.TURRET.TURRET_S.in(Volts), CodeConstants.TURRET.TURRET_V.in(Volts), CodeConstants.TURRET.TURRET_A.in(Volts), 0);
         turretMotor.applyConfig();
 
-        SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
-        SmartDashboard.putNumber("tI", TURRET.TURRET_I.in(Volts));
-        SmartDashboard.putNumber("tD", TURRET.TURRET_D.in(Volts));
+        SmartDashboard.putNumber("tP", CodeConstants.TURRET.TURRET_P.in(Volts));
+        SmartDashboard.putNumber("tI", CodeConstants.TURRET.TURRET_I.in(Volts));
+        SmartDashboard.putNumber("tD", CodeConstants.TURRET.TURRET_D.in(Volts));
 
         SmartDashboard.putNumber("Turret Voltage", 0);
         SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
@@ -59,7 +60,7 @@ public class Turret extends SubsystemBase {
         if (Math.abs(target) > TURRET.MAX_ROTATION_LIMIT)
             target -= Math.signum(target) * 360;
         logAngle(target);
-        turretMotor.setPositionControl(target * TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
+        turretMotor.setPositionControl(target * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS, 0);
     }
 
     public void basicTurretToPos(double angle) {
@@ -133,7 +134,7 @@ public class Turret extends SubsystemBase {
     }
 
     public double getAngle() {
-        return turretMotor.getPosition() / (TURRET.DEGREES_TO_MOTOR_ROTATIONS);
+        return turretMotor.getPosition() / (CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
     }
 
     public double getTargetAngle() {
@@ -150,17 +151,17 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("E1", E1.get());
         Logger.recordOutput("E2", E2.get());
 
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Angle",
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Angle",
                 turretMotor.getPosition()
-                        * (1 / TURRET.DEGREES_TO_MOTOR_ROTATIONS));
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Rotations",
+                        * (1 / CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS));
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Rotations",
                 turretMotor.getPosition()); // rotations per second
-        Logger.recordOutput(TURRET.LOG_PATH + "Motor Voltage",
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Motor Voltage",
                 turretMotor.getVoltage());
 
-        Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
+        Logger.recordOutput(CodeConstants.TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
 
-        turretMotor.motorLogging(TURRET.LOG_PATH);
+        turretMotor.motorLogging(CodeConstants.TURRET.LOG_PATH);
 
     }
 }
