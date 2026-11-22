@@ -424,16 +424,17 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         // (translateY, translateX, rotate)
         //double percent = 0.60;
         //SmartDashboard.putNumber("DRIVE PERCENTAGE", percent);
-        double percent = 0.0;
-        if (SmartDashboard.getBoolean("DRIVE ENABLED", true)) {
+        double percent = 1.0;
+        boolean enabled = false;
+        SmartDashboard.getBoolean("DRIVE ENABLED", enabled);
+        if (enabled) {
             SmartDashboard.getNumber("DRIVE PERCENTAGE", percent);
         }
 
-        else {
-            percent = 1.0;
-        }
+        //SmartDashboard.putNumber("READ DRIVER PERCENTAGE", percent);
+        Logger.recordOutput("DRIVE PERCENTAGE", percent);
 
-        if (Math.hypot(rawX, rawY) >= percent) {
+        if (Math.hypot(rawX, rawY) > percent) {
             driveTranslateX = 0.0;
             driveTranslateY = 0.0;
         }
