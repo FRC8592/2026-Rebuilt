@@ -60,8 +60,6 @@ public class Swerve extends SubsystemBase {
     private RobotConfig config = null;
 
     public Swerve(CommandSwerveDrivetrain drivetrain) {
-        SmartDashboard.putBoolean("DRIVE ENABLED", true);
-        SmartDashboard.putNumber("ROTATE RADIANS", 1.0);
         smoothingFilter = new SmoothingFilter(SWERVE.TRANSLATION_SMOOTHING_AMOUNT,
                 SWERVE.TRANSLATION_SMOOTHING_AMOUNT, SWERVE.ROTATION_SMOOTHING_AMOUNT);
 
@@ -69,9 +67,10 @@ public class Swerve extends SubsystemBase {
                 new PIDController(SWERVE.SNAP_TO_kP, SWERVE.SNAP_TO_kI, SWERVE.SNAP_TO_kD); // Turns
                                                                                             // the
                                                                                             // robot
-                                                                                            // to a
-                                                                                            // set
-                                                                                            // heading
+                                                                                            // to a                                                             // set                                      // heading
+        SmartDashboard.putBoolean("DRIVE ENABLED", true);
+        SmartDashboard.putNumber("ROTATE RADIANS", 1.0);
+
         snapToController.enableContinuousInput(-Math.PI, Math.PI); // makes -pi and pi friendly
                                                                    // neighbors :)
         snapToController.setTolerance(Math.toRadians(2.0)); // prevent chatter and oscillation
@@ -425,10 +424,10 @@ public void driveAtHeading(ChassisSpeeds speeds) {
         if (SmartDashboard.getBoolean("DRIVE ENABLED", true)) {
             SmartDashboard.getNumber("ROTATE RADIANS", radians);
         }
+
         else {
             radians = (360 * Math.PI / 180);
-        }
-            
+        }    
 
         if (Math.abs(rawRot) >= radians) {
             driveRotate = 0.0;
