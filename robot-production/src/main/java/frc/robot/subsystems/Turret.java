@@ -27,18 +27,16 @@ public class Turret extends SubsystemBase {
         E2 = new DutyCycleEncoder(1, 360, TURRET.E2_OFFSET.in(Degrees));
 
         turretMotor = new TalonFXControl(TURRET.TURRET_MOTOR_CAN_ID, false);
-        turretMotor.createSlot0();
 
         turretMotor.overrideBrakeDurNeutral(true);
         turretMotor.inverted(InvertedValue.Clockwise_Positive);
-        turretMotor.statorCurrentLimit(TURRET.CURRENT_LIMIT);
+        turretMotor.setStatorCurrentLimit(TURRET.CURRENT_LIMIT);
 
         turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * TURRET.DEGREES_TO_MOTOR_ROTATIONS);
 
         turretMotor.setPID(TURRET.TURRET_P.in(Volts), TURRET.TURRET_I.in(Volts), TURRET.TURRET_D.in(Volts),
                 TURRET.TURRET_S.in(Volts), TURRET.TURRET_V.in(Volts), TURRET.TURRET_A.in(Volts), 0);
-        turretMotor.applyConfig();
 
         SmartDashboard.putNumber("tP", TURRET.TURRET_P.in(Volts));
         SmartDashboard.putNumber("tI", TURRET.TURRET_I.in(Volts));
@@ -159,6 +157,5 @@ public class Turret extends SubsystemBase {
                 turretMotor.getVoltage());
 
         Logger.recordOutput(TURRET.LOG_PATH + "Turret Target Angle", targetAngle);
-
     }
 }

@@ -36,17 +36,12 @@ public class Shooter extends SubsystemBase {
         leftMotor = new TalonFXControl(SHOOTER.LEFT_MOTOR_CAN_ID, true);
         rightMotor = new TalonFXControl(SHOOTER.RIGHT_MOTOR_CAN_ID, true);
 
-        /**
-         * Shooter PID Tuning Configuration and Constants
-         */
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_SHORT, SHOOTER.SHOOTER_A, 0);
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_MEDIUM, SHOOTER.SHOOTER_A, 1);
         leftMotor.setPID(SHOOTER.SHOOTER_P, SHOOTER.SHOOTER_I, SHOOTER.SHOOTER_D, SHOOTER.SHOOTER_S, SHOOTER.SHOOTER_V_LONG, SHOOTER.SHOOTER_A, 2);
 
-        leftMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
-        leftMotor.applyConfig();
-        rightMotor.setCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
-        rightMotor.applyConfig();
+        leftMotor.setStatorCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
+        rightMotor.setStatorCurrentLimit(SHOOTER.SHOOTER_CURRENT_LIMIT);
 
         //Set the Shooter Right Motor to follow the Left Shooter Motor in the inverse direction
         rightMotor.setFollower(leftMotor, MotorAlignmentValue.Opposed);
@@ -57,14 +52,12 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("sV", SHOOTER.SHOOTER_V_MEDIUM);
         SmartDashboard.putNumber("Shooter Voltage", 0);
         SmartDashboard.putNumber("shooterSpeedOffset", shooterSpeedOffset);
-
     }
 
     public void runAtSpeed(double desiredRPM, int slot) {
         double shooterMotorVelocity = desiredRPM / 60d; // Convert from RPM to RPS for the motor controller
         targetShooterRPM = desiredRPM;
         Logger.recordOutput("shooterMotorRPS", shooterMotorVelocity);
-        // Configure the motors to run at this velocity utilizing the VelocityVoltage control modes
         leftMotor.setVelocityControl(desiredRPM, slot);
         Logger.recordOutput("Shooter Motor Velocity Voltage Info", leftMotor.getVelocityVoltageString());
     }
@@ -192,5 +185,4 @@ public class Shooter extends SubsystemBase {
                 rightMotor.getCurrent());
         Logger.recordOutput(SHOOTER.LOG_PATH + "Shooter Tolerance", isWithin());
     }
-
 }

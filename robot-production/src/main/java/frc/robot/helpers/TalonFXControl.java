@@ -1,6 +1,4 @@
 package frc.robot.helpers;
-
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
@@ -10,21 +8,18 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.units.measure.Current;
-
 import com.ctre.phoenix6.controls.*;
 
 public class TalonFXControl {
     private TalonFX motor;
     private TalonFXConfiguration motorConfig;
-    private CurrentLimitsConfigs motorCurrentLimit;
     private Slot0Configs motorPIDSlot0Configs;
     private Slot1Configs motorPIDSlot1Configs;
     private Slot2Configs motorPIDSlot2Configs;
-    private int CAN_ID;
     private VelocityVoltage velocityVoltage;
     private PositionVoltage positionRequest;
-
+    private int CAN_ID;
+    
     /**
      * @param canId
      * @param coastMode
@@ -47,41 +42,24 @@ public class TalonFXControl {
         motorPIDSlot1Configs = new Slot1Configs();
         motorPIDSlot2Configs = new Slot2Configs();
 
-        motorPIDSlot0Configs = new Slot0Configs();
-        motorPIDSlot1Configs = new Slot1Configs();
-        motorPIDSlot2Configs = new Slot2Configs();
-
-        motorCurrentLimit = new CurrentLimitsConfigs();
-
         motor.set(0);
 
         velocityVoltage = new VelocityVoltage(0);
+        positionRequest = new PositionVoltage(0);
     }
 
-    /**
-     * Sets motor position using rotations
-     * @param rotations
-     */
-
-    public void setPosition(double rotations){
-        PositionVoltage positionVoltage = new PositionVoltage(rotations);
-        motor.setControl(positionVoltage.withPosition(rotations));
+    public void setVelocityControl(double desiredRPM, int slot) {
+        motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
     }
 
-    /**
-     * Sets motor voltage
-     * 
-     * @param voltage
-     */
+    public void setPositionControl(double rotations, int slot){
+        motor.setControl(positionRequest.withSlot(slot).withPosition(rotations));
+    }
+
     public void setVoltage(double voltage) {
         motor.setVoltage(voltage);
     }
 
-    /**
-     * Sets motor percent output
-     * 
-     * @param power
-     */
     public void setPercentOutput(double power) {
         motor.set(power);
     }
@@ -118,6 +96,15 @@ public class TalonFXControl {
         motor.setControl(new Follower(followerMotor.CAN_ID, alignmentValue));
     }
 
+     /**
+     * Restricts the maximum electrical current allowed to flow through a motor's
+     * stator windings
+     */
+    public void setStatorCurrentLimit(double currentLimit) {
+        motorConfig.CurrentLimits.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
+        motor.getConfigurator().apply(motorConfig);
+    }
+
     public void setForwardSoftLimit(double forwardRotations) {
         motorConfig.SoftwareLimitSwitch
                 .withForwardSoftLimitThreshold(forwardRotations)
@@ -132,11 +119,20 @@ public class TalonFXControl {
         motor.getConfigurator().apply(motorConfig);
     }
 
-    public void setCurrentLimit(double currentLimit) {
-        motorCurrentLimit.withStatorCurrentLimit(currentLimit).withStatorCurrentLimitEnable(true);
-        motorConfig.withCurrentLimits(motorCurrentLimit);
-        motor.getConfigurator().apply(motorConfig);
-        motor.getConfigurator().apply(motorConfig);
+    /**
+     * When set to true, forces motor to utilize brake mode behaviour during a
+     * neutral state.
+     */
+    public void overrideBrakeDurNeutral(boolean override) {
+        positionRequest.withOverrideBrakeDurNeutral(override);
+    }
+
+    /**
+     * Configures whether the motor spins clockwise or counterclockwise for positive
+     * control demands
+     */
+    public void inverted(InvertedValue direction) {
+        motorConfig.MotorOutput.withInverted(direction);
     }
 
     /**
@@ -202,17 +198,6 @@ public class TalonFXControl {
                     .withKD(kD).withKV(kV);
             motorConfig.withSlot2(motorPIDSlot2Configs);
         }
-
         motor.getConfigurator().apply(motorConfig);
-    }
-
-    /**
-     * Sets motor velocity using RPS
-     * 
-     * @param desiredRPM
-     * @param slot
-     */
-    public void setVelocityControl(double desiredRPM, int slot) {
-        motor.setControl(velocityVoltage.withSlot(slot).withVelocity(desiredRPM / 60.0));
     }
 }
