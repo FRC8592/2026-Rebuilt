@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
     id "com.peterabeles.gversion" version "1.10"
+    id 'pmd'
 }
 
 java {
@@ -9,10 +10,19 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+pmd {
+    toolVersion = '7.16.0' // Requires Gradle 8.6+ for PMD 7
+    consoleOutput = true   // Prints violations directly to the terminal
+    ignoreFailures = true // Fails the build if violations are found
+    ruleSets = [
+        'category/java/errorprone.xml',
+        'category/java/bestpractices.xml'
+    ]
+}
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
-// This is added by GradleRIO's backing project DeployUtils.
+// This is added by GradleRIO's. backing project DeployUtils.
 deploy {
     targets {
         roborio(getTargetTypeClass('RoboRIO')) {
