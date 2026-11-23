@@ -24,6 +24,7 @@ import frc.robot.Constants.SHARED;
 
 public class Vision extends SubsystemBase {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/VISION/";
+    private static final double FOV_DIAG_IN_DEGREES = 70d;
     private final PhotonCamera camera;
     private final PhotonPoseEstimator estimator;
 
@@ -61,7 +62,7 @@ public class Vision extends SubsystemBase {
 
         cameraProperties = new SimCameraProperties();
         cameraProperties.setCalibration(calibrationWidth, calibrationHeight,
-                Rotation2d.fromDegrees(70));
+                Rotation2d.fromDegrees(FOV_DIAG_IN_DEGREES));
         cameraProperties.setCalibError(calibrationAvgErrorPx, calibrationErrorStdPx);
         cameraProperties.setFPS(fps);
 
