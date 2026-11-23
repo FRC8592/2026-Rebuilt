@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.utils.stormconfig.ConfigSchema.ConfigSchemaException;
 import frc.utils.stormconfig.ConfigSchema.ListShape;
 import frc.utils.stormconfig.ConfigSchema.ObjectShape;
+import frc.utils.stormconfig.ConfigSchema.Shape;
 
 import java.io.File;
 import java.net.NetworkInterface;
@@ -21,6 +22,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -35,34 +37,73 @@ import java.util.function.Function;
  *   <li>otherwise, the {@code stormconfig.robots} entry matching a MAC address of any network interface;
  *   <li>otherwise, config.conf alone.
  * </ol>
+ *
+ * <p>A robot's files don't have to set every key (see {@link ConfigProject}). Each generated
+ * section of {@code Constants} calls {@link Node#require} when it is first used, so code that uses
+ * a section this robot hasn't configured fails right there, naming the missing keys.
  */
 public final class StormConfig {
-    private static final String BASE_NAME = "config.conf";
     private static final File RC_FILE = new File(System.getProperty("user.home"), ".stormrc.conf");
 
     private static Node root;
 
     private StormConfig() {}
 
+    /** Thrown when code uses a config section that this robot's files don't fully set. */
+    public static final class MissingConfigException extends RuntimeException {
+        public MissingConfigException(String message) {
+            super(message);
+        }
+    }
+
     /** A loaded config object together with its shape, so values come back as the right Java types. */
     public static final class Node {
         private final Config config;
         private final ObjectShape shape;
+        private final List<String> files;
 
-        Node(Config config, ObjectShape shape) {
+        Node(Config config, ObjectShape shape, List<String> files) {
             this.config = config;
             this.shape = shape;
+            this.files = files;
+        }
+
+        /**
+         * Checks that this robot sets every value directly in a section (nested sections check
+         * themselves). Generated sections call this when they are first used.
+         */
+        public void require(String section, String javaName) {
+            ObjectShape sectionShape = section.isEmpty() ? shape : (ObjectShape) shape.lookup(ConfigUtil.splitPath(section));
+            List<String> missing = new ArrayList<>();
+            for (Map.Entry<String, Shape> field : sectionShape.fields().entrySet()) {
+                String path = section.isEmpty() ? field.getKey() : section + "." + field.getKey();
+                if (!(field.getValue() instanceof ObjectShape) && !config.hasPath(path)) {
+                    missing.add(path);
+                }
+            }
+            if (!missing.isEmpty()) {
+                String robotFile = files.isEmpty() ? "this robot's file" : files.get(0);
+                throw new MissingConfigException(javaName + " was used, but this robot's config ("
+                        + ConfigProject.describe(files) + ") has no value for " + String.join(", ", missing)
+                        + ". Set " + (missing.size() == 1 ? "it" : "them") + " in " + robotFile
+                        + ", or give " + (missing.size() == 1 ? "it a default" : "them defaults") + " in "
+                        + ConfigProject.BASE_NAME + ".");
+            }
         }
 
         /** Reads the value at a dotted path, already converted (int, double, Angle, Pose2d, List...). */
         @SuppressWarnings("unchecked")
         public <T> T get(String path) {
+            if (!config.hasPath(path)) {
+                throw new MissingConfigException("this robot's config (" + ConfigProject.describe(files)
+                        + ") has no value for " + path);
+            }
             return (T) ConfigSchema.decode(shape.lookup(ConfigUtil.splitPath(path)), config.getValue(path));
         }
 
         /** The object at a dotted path, for reading its fields. */
         public Node node(String path) {
-            return new Node(config.getConfig(path), (ObjectShape) shape.lookup(ConfigUtil.splitPath(path)));
+            return new Node(config.getConfig(path), (ObjectShape) shape.lookup(ConfigUtil.splitPath(path)), files);
         }
 
         /** A list of objects, each turned into a Java value by {@code element} (the generated records use this). */
@@ -70,7 +111,7 @@ public final class StormConfig {
             ObjectShape elementShape = (ObjectShape) ((ListShape) shape.lookup(ConfigUtil.splitPath(path))).element();
             List<T> result = new ArrayList<>();
             for (ConfigValue value : config.getList(path)) {
-                result.add(element.apply(new Node(((ConfigObject) value).toConfig(), elementShape)));
+                result.add(element.apply(new Node(((ConfigObject) value).toConfig(), elementShape, files)));
             }
             return Collections.unmodifiableList(result);
         }
@@ -85,8 +126,8 @@ public final class StormConfig {
     }
 
     private static Node load(File deployDir) {
-        Config base = parse(new File(deployDir, BASE_NAME));
-        ConfigSchema.Meta meta = ConfigSchema.meta(base);
+        ConfigProject project = new ConfigProject(name -> parse(new File(deployDir, name)));
+        ConfigSchema.Meta meta = project.meta();
 
         List<String> files = new ArrayList<>();
         if (RobotBase.isSimulation()) {
@@ -96,24 +137,20 @@ public final class StormConfig {
             addIfSet(files, robotFile(meta));
         }
 
-        List<Config> overrides = new ArrayList<>();
-        for (String file : files) {
-            System.out.println("Config: loading " + file + " on top of " + BASE_NAME);
-            overrides.add(parse(new File(deployDir, file)));
-        }
+        System.out.println("Config: loading " + ConfigProject.describe(files));
 
         // The build already checked every robot file listed in config.conf, so errors here mean a
         // file was edited on the robot. Failing loudly beats running with values nobody intended.
-        Config merged = ConfigSchema.merge(base, overrides);
-        ObjectShape schema = ConfigSchema.fromBase(base.resolve());
-        List<String> errors = ConfigSchema.check(schema, merged);
+        ObjectShape schema = project.schema();
+        List<String> errors = project.check(schema, files);
         if (!errors.isEmpty()) {
-            throw new ConfigSchemaException("Robot config " + files, errors);
+            throw new ConfigSchemaException("Robot config " + ConfigProject.describe(files), errors);
         }
+        Config merged = project.merged(files);
         if (meta.debug()) {
             System.out.println(merged.root().render(ConfigRenderOptions.defaults().setOriginComments(false)));
         }
-        return new Node(merged, schema);
+        return new Node(merged, schema, files);
     }
 
     private static String robotFile(ConfigSchema.Meta meta) {
@@ -132,7 +169,7 @@ public final class StormConfig {
             }
         }
         System.out.println("Config: WARNING no robot file matches MAC addresses " + macAddresses()
-                + "; add one to stormconfig.robots in " + BASE_NAME);
+                + "; add one to stormconfig.robots in " + ConfigProject.BASE_NAME);
         return null;
     }
 

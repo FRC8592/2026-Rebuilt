@@ -15,6 +15,7 @@ import frc.utils.stormconfig.ConfigSchema.ObjectShape;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,16 +25,49 @@ class ConfigSchemaTest {
         return ConfigFactory.parseString(text);
     }
 
-    /** Errors from checking {@code override} layered on {@code base}. */
+    /** A project made of in-memory files, by name. */
+    private static ConfigProject project(Map<String, String> files) {
+        return new ConfigProject(name -> {
+            String text = files.get(name);
+            if (text == null) {
+                throw new IllegalArgumentException("no file " + name);
+            }
+            return parse(text);
+        });
+    }
+
+    private static final List<String> SIM = List.of("robot.conf", "sim.conf");
+
+    /** {@code base} as config.conf, an empty sim robot, and {@code override} as the sim file. */
+    private static ConfigProject simProject(String base, String override) {
+        return project(Map.of(
+                "config.conf", base + "\nstormconfig { sim = \"robot.conf\", simExtra = \"sim.conf\" }",
+                "robot.conf", "",
+                "sim.conf", override));
+    }
+
+    /** Errors from layering {@code override} (as the sim file) on {@code base}. */
     private static List<String> check(String base, String override) {
-        Config b = parse(base);
-        ObjectShape schema = ConfigSchema.fromBase(b.resolve());
-        return ConfigSchema.check(schema, ConfigSchema.merge(b, List.of(parse(override))));
+        ConfigProject p = simProject(base, override);
+        return p.check(p.schema(), SIM);
     }
 
     private static StormConfig.Node node(String base, String override) {
-        Config b = parse(base);
-        return new StormConfig.Node(ConfigSchema.merge(b, List.of(parse(override))), ConfigSchema.fromBase(b.resolve()));
+        ConfigProject p = simProject(base, override);
+        return new StormConfig.Node(p.merged(SIM), p.schema(), SIM);
+    }
+
+    /** The schema of a project that is just this config.conf. */
+    private static ObjectShape schemaOf(String base) {
+        return project(Map.of("config.conf", base)).schema();
+    }
+
+    /** config.conf plus two robots. */
+    private static ConfigProject twoRobots(String base, String robotA, String robotB) {
+        return project(Map.of(
+                "config.conf", base + "\nstormconfig.robots { \"aa\" = \"a.conf\", \"bb\" = \"b.conf\" }",
+                "a.conf", robotA,
+                "b.conf", robotB));
     }
 
     private static void assertOneError(List<String> errors, String containing) {
@@ -81,8 +115,8 @@ class ConfigSchemaTest {
     }
 
     @Test
-    void overrideTypoIsAnError() {
-        assertOneError(check("SWERVE { STEER_KP = 1.0 }", "SWERVE.STEER_KPP = 2.0"), "not in config.conf");
+    void simFileTypoIsAnError() {
+        assertOneError(check("SWERVE { STEER_KP = 1.0 }", "SWERVE.STEER_KPP = 2.0"), "can only override");
     }
 
     @Test
@@ -91,13 +125,52 @@ class ConfigSchemaTest {
         assertEquals(0, (Integer) node("canId = 0\nkP = 0.0", "kP = 1.5").get("canId"));
     }
 
+    // ---------------------------------------------------------------- the union of robot files
+
     @Test
-    void simFileCantAddKeys() {
-        Config base = parse("toggles.useDrive = true");
-        ObjectShape schema = ConfigSchema.fromBase(base.resolve());
-        List<String> errors = ConfigSchema.check(schema, ConfigSchema.merge(base,
-                List.of(parse("toggles.useDrive = false"), parse("toggles.useBatteryMonitor = true"))));
-        assertOneError(errors, "can only override existing keys");
+    void robotOnlyKeyNeedNotBeInEveryRobot() {
+        ConfigProject p = twoRobots("TURRET.LOG_PATH = \"Turret/\"", "TURRET.CAN_ID = 20", "");
+        ObjectShape schema = p.schema();
+        assertEquals(List.of(), p.checkAll(schema));
+
+        StormConfig.Node a = new StormConfig.Node(p.merged(List.of("a.conf")), schema, List.of("a.conf"));
+        a.require("TURRET", "Constants.TURRET");
+        assertEquals(20, (Integer) a.get("TURRET.CAN_ID"));
+    }
+
+    @Test
+    void usingAnUnconfiguredSectionFailsClearly() {
+        ConfigProject p = twoRobots("TURRET.LOG_PATH = \"Turret/\"", "TURRET { CAN_ID = 20, GEAR = 80.0 }", "");
+        StormConfig.Node b = new StormConfig.Node(p.merged(List.of("b.conf")), p.schema(), List.of("b.conf"));
+        StormConfig.MissingConfigException e = assertThrows(StormConfig.MissingConfigException.class,
+                () -> b.require("TURRET", "Constants.TURRET"));
+        assertTrue(e.getMessage().contains("Constants.TURRET was used"), e.getMessage());
+        assertTrue(e.getMessage().contains("TURRET.CAN_ID, TURRET.GEAR"), e.getMessage());
+        assertTrue(e.getMessage().contains("Set them in b.conf"), e.getMessage());
+    }
+
+    @Test
+    void keyHasOneTypeAcrossRobots() {
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class,
+                () -> twoRobots("", "TURRET.GEAR = 80.0", "TURRET.GEAR = 80").schema());
+        assertTrue(e.getMessage().contains("write 80.0"), e.getMessage());
+    }
+
+    @Test
+    void nearMissKeysAreTypos() {
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class,
+                () -> twoRobots("SWERVE.SNAP_TO_kP = 1.0", "SWERVE.SNAP_TO_KP = 2.0", "").schema());
+        assertTrue(e.getMessage().contains("looks like a typo of SWERVE.SNAP_TO_kP"), e.getMessage());
+    }
+
+    @Test
+    void simFileCantAddKeysEvenIfAnotherRobotHasThem() {
+        ConfigProject p = project(Map.of(
+                "config.conf", "toggles.useDrive = true\nstormconfig { robots { \"aa\" = \"a.conf\" }, sim = \"b.conf\", simExtra = \"sim.conf\" }",
+                "a.conf", "TURRET.CAN_ID = 20",
+                "b.conf", "",
+                "sim.conf", "TURRET.CAN_ID = 5"));
+        assertOneError(p.check(p.schema(), List.of("b.conf", "sim.conf")), "sim files can only override");
     }
 
     // ---------------------------------------------------------------- measures
@@ -116,7 +189,7 @@ class ConfigSchemaTest {
 
     @Test
     void unknownUnitIsAnError() {
-        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> ConfigSchema.fromBase(parse("d = \"5 meters\"")));
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> schemaOf("d = \"5 meters\""));
         assertTrue(e.getMessage().contains("unknown unit 'meters'"), e.getMessage());
     }
 
@@ -125,7 +198,7 @@ class ConfigSchemaTest {
     @Test
     void compoundAnglesNeedUnits() {
         ConfigSchemaException e = assertThrows(ConfigSchemaException.class,
-                () -> ConfigSchema.fromBase(parse("p = { _type = Pose2d, x = 1.0, y = 2.0, rotation = 90 }")));
+                () -> schemaOf("p = { _type = Pose2d, x = 1.0, y = 2.0, rotation = 90 }"));
         assertTrue(e.getMessage().contains("needs a unit"), e.getMessage());
     }
 
@@ -153,7 +226,7 @@ class ConfigSchemaTest {
     @Test
     void colorChannelsAreChecked() {
         ConfigSchemaException e = assertThrows(ConfigSchemaException.class,
-                () -> ConfigSchema.fromBase(parse("c = { _type = Color, r = 300, g = 0, b = 0 }")));
+                () -> schemaOf("c = { _type = Color, r = 300, g = 0, b = 0 }"));
         assertTrue(e.getMessage().contains("0 to 255"), e.getMessage());
     }
 
@@ -168,7 +241,7 @@ class ConfigSchemaTest {
 
     @Test
     void listElementsMustMatch() {
-        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> ConfigSchema.fromBase(parse("ids = [1, 2.5]")));
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> schemaOf("ids = [1, 2.5]"));
         assertTrue(e.getMessage().contains("same type"), e.getMessage());
     }
 
@@ -190,19 +263,29 @@ class ConfigSchemaTest {
     @Test
     void deployedConfigFilesPass() {
         File dir = new File("src/main/deploy");
-        Config base = ConfigFactory.parseFile(new File(dir, "config.conf"));
-        ObjectShape schema = ConfigSchema.fromBase(base.resolve());
-        Config sim = ConfigSchema.merge(base, List.of(
-                ConfigFactory.parseFile(new File(dir, "prismarine.conf")),
-                ConfigFactory.parseFile(new File(dir, "prismarine.sim.conf"))));
-        assertEquals(List.of(), ConfigSchema.check(schema, sim));
+        ConfigProject p = new ConfigProject(name -> ConfigFactory.parseFile(new File(dir, name)));
+        ObjectShape schema = p.schema();
+        assertEquals(List.of(), p.checkAll(schema));
 
-        StormConfig.Node node = new StormConfig.Node(sim, schema);
+        // Prismarine sets every section, so no section of Constants would fail on it
+        List<String> sim = List.of("prismarine.conf", "prismarine.sim.conf");
+        StormConfig.Node node = new StormConfig.Node(p.merged(sim), schema, sim);
+        requireAll(node, schema, "");
+
         Pose2d hub = node.get("SCORING.RED_HUB_POSE");
         assertEquals(11.94, hub.getX(), 1e-9);
         Color pink = node.get("LEDS.HOT_PINK");
         assertEquals(29 / 255.0, pink.green, 1e-3); // Color stores channels at reduced precision
         assertEquals(80.0, (Double) node.get("TURRET.TURRET_GT"), 1e-9);
         assertEquals("CustomLogs/TURRET/", node.get("TURRET.LOG_PATH"));
+    }
+
+    private static void requireAll(StormConfig.Node node, ObjectShape shape, String path) {
+        node.require(path, path.isEmpty() ? "Constants" : path);
+        shape.fields().forEach((key, field) -> {
+            if (field instanceof ObjectShape obj) {
+                requireAll(node, obj, path.isEmpty() ? key : path + "." + key);
+            }
+        });
     }
 }

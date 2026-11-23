@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigValue;
 
-import frc.utils.stormconfig.ConfigSchema;
+import frc.utils.stormconfig.ConfigProject;
 import frc.utils.stormconfig.ConfigSchema.CompoundShape;
 import frc.utils.stormconfig.ConfigSchema.ListShape;
 import frc.utils.stormconfig.ConfigSchema.MeasureShape;
@@ -34,12 +34,10 @@ public class ConfigGenerator {
     private final Set<String> imports = new TreeSet<>();
     private final List<String> errors = new ArrayList<>();
     private final StringBuilder body = new StringBuilder();
-    private final Config base;
-    private final Config unresolvedBase;
+    private final ConfigProject project;
 
-    private ConfigGenerator(Config base, Config unresolvedBase) {
-        this.base = base;
-        this.unresolvedBase = unresolvedBase;
+    private ConfigGenerator(ConfigProject project) {
+        this.project = project;
     }
 
     public static void main(String[] args) {
@@ -52,15 +50,14 @@ public class ConfigGenerator {
         String className = output.getName().replace(".java", "");
 
         try {
-            Config unresolvedBase = parse(new File(deployDir, "config.conf"));
-            Config base = unresolvedBase.resolve();
-            ObjectShape schema = ConfigSchema.fromBase(base);
-            List<String> problems = checkAllRobots(deployDir, unresolvedBase, schema);
+            ConfigProject project = new ConfigProject(name -> parse(new File(deployDir, name)));
+            ObjectShape schema = project.schema();
+            List<String> problems = project.checkAll(schema);
             if (!problems.isEmpty()) {
                 fail(problems);
             }
 
-            ConfigGenerator generator = new ConfigGenerator(base, unresolvedBase);
+            ConfigGenerator generator = new ConfigGenerator(project);
             String program = generator.program(className, schema);
             if (!generator.errors.isEmpty()) {
                 fail(generator.errors);
@@ -76,43 +73,13 @@ public class ConfigGenerator {
         }
     }
 
-    /** Merges and checks every combination the robot can load at runtime. */
-    private static List<String> checkAllRobots(File deployDir, Config unresolvedBase, ObjectShape schema) {
-        ConfigSchema.Meta meta = ConfigSchema.meta(unresolvedBase);
-
-        List<List<String>> combinations = new ArrayList<>();
-        for (String robotFile : meta.robots().values()) {
-            combinations.add(List.of(robotFile));
-        }
-        List<String> sim = new ArrayList<>();
-        if (meta.sim() != null) {
-            sim.add(meta.sim());
-        }
-        if (meta.simExtra() != null) {
-            sim.add(meta.simExtra());
-        }
-        combinations.add(sim);
-
-        List<String> problems = new ArrayList<>();
-        for (List<String> files : combinations) {
-            List<Config> overrides = new ArrayList<>();
-            for (String file : files) {
-                overrides.add(parse(new File(deployDir, file)));
-            }
-            String label = files.isEmpty() ? "config.conf" : "config.conf + " + String.join(" + ", files);
-            for (String error : ConfigSchema.check(schema, ConfigSchema.merge(unresolvedBase, overrides))) {
-                problems.add("[" + label + "] " + error);
-            }
-        }
-        return problems;
-    }
-
     // ---------------------------------------------------------------- code generation
 
     private String program(String className, ObjectShape schema) {
         imports.add("frc.utils.stormconfig.StormConfig");
         body.append("public final class ").append(className).append(" {\n");
         body.append("\tprivate static final StormConfig.Node C = StormConfig.root();\n\n");
+        body.append("\tstatic {\n\t\tC.require(\"\", \"").append(className).append("\");\n\t}\n\n");
         body.append("\tprivate ").append(className).append("() {}\n");
         writeMembers(schema, "", 1, List.of(className));
         body.append("}\n");
@@ -142,6 +109,9 @@ public class ConfigGenerator {
                 String nested = className(key, fullPath, enclosing);
                 writeDoc(fullPath, tabs, false);
                 body.append(tabs).append("public static final class ").append(nested).append(" {\n");
+                body.append(tabs).append("\t// Fails with a clear message if this robot's config doesn't set every value below\n");
+                body.append(tabs).append("\tstatic {\n").append(tabs).append("\t\tC.require(\"").append(fullPath).append("\", \"")
+                        .append(String.join(".", append(enclosing, nested))).append("\");\n").append(tabs).append("\t}\n");
                 writeMembers(obj, fullPath, depth + 1, append(enclosing, nested));
                 body.append(tabs).append("}\n");
             } else if (field instanceof ListShape list && list.element() instanceof ObjectShape element) {
@@ -240,15 +210,13 @@ public class ConfigGenerator {
         throw new IllegalStateException("unexpected shape " + shape);
     }
 
-    /** Javadoc from the comments above the key in config.conf, plus where the default lives. */
+    /** Javadoc from the comments above the key where it is first defined, plus that file and value. */
     private void writeDoc(String path, String tabs, boolean withValue) {
-        ConfigValue value = base.getValue(path);
         // Comments and line numbers come from the unresolved file: a resolved ${substitution}
         // reports the origin of the value it points at instead.
-        ConfigValue source = unresolvedBase.root();
-        for (String key : com.typesafe.config.ConfigUtil.splitPath(path)) {
-            source = ((com.typesafe.config.ConfigObject) source).get(key);
-        }
+        ConfigProject.Definition definition = project.definition(path);
+        ConfigValue source = definition.source();
+        ConfigValue value = definition.resolved();
         List<String> lines = new ArrayList<>();
         for (String comment : source.origin().comments()) {
             String text = comment.trim();
@@ -261,7 +229,10 @@ public class ConfigGenerator {
             if (rendered.length() > 100) {
                 rendered = rendered.substring(0, 97) + "...";
             }
-            lines.add("config.conf:" + source.origin().lineNumber() + " = " + rendered.replace("*/", "* /"));
+            lines.add(definition.file() + ":" + source.origin().lineNumber() + " = " + rendered.replace("*/", "* /"));
+            if (!definition.file().equals(ConfigProject.BASE_NAME)) {
+                lines.add("Robot-specific: on a robot whose file doesn't set this, using this section fails.");
+            }
         }
         if (lines.isEmpty()) {
             return;

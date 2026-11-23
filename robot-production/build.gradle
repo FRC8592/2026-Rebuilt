@@ -146,7 +146,8 @@ sourceSets {
 task compileGeneratorCode(type: JavaCompile) {
     // The generator shares the config type rules with the robot code, so both always agree
     source = sourceSets.generate.java + fileTree('src/main/java').matching {
-        include 'frc/utils/stormconfig/ConfigTypes.java', 'frc/utils/stormconfig/ConfigSchema.java'
+        include 'frc/utils/stormconfig/ConfigTypes.java', 'frc/utils/stormconfig/ConfigSchema.java',
+                'frc/utils/stormconfig/ConfigProject.java'
     }
     classpath = configurations.runtimeClasspath
 

@@ -18,15 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The shape of the config, taken from the base file (config.conf), and the rules every robot's
- * merged config must follow:
- * <ul>
- *   <li>config.conf defines every key with a default;
- *   <li>a value's type is whatever the base file's value is: 42 is an int, 42.0 is a double,
- *       "-15 deg" is an Angle, {@code { _type = Pose2d, ... }} is a Pose2d;
- *   <li>robot and sim files only override: they may change values but not types, and may not add
- *       keys (so typos fail).
- * </ul>
+ * The shape (type) of config values, and checks of a config against a shape. A value's type is how
+ * it is written: 42 is an int, 42.0 is a double, "-15 deg" is an Angle, {@code { _type = Pose2d, ... }}
+ * is a Pose2d. {@link ConfigProject} decides which files make up the shape.
  *
  * <p>Compiled into both the robot code and the build-time generator.
  */
@@ -95,14 +89,9 @@ public final class ConfigSchema {
 
     // ---------------------------------------------------------------- building the schema
 
-    /** Reads the shape of the resolved base config. */
-    public static ObjectShape fromBase(Config resolvedBase) {
-        List<String> errors = new ArrayList<>();
-        ObjectShape shape = objectShape(resolvedBase.root(), "", errors);
-        if (!errors.isEmpty()) {
-            throw new ConfigSchemaException(where(resolvedBase.root()), errors);
-        }
-        return shape;
+    /** Reads the shape of one resolved config tree (without the stormconfig block). */
+    public static ObjectShape shapeOfTree(Config resolved, List<String> errors) {
+        return objectShape(resolved.root(), "", errors);
     }
 
     private static Shape shapeOf(ConfigValue value, String path, List<String> errors) {
@@ -189,16 +178,20 @@ public final class ConfigSchema {
     /** Checks a resolved, merged config (base + robot + sim) against the schema. Returns every problem. */
     public static List<String> check(ObjectShape schema, Config resolvedMerged) {
         List<String> errors = new ArrayList<>();
-        checkObject(schema, resolvedMerged.root(), "", true, errors);
+        checkObject(schema, resolvedMerged.root(), "", true, false, errors);
         return errors;
     }
 
-    private static void check(Shape expected, ConfigValue value, String path, List<String> errors) {
+    /**
+     * {@code inList} is true inside list elements, where every field must be present; elsewhere a
+     * robot may leave keys out (code that reads them fails with a clear message, see StormConfig.Node#require).
+     */
+    private static void check(Shape expected, ConfigValue value, String path, boolean inList, List<String> errors) {
         if (expected instanceof ObjectShape obj) {
             if (value.valueType() != ConfigValueType.OBJECT || ((ConfigObject) value).containsKey(ConfigTypes.TYPE_KEY)) {
                 errors.add(mismatch(path, expected, value));
             } else {
-                checkObject(obj, (ConfigObject) value, path, false, errors);
+                checkObject(obj, (ConfigObject) value, path, false, inList, errors);
             }
             return;
         }
@@ -209,7 +202,7 @@ public final class ConfigSchema {
             }
             ConfigList values = (ConfigList) value;
             for (int i = 0; i < values.size(); i++) {
-                check(list.element(), values.get(i), path + "[" + i + "]", errors);
+                check(list.element(), values.get(i), path + "[" + i + "]", true, errors);
             }
             return;
         }
@@ -221,24 +214,51 @@ public final class ConfigSchema {
         }
     }
 
-    private static void checkObject(ObjectShape expected, ConfigObject obj, String path, boolean root, List<String> errors) {
+    private static void checkObject(ObjectShape expected, ConfigObject obj, String path, boolean root, boolean inList,
+            List<String> errors) {
         for (String key : obj.keySet()) {
             if (root && key.equals(META_KEY)) {
                 continue;
             }
             if (!expected.fields().containsKey(key)) {
                 errors.add(where(obj.get(key)) + " " + join(path, key)
-                        + ": not in config.conf; robot and sim files can only override existing keys (a typo? new keys go in config.conf first)");
+                        + ": not in config.conf or any robot file listed in stormconfig.robots");
             }
         }
         for (Map.Entry<String, Shape> field : expected.fields().entrySet()) {
             ConfigValue value = obj.get(field.getKey());
             if (value == null) {
-                errors.add(where(obj) + " " + join(path, field.getKey()) + ": missing");
+                if (inList) {
+                    errors.add(where(obj) + " " + join(path, field.getKey()) + ": missing (every list element needs every field)");
+                }
             } else {
-                check(field.getValue(), value, join(path, field.getKey()), errors);
+                check(field.getValue(), value, join(path, field.getKey()), inList, errors);
             }
         }
+    }
+
+    /**
+     * Checks that every key in an override-only file (the sim file) already exists in the config it
+     * is layered on, so it can change values but never add keys. Compound values are checked by
+     * their own field rules instead.
+     */
+    public static void checkOverrideOnly(ConfigObject overlay, ConfigObject tree, String path, List<String> errors) {
+        for (String key : overlay.keySet()) {
+            ConfigValue under = tree.get(key);
+            ConfigValue over = overlay.get(key);
+            if (under == null) {
+                errors.add(where(over) + " " + join(path, key)
+                        + ": sim files can only override keys that the sim robot's config already has (a typo?)");
+            } else if (over instanceof ConfigObject o && under instanceof ConfigObject u
+                    && !u.containsKey(ConfigTypes.TYPE_KEY)) {
+                checkOverrideOnly(o, u, join(path, key), errors);
+            }
+        }
+    }
+
+    /** The error for a value whose type doesn't match the expected shape, with a hint where one helps. */
+    public static String typeMismatch(String path, Shape expected, ConfigValue value) {
+        return mismatch(path, expected, value);
     }
 
     private static String mismatch(String path, Shape expected, ConfigValue value) {
