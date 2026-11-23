@@ -36,23 +36,6 @@ public class Vision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
 
     /**
-     * Creates a vision subsystem for a camera on the robot
-     * 
-     * @param camName    name of the camera
-     * @param camOffsets camera position relative to the robot center
-     */
-    public Vision(String camName, Transform3d camOffsets) {
-        initializeCommon(camName, camOffsets);
-    }
-
-    private void initializeCommon(String camName, Transform3d camOffsets) {
-        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-
-        camera = new PhotonCamera(camName);
-        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, camOffsets);
-    }
-
-    /**
      * Creates a vision subsystem for a camera on the robot and additionally sets up
      * simulation.
      * Don't use this constructor for simple or early testing.
@@ -71,7 +54,7 @@ public class Vision extends SubsystemBase {
     public Vision(String camName, Transform3d camOffsets, int calibrationWidth,
             int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx,
             int fps) {
-        initializeCommon(camName, camOffsets);
+        this(camName, camOffsets);
 
         visionSim = new VisionSystemSim("photonvision");
         visionSim.addAprilTags(aprilTagFieldLayout);
@@ -88,6 +71,19 @@ public class Vision extends SubsystemBase {
         cameraSim.enableDrawWireframe(true);
 
         visionSim.addCamera(cameraSim, camOffsets);
+    }
+
+    /**
+     * Creates a vision subsystem for a camera on the robot
+     * 
+     * @param camName    name of the camera
+     * @param camOffsets camera position relative to the robot center
+     */
+    public Vision(String camName, Transform3d camOffsets) {
+        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+        camera = new PhotonCamera(camName);
+        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, camOffsets);
     }
 
     @Override
