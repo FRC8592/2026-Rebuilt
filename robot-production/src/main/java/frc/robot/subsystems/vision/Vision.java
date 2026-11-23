@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.*;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -18,8 +19,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SHARED;
 
 public class Vision extends SubsystemBase {
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/VISION/";
     PhotonCamera camera;
     PhotonPoseEstimator estimator;
 
@@ -98,6 +101,8 @@ public class Vision extends SubsystemBase {
 
             if (targetVisible) { // At least one AprilTag was seen by the camera
                 targetAmbiguity = result.getBestTarget().getPoseAmbiguity();
+
+                logViewedAprilTags(result);
             } else {
                 targetAmbiguity = -10.0; // A large value to differentiate clearly
             }
@@ -105,6 +110,14 @@ public class Vision extends SubsystemBase {
 
         SmartDashboard.putNumber("Tag Count", results.size());
 
+    }
+
+    private void logViewedAprilTags(PhotonPipelineResult result) {
+        double[] viewedAprilTags = result.getTargets().stream().map(PhotonTrackedTarget::getFiducialId)
+                .mapToDouble(Integer::doubleValue).toArray();
+
+        SmartDashboard.putNumberArray(getName(), viewedAprilTags);
+        Logger.recordOutput(Vision.LOG_PATH + "aprilTags", viewedAprilTags);
     }
 
     /**
