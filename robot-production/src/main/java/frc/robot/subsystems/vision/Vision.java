@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +24,16 @@ import frc.robot.Constants.SHARED;
 
 public class Vision extends SubsystemBase {
     public static final String LOG_PATH = SHARED.LOG_FOLDER + "/VISION/";
-    PhotonCamera camera;
-    PhotonPoseEstimator estimator;
+    private final PhotonCamera camera;
+    private final PhotonPoseEstimator estimator;
 
-    boolean targetVisible = false;
-    double targetAmbiguity = 0.0;
-    List<PhotonPipelineResult> results;
+    private double targetAmbiguity = 0.0;
+    private List<PhotonPipelineResult> results = List.of();
 
-    VisionSystemSim visionSim;
-    SimCameraProperties cameraProperties;
-    PhotonCameraSim cameraSim;
-    AprilTagFieldLayout aprilTagFieldLayout;
+    private VisionSystemSim visionSim;
+    private SimCameraProperties cameraProperties;
+    private PhotonCameraSim cameraSim;
+    private AprilTagFieldLayout aprilTagFieldLayout;
 
     /**
      * Creates a vision subsystem for a camera on the robot and additionally sets up
