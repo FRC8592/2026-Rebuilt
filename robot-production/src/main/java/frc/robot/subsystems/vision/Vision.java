@@ -104,7 +104,7 @@ public class Vision extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("Tag Count", results.size());
-        // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+
     }
 
     /**
