@@ -1,8 +1,10 @@
 package frc.robot.subsystems.vision;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.*;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -13,66 +15,56 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LEDs;
+import frc.robot.Constants.SHARED;
 
 public class Vision extends SubsystemBase {
-    PhotonCamera camera;
-    PhotonPoseEstimator estimator;
+    public static final String LOG_PATH = SHARED.LOG_FOLDER + "/VISION/";
+    private static final double FOV_DIAG_IN_DEGREES = 70d;
+    private final PhotonCamera camera;
+    private final PhotonPoseEstimator estimator;
 
-    boolean targetVisible = false;
-    double targetAmbiguity = 0.0;
-    List<PhotonPipelineResult> results;
+    private double targetAmbiguity = 0.0;
+    private List<PhotonPipelineResult> results = List.of();
 
-    VisionSystemSim visionSim;
-    SimCameraProperties cameraProperties;
-    PhotonCameraSim cameraSim;
-    AprilTagFieldLayout aprilTagFieldLayout;
-
-    /**
-     * Creates a vision subsystem for a camera on the robot
-     * 
-     * @param camName name of the camera
-     * @param camOffsets camera position relative to the robot center
-     */
-    public Vision(String camName, Transform3d camOffsets) {
-        initializeCommon(camName, camOffsets);
-    }
-
-    private void initializeCommon(String camName, Transform3d camOffsets) {
-        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-
-        camera = new PhotonCamera(camName);
-        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, camOffsets);
-    }
+    private VisionSystemSim visionSim;
+    private SimCameraProperties cameraProperties;
+    private PhotonCameraSim cameraSim;
+    private AprilTagFieldLayout aprilTagFieldLayout;
 
     /**
-     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation.
+     * Creates a vision subsystem for a camera on the robot and additionally sets up
+     * simulation.
      * Don't use this constructor for simple or early testing.
      * 
-     * @param camName name of the camera
-     * @param camOffsets camera position relative to the robot center
-     * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
-     * @param calibrationHeight height of the calibration (i.e. the 480 of 840x480)
+     * @param camName               name of the camera
+     * @param camOffsets            camera position relative to the robot center
+     * @param calibrationWidth      width of the calibration (i.e. the 640 of
+     *                              640x480)
+     * @param calibrationHeight     height of the calibration (i.e. the 480 of
+     *                              840x480)
      * @param calibrationAvgErrorPx average error of the calibration in pixels
      * @param calibrationErrorStdPx std in error of the calibration in pixels
-     * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
+     * @param fps                   frames per second of the calibration (i.e.
+     *                              100fps, 90fps...)
      */
     public Vision(String camName, Transform3d camOffsets, int calibrationWidth,
             int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx,
             int fps) {
-        initializeCommon(camName, camOffsets);
+        this(camName, camOffsets);
 
         visionSim = new VisionSystemSim("photonvision");
         visionSim.addAprilTags(aprilTagFieldLayout);
 
         cameraProperties = new SimCameraProperties();
         cameraProperties.setCalibration(calibrationWidth, calibrationHeight,
-                Rotation2d.fromDegrees(70));
+                Rotation2d.fromDegrees(FOV_DIAG_IN_DEGREES));
         cameraProperties.setCalibError(calibrationAvgErrorPx, calibrationErrorStdPx);
         cameraProperties.setFPS(fps);
 
@@ -84,6 +76,19 @@ public class Vision extends SubsystemBase {
         visionSim.addCamera(cameraSim, camOffsets);
     }
 
+    /**
+     * Creates a vision subsystem for a camera on the robot
+     * 
+     * @param camName    name of the camera
+     * @param camOffsets camera position relative to the robot center
+     */
+    public Vision(String camName, Transform3d camOffsets) {
+        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+        camera = new PhotonCamera(camName);
+        estimator = new PhotonPoseEstimator(aprilTagFieldLayout, camOffsets);
+    }
+
     @Override
     public void periodic() {
         results = camera.getAllUnreadResults(); // MUST ONLY CALL THIS METHOD ONCE PER LOOP
@@ -91,17 +96,44 @@ public class Vision extends SubsystemBase {
         if (!results.isEmpty()) {
             // Get the latest result from the camera and check if it contains an apriltag
             var result = results.get(results.size() - 1);
-            targetVisible = result.hasTargets();
+            boolean targetVisible = result.hasTargets();
 
             if (targetVisible) { // At least one AprilTag was seen by the camera
                 targetAmbiguity = result.getBestTarget().getPoseAmbiguity();
+
+                logViewedAprilTags(result);
             } else {
                 targetAmbiguity = -10.0; // A large value to differentiate clearly
             }
         }
 
         SmartDashboard.putNumber("Tag Count", results.size());
-        // SmartDashboard.putData("VisionSimField", visionSim.getDebugField());
+
+    }
+
+    private double getDistanceToTarget(PhotonTrackedTarget target) {
+        Transform3d camToTarget = target.getBestCameraToTarget();
+        Translation3d translation = camToTarget.getTranslation();
+
+        // Straight-line 3D distance or horizontal (XY) distance in meters
+        return translation.getNorm();
+    }
+
+    private void logViewedAprilTags(PhotonPipelineResult result) {
+        double[] viewedAprilTags = result.getTargets().stream().map(PhotonTrackedTarget::getFiducialId)
+                .mapToDouble(Integer::doubleValue).toArray();
+
+        SmartDashboard.putNumberArray(getName(), viewedAprilTags);
+        Logger.recordOutput(Vision.LOG_PATH + "aprilTags", viewedAprilTags);
+
+        result.getTargets().forEach(aTarget -> {
+            double distanceInMeters = getDistanceToTarget(aTarget);
+            int aprilTagId = aTarget.getFiducialId();
+
+            SmartDashboard.putNumber(Integer.toString(aprilTagId)+" distance in meters", distanceInMeters);
+              Logger.recordOutput(Vision.LOG_PATH + "aprilTags-"+aprilTagId, "distanceInMeters: "+distanceInMeters);
+        });
+
     }
 
     /**
