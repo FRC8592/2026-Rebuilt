@@ -94,7 +94,7 @@ public class Vision extends SubsystemBase {
         if (!results.isEmpty()) {
             // Get the latest result from the camera and check if it contains an apriltag
             var result = results.get(results.size() - 1);
-            targetVisible = result.hasTargets();
+            boolean targetVisible = result.hasTargets();
 
             if (targetVisible) { // At least one AprilTag was seen by the camera
                 targetAmbiguity = result.getBestTarget().getPoseAmbiguity();
