@@ -30,6 +30,8 @@ jobs:
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Spot Bugs
+        run: ./gradlew spotBugsMain
       # Runs a single command using the runners shell
       - name: Compile and run tests on robot code
         run: ./gradlew build
