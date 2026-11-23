@@ -318,21 +318,6 @@ public final class ConfigTypes {
         }
     }
 
-    /** The compound type with this name (e.g. "Pose2d"), or null. */
-    public static CompoundType compoundType(String name) {
-        return COMPOUNDS.get(name);
-    }
-
-    /** The measure type with this Java name (e.g. "Angle"), or null. */
-    public static MeasureType measureType(String javaType) {
-        for (UnitDef unit : UNITS.values()) {
-            if (unit.type().javaType().equals(javaType)) {
-                return unit.type();
-            }
-        }
-        return null;
-    }
-
     /** Lists the compound types, for error messages and documentation. */
     public static List<String> compoundTypeNames() {
         return new ArrayList<>(COMPOUNDS.keySet());

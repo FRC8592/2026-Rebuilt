@@ -21,11 +21,11 @@ import java.util.Map;
  * The shape of the config, taken from the base file (config.conf), and the rules every robot's
  * merged config must follow:
  * <ul>
+ *   <li>config.conf defines every key with a default;
  *   <li>a value's type is whatever the base file's value is: 42 is an int, 42.0 is a double,
  *       "-15 deg" is an Angle, {@code { _type = Pose2d, ... }} is a Pose2d;
- *   <li>override files may change values but not types, and may not add keys (so typos fail);
- *   <li>a base value of {@code "@int"}, {@code "@Angle"}, {@code "@Pose2d"}, ... declares the type
- *       but no value, and every robot must set it.
+ *   <li>robot and sim files only override: they may change values but not types, and may not add
+ *       keys (so typos fail).
  * </ul>
  *
  * <p>Compiled into both the robot code and the build-time generator.
@@ -33,7 +33,6 @@ import java.util.Map;
 public final class ConfigSchema {
     /** Top-level block holding robot selection settings; not part of the generated constants. */
     public static final String META_KEY = "stormconfig";
-    private static final String PLACEHOLDER_PREFIX = "@";
 
     public sealed interface Shape permits Scalar, MeasureShape, CompoundShape, ObjectShape, ListShape {
         /** How this type is described in error messages. */
@@ -126,21 +125,13 @@ public final class ConfigSchema {
             case LIST:
                 return listShape((ConfigList) value, path, errors);
             default:
-                errors.add(where(value) + " " + path + ": null is not allowed; give a value or a placeholder like \"@int\"");
+                errors.add(where(value) + " " + path + ": null is not allowed; give a default value");
                 return null;
         }
     }
 
     private static Shape stringShape(ConfigValue value, String path, List<String> errors) {
         String text = (String) value.unwrapped();
-        if (text.startsWith(PLACEHOLDER_PREFIX)) {
-            Shape shape = placeholderShape(text.substring(PLACEHOLDER_PREFIX.length()));
-            if (shape == null) {
-                errors.add(where(value) + " " + path + ": unknown placeholder \"" + text
-                        + "\" (use @int, @long, @double, @boolean, @String, a unit type like @Angle, or a type like @Pose2d)");
-            }
-            return shape;
-        }
         try {
             ParsedMeasure measure = ConfigTypes.parseMeasure(text);
             return measure == null ? new Scalar(ScalarKind.STRING) : new MeasureShape(measure.type());
@@ -148,33 +139,6 @@ public final class ConfigSchema {
             errors.add(where(value) + " " + path + ": " + e.getMessage());
             return null;
         }
-    }
-
-    private static Shape placeholderShape(String typeName) {
-        switch (typeName) {
-            case "int":
-                return new Scalar(ScalarKind.INT);
-            case "long":
-                return new Scalar(ScalarKind.LONG);
-            case "double":
-                return new Scalar(ScalarKind.DOUBLE);
-            case "boolean":
-                return new Scalar(ScalarKind.BOOLEAN);
-            case "String":
-                return new Scalar(ScalarKind.STRING);
-            default:
-                MeasureType measure = ConfigTypes.measureType(typeName);
-                if (measure != null) {
-                    return new MeasureShape(measure);
-                }
-                CompoundType compound = ConfigTypes.compoundType(typeName);
-                return compound == null ? null : new CompoundShape(compound);
-        }
-    }
-
-    private static boolean isPlaceholder(ConfigValue value) {
-        return value.valueType() == ConfigValueType.STRING
-                && ((String) value.unwrapped()).startsWith(PLACEHOLDER_PREFIX);
     }
 
     private static Shape compoundShape(ConfigObject obj, String path, List<String> errors) {
@@ -230,10 +194,6 @@ public final class ConfigSchema {
     }
 
     private static void check(Shape expected, ConfigValue value, String path, List<String> errors) {
-        if (isPlaceholder(value)) {
-            errors.add(where(value) + " " + path + ": no value set; a robot file must set this " + expected.describe());
-            return;
-        }
         if (expected instanceof ObjectShape obj) {
             if (value.valueType() != ConfigValueType.OBJECT || ((ConfigObject) value).containsKey(ConfigTypes.TYPE_KEY)) {
                 errors.add(mismatch(path, expected, value));
@@ -268,7 +228,7 @@ public final class ConfigSchema {
             }
             if (!expected.fields().containsKey(key)) {
                 errors.add(where(obj.get(key)) + " " + join(path, key)
-                        + ": not in config.conf (a typo? new keys must be added to config.conf first)");
+                        + ": not in config.conf; robot and sim files can only override existing keys (a typo? new keys go in config.conf first)");
             }
         }
         for (Map.Entry<String, Shape> field : expected.fields().entrySet()) {

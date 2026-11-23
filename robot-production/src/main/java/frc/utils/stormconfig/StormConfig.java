@@ -33,7 +33,7 @@ import java.util.function.Function;
  *   <li>in simulation, {@code stormconfig.sim} plus {@code stormconfig.simExtra};
  *   <li>otherwise, {@code robot = "file.conf"} in ~/.stormrc.conf if that file exists;
  *   <li>otherwise, the {@code stormconfig.robots} entry matching a MAC address of any network interface;
- *   <li>otherwise, config.conf alone (which fails if config.conf has "@type" placeholders).
+ *   <li>otherwise, config.conf alone.
  * </ol>
  */
 public final class StormConfig {

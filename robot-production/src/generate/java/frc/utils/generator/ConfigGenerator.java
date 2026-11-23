@@ -258,9 +258,7 @@ public class ConfigGenerator {
         }
         if (withValue) {
             String rendered = value.render(com.typesafe.config.ConfigRenderOptions.concise());
-            if (rendered.startsWith("\"@")) {
-                rendered = rendered + " (each robot file sets this)";
-            } else if (rendered.length() > 100) {
+            if (rendered.length() > 100) {
                 rendered = rendered.substring(0, 97) + "...";
             }
             lines.add("config.conf:" + source.origin().lineNumber() + " = " + rendered.replace("*/", "* /"));

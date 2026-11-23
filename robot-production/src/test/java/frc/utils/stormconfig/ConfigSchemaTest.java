@@ -85,19 +85,19 @@ class ConfigSchemaTest {
         assertOneError(check("SWERVE { STEER_KP = 1.0 }", "SWERVE.STEER_KPP = 2.0"), "not in config.conf");
     }
 
-    // ---------------------------------------------------------------- placeholders
-
     @Test
-    void placeholderMustBeSet() {
-        assertOneError(check("canId = \"@int\"", ""), "no value set");
-        assertEquals(List.of(), check("canId = \"@int\"", "canId = 20"));
-        assertOneError(check("canId = \"@int\"", "canId = 20.0"), "should be int");
+    void defaultsApplyWhenRobotDoesNotOverride() {
+        assertEquals(List.of(), check("canId = 0\nkP = 0.0", "kP = 1.5"));
+        assertEquals(0, (Integer) node("canId = 0\nkP = 0.0", "kP = 1.5").get("canId"));
     }
 
     @Test
-    void unknownPlaceholderIsAnError() {
-        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> ConfigSchema.fromBase(parse("a = \"@integer\"")));
-        assertTrue(e.getMessage().contains("unknown placeholder"), e.getMessage());
+    void simFileCantAddKeys() {
+        Config base = parse("toggles.useDrive = true");
+        ObjectShape schema = ConfigSchema.fromBase(base.resolve());
+        List<String> errors = ConfigSchema.check(schema, ConfigSchema.merge(base,
+                List.of(parse("toggles.useDrive = false"), parse("toggles.useBatteryMonitor = true"))));
+        assertOneError(errors, "can only override existing keys");
     }
 
     // ---------------------------------------------------------------- measures
