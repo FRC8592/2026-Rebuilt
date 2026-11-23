@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
         rollerRightMotor = new TalonFXControl(INTAKE.INTAKE_ROLLER_RIGHT_CAN_ID, true, "rollerRightMotor");
         rollerLeftMotor = new TalonFXControl(INTAKE.INTAKE_MOTOR_LEFT_CAN_ID, true, "rollerLeftMotor");
 
-        rollerLeftMotor.setFollower(rollerRightMotor, MotorAlignmentValue.Opposed);
+        rollerLeftMotor.setFollower(rollerRightMotor, true);
 
         /*
          * Create the Extension motor and instatiate the following features Reset to safe factory

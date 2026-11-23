@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
         rightMotor.applyConfig();
 
         //Set the Shooter Right Motor to follow the Left Shooter Motor in the inverse direction
-        rightMotor.setFollower(leftMotor, MotorAlignmentValue.Opposed);
+        rightMotor.setFollower(leftMotor, true);
 
         SmartDashboard.putNumber("sP", SHOOTER.SHOOTER_P);
         SmartDashboard.putNumber("sI", SHOOTER.SHOOTER_I);

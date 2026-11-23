@@ -112,7 +112,8 @@ public class TalonFXControl {
         return velocityVoltage.toString();
     }
 
-    public void setFollower(TalonFXControl followerMotor, MotorAlignmentValue alignmentValue) {
+    public void setFollower(TalonFXControl followerMotor, boolean inverted) {
+        MotorAlignmentValue alignmentValue = !inverted ? MotorAlignmentValue.Aligned : MotorAlignmentValue.Opposed;
         motor.setControl(new Follower(followerMotor.CAN_ID, alignmentValue));
     }
 
