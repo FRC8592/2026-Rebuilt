@@ -69,6 +69,7 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+    implementation 'com.typesafe:config:1.4.3'
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
@@ -130,7 +131,7 @@ gversion {
   indent       = "  "
 }
 
-// Additions to handle code generation for properties
+// Additions to handle code generation for the .conf config files
 // A different source set is required to decouple compilation of the generator from the rest of the code.
 // The generator needs to be compiled and run before the rest of the code is compiled (since generated code is
 // compiled with the rest of the robot
@@ -143,7 +144,10 @@ sourceSets {
 }
 
 task compileGeneratorCode(type: JavaCompile) {
-    source = sourceSets.generate.java
+    // The generator shares the config type rules with the robot code, so both always agree
+    source = sourceSets.generate.java + fileTree('src/main/java').matching {
+        include 'frc/utils/stormconfig/ConfigTypes.java', 'frc/utils/stormconfig/ConfigSchema.java'
+    }
     classpath = configurations.runtimeClasspath
 
     destinationDir = file("$buildDir/myGeneratorCode")
@@ -152,21 +156,21 @@ task compileGeneratorCode(type: JavaCompile) {
 
 // Task to run the generator
 task generateCode(dependsOn: compileGeneratorCode) {
-    def propertyFileDir = 'src/main/deploy'
+    def configFileDir = 'src/main/deploy'
     def outputFileName = 'src/main/java/frc/robot/Constants.java'
 
     // Dependency on the generated java code being up-to-date
     inputs.dir file("$buildDir/myGeneratorCode") as Object
-    // Dependency on the *.properties files we care about
-    inputs.files fileTree(dir: propertyFileDir, include: '**/*.properties')
+    // Dependency on the *.conf files we care about
+    inputs.files fileTree(dir: configFileDir, include: '**/*.conf')
     // Has the output file been modified? Regenerate it!
     outputs.file outputFileName
 
     doLast {
         javaexec {
             classpath = files(compileGeneratorCode.destinationDirectory, sourceSets.main.runtimeClasspath)
-            main = 'frc.utils.generator.ConstantGenerator'
-            args = [propertyFileDir, outputFileName]
+            main = 'frc.utils.generator.ConfigGenerator'
+            args = [configFileDir, outputFileName]
         }
     }
 }

@@ -162,12 +162,12 @@ public class Robot extends LoggedRobot {
     int leftVisionCounter = leftvision.getTargets().size();
     int VisionCounter = backvisionCounter + rightVisionCounter + leftVisionCounter;
 
-    Logger.recordOutput(CodeConstants.LEDS.LOG_PATH + "periodicCounter", periodicCounter);
+    Logger.recordOutput(Constants.LEDS.LOG_PATH + "periodicCounter", periodicCounter);
 
     // LED control
 
     // double average = tagCounter/10;
-    // Logger.recordOutput(CodeConstants.LEDS.LOG_PATH + "Average", average);
+    // Logger.recordOutput(Constants.LEDS.LOG_PATH + "Average", average);
     // m_robotContainer.leds.setHasTags((int)Math.round(average));
     if (VisionCounter > 1) {
       tagCounter = 2;
@@ -184,7 +184,7 @@ public class Robot extends LoggedRobot {
     }
     periodicCounter++;
 
-    Logger.recordOutput(CodeConstants.LEDS.LOG_PATH + "tag counter", tagCounter);
+    Logger.recordOutput(Constants.LEDS.LOG_PATH + "tag counter", tagCounter);
 
     // set the number of tags being seen by the cameras on the LEDs subsystem, and
     // update the LEDs to reflect that information.

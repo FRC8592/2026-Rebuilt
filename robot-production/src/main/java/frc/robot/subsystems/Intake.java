@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CodeConstants;
+import frc.robot.Constants;
 import frc.robot.Constants.INTAKE;
 import frc.robot.helpers.SparkFlexControl;
 import frc.robot.helpers.TalonFXControl;
@@ -183,9 +183,9 @@ public class Intake extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        Logger.recordOutput(CodeConstants.INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
-        extendMotor.motorLogging(CodeConstants.INTAKE.LOG_PATH);
-        rollerRightMotor.motorLogging(CodeConstants.INTAKE.LOG_PATH);
-        rollerLeftMotor.motorLogging(CodeConstants.INTAKE.LOG_PATH);
+        Logger.recordOutput(Constants.INTAKE.LOG_PATH + "Retraction Position", retractionPosition);
+        extendMotor.motorLogging(Constants.INTAKE.LOG_PATH);
+        rollerRightMotor.motorLogging(Constants.INTAKE.LOG_PATH);
+        rollerLeftMotor.motorLogging(Constants.INTAKE.LOG_PATH);
     }
 }

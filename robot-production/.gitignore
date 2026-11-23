@@ -179,10 +179,9 @@ logs/
 
 src/main/java/frc/robot/BuildConstants.java
 src/main/java/frc/robot/Constants.java
-src/main/java/frc/robot/Options.java
 
 # The root .gitignore ignores *.properties, but the robot config files must be checked in
-!src/main/deploy/*.properties
+!src/main/deploy/*.conf
 
 
 # Folder that has CTRE Phoenix Sim device config storage
