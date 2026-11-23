@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LEDs;
 
 public class Vision extends SubsystemBase {
     PhotonCamera camera;
@@ -36,7 +35,7 @@ public class Vision extends SubsystemBase {
     /**
      * Creates a vision subsystem for a camera on the robot
      * 
-     * @param camName name of the camera
+     * @param camName    name of the camera
      * @param camOffsets camera position relative to the robot center
      */
     public Vision(String camName, Transform3d camOffsets) {
@@ -51,16 +50,20 @@ public class Vision extends SubsystemBase {
     }
 
     /**
-     * Creates a vision subsystem for a camera on the robot and additionally sets up simulation.
+     * Creates a vision subsystem for a camera on the robot and additionally sets up
+     * simulation.
      * Don't use this constructor for simple or early testing.
      * 
-     * @param camName name of the camera
-     * @param camOffsets camera position relative to the robot center
-     * @param calibrationWidth width of the calibration (i.e. the 640 of 640x480)
-     * @param calibrationHeight height of the calibration (i.e. the 480 of 840x480)
+     * @param camName               name of the camera
+     * @param camOffsets            camera position relative to the robot center
+     * @param calibrationWidth      width of the calibration (i.e. the 640 of
+     *                              640x480)
+     * @param calibrationHeight     height of the calibration (i.e. the 480 of
+     *                              840x480)
      * @param calibrationAvgErrorPx average error of the calibration in pixels
      * @param calibrationErrorStdPx std in error of the calibration in pixels
-     * @param fps frames per second of the calibration (i.e. 100fps, 90fps...)
+     * @param fps                   frames per second of the calibration (i.e.
+     *                              100fps, 90fps...)
      */
     public Vision(String camName, Transform3d camOffsets, int calibrationWidth,
             int calibrationHeight, double calibrationAvgErrorPx, double calibrationErrorStdPx,
