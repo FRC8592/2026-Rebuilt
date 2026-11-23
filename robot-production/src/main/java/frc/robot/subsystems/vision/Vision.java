@@ -15,9 +15,11 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SHARED;
@@ -109,12 +111,29 @@ public class Vision extends SubsystemBase {
 
     }
 
+    private double getDistanceToTarget(PhotonTrackedTarget target) {
+        Transform3d camToTarget = target.getBestCameraToTarget();
+        Translation3d translation = camToTarget.getTranslation();
+
+        // Straight-line 3D distance or horizontal (XY) distance in meters
+        return translation.getNorm();
+    }
+
     private void logViewedAprilTags(PhotonPipelineResult result) {
         double[] viewedAprilTags = result.getTargets().stream().map(PhotonTrackedTarget::getFiducialId)
                 .mapToDouble(Integer::doubleValue).toArray();
 
         SmartDashboard.putNumberArray(getName(), viewedAprilTags);
         Logger.recordOutput(Vision.LOG_PATH + "aprilTags", viewedAprilTags);
+
+        result.getTargets().forEach(aTarget -> {
+            double distance = getDistanceToTarget(aTarget);
+            int aprilTagId = aTarget.getFiducialId();
+
+            SmartDashboard.putNumber(Integer.toString(aprilTagId)+" distance in meters", distance)
+              Logger.recordOutput(Vision.LOG_PATH + "aprilTags-"+aprilTagId, "distanceInMeters: "+distance);
+        });
+
     }
 
     /**
