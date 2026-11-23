@@ -130,7 +130,7 @@ public class Vision extends SubsystemBase {
             double distanceInMeters = getDistanceToTarget(aTarget);
             int aprilTagId = aTarget.getFiducialId();
 
-            SmartDashboard.putNumber(Integer.toString(aprilTagId)+" distance in meters", distanceInMeters)
+            SmartDashboard.putNumber(Integer.toString(aprilTagId)+" distance in meters", distanceInMeters);
               Logger.recordOutput(Vision.LOG_PATH + "aprilTags-"+aprilTagId, "distanceInMeters: "+distanceInMeters);
         });
 
