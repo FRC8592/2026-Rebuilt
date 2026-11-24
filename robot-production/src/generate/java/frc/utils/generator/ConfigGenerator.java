@@ -27,17 +27,24 @@ import static java.lang.System.exit;
 
 /**
  * Build-time step: checks config.conf and every robot file it lists, then writes Constants.java
- * with one typed field per config value. Any config error fails the build, with file:line.
+ * with one typed field per config value. Values a section lists in {@code _tunables} become
+ * accessor methods instead ({@code TURRET_P()}), backed by a dashboard tunable. Any config error
+ * fails the build, with file:line.
  */
 public class ConfigGenerator {
+    /** Names the generator adds to a section that has tunables, so config keys can't use them. */
+    private static final String HOLDER = "TUNABLE";
+    private static final String ON_TUNE = "onTune";
 
     private final Set<String> imports = new TreeSet<>();
     private final List<String> errors = new ArrayList<>();
     private final StringBuilder body = new StringBuilder();
     private final ConfigProject project;
+    private final Map<String, List<String>> tunables;
 
-    private ConfigGenerator(ConfigProject project) {
+    private ConfigGenerator(ConfigProject project, Map<String, List<String>> tunables) {
         this.project = project;
+        this.tunables = tunables;
     }
 
     public static void main(String[] args) {
@@ -57,7 +64,7 @@ public class ConfigGenerator {
                 fail(problems);
             }
 
-            ConfigGenerator generator = new ConfigGenerator(project);
+            ConfigGenerator generator = new ConfigGenerator(project, project.tunables(schema));
             String program = generator.program(className, schema);
             if (!generator.errors.isEmpty()) {
                 fail(generator.errors);
@@ -95,10 +102,19 @@ public class ConfigGenerator {
     }
 
     private void writeMembers(ObjectShape shape, String path, int depth, List<String> enclosing) {
+        List<String> tunable = tunables.getOrDefault(path, List.of());
+        if (!tunable.isEmpty()) {
+            writeTunableHolder(shape, path, tunable, "\t".repeat(depth), String.join(".", enclosing));
+        }
         for (Map.Entry<String, Shape> entry : shape.fields().entrySet()) {
             String key = entry.getKey();
             String fullPath = path.isEmpty() ? key : path + "." + key;
             if (!checkIdentifier(key, fullPath)) {
+                continue;
+            }
+            if (!tunable.isEmpty() && (key.equals(HOLDER) || key.equals(ON_TUNE))) {
+                errors.add(project.definition(fullPath).file() + ": '" + fullPath + "' can't be called " + key
+                        + " in a section with _tunables; the generated code uses that name");
                 continue;
             }
             Shape field = entry.getValue();
@@ -121,12 +137,48 @@ public class ConfigGenerator {
                 body.append(tabs).append("public static final List<").append(record).append("> ").append(key)
                         .append(" = C.getList(\"").append(fullPath).append("\", n1 -> ")
                         .append(construct(record, element, "n1", 1)).append(");\n");
+            } else if (tunable.contains(key)) {
+                String section = String.join(".", enclosing);
+                writeDoc(fullPath, tabs, true, List.of(
+                        "Tunable from the dashboard (Tunables/" + fullPath.replace('.', '/') + "): this returns the current value,",
+                        "so read it where you use it. If code copies it somewhere, such as motor PID gains, copy it",
+                        "again in {@link " + section + "#" + ON_TUNE + "}."));
+                body.append(tabs).append("public static ").append(javaType(field, false)).append(" ").append(key).append("() {\n")
+                        .append(tabs).append("\treturn ").append(HOLDER).append(".").append(key).append(".get();\n")
+                        .append(tabs).append("}\n");
             } else {
                 writeDoc(fullPath, tabs, true);
                 body.append(tabs).append("public static final ").append(javaType(field, false)).append(" ")
                         .append(key).append(" = C.get(\"").append(fullPath).append("\");\n");
             }
         }
+    }
+
+    /** The TUNABLE holder class and onTune method of a section with tunables. */
+    private void writeTunableHolder(ObjectShape shape, String path, List<String> names, String tabs, String section) {
+        imports.add("frc.utils.stormconfig.Tunable");
+        imports.add("frc.utils.stormconfig.TunableSection");
+        String list = String.join("(), ", names) + "()";
+        body.append("\n");
+        body.append(tabs).append("/**\n");
+        body.append(tabs).append(" * The tunables behind ").append(list).append(": use them to set() a value from\n");
+        body.append(tabs).append(" * code or to pass one as a Supplier. To read a value, call its accessor instead.\n");
+        body.append(tabs).append(" */\n");
+        body.append(tabs).append("public static final class ").append(HOLDER).append(" {\n");
+        body.append(tabs).append("\tprivate ").append(HOLDER).append("() {}\n\n");
+        body.append(tabs).append("\tstatic final TunableSection SECTION = C.section(\"").append(path).append("\");\n");
+        for (String key : names) {
+            body.append(tabs).append("\tpublic static final Tunable<").append(javaType(shape.fields().get(key), true)).append("> ")
+                    .append(key).append(" = C.tunable(\"").append(path).append(".").append(key).append("\");\n");
+        }
+        body.append(tabs).append("}\n\n");
+        body.append(tabs).append("/**\n");
+        body.append(tabs).append(" * Runs {@code callback} on the robot thread, once per loop in which the dashboard changed any of\n");
+        body.append(tabs).append(" * ").append(list).append(". Use it to copy them again where code copied them, such as motor PID gains.\n");
+        body.append(tabs).append(" */\n");
+        body.append(tabs).append("public static void ").append(ON_TUNE).append("(Runnable callback) {\n");
+        body.append(tabs).append("\t").append(HOLDER).append(".SECTION.onTune(callback);\n");
+        body.append(tabs).append("}\n");
     }
 
     /** One record per list-of-objects; nested plain objects become nested records. */
@@ -212,6 +264,10 @@ public class ConfigGenerator {
 
     /** Javadoc from the comments above the key where it is first defined, plus that file and value. */
     private void writeDoc(String path, String tabs, boolean withValue) {
+        writeDoc(path, tabs, withValue, List.of());
+    }
+
+    private void writeDoc(String path, String tabs, boolean withValue, List<String> extra) {
         // Comments and line numbers come from the unresolved file: a resolved ${substitution}
         // reports the origin of the value it points at instead.
         ConfigProject.Definition definition = project.definition(path);
@@ -234,6 +290,7 @@ public class ConfigGenerator {
                 lines.add("Robot-specific: on a robot whose file doesn't set this, using this section fails.");
             }
         }
+        lines.addAll(extra);
         if (lines.isEmpty()) {
             return;
         }

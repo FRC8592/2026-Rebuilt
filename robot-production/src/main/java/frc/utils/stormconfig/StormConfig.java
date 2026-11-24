@@ -8,6 +8,7 @@ import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigUtil;
 import com.typesafe.config.ConfigValue;
 
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -99,6 +100,45 @@ public final class StormConfig {
                         + ") has no value for " + path);
             }
             return (T) ConfigSchema.decode(shape.lookup(ConfigUtil.splitPath(path)), config.getValue(path));
+        }
+
+        /** The tunables of a section, e.g. "TURRET"; generated code exposes its onTune. */
+        public TunableSection section(String path) {
+            return TunableBackend.section(path);
+        }
+
+        /**
+         * A tunable starting at the value at a dotted path, published to the dashboard. A unit value
+         * shows on the dashboard as a number in the unit this robot's config writes it in.
+         */
+        @SuppressWarnings("unchecked")
+        public <T> Tunable<T> tunable(String path) {
+            Tunable<T> tunable = new Tunable<>(path, get(path), section(path.substring(0, path.lastIndexOf('.'))));
+            Shape shape = this.shape.lookup(ConfigUtil.splitPath(path));
+            if (shape instanceof ConfigSchema.MeasureShape) {
+                String unit = ConfigTypes.unitOf(config.getString(path));
+                TunableBackend.publishDouble((Tunable<Measure<?>>) tunable, m -> ConfigTypes.in(m, unit),
+                        n -> ConfigTypes.measure(n, unit), unit);
+                return tunable;
+            }
+            switch (((ConfigSchema.Scalar) shape).kind()) {
+                case BOOLEAN:
+                    TunableBackend.publishBoolean((Tunable<Boolean>) tunable);
+                    break;
+                case INT:
+                    TunableBackend.publishDouble((Tunable<Integer>) tunable, Integer::doubleValue,
+                            n -> (int) Math.round(n), null);
+                    break;
+                case DOUBLE:
+                    TunableBackend.publishDouble((Tunable<Double>) tunable, Double::doubleValue, n -> n, null);
+                    break;
+                case STRING:
+                    TunableBackend.publishString((Tunable<String>) tunable);
+                    break;
+                default:
+                    throw new IllegalArgumentException(path + " can't be tunable");
+            }
+            return tunable;
         }
 
         /** The object at a dotted path, for reading its fields. */

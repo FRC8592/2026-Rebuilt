@@ -124,6 +124,30 @@ public final class ConfigTypes {
         return new ParsedMeasure(unit.type(), unit.of().apply(Double.parseDouble(m.group(1))));
     }
 
+    /** The unit symbol a measure string is written in ("V" for "40 V"), or null if it isn't a measure. */
+    public static String unitOf(String text) {
+        Matcher m = MEASURE_PATTERN.matcher(text);
+        return m.matches() && UNITS.containsKey(m.group(2)) ? m.group(2) : null;
+    }
+
+    /** {@code value} in the unit named by {@code unit}, e.g. measure(15.0, "deg"). */
+    public static Measure<?> measure(double value, String unit) {
+        return unitDef(unit).of().apply(value);
+    }
+
+    /** The number {@code measure} is in the unit named by {@code unit}, e.g. 15.0 for 15 degrees in "deg". */
+    public static double in(Measure<?> measure, String unit) {
+        return measure.baseUnitMagnitude() / unitDef(unit).of().apply(1.0).baseUnitMagnitude();
+    }
+
+    private static UnitDef unitDef(String unit) {
+        UnitDef def = UNITS.get(unit);
+        if (def == null) {
+            throw new IllegalArgumentException("unknown unit '" + unit + "'");
+        }
+        return def;
+    }
+
     // ---------------------------------------------------------------- compound types
 
     /**

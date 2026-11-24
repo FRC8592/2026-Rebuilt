@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDS;
 import frc.robot.Constants.SHARED;
 import frc.robot.subsystems.vision.Vision;
+import frc.utils.stormconfig.TunableBackend;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -122,6 +123,7 @@ public class Robot extends LoggedRobot {
 
 
     CommandScheduler.getInstance().run();
+    TunableBackend.update(); // dashboard changes to Constants tunables, then their onTune callbacks
 
   }
 

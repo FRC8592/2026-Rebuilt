@@ -260,12 +260,69 @@ class ConfigSchemaTest {
 
     // ---------------------------------------------------------------- the real files
 
+    // ---------------------------------------------------------------- dashboard tunables
+
+    // One key per line: schema order is line order
+    private static final String TUNABLE_BASE = "T {\nP = \"40 V\"\nD = 0.8\nON = true\nPOSE { _type = Pose2d, x = 1.0, y = 2.0 }\n}\n";
+
+    @Test
+    void tunablesListIsNotAValueAndComesOutInSchemaOrder() {
+        ConfigProject p = twoRobots(TUNABLE_BASE + "T._tunables = [\"ON\", \"P\"]", "", "");
+        ObjectShape schema = p.schema();
+        assertFalse(schema.fields().get("T") instanceof ObjectShape t && t.fields().containsKey("_tunables"));
+        assertEquals(List.of(), p.checkAll(schema));
+        assertEquals(Map.of("T", List.of("P", "ON")), p.tunables(schema));
+    }
+
+    @Test
+    void robotFilesAddTunablesToTheirSections() {
+        ConfigProject p = twoRobots(TUNABLE_BASE + "T._tunables = [\"P\"]",
+                "T { X = 1, _tunables = [\"X\"] }", "T._tunables = [\"D\"]");
+        assertEquals(Map.of("T", List.of("P", "D", "X")), p.tunables(p.schema()));
+    }
+
+    @Test
+    void tunableMistakesAreReported() {
+        ConfigProject p = twoRobots(TUNABLE_BASE + "T._tunables = [\"Q\", \"POSE\"]\n_tunables = [\"T\"]", "", "");
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> p.tunables(p.schema()));
+        assertTrue(e.getMessage().contains("T has no value Q"), e.getMessage());
+        assertTrue(e.getMessage().contains("POSE is Pose2d"), e.getMessage());
+        assertTrue(e.getMessage().contains("goes inside a section"), e.getMessage());
+    }
+
+    @Test
+    void simFileCanOnlyRepeatTunables() {
+        ConfigProject ok = simProject(TUNABLE_BASE + "T._tunables = [\"P\"]", "T._tunables = [\"P\"]");
+        assertEquals(Map.of("T", List.of("P")), ok.tunables(ok.schema()));
+        ConfigProject bad = simProject(TUNABLE_BASE, "T._tunables = [\"D\"]");
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class, () -> bad.tunables(bad.schema()));
+        assertTrue(e.getMessage().contains("sim files can't add tunables"), e.getMessage());
+        assertEquals(List.of(), bad.check(bad.schema(), SIM));
+    }
+
+    @Test
+    void misspelledReservedKeyIsAnError() {
+        ConfigSchemaException e = assertThrows(ConfigSchemaException.class,
+                () -> schemaOf(TUNABLE_BASE + "T._tunable = [\"P\"]"));
+        assertTrue(e.getMessage().contains("T._tunable: keys starting with _ are reserved"), e.getMessage());
+    }
+
+    @Test
+    void measureTunablesShowInTheirConfigUnit() {
+        assertEquals("deg", ConfigTypes.unitOf("15 deg"));
+        assertNull(ConfigTypes.unitOf("hello"));
+        Angle angle = (Angle) ConfigTypes.measure(15.0, "deg");
+        assertEquals(15.0, ConfigTypes.in(angle, "deg"), 1e-12);
+        assertEquals(Math.toRadians(15.0), ConfigTypes.in(angle, "rad"), 1e-12);
+    }
+
     @Test
     void deployedConfigFilesPass() {
         File dir = new File("src/main/deploy");
         ConfigProject p = new ConfigProject(name -> ConfigFactory.parseFile(new File(dir, name)));
         ObjectShape schema = p.schema();
         assertEquals(List.of(), p.checkAll(schema));
+        assertEquals(List.of("TURRET_P", "TURRET_I", "TURRET_D", "TURRET_S", "TURRET_V", "TURRET_A"), p.tunables(schema).get("TURRET"));
 
         // Prismarine sets every section, so no section of Constants would fail on it
         List<String> sim = List.of("prismarine.conf", "prismarine.sim.conf");

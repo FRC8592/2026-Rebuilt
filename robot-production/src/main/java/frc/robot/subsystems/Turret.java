@@ -38,13 +38,9 @@ public class Turret extends SubsystemBase {
         turretMotor.setForwardSoftLimit(TURRET.FORWARD_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
         turretMotor.setReverseSoftLimit(TURRET.REVERSE_LIMIT * CodeConstants.TURRET.DEGREES_TO_MOTOR_ROTATIONS);
 
-        turretMotor.setPID(Constants.TURRET.TURRET_P.in(Volts), Constants.TURRET.TURRET_I.in(Volts), Constants.TURRET.TURRET_D.in(Volts),
-                Constants.TURRET.TURRET_S.in(Volts), Constants.TURRET.TURRET_V.in(Volts), Constants.TURRET.TURRET_A.in(Volts), 0);
-        turretMotor.applyConfig();
-
-        SmartDashboard.putNumber("tP", Constants.TURRET.TURRET_P.in(Volts));
-        SmartDashboard.putNumber("tI", Constants.TURRET.TURRET_I.in(Volts));
-        SmartDashboard.putNumber("tD", Constants.TURRET.TURRET_D.in(Volts));
+        configurePid();
+        // The gains are tunable (Tunables/TURRET on the dashboard); the motor keeps its own copy
+        TURRET.onTune(this::configurePid);
 
         SmartDashboard.putNumber("Turret Voltage", 0);
         SmartDashboard.putNumber("turretAngleOffset", turretAngleOffset);
@@ -52,6 +48,12 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("turretAngleOffset", turretAngleOffset);
 
         this.resetPos();
+    }
+
+    private void configurePid() {
+        turretMotor.setPID(TURRET.TURRET_P().in(Volts), TURRET.TURRET_I().in(Volts), TURRET.TURRET_D().in(Volts),
+                TURRET.TURRET_S().in(Volts), TURRET.TURRET_V().in(Volts), TURRET.TURRET_A().in(Volts), 0);
+        turretMotor.applyConfig();
     }
 
     public void TurrettoAngle(Pose2d robotPosition, double angle) {

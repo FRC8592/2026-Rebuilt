@@ -28,6 +28,9 @@ public final class ConfigSchema {
     /** Top-level block holding robot selection settings; not part of the generated constants. */
     public static final String META_KEY = "stormconfig";
 
+    /** Key in a section listing which of its values can be changed from the dashboard; see {@link ConfigProject#tunables}. */
+    public static final String TUNABLES_KEY = "_tunables";
+
     public sealed interface Shape permits Scalar, MeasureShape, CompoundShape, ObjectShape, ListShape {
         /** How this type is described in error messages. */
         String describe();
@@ -146,7 +149,12 @@ public final class ConfigSchema {
     private static ObjectShape objectShape(ConfigObject obj, String path, List<String> errors) {
         Map<String, Shape> fields = new LinkedHashMap<>();
         for (String key : keysInFileOrder(obj)) {
-            if (path.isEmpty() && key.equals(META_KEY)) {
+            if (path.isEmpty() && key.equals(META_KEY) || key.equals(TUNABLES_KEY)) {
+                continue;
+            }
+            if (key.startsWith("_")) {
+                errors.add(where(obj.get(key)) + " " + join(path, key) + ": keys starting with _ are reserved ("
+                        + ConfigTypes.TYPE_KEY + ", " + TUNABLES_KEY + "); is this a typo?");
                 continue;
             }
             Shape shape = shapeOf(obj.get(key), join(path, key), errors);
@@ -217,7 +225,7 @@ public final class ConfigSchema {
     private static void checkObject(ObjectShape expected, ConfigObject obj, String path, boolean root, boolean inList,
             List<String> errors) {
         for (String key : obj.keySet()) {
-            if (root && key.equals(META_KEY)) {
+            if (root && key.equals(META_KEY) || key.equals(TUNABLES_KEY)) {
                 continue;
             }
             if (!expected.fields().containsKey(key)) {
@@ -244,6 +252,9 @@ public final class ConfigSchema {
      */
     public static void checkOverrideOnly(ConfigObject overlay, ConfigObject tree, String path, List<String> errors) {
         for (String key : overlay.keySet()) {
+            if (key.equals(TUNABLES_KEY)) {
+                continue; // checked by ConfigProject.tunables
+            }
             ConfigValue under = tree.get(key);
             ConfigValue over = overlay.get(key);
             if (under == null) {

@@ -1,17 +1,24 @@
 package frc.utils.stormconfig;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigUtil;
 import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueType;
 
 import frc.utils.stormconfig.ConfigSchema.ConfigSchemaException;
+import frc.utils.stormconfig.ConfigSchema.MeasureShape;
 import frc.utils.stormconfig.ConfigSchema.Meta;
 import frc.utils.stormconfig.ConfigSchema.ObjectShape;
+import frc.utils.stormconfig.ConfigSchema.Scalar;
+import frc.utils.stormconfig.ConfigSchema.ScalarKind;
 import frc.utils.stormconfig.ConfigSchema.Shape;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -199,6 +206,114 @@ public final class ConfigProject {
             }
         }
         return dedupe(errors);
+    }
+
+    // ---------------------------------------------------------------- dashboard tunables
+
+    private record Declared(String section, String name, ConfigValue at) {}
+
+    /**
+     * Which values are tunable from the dashboard: section path to key names, in schema order. A
+     * section lists its own, e.g. {@code TURRET { _tunables = ["TURRET_P"] }}. Lists in config.conf and
+     * the robot files add up, like keys do, so a robot file can make its own values tunable; the
+     * sim file can only repeat values that are already tunable. Throws with every problem found.
+     */
+    public Map<String, List<String>> tunables(ObjectShape schema) {
+        List<String> errors = new ArrayList<>();
+        List<Declared> declared = new ArrayList<>();
+        collectTunables(base.root(), "", declared, errors);
+        for (String file : robotFiles()) {
+            collectTunables(files.get(file).root(), "", declared, errors);
+        }
+        Map<String, Set<String>> bySection = new HashMap<>();
+        for (Declared d : declared) {
+            Shape shape = find(schema, d.section(), d.name());
+            String at = ConfigSchema.where(d.at()) + " " + d.section() + "." + ConfigSchema.TUNABLES_KEY + ": ";
+            if (shape == null) {
+                errors.add(at + d.section() + " has no value " + d.name());
+            } else if (!(shape instanceof MeasureShape || shape instanceof Scalar s && s.kind() != ScalarKind.LONG)) {
+                errors.add(at + d.name() + " is " + shape.describe()
+                        + "; tunables can be boolean, int, double, String or a unit type like \"40 V\"");
+            } else {
+                bySection.computeIfAbsent(d.section(), k -> new HashSet<>()).add(d.name());
+            }
+        }
+        if (meta.simExtra() != null) {
+            List<Declared> sim = new ArrayList<>();
+            collectTunables(files.get(meta.simExtra()).root(), "", sim, errors);
+            for (Declared d : sim) {
+                if (!bySection.getOrDefault(d.section(), Set.of()).contains(d.name())) {
+                    errors.add(ConfigSchema.where(d.at()) + " " + d.section() + "." + ConfigSchema.TUNABLES_KEY + ": "
+                            + d.name() + " isn't tunable in config.conf or a robot file; sim files can't add tunables");
+                }
+            }
+        }
+        if (!errors.isEmpty()) {
+            throw new ConfigSchemaException("The config files", dedupe(errors));
+        }
+        Map<String, List<String>> result = new LinkedHashMap<>();
+        orderTunables(schema, "", bySection, result);
+        return result;
+    }
+
+    private static void collectTunables(ConfigObject obj, String path, List<Declared> out, List<String> errors) {
+        for (String key : obj.keySet()) {
+            ConfigValue value = obj.get(key);
+            if (path.isEmpty() && key.equals(ConfigSchema.META_KEY)) {
+                continue;
+            }
+            if (key.equals(ConfigSchema.TUNABLES_KEY)) {
+                String at = ConfigSchema.where(value) + " " + (path.isEmpty() ? "" : path + ".") + key + ": ";
+                if (path.isEmpty()) {
+                    errors.add(at + "goes inside a section, e.g. TURRET { " + key + " = [\"TURRET_P\"] }");
+                } else if (!(value instanceof ConfigList list)) {
+                    errors.add(at + "should be a list of this section's keys, e.g. [\"TURRET_P\", \"TURRET_D\"]");
+                } else {
+                    for (ConfigValue element : list) {
+                        if (isString(element)) {
+                            out.add(new Declared(path, (String) element.unwrapped(), element));
+                        } else {
+                            errors.add(at + "should be a list of this section's keys, e.g. [\"TURRET_P\", \"TURRET_D\"]");
+                        }
+                    }
+                }
+            } else if (value instanceof ConfigObject child && !child.containsKey(ConfigTypes.TYPE_KEY)) {
+                collectTunables(child, path.isEmpty() ? key : path + "." + key, out, errors);
+            }
+        }
+    }
+
+    private static boolean isString(ConfigValue value) {
+        try {
+            return value.valueType() == ConfigValueType.STRING;
+        } catch (ConfigException.NotResolved e) {
+            return false; // a ${substitution}; tunable names must be written out
+        }
+    }
+
+    /** The shape of {@code section.name}, or null if there is no such value. */
+    private static Shape find(ObjectShape schema, String section, String name) {
+        Shape shape = schema;
+        for (String key : ConfigUtil.splitPath(section)) {
+            if (!(shape instanceof ObjectShape obj)) {
+                return null;
+            }
+            shape = obj.fields().get(key);
+        }
+        return shape instanceof ObjectShape obj ? obj.fields().get(name) : null;
+    }
+
+    private static void orderTunables(ObjectShape shape, String path, Map<String, Set<String>> bySection,
+            Map<String, List<String>> result) {
+        Set<String> names = bySection.get(path);
+        if (names != null) {
+            result.put(path, shape.fields().keySet().stream().filter(names::contains).toList());
+        }
+        shape.fields().forEach((key, field) -> {
+            if (field instanceof ObjectShape obj) {
+                orderTunables(obj, path.isEmpty() ? key : path + "." + key, bySection, result);
+            }
+        });
     }
 
     // ---------------------------------------------------------------- documentation
